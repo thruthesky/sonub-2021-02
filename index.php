@@ -10,13 +10,12 @@ if ( isset($_REQUEST['page']) ) {
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
     <link rel="stylesheet" href="/wp-content/themes/wigo/css/index.css">
-
     <?php live_reload_js() ?>
 </head>
 <body>
 
 <section id="layout">
-<h1>WiGo</h1>
+    <h1>WiGo</h1>
     <div>
         Menu:
         <a href="/">Home</a> |
@@ -29,13 +28,13 @@ if ( isset($_REQUEST['page']) ) {
         <a href="/?page=forum/list&category=discussion">Discussion</a>
     </div>
     {{ message }}
-<ul>
-    <li>Done Install Bootstrap 4</li>
-    <li>Done Vue.js 3 https://v3.vuejs.org/guide/introduction.html#what-is-vue-js</li>
-    <li>Node SASS</li>
-    <li>Create <a href="/?page=user/register">Register page</a>, Login Page.</li>
-    <li>Create Forum.</li>
-</ul>
+    <ul>
+        <li>Done Install Bootstrap 4</li>
+        <li>Done Vue.js 3 https://v3.vuejs.org/guide/introduction.html#what-is-vue-js</li>
+        <li>Node SASS</li>
+        <li>Create <a href="/?page=user/register">Register page</a>, Login Page.</li>
+        <li>Create Forum.</li>
+    </ul>
 
     <section id="router">
         <?php
@@ -67,21 +66,35 @@ if ( isset($_REQUEST['page']) ) {
             return {
                 message: 'You loaded this page on ' + new Date().toLocaleString(),
                 register: {},
+                login: {},
+                user: {},
             }
         },
         methods: {
             onRegisterFormSubmit() {
                 console.log('register form submitted');
                 console.log(this.$data.register);
-                request('user.register', this.$data.register, function(re) {
-                    console.log('re: ', re);
+                const _this = this;
+                request('user.register', _this.$data.register, function(re) {
+                    Object.assign(_this.$data.user, re['data']);
+                    console.log('this.$data.user: ', _this.$data.user);
                 }, function(errcode) {
                     console.log("ERROR CODE: ", errcode);
                 });
 
+            },
+            onLoginFormSubmit() {
+                const _this = this;
+                request('user.login', _this.$data.login, function(re) {
+                    Object.assign(_this.user, re['data']);
+                    console.log('this.$data.user: ', _this.$data.user);
+                }, function(errcode) {
+                    console.log("ERROR CODE: ", errcode);
+                });
             }
+
         }
-    }
+    };
     Vue.createApp(AttributeBinding).mount('#layout');
 </script>
 </body>
