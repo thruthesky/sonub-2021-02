@@ -44,7 +44,7 @@ if ( isset($_REQUEST['page']) ) {
     </section>
 </section>
 
-<script src="https://unpkg.com/vue@next"></script>
+<script src="https://unpkg.com/vue@3.0.5/dist/vue.global.prod.js"></script>
 <script src="/wp-content/themes/wigo/js/axios.min.js"></script>
 
 <script>
