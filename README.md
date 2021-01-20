@@ -5,7 +5,7 @@ Withcenter Travel Application
 
 
 
-###Installing SASS Reloader
+### Installing SASS Reloader
 
 Installation if npm not set
 ```
@@ -25,3 +25,15 @@ node watch specific file
 ```
  ./node_modules/.bin/sass --watch scss/index.scss css/index.css
 ```
+
+
+## Development Guideline
+
+### Hot reload
+
+* Run the command below.
+
+```
+$ node live-reload.js
+```
+

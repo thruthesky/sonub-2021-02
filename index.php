@@ -1,6 +1,6 @@
 <?php
-if ( trim($_SERVER['REQUEST_URI']) != ''  && trim($_SERVER['REQUEST_URI']) != '/' ) {
-    $script = "./wp-content/themes/wigo$_SERVER[REQUEST_URI].php";
+if ( isset($_REQUEST['page']) ) {
+    $script = "./wp-content/themes/wigo/$_REQUEST[page].php";
 } else {
     $script = "./wp-content/themes/wigo/main.php";
 }
@@ -9,7 +9,9 @@ if ( trim($_SERVER['REQUEST_URI']) != ''  && trim($_SERVER['REQUEST_URI']) != '/
 <html>
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
-    <link rel="stylesheet" href="/wp-content/themes/wigo/scss/index.css">
+    <link rel="stylesheet" href="/wp-content/themes/wigo/css/index.css">
+
+    <?php live_reload_js() ?>
 </head>
 <body>
 
@@ -18,15 +20,20 @@ if ( trim($_SERVER['REQUEST_URI']) != ''  && trim($_SERVER['REQUEST_URI']) != '/
     <div>
         Menu:
         <a href="/">Home</a> |
-        <a href="/user/register">Register page</a> |
-        <a href="/user/login">Login page</a>
+        <a href="/?page=user/register">Register page</a> |
+        <a href="/?page=user/login">Login page</a> |
+        <a href="/?page=user/profile">Profile page</a> |
+        <a href="/?page=user/logout">Logout</a> |
+        <a href="/?page=forum/list&category=reminder">Reminder</a> |
+        <a href="/?page=forum/list&category=qna">QnA</a> |
+        <a href="/?page=forum/list&category=discussion">Discussion</a>
     </div>
     {{ message }}
 <ul>
     <li>Done Install Bootstrap 4</li>
     <li>Done Vue.js 3 https://v3.vuejs.org/guide/introduction.html#what-is-vue-js</li>
     <li>Node SASS</li>
-    <li>Create <a href="/user/register">Register page</a>, Login Page.</li>
+    <li>Create <a href="/?page=user/register">Register page</a>, Login Page.</li>
     <li>Create Forum.</li>
 </ul>
 
@@ -38,18 +45,40 @@ if ( trim($_SERVER['REQUEST_URI']) != ''  && trim($_SERVER['REQUEST_URI']) != '/
 </section>
 
 <script src="https://unpkg.com/vue@next"></script>
+<script src="/wp-content/themes/wigo/js/axios.min.js"></script>
 
 <script>
+    const apiUrl = "https://local.nalia.kr/v3/index.php";
+    function request(route, data, successCallback, errorCallback) {
+        data = Object.assign({}, data, {route: route});
+        console.log('data', data);
+        axios.post(apiUrl, data).then(function (res) {
+            if ( res.data.code !== 0 ) {
+                if ( typeof errorCallback === 'function' ) {
+                    errorCallback(res.data.code);
+                }
+            } else {
+                successCallback(res);
+            }
+        }).catch(errorCallback);
+    }
     const AttributeBinding = {
         data() {
             return {
-                message: 'You loaded this page on ' + new Date().toLocaleString();
+                message: 'You loaded this page on ' + new Date().toLocaleString(),
+                register: {},
             }
-        }
-
+        },
         methods: {
             onRegisterFormSubmit() {
                 console.log('register form submitted');
+                console.log(this.$data.register);
+                request('user.register', this.$data.register, function(re) {
+                    console.log('re: ', re);
+                }, function(errcode) {
+                    console.log("ERROR CODE: ", errcode);
+                });
+
             }
         }
     }
