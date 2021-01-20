@@ -1,8 +1,10 @@
 <?php
+include_once('load.php');
+
 if ( isset($_REQUEST['page']) ) {
-    $script = "./wp-content/themes/wigo/$_REQUEST[page].php";
+    $script = "./wp-content/themes/wigo/themes/default/$_REQUEST[page].php";
 } else {
-    $script = "./wp-content/themes/wigo/main.php";
+    $script = "./wp-content/themes/wigo/themes/default/main.php";
 }
 ?>
 <!doctype html>
@@ -16,18 +18,28 @@ if ( isset($_REQUEST['page']) ) {
 
 <section id="layout">
     <h1>WiGo</h1>
+
     <div>
         Menu:
         <a href="/">Home</a> |
+
+
+        <span v-if="notLoggedIn()">
         <a href="/?page=user/register">Register page</a> |
         <a href="/?page=user/login">Login page</a> |
+        </span>
+
+
+        <span v-if="loggedIn()">
         <a href="/?page=user/profile">Profile page</a> |
         <a href="/?page=user/logout">Logout</a> |
+        </span>
+
         <a href="/?page=forum/list&category=reminder">Reminder</a> |
         <a href="/?page=forum/list&category=qna">QnA</a> |
         <a href="/?page=forum/list&category=discussion">Discussion</a>
     </div>
-    {{ message }}
+
     <ul>
         <li>Done Install Bootstrap 4</li>
         <li>Done Vue.js 3 https://v3.vuejs.org/guide/introduction.html#what-is-vue-js</li>
@@ -57,45 +69,81 @@ if ( isset($_REQUEST['page']) ) {
                     errorCallback(res.data.code);
                 }
             } else {
-                successCallback(res);
+                successCallback(res.data.data);
             }
         }).catch(errorCallback);
     }
+
+
     const AttributeBinding = {
         data() {
             return {
-                message: 'You loaded this page on ' + new Date().toLocaleString(),
                 register: {},
                 login: {},
-                user: {},
+                user: null,
+                // loggedIn: user.session_id,
+                // notLoggedIn: !this.$data.user.loggedIn,
             }
         },
+        created() {
+            console.log('created!');
+            this.getUser();
+        },
+        mounted() {
+            console.log('mounted!');
+        },
         methods: {
+            loggedIn() {
+
+                return this.$data.user !== null && this.$data.user.session_id;
+            },
+            notLoggedIn() {
+                return ! this.loggedIn();
+            },
             onRegisterFormSubmit() {
                 console.log('register form submitted');
                 console.log(this.$data.register);
-                const _this = this;
-                request('user.register', _this.$data.register, function(re) {
-                    Object.assign(_this.$data.user, re['data']);
-                    console.log('this.$data.user: ', _this.$data.user);
-                }, function(errcode) {
-                    console.log("ERROR CODE: ", errcode);
-                });
-
+                request('user.register', vm.$data.register, this.setUser, this.error);
             },
             onLoginFormSubmit() {
-                const _this = this;
-                request('user.login', _this.$data.login, function(re) {
-                    Object.assign(_this.user, re['data']);
-                    console.log('this.$data.user: ', _this.$data.user);
+                request('user.login', vm.$data.login, function(re) {
+                    Object.assign(vm.user, re['data']);
+                    console.log('this.$data.user: ', vm.$data.user);
                 }, function(errcode) {
                     console.log("ERROR CODE: ", errcode);
                 });
+            },
+            logout() {
+              localStorage.removeItem('user');
+              this.$data.user = null;
+            },
+            error(e) {
+                console.log('e');
+                alert(e);
+            },
+            setUser(profile) {
+                this.set('user', profile);
+                this.$data.user = profile;
+            },
+            getUser() {
+                this.$data.user = this.get('user');
+                return this.$data.user;
+            },
+            set(name, value) {
+                value = JSON.stringify(value);
+                localStorage.setItem(name, value);
+            },
+            get(name) {
+                const val = localStorage.getItem(name);
+                if ( val ) {
+                    return JSON.parse(val);
+                } else {
+                    return val;
+                }
             }
-
         }
     };
-    Vue.createApp(AttributeBinding).mount('#layout');
+    const vm = Vue.createApp(AttributeBinding).mount('#layout');
 </script>
 </body>
 </html>
