@@ -10,9 +10,9 @@
             <option v-for="(v,k) in pushNotificationSendingOptions" :value="k">{{v}}</option>
             <option value="topic">Topic</option>
             <option value="tokens">Tokens</option>
-            <option value="user_ids">User Ids</option>
+            <option value="users">Users</option>
         </select>
-        <input type="text" name="sendTo" v-model="pushNotification.sendInfo">
+        <input type="text" name="sendTo" v-model="pushNotification.receiverInfo">
     </div>
     <div>
         <label>Title</label>

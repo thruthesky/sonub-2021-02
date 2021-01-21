@@ -1,9 +1,9 @@
 function request(route, data, successCallback, errorCallback) {
     data = Object.assign({}, data, {route: route});
-    if (this.loggedIn) {
-        data['session_id'] = this.$data.user.session_id;
+    if (vm.loggedIn) {
+        data['session_id'] = vm.$data.user.session_id;
     }
-    // console.log('data', data);
+    console.log('data', data);
     axios.post(config.apiUrl, data).then(function (res) {
         if ( res.data.code !== 0 ) {
             if ( typeof errorCallback === 'function' ) {
@@ -31,7 +31,6 @@ const AttributeBinding = {
             pushNotification: {
                 sendTo: 'topic'
             },
-            // pushNotificationSendingOptions: {topic:'Topic', token:'Token', user_ID: 'User ID'},
         }
     },
     created() {
@@ -134,11 +133,22 @@ const AttributeBinding = {
             // if (this.$data.pushNotification.title === void 0 && this.$data.pushNotification.title === void 0) return alert('Title or Body is missing');
             console.log("sendPushNotification::", this.$data.pushNotification);
 
-            
-            request('notification.sendPushNotification', this.$data.pushNotification, function(post) {
-                console.log('post created', post);
-                window.location.href = "/?page=forum/list&category=" + category;
-            }, this.error);
+            let route = '';
+            const data = {
+                title: this.$data.pushNotification.title,
+                body: this.$data.pushNotification.body
+            };
+            if (this.$data.pushNotification.sendTo === 'topic' ) {
+                route = 'notification.sendMessageToTopic';
+                data['topic'] = this.$data.pushNotification.receiverInfo;
+            } else if (this.$data.pushNotification.sendTo === 'tokens' ) {
+                route = 'notification.sendMessageToTokens';
+                data['tokens'] = this.$data.pushNotification.receiverInfo;
+            } else if (this.$data.pushNotification.sendTo === 'users' ) {
+                route = 'notification.sendMessageToUsers';
+                data['users'] = this.$data.pushNotification.receiverInfo;
+            }
+            request(route, data, function(res) {}, this.error);
         },
     }
 };
