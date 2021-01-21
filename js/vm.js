@@ -97,16 +97,35 @@ const AttributeBinding = {
         },
 
         /// Forum
-        onPostEditFormSubmit(category) {
-            this.$data.post.category = category;
-            this.$data.post.session_id = this.$data.user.session_id;
-            console.log(this.$data.post);
-
-            request('forum.editPost', vm.$data.post, function(post) {
-                console.log('post created', post);
-                window.location.href = "/?page=forum/list&category=" + category;
+        /// Add or Update Post.
+        onPostEditFormSubmit(event) {
+            const formData = new FormData(event.target); // reference to form element
+            const data = {}; // need to convert it before using not with XMLHttpRequest
+            data.session_id = this.$data.user.session_id; // add session id
+            for (let [key, val] of formData.entries()) {
+              Object.assign(data, { [key]: val })
+            }
+            console.log('Post Edit Form Data', data);
+            request('forum.editPost', data, function(post) {
+                console.log('post updated', post);
+                window.location.replace(post['guid']);
             }, this.error);
         },
+        /// Delete Post.
+        onPostDelete(ID, category) {
+            const conf = confirm('Delete Post?');
+            if (conf == false) return; 
+
+            const data = {
+                session_id: this.$data.user.session_id,
+                ID: ID,
+            };
+
+            request('forum.deletePost', data, function(post) {
+                console.log('post delete', post);
+                window.location.href = "/?page=forum/list&category=" + category;
+            }, this.error);
+        }
     }
 };
 const vm = Vue.createApp(AttributeBinding).mount('#layout');
