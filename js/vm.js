@@ -3,7 +3,7 @@ function request(route, data, successCallback, errorCallback) {
     if (this.loggedIn) {
         data['session_id'] = this.$data.user.session_id;
     }
-    console.log('data', data);
+    // console.log('data', data);
     axios.post(config.apiUrl, data).then(function (res) {
         if ( res.data.code !== 0 ) {
             if ( typeof errorCallback === 'function' ) {
@@ -28,6 +28,10 @@ const AttributeBinding = {
             user: null,
             // loggedIn: user.session_id,
             // notLoggedIn: !this.$data.user.loggedIn,
+            pushNotification: {
+                sendTo: 'topic'
+            },
+            // pushNotificationSendingOptions: {topic:'Topic', token:'Token', user_ID: 'User ID'},
         }
     },
     created() {
@@ -89,10 +93,9 @@ const AttributeBinding = {
         alert(title, body) {
             alert(title + "\n" + body);
         },
-        saveToken(token) {
-            console.log('token::\n', token);
-            request('notification.updateToken', { token: token }, function (re) {
-                console.log(re);
+        saveToken(token, topic = '') {
+            request('notification.updateToken', { token: token, topic: topic }, function (re) {
+                // console.log(re);
             }, this.error);
         },
 
@@ -103,6 +106,17 @@ const AttributeBinding = {
             console.log(this.$data.post);
 
             request('forum.editPost', vm.$data.post, function(post) {
+                console.log('post created', post);
+                window.location.href = "/?page=forum/list&category=" + category;
+            }, this.error);
+        },
+        async sendPushNotification() {
+            // console.log(this.$data.pushNotification.title);
+            // if (this.$data.pushNotification.title === void 0 && this.$data.pushNotification.title === void 0) return alert('Title or Body is missing');
+            console.log("sendPushNotification::", this.$data.pushNotification);
+
+            
+            request('notification.sendPushNotification', this.$data.pushNotification, function(post) {
                 console.log('post created', post);
                 window.location.href = "/?page=forum/list&category=" + category;
             }, this.error);

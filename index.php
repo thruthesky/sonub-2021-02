@@ -82,6 +82,7 @@ if ( isset($_REQUEST['page']) ) {
             messagingSenderId: "973770265003",
             appId: "1:973770265003:web:dd304f98a421a733d8c2ee"
         },
+        allTopic: "allTopic"
     };
 </script>
 <script src="https://unpkg.com/vue@3.0.5/dist/vue.global.prod.js"></script>
