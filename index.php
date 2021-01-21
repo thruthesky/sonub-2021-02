@@ -71,6 +71,7 @@ if ( !file_exists($script) ) {
         </span>
     </div>
 
+
     <ul>
         <li>Done Install Bootstrap 4</li>
         <li>Done Vue.js 3 https://v3.vuejs.org/guide/introduction.html#what-is-vue-js</li>
@@ -115,7 +116,7 @@ if ( !file_exists($script) ) {
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-messaging.js"></script>
 <script src="/wp-content/themes/wigo/js/firebase.js"></script>
-<script src="<?php echo THEME_URL . '/js/vm.js'?>"></script>
+<script src="<?php echo THEME_URL . '/js/app.js'?>"></script>
 <script>
     request('app.version', {}, function (x) {
         console.log('version: ', x);

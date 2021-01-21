@@ -1,7 +1,7 @@
 function request(route, data, successCallback, errorCallback) {
     data = Object.assign({}, data, {route: route});
-    if (vm.loggedIn) {
-        data['session_id'] = vm.$data.user.session_id;
+    if (app.loggedIn) {
+        data['session_id'] = app.sessionId;
     }
     console.log('data', data);
     axios.post(config.apiUrl, data).then(function (res) {
@@ -47,17 +47,20 @@ const AttributeBinding = {
         loggedIn() {
             return this.$data.user !== null && this.$data.user.session_id;
         },
+        sessionId() {
+            return this.$data.user.session_id;
+        },
         notLoggedIn() {
             return ! this.loggedIn();
         },
         onRegisterFormSubmit() {
             console.log('register form submitted');
             console.log(this.$data.register);
-            request('user.register', vm.$data.register, this.setUser, this.error);
+            request('user.register', this.$data.register, this.setUser, this.error);
         },
         onLoginFormSubmit() {
-            request('user.login', vm.$data.login, function(profile) {
-                vm.setUser(profile);
+            request('user.login', this.$data.login, function(profile) {
+                app.setUser(profile);
                 move('/');
             }, this.error);
         },
@@ -128,7 +131,7 @@ const AttributeBinding = {
                 window.location.href = "/?page=forum/list&category=" + category;
             }, this.error);
         },
-        async sendPushNotification() {
+        sendPushNotification() {
             // console.log(this.$data.pushNotification.title);
             // if (this.$data.pushNotification.title === void 0 && this.$data.pushNotification.title === void 0) return alert('Title or Body is missing');
             console.log("sendPushNotification::", this.$data.pushNotification);
@@ -152,4 +155,5 @@ const AttributeBinding = {
         },
     }
 };
-const vm = Vue.createApp(AttributeBinding).mount('#layout');
+const app = Vue.createApp(AttributeBinding).mount('#layout');
+
