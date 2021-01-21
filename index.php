@@ -62,6 +62,9 @@ if ( isset($_REQUEST['page']) ) {
     const apiUrl = "https://local.nalia.kr/v3/index.php";
     function request(route, data, successCallback, errorCallback) {
         data = Object.assign({}, data, {route: route});
+        if (this.loggedIn) {
+            data['session_id'] = this.$data.user.session_id;
+        }
         console.log('data', data);
         axios.post(apiUrl, data).then(function (res) {
             if ( res.data.code !== 0 ) {
@@ -88,13 +91,19 @@ if ( isset($_REQUEST['page']) ) {
         created() {
             console.log('created!');
             this.getUser();
+
+//            // add event listener to subscribe and send subscription to server
+//            self.addEventListener('activate', this.pnSubscribe);
+//            // and listen to incomming push notifications
+//            self.addEventListener('push', this.pnPopupNotification);
+//            // ... and listen to the click
+//            self.addEventListener('notificationclick', this.pnNotificationClick);
         },
         mounted() {
             console.log('mounted!');
         },
         methods: {
             loggedIn() {
-
                 return this.$data.user !== null && this.$data.user.session_id;
             },
             notLoggedIn() {
@@ -106,16 +115,11 @@ if ( isset($_REQUEST['page']) ) {
                 request('user.register', vm.$data.register, this.setUser, this.error);
             },
             onLoginFormSubmit() {
-                request('user.login', vm.$data.login, function(re) {
-                    Object.assign(vm.user, re['data']);
-                    console.log('this.$data.user: ', vm.$data.user);
-                }, function(errcode) {
-                    console.log("ERROR CODE: ", errcode);
-                });
+                request('user.login', vm.$data.login, this.setUser, this.error);
             },
             logout() {
-              localStorage.removeItem('user');
-              this.$data.user = null;
+                localStorage.removeItem('user');
+                this.$data.user = null;
             },
             error(e) {
                 console.log('e');
@@ -140,10 +144,24 @@ if ( isset($_REQUEST['page']) ) {
                 } else {
                     return val;
                 }
+            },
+            alert(title, body) {
+                alert(title + "\n" + body);
+            },
+            saveToken(token) {
+                console.log('token::\n', token);
+                request('notification.updateToken', { token: token }, function (re) {
+                    console.log(re);
+                }, this.error);
             }
         }
     };
     const vm = Vue.createApp(AttributeBinding).mount('#layout');
 </script>
+
+<script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-messaging.js"></script>
+<script src="/wp-content/themes/wigo/js/firebase.js"></script>
+
 </body>
 </html>
