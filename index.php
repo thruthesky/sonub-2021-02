@@ -12,7 +12,7 @@ if ( isset($_REQUEST['page']) ) {
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
     <link rel="stylesheet" href="/wp-content/themes/wigo/css/index.css">
-    <?php live_reload_js() ?>
+    <!-- <?php live_reload_js() ?> -->
 </head>
 <body>
 
@@ -74,12 +74,14 @@ if ( isset($_REQUEST['page']) ) {
         }).catch(errorCallback);
     }
 
+    post = {};
 
     const AttributeBinding = {
         data() {
             return {
                 register: {},
                 login: {},
+                post: post ?? {},
                 user: null,
                 // loggedIn: user.session_id,
                 // notLoggedIn: !this.$data.user.loggedIn,
@@ -94,7 +96,6 @@ if ( isset($_REQUEST['page']) ) {
         },
         methods: {
             loggedIn() {
-
                 return this.$data.user !== null && this.$data.user.session_id;
             },
             notLoggedIn() {
@@ -106,12 +107,7 @@ if ( isset($_REQUEST['page']) ) {
                 request('user.register', vm.$data.register, this.setUser, this.error);
             },
             onLoginFormSubmit() {
-                request('user.login', vm.$data.login, function(re) {
-                    Object.assign(vm.user, re['data']);
-                    console.log('this.$data.user: ', vm.$data.user);
-                }, function(errcode) {
-                    console.log("ERROR CODE: ", errcode);
-                });
+                request('user.login', vm.$data.login, this.setUser, this.error);
             },
             logout() {
               localStorage.removeItem('user');
@@ -140,7 +136,21 @@ if ( isset($_REQUEST['page']) ) {
                 } else {
                     return val;
                 }
-            }
+            },
+            /// Forum
+            onPostEditFormSubmit() {
+                var category = <?php echo "'" . $category . "'";  ?>;
+                if (this.$data.post.category == '') this.error('Category empty');
+                this.$data.post.category = category;
+
+                this.$data.post.session_id = this.$data.user.session_id;
+                console.log(this.$data.post);
+
+                request('forum.editPost', vm.$data.post, function(post) {
+                    console.log('post created', post);
+                    window.location.href = "/?page=forum/list&category=" + category; 
+                }, this.error);
+            },
         }
     };
     const vm = Vue.createApp(AttributeBinding).mount('#layout');
