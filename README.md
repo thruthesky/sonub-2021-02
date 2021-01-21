@@ -34,6 +34,6 @@ node watch specific file
 * Run the command below.
 
 ```
-$ node live-reload.js
+ % node wp-content/themes/wigo/live-reload.js
 ```
 

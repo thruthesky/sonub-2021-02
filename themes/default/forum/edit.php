@@ -1,7 +1,7 @@
 <?php
 
-require_once(V3_DIR . '/v3-load.php');
-require_once(V3_DIR . '/routes/forum.route.php');
+
+
 
 
 $category = $_REQUEST['category'];
@@ -9,7 +9,7 @@ $category = $_REQUEST['category'];
 
 <h1> POST EDIT : <?php echo $category ?></h1>
 
-<form @submit.prevent="onPostEditFormSubmit">
+<form @submit.prevent="onPostEditFormSubmit('<?php echo $category?>')">
     <div class="form-group">
         <label for="post_title">Title</label>
         <input type="text" class="form-control" id="post_title" name="post_title" v-model="post.post_title">

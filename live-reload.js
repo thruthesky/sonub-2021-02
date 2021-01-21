@@ -1,6 +1,12 @@
 
-var http = require('http');
-var server = http.createServer(function onRequest(req, res) {
+var fs = require('fs');
+var https = require('https');
+var svrOptions = {
+    key: fs.readFileSync('/Users/thruthesky/www/wordpress/v3/tmp/ssl/nalia/privkey.pem'),
+    cert: fs.readFileSync('/Users/thruthesky/www/wordpress/v3/tmp/ssl/nalia/fullchain.pem'),
+};
+
+var server = https.createServer(svrOptions, function onRequest(req, res) {
     // Set CORS headers
     res.setHeader('Access-Control-Allow-Origin', req.headers.origin)
     res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
@@ -25,7 +31,7 @@ io.on('connection', function (client) {
     client.on('disconnect', function () {});
 });
 var chokidar = require('chokidar');
-chokidar.watch('.', { ignored: [ '.idea', 'node_modules', '**/vendor', '**/scss', '**/.git', 'package*', 'live-reload.js', '**/*.mp4', '**/*.mp3', '**/*.jpg'] } ).on('all', function (event, path) {
+chokidar.watch('.', { ignored: [ '.idea', 'node_modules', 'wp-admin', 'wp-includes', 'wp-content/debug.log', '**/vendor', '**/scss', '**/.git', 'package*', 'live-reload.js', '**/*.mp4', '**/*.mp3', '**/*.jpg'] } ).on('all', function (event, path) {
     console.log(event, path, ' at ' + ( new Date ).toLocaleString());
     io.emit('reload', { code: 'reload' });
 });
