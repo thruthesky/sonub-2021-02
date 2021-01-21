@@ -77,14 +77,12 @@ if ( isset($_REQUEST['page']) ) {
         }).catch(errorCallback);
     }
 
-    post = {};
-
     const AttributeBinding = {
         data() {
             return {
                 register: {},
                 login: {},
-                post: post ?? {},
+                post: {},
                 user: null,
                 // loggedIn: user.session_id,
                 // notLoggedIn: !this.$data.user.loggedIn,
