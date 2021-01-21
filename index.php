@@ -1,15 +1,40 @@
 <?php
 
+global $config;
 include_once('load.php');
 
+function get_theme_script($theme) {
+    if ( isset($_REQUEST['page']) ) {
+        $script = THEME_DIR . "/themes/$theme/$_REQUEST[page].php";
+    } else {
+        $_uri = $_SERVER['REQUEST_URI'];
+        if ( empty($_uri) || $_uri == '/' ) $script = THEME_DIR . "/themes/$theme/home.php";
+        else $script = THEME_DIR . "/themes/$theme/forum/view.php";
+    }
 
-if ( isset($_REQUEST['page']) ) {
-    $script = THEME_DIR . "/themes/default/$_REQUEST[page].php";
-} else {
-    $_uri = $_SERVER['REQUEST_URI'];
-    if ( empty($_uri) || $_uri == '/' ) $script = THEME_DIR . "/themes/default/main.php";
-    else $script = THEME_DIR . "/themes/default/forum/view.php";
+    return $script;
 }
+
+function get_error_script($title, $content) {
+    global $config;
+    $config->error_title = $title;
+    $config->error_content = $content;
+    return THEME_DIR . "/themes/default/error.php";
+}
+
+
+$script = get_theme_script($config->theme);
+
+
+
+if ( !file_exists($script) ) {
+    $script = get_theme_script('default');
+}
+
+if ( !file_exists($script) ) {
+    $script = get_error_script('File not found', 'The file you are referring does not exists on server');
+}
+
 ?>
 <!doctype html>
 <html>

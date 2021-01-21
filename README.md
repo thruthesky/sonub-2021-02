@@ -26,6 +26,14 @@ node watch specific file
  ./node_modules/.bin/sass --watch scss/index.scss css/index.css
 ```
 
+## Multi Themes
+
+* it can be set by wigo/config.php
+
+* if theme script does not exist, then default theme script file will be used.
+
+
+
 
 ## Development Guideline
 
@@ -36,4 +44,6 @@ node watch specific file
 ```
  % node wp-content/themes/wigo/live-reload.js
 ```
+
+
 
