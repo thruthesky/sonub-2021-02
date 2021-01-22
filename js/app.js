@@ -31,6 +31,11 @@ const AttributeBinding = {
             pushNotification: {
                 sendTo: 'topic'
             },
+            modal: {
+                active: false,
+                title: '',
+                content: '',
+            }
         }
     },
     created() {
@@ -190,6 +195,12 @@ const AttributeBinding = {
             request(route, data, function(res) {
                 // console.log(res);
             }, this.error);
+        },
+        showModal() {
+            this.$data.modal.active = true;
+        },
+        hideModal() {
+            this.$data.modal.active = false;
         },
     }
 };

@@ -90,12 +90,32 @@ if ( !file_exists($script) ) {
 
         </li>
     </ul>
+    <button class="btn btn-primary" @click="showModal()">Show Modal</button>
 
     <section id="router">
         <?php
         include $script;
         ?>
     </section>
+    <div class="modal" :class="{ 'd-block': modal.active }" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{modal.title}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="hideModal()">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="hideModal()">Close</button>
+                    <button type="button" class="btn btn-primary" @click="hideModal(true)">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 
 <script>
@@ -125,7 +145,6 @@ if ( !file_exists($script) ) {
         console.log('error: ', e);
     });
 </script>
-
 
 </body>
 </html>
