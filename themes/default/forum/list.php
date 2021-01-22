@@ -13,11 +13,13 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
     $posts = forum_search(['category_name' => $category, 'posts_per_page' => 20]);
 
     foreach ($posts as $post) {
-    // print_r($post);
+        // print_r($post);
     ?>
-        <a class="d-block mb-2" href="<?php echo $post['guid'] ?>">
-            <?php echo $post['post_title'] ?>
-            By <?php echo $post['author_name'] ?>
-        </a>
+        <div class="p-2 m-2 card border border-dark">
+            <a class="d-block mb-2" href="<?php echo $post['guid'] ?>">
+                <?php echo $post['post_title'] ?>
+                By <?php echo $post['author_name'] ?>
+            </a>
+        </div>
     <?php } ?>
 </section>

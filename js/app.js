@@ -99,35 +99,71 @@ const AttributeBinding = {
                 // console.log(re);
             }, this.error);
         },
-
-        /// Forum
-        /// Add or Update Post.
-        onPostEditFormSubmit(event) {
+        /**
+         * Transform form event data to an object.
+         * 
+         * @param {event} event 
+         */
+        getFormData(event) {
             const formData = new FormData(event.target); // reference to form element
             const data = {}; // need to convert it before using not with XMLHttpRequest
-            data.session_id = this.$data.user.session_id; // add session id
             for (let [key, val] of formData.entries()) {
               Object.assign(data, { [key]: val })
             }
+            return data;
+        },
+        /**
+         * Request call for editting(creating / updating) post.
+         * 
+         * @param {event} event 
+         */
+        onPostEditFormSubmit(event) {
+            const data = this.getFormData(event);
             console.log('Post Edit Form Data', data);
             request('forum.editPost', data, function(post) {
-                console.log('post updated', post);
+                console.log('post edit', post);
                 window.location.replace(post['guid']);
             }, this.error);
         },
-        /// Delete Post.
+        /**
+         * Request call for deleting post.
+         * 
+         * @param {string|number} ID 
+         * @param {string} category 
+         */
         onPostDelete(ID, category) {
             const conf = confirm('Delete Post?');
             if (conf == false) return; 
-
-            const data = {
-                session_id: this.$data.user.session_id,
-                ID: ID,
-            };
-
-            request('forum.deletePost', data, function(post) {
+            request('forum.deletePost', { ID: ID }, function(post) {
                 console.log('post delete', post);
                 move("/?page=forum/list&category=" + category);
+            }, this.error);
+        },
+        /**
+         * Request call for editting(creating / updating) comment.
+         * 
+         * @param {event} event 
+         */
+        onCommentEditFormSubmit(event) {
+            const data = this.getFormData(event);
+            console.log('Post Edit Form Data', data);
+            request('forum.editComment', data, function(comment) {
+                console.log('comment edit', comment);
+                /// TODO: insert to post comments
+            }, this.error);
+        },
+        /**
+         * Request call for deleting comment.
+         * 
+         * @param {string|number} ID
+         */
+        onCommentDelete(ID) {
+            const conf = confirm('Delete Comment?');
+            if (conf == false) return; 
+            request('forum.deleteComment', { comment_ID: ID }, function(post) {
+                console.log('comment delete', post);
+                var el = document.getElementById("comment_" + ID);
+                el.remove();
             }, this.error);
         },
         sendPushNotification() {
