@@ -44,16 +44,13 @@ navigator.serviceWorker.register('/wp-content/themes/wigo/firebase-messaging-sw.
             })
     })
     .catch(function (e) {
-        console.log(e);
-        console.log('Error in registering service worker');
+        console.log('Error in registering service worker::', e);
     });
 
 /** What we need to do when the existing token refreshes for a user */
 messaging.onTokenRefresh(function() {
     messaging.getToken()
         .then(function(renewedToken) {
-            // console.log(renewedToken);
-
             app.saveToken(renewedToken, config.allTopic);
             /** UPDATE TOKEN::From here you need to store the TOKEN by AJAX request to your server */
         })
@@ -65,14 +62,13 @@ messaging.onTokenRefresh(function() {
 
 // Handle incoming messages
 messaging.onMessage(function(payload) {
-    const notificationTitle = 'Data Message Title';
-    const notificationOptions = {
-        body: 'Data Message body',
-        icon: 'https://c.disquscdn.com/uploads/users/34896/2802/avatar92.jpg',
-        image: 'https://c.disquscdn.com/uploads/users/34896/2802/avatar92.jpg'
-    };
-    console.log(payload);
-    app.alert(payload.notification.title,payload.notification.body);
-
-    // return self.registration.showNotification(notificationTitle, notificationOptions);
+    // const notificationTitle = 'Data Message Title';
+    // const notificationOptions = {
+    //     body: 'Data Message body',
+    //     icon: 'https://c.disquscdn.com/uploads/users/34896/2802/avatar92.jpg',
+    //     image: 'https://c.disquscdn.com/uploads/users/34896/2802/avatar92.jpg'
+    // };
+    console.log('onMessage::',payload);
+    const notification = payload.notification;
+    app.alert(notification.title,notification.body);
 });

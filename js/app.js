@@ -1,6 +1,7 @@
 function request(route, data, successCallback, errorCallback) {
     data = Object.assign({}, data, {route: route});
-    if (app.loggedIn) {
+
+    if (app.loggedIn()) {
         data['session_id'] = app.sessionId();
     }
     console.log('data', data);
@@ -150,7 +151,9 @@ const AttributeBinding = {
                 route = 'notification.sendMessageToUsers';
                 data['users'] = this.$data.pushNotification.receiverInfo;
             }
-            request(route, data, function(res) {}, this.error);
+            request(route, data, function(res) {
+                // console.log(res);
+            }, this.error);
         },
     }
 };

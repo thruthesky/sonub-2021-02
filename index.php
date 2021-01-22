@@ -45,7 +45,7 @@ if ( !file_exists($script) ) {
 </head>
 <body>
 
-<section id="layout">
+<section id="layout" class="container">
     <h1>WiGo</h1>
 
     <div>
@@ -75,9 +75,10 @@ if ( !file_exists($script) ) {
     <ul>
         <li>Done Install Bootstrap 4</li>
         <li>Done Vue.js 3 https://v3.vuejs.org/guide/introduction.html#what-is-vue-js</li>
-        <li>Node SASS</li>
-        <li>Create <a href="/?page=user/register">Register page</a>, Login Page.</li>
+        <li>Done Node SASS</li>
+        <li>Done Create <a href="/?page=user/register">Register page</a>, Login Page.</li>
         <li>Create Forum.</li>
+        <li>Admin push notification.</li>
         <li>
             Goal:
             Travel Diary.
