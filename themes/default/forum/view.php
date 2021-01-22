@@ -87,6 +87,7 @@ $post = get_post($arr[1]);
 </article>
 
 <script>
+
     function toggleCommentEditDisplay(elementID, display) {
         var el = document.getElementById('comment_content_' + elementID);
         var el2 = document.getElementById('comment_content_edit_' + elementID)

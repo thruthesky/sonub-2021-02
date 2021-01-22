@@ -23,6 +23,7 @@ function refresh() {
     location.reload();
 }
 
+
 const AttributeBinding = {
     data() {
         return {
