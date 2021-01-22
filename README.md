@@ -33,6 +33,18 @@ node watch specific file
 * if theme script does not exist, then default theme script file will be used.
 
 
+## SEO Friendly URL
+
+* To make the URL (of the post view page) friendly as human-readable, we use this format below.
+
+```url
+https://xxx.domain.com/post_ID/post-title
+```
+where the `post_ID` is the post ID and `post-title` is the post title(part of guid.).
+
+
+
+
 
 
 ## Development Guideline

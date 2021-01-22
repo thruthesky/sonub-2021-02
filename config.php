@@ -14,4 +14,3 @@ foreach( _THEMES as $_domain => $_theme ) {
         $config->theme = $_theme;
     }
 }
-

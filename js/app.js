@@ -18,6 +18,9 @@ function request(route, data, successCallback, errorCallback) {
 function move(uri) {
     location.href = uri;
 }
+function refresh() {
+    location.reload();
+}
 
 const AttributeBinding = {
     data() {
@@ -47,7 +50,7 @@ const AttributeBinding = {
             return this.$data.user !== null && this.$data.user.session_id;
         },
         sessionId() {
-            return this.$data.user.session_id;
+            return this.$data.user && this.$data.user.session_id;
         },
         notLoggedIn() {
             return ! this.loggedIn();
@@ -68,7 +71,7 @@ const AttributeBinding = {
             this.$data.user = null;
         },
         error(e) {
-            console.log('e');
+            console.log('alert(e)', e);
             alert(e);
         },
         setUser(profile) {
@@ -122,7 +125,7 @@ const AttributeBinding = {
             console.log('Post Edit Form Data', data);
             request('forum.editPost', data, function(post) {
                 console.log('post edit', post);
-                window.location.replace(post['guid']);
+                move(post['url']);
             }, this.error);
         },
         /**
@@ -133,7 +136,7 @@ const AttributeBinding = {
          */
         onPostDelete(ID, category) {
             const conf = confirm('Delete Post?');
-            if (conf == false) return; 
+            if (conf === false) return;
             request('forum.deletePost', { ID: ID }, function(post) {
                 console.log('post delete', post);
                 move("/?page=forum/list&category=" + category);
@@ -149,7 +152,7 @@ const AttributeBinding = {
             console.log('Post Edit Form Data', data);
             request('forum.editComment', data, function(comment) {
                 console.log('comment edit', comment);
-                /// TODO: insert to post comments
+                refresh();
             }, this.error);
         },
         /**
@@ -159,7 +162,7 @@ const AttributeBinding = {
          */
         onCommentDelete(ID) {
             const conf = confirm('Delete Comment?');
-            if (conf == false) return; 
+            if (conf === false) return;
             request('forum.deleteComment', { comment_ID: ID }, function(post) {
                 console.log('comment delete', post);
                 var el = document.getElementById("comment_" + ID);

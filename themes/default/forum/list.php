@@ -16,7 +16,7 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
         // print_r($post);
     ?>
         <div class="p-2 m-2 card border border-dark">
-            <a class="d-block mb-2" href="<?php echo $post['guid'] ?>">
+            <a class="d-block mb-2" href="<?php echo $post['url'] ?>">
                 <?php echo $post['post_title'] ?>
                 By <?php echo $post['author_name'] ?>
             </a>
