@@ -1,7 +1,7 @@
 function request(route, data, successCallback, errorCallback) {
     data = Object.assign({}, data, {route: route});
     if (app.loggedIn) {
-        data['session_id'] = app.sessionId;
+        data['session_id'] = app.sessionId();
     }
     console.log('data', data);
     axios.post(config.apiUrl, data).then(function (res) {
@@ -127,7 +127,7 @@ const AttributeBinding = {
 
             request('forum.deletePost', data, function(post) {
                 console.log('post delete', post);
-                window.location.href = "/?page=forum/list&category=" + category;
+                move("/?page=forum/list&category=" + category);
             }, this.error);
         },
         sendPushNotification() {
