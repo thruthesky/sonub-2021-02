@@ -59,3 +59,180 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
 
 
 
+
+
+
+## Reference
+
+* The very first version on this module is on [`0.1` branch](https://github.com/thruthesky/v3/tree/0.1). It has user, forum, push notification functionality.
+  * This [`0.1` branch](https://github.com/thruthesky/v3/tree/0.1) works with [nalia_app flutter-v3 branch](https://github.com/thruthesky/nalia_app/tree/flutter-v3) which works with the v3 0.1 branch. These two would be a good example.
+
+
+
+
+## API methods & Protocols
+
+
+### Login
+
+### Register
+
+### Getting Profile
+
+### loginOrRegister
+
+- with this one protocol, user can register or login (if they have registered already)
+- When user login, the result data will have `['mode' => 'login']`, or the result data will have `['mode' => 'register']`
+
+```
+https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.com&user_pass=Abcde5,*&any=data&add=more&...
+```
+
+
+## Coding Guideline
+
+### Precautions
+
+* There are some functions that have confusing names.
+  * `_is_error()` is the one to check if API function call is error or not.
+  * `isError()` is to test if the result of API call is error or not.
+
+* Return value of route must be an array.
+
+
+* Route is divided into two parts by 'comma'. The first one is class name of route, and the second is the name of the method of the route class.
+  Ex) `user.login` where `user` is the route class at `routes/user.route.php` and `login` is the method of the class.
+
+* Route class name must end with `Route` like `AppRoute`, `UserRoute`.
+  * And the class call route, the route name must be lower case without `Route` from the route class name.
+
+* Naming is kebab case. like `user_login`, `get_route`, `_is_error`
+
+* Error codes must begin with `ERROR_`.
+  * Attention: Some error codes have extra information after clone(:).
+  For instance, ERROR_FAILED_ON_EDIT_POST:Content, title, and excerpt are empty.
+* Only routes functions can call `error()` or `success()`. All other functions must return an error code if there is an error.
+
+* Route cannot return null or empty string to client. It will response error instead.
+
+### Extension - Write your own route
+
+* When you need to write your own routes, write your route class under `ext` folder.
+
+### Customizing
+
+* You should not edit the core source files that are
+  - index.php
+  - defines.php
+  - lib/*.php
+  - routes/*.php
+  
+* If you need to add your own routes, you can save your routes files under `ext` folder.
+* And if you need to write extra files, then write it under `var` folder.
+
+
+
+## Protocols
+
+### app.query
+
+* You can directly query to database with your own SQL using `route=app.query` route.
+* It is a little limited to prevent SQL Injection and accidents with wrong SQL query.
+* Tables you can do SQL Query must be defined with `PUBLIC_TABLES` in config.php and you only do SELECT Query.
+
+# Unit Test
+
+* There are two methods to do unit test.
+  * `V3 unit test` is developed by the core team. And is not recommended simply because it is not a standard.
+  * The other one is `PHPUnit` which is more likely a standard unit testing tool for PHP. And `PHPUnit` is recommended simply because it is a de-facto standard.
+
+
+
+## PHPUNIT - Unit testing
+
+* Test files are under `phpunit` folder.
+* Run test like below
+```shell script
+$ php phpunit.phar phpunit/AppVersionTest.php
+```
+
+## V3 Unit Testing
+
+* Install `phprun` node module globally.
+```text
+$ npm i -g phprun
+```
+
+* You can test like below
+
+```text
+$ phprun tests/xxxx.test.php
+```
+
+Examples)
+```text
+% phprun tests/app.version.test.php
+% phprun tests/loginOrRegister.test.php
+% phprun tests/loginOrRegister_with_metadata.php
+% phprun tests/loginOrRegister.function_call.test.php
+```
+
+
+### How to write test code
+
+* See `tests/route.test.php` for the best test example.
+  * Recommended style guide
+    * Prepare first,
+    * Then, test functions
+    * Then, test routes by creating its instance
+    * Then, test with API call.
+
+```php
+<?php
+define('V3_DIR', '.');
+require_once(V3_DIR . '/../wp-load.php');
+require_once(V3_DIR . '/v3-load.php');
+
+
+/// Prepare test data set.
+$A = 1;
+$B = 2;
+$C = 3;
+$tokenA = 'A';
+$tokenB = 'B';
+$tokenC = 'C';
+$extraTokenA = 'Apple';
+$extraTokenB = 'Banana';
+$extraTokenC = 'Cherry';
+
+
+/// Step 1. Test functions
+///
+/// Step 2. Test route.
+///
+/// Step 3. Test Api call.
+
+
+/** Display the summary of test results. */
+displayTestSummary();
+```
+
+* Best way to write test is to following the steps below.
+  * First, test all necessary functions.
+  * Second, load the route class file and test route methods.
+  * Lastly, test as client.
+
+
+
+
+# Push notification
+
+* Subscribing to a specific topic for some conditions are not encouraged.
+  * Suppose, user subscribed for a chat room named 'C1' using his phone named 'P1'.
+  * And the user (with same login auth) changes his another phone named 'P1'.
+    Now he has two devices with two tokens.
+  * But the token of 'P1' subscribed only. Not the token of 'P2'.
+  * When there is a new message, the message will only delivered to 'P1', not to 'P2'.
+    Meaning, the user may not get push notification.
+  * You may need to go for a heavy surgery of your code to make it perfectly.
+  
