@@ -1,8 +1,11 @@
 <?php
+//
+/**
+ * @todo change V3_DIR to API_DIR
+ */
 if ( ! defined( 'V3_DIR' ) ) {
     define( 'V3_DIR', dirname( __FILE__ ) );
 }
-require_once(V3_DIR . '/../wp-load.php');
 require_once(V3_DIR . '/v3-load.php');
 
 

@@ -2,14 +2,13 @@
 use PHPUnit\Framework\TestCase;
 
 define('V3_DIR', '.');
-require_once(V3_DIR . '/../wp-load.php');
 require_once(V3_DIR . '/v3-load.php');
 require_once(V3_DIR . '/ext/credit.class.php');
 require_once(V3_DIR . '/ext/nalia.route.php');
 
 
 
-class VerifyAndroidPurchaseTest extends TestCase
+class failure extends TestCase
 {
 
     private $nalia;

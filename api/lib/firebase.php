@@ -9,7 +9,7 @@ use Kreait\Firebase\Messaging\Notification;
  *  $factory = getFirebase();
  */
 function getFirebase() {
-    return (new Factory)->withServiceAccount(V3_DIR . '/firebase_credentials.json');
+    return (new Factory)->withServiceAccount(SERVICE_ACCOUNT_FIREBASE_JSON_FILE_PATH);
 }
 
 

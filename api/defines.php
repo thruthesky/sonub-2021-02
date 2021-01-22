@@ -171,10 +171,7 @@ define('POST_FIELDS', [
 ]);
 
 
-
-
-
-
+define('API_CALL', in('route') != null );
 
 
 /// Tables

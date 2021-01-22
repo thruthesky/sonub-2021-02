@@ -12,7 +12,7 @@ $failure_count = 0;
  *  $re = getRoute(['route' => 'purchase.createHistory', 'session_id' => $profile['session_id']]);
  */
 function getRoute($params) {
-    $url = "http://127.0.0.1/wordpress/v3/index.php?" . http_build_query($params);
+    $url = "http://127.0.0.1/wordpress/wp-content/themes/wigo/api/index.php?" . http_build_query($params);
 //    echo "\nREQUEST URL: $url\n";
     $re = file_get_contents($url);
 //    print("RE:\n");
@@ -24,6 +24,11 @@ function getRoute($params) {
     return $json;
 }
 
+/**
+ * @param $re
+ * @param string $msg
+ * @todo change name to `testSuccess`
+ */
 function isSuccess($re, $msg = '') {
     if ( is_string($re) && _is_error($re) ) isTrue(false, "$msg, Error code: $re");
     else if ( isset($re['code']) && _is_error($re['code']) )  isTrue(false, "$msg, Error code: $re[code]");
@@ -34,6 +39,7 @@ function isSuccess($re, $msg = '') {
  * @param $re - Route response or if it's string, it's error.
  * @param $error_code
  * @param string $msg
+ * @todo change name to `testError`
  */
 function isError($re, $error_code, $msg = '') {
     $code = is_string($re) ? $re : $re['code'];

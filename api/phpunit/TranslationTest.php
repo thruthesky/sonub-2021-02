@@ -5,7 +5,6 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 
 define('V3_DIR', '.');
-require_once(V3_DIR . '/../wp-load.php');
 require_once(V3_DIR . '/v3-load.php');
 require_once(V3_DIR . '/routes/translation.route.php');
 

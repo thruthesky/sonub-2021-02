@@ -5,7 +5,6 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 
 define('V3_DIR', '.');
-require_once(V3_DIR . '/../wp-load.php');
 require_once(V3_DIR . '/v3-load.php');
 require_once(V3_DIR . '/ext/purchase.route.php');
 require_once(V3_DIR . '/ext/admin.route.php');
@@ -14,7 +13,7 @@ define('ADMIN_ID', 1);
 define('USER_ID', 2);
 
 
-class AdminPurchaseSearchTest extends TestCase {
+class failure extends TestCase {
 
     public function testAdminPurchaseSearch() {
 

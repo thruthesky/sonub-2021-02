@@ -5,14 +5,13 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 
 define('V3_DIR', '.');
-require_once(V3_DIR . '/../wp-load.php');
 require_once(V3_DIR . '/v3-load.php');
 require_once(V3_DIR . '/ext/purchase.route.php');
 
 define('USER_ID', 3);
 
 
-class PurchaseTest extends TestCase {
+class failure extends TestCase {
     public function testPurchase() {
 
         wp_set_current_user(USER_ID);

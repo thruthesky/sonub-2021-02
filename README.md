@@ -69,6 +69,11 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
 
 
 
+# API
+
+* Api folder has all the api related codes and its `index.php` serves as the endpoint.
+  * Since `api/index.php` is served directly by client end, `api` folder must contain all the necessary code likes defines, configurations, etc.
+* `api/lib/` is shared by the theme.
 
 ## API methods & Protocols
 
@@ -106,7 +111,9 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
 * Route class name must end with `Route` like `AppRoute`, `UserRoute`.
   * And the class call route, the route name must be lower case without `Route` from the route class name.
 
-* Naming is kebab case. like `user_login`, `get_route`, `_is_error`
+* Naming for vars and functions in `api/lib` folder scripts is kebab case.
+  like `user_login`, `get_route`, `_is_error`.
+   * Naming for other vars and functions outside of `api/lib` may go camel case.
 
 * Error codes must begin with `ERROR_`.
   * Attention: Some error codes have extra information after clone(:).

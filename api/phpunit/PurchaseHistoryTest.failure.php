@@ -2,7 +2,6 @@
 use PHPUnit\Framework\TestCase;
 
 define('V3_DIR', '.');
-require_once(V3_DIR . '/../wp-load.php');
 require_once(V3_DIR . '/v3-load.php');
 require_once(V3_DIR . '/ext/purchase.route.php');
 
@@ -12,7 +11,7 @@ define('FAILURE_ID', '10');
 define('SUCCESS_ID', '5');
 
 
-final class PurchaseHistoryTest extends TestCase
+final class failure extends TestCase
 {
 
     public function testMethods(): void
