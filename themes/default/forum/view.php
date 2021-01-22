@@ -11,7 +11,7 @@ $post = get_post_from_guid(home_url() . $_SERVER['REQUEST_URI']);
         Content: <?php echo $post->post_content ?>
     </p>
 
-    <!-- TODO: is mine -->
+    <!-- TODO: MINE BUTTONS -->
     <div>
         <a class="btn btn-success mr-3" href="/?page=forum/edit&ID=<?php echo $post->ID ?>">Edit</a>
         <button class="btn btn-danger" @click="onPostDelete('<?php echo $post->ID ?>', '<?php echo get_the_category($post->ID)[0]->slug ?>')">
