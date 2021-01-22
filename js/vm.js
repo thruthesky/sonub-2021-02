@@ -24,7 +24,6 @@ const AttributeBinding = {
         return {
             register: {},
             login: {},
-            post: {},
             user: null,
             // loggedIn: user.session_id,
             // notLoggedIn: !this.$data.user.loggedIn,
