@@ -1,15 +1,40 @@
 <?php
 
+global $config;
 include_once('load.php');
 
+function get_theme_script($theme) {
+    if ( isset($_REQUEST['page']) ) {
+        $script = THEME_DIR . "/themes/$theme/$_REQUEST[page].php";
+    } else {
+        $_uri = $_SERVER['REQUEST_URI'];
+        if ( empty($_uri) || $_uri == '/' ) $script = THEME_DIR . "/themes/$theme/home.php";
+        else $script = THEME_DIR . "/themes/$theme/forum/view.php";
+    }
 
-if ( isset($_REQUEST['page']) ) {
-    $script = THEME_DIR . "/themes/default/$_REQUEST[page].php";
-} else {
-    $_uri = $_SERVER['REQUEST_URI'];
-    if ( empty($_uri) || $_uri == '/' ) $script = THEME_DIR . "/themes/default/main.php";
-    else $script = THEME_DIR . "/themes/default/forum/view.php";
+    return $script;
 }
+
+function get_error_script($title, $content) {
+    global $config;
+    $config->error_title = $title;
+    $config->error_content = $content;
+    return THEME_DIR . "/themes/default/error.php";
+}
+
+
+$script = get_theme_script($config->theme);
+
+
+
+if ( !file_exists($script) ) {
+    $script = get_theme_script('default');
+}
+
+if ( !file_exists($script) ) {
+    $script = get_error_script('File not found', 'The file you are referring does not exists on server');
+}
+
 ?>
 <!doctype html>
 <html>
@@ -45,6 +70,7 @@ if ( isset($_REQUEST['page']) ) {
             | <a href="/?page=admin/index">Admin</a>
         </span>
     </div>
+
 
     <ul>
         <li>Done Install Bootstrap 4</li>
@@ -82,6 +108,7 @@ if ( isset($_REQUEST['page']) ) {
             messagingSenderId: "973770265003",
             appId: "1:973770265003:web:dd304f98a421a733d8c2ee"
         },
+        allTopic: "allTopic"
     };
 </script>
 <script src="https://unpkg.com/vue@3.0.5/dist/vue.global.prod.js"></script>
@@ -89,7 +116,7 @@ if ( isset($_REQUEST['page']) ) {
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-messaging.js"></script>
 <script src="/wp-content/themes/wigo/js/firebase.js"></script>
-<script src="<?php echo THEME_URL . '/js/vm.js'?>"></script>
+<script src="<?php echo THEME_URL . '/js/app.js'?>"></script>
 <script>
     request('app.version', {}, function (x) {
         console.log('version: ', x);

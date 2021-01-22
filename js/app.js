@@ -1,7 +1,7 @@
 function request(route, data, successCallback, errorCallback) {
     data = Object.assign({}, data, {route: route});
-    if (this.loggedIn) {
-        data['session_id'] = this.$data.user.session_id;
+    if (app.loggedIn) {
+        data['session_id'] = app.sessionId;
     }
     console.log('data', data);
     axios.post(config.apiUrl, data).then(function (res) {
@@ -27,6 +27,9 @@ const AttributeBinding = {
             user: null,
             // loggedIn: user.session_id,
             // notLoggedIn: !this.$data.user.loggedIn,
+            pushNotification: {
+                sendTo: 'topic'
+            },
         }
     },
     created() {
@@ -43,17 +46,20 @@ const AttributeBinding = {
         loggedIn() {
             return this.$data.user !== null && this.$data.user.session_id;
         },
+        sessionId() {
+            return this.$data.user.session_id;
+        },
         notLoggedIn() {
             return ! this.loggedIn();
         },
         onRegisterFormSubmit() {
             console.log('register form submitted');
             console.log(this.$data.register);
-            request('user.register', vm.$data.register, this.setUser, this.error);
+            request('user.register', this.$data.register, this.setUser, this.error);
         },
         onLoginFormSubmit() {
-            request('user.login', vm.$data.login, function(profile) {
-                vm.setUser(profile);
+            request('user.login', this.$data.login, function(profile) {
+                app.setUser(profile);
                 move('/');
             }, this.error);
         },
@@ -88,10 +94,9 @@ const AttributeBinding = {
         alert(title, body) {
             alert(title + "\n" + body);
         },
-        saveToken(token) {
-            console.log('token::\n', token);
-            request('notification.updateToken', { token: token }, function (re) {
-                console.log(re);
+        saveToken(token, topic = '') {
+            request('notification.updateToken', { token: token, topic: topic }, function (re) {
+                // console.log(re);
             }, this.error);
         },
 
@@ -124,7 +129,30 @@ const AttributeBinding = {
                 console.log('post delete', post);
                 window.location.href = "/?page=forum/list&category=" + category;
             }, this.error);
-        }
+        },
+        sendPushNotification() {
+            // console.log(this.$data.pushNotification.title);
+            // if (this.$data.pushNotification.title === void 0 && this.$data.pushNotification.title === void 0) return alert('Title or Body is missing');
+            console.log("sendPushNotification::", this.$data.pushNotification);
+
+            let route = '';
+            const data = {
+                title: this.$data.pushNotification.title,
+                body: this.$data.pushNotification.body
+            };
+            if (this.$data.pushNotification.sendTo === 'topic' ) {
+                route = 'notification.sendMessageToTopic';
+                data['topic'] = this.$data.pushNotification.receiverInfo;
+            } else if (this.$data.pushNotification.sendTo === 'tokens' ) {
+                route = 'notification.sendMessageToTokens';
+                data['tokens'] = this.$data.pushNotification.receiverInfo;
+            } else if (this.$data.pushNotification.sendTo === 'users' ) {
+                route = 'notification.sendMessageToUsers';
+                data['users'] = this.$data.pushNotification.receiverInfo;
+            }
+            request(route, data, function(res) {}, this.error);
+        },
     }
 };
-const vm = Vue.createApp(AttributeBinding).mount('#layout');
+const app = Vue.createApp(AttributeBinding).mount('#layout');
+

@@ -29,12 +29,12 @@ navigator.serviceWorker.register('/wp-content/themes/wigo/firebase-messaging-sw.
                     .then(function(token) {
                         /** Here I am logging to my console. This token I will use for testing with PHP Notification */
                         // console.log(token);
-                        vm.saveToken(token);
+                        app.saveToken(token, config.allTopic);
                         /** SAVE TOKEN::From here you need to store the TOKEN by AJAX request to your server */
                     })
                     .catch(function(error) {
                         /** If some error happens while fetching the token then handle here */
-                        updateUIForPushPermissionRequired();
+                        // updateUIForPushPermissionRequired();
                         console.log('Error while fetching the token ' + error);
                     });
             })
@@ -54,7 +54,7 @@ messaging.onTokenRefresh(function() {
         .then(function(renewedToken) {
             // console.log(renewedToken);
 
-            vm.saveToken(renewedToken);
+            app.saveToken(renewedToken, config.allTopic);
             /** UPDATE TOKEN::From here you need to store the TOKEN by AJAX request to your server */
         })
         .catch(function(error) {
@@ -72,7 +72,7 @@ messaging.onMessage(function(payload) {
         image: 'https://c.disquscdn.com/uploads/users/34896/2802/avatar92.jpg'
     };
     console.log(payload);
-    vm.alert(payload.notification.title,payload.notification.body);
+    app.alert(payload.notification.title,payload.notification.body);
 
     // return self.registration.showNotification(notificationTitle, notificationOptions);
 });

@@ -3,6 +3,6 @@
 ?>
 <script>
     window.addEventListener('load', function() {
-        vm.logout();
+        app.logout();
     });
 </script>
