@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 
-define('V3_DIR', '.');
-require_once(V3_DIR . '/v3-load.php');
-require_once(V3_DIR . '/ext/bio.route.php');
+if ( !defined('API_DIR') ) define('API_DIR', '.');
+require_once(API_DIR . '/api-load.php');
+require_once(API_DIR . '/ext/bio.route.php');
 
 
 

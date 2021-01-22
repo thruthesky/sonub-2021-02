@@ -1,5 +1,5 @@
 <?php
-require_once(V3_DIR . '/ext/credit.class.php');
+require_once(API_DIR . '/ext/credit.class.php');
 
 
 class NaliaRoute {

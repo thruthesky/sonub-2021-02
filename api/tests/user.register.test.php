@@ -1,7 +1,7 @@
 <?php
-define('V3_DIR', '.');
-require_once(V3_DIR . '/../wp-load.php');
-require_once(V3_DIR . '/v3-load.php');
+define('API_DIR', '.');
+require_once(API_DIR . '/../wp-load.php');
+require_once(API_DIR . '/api-load.php');
 
 
 /// Prepare
@@ -16,33 +16,33 @@ $she = "HER$email";
 /// Step 1.
 
 $re = register([]);
-isError($re, ERROR_EMPTY_EMAIL, ERROR_EMPTY_EMAIL);
+testError($re, ERROR_EMPTY_EMAIL, ERROR_EMPTY_EMAIL);
 
 $re = register(['user_email' => 'thruthesky@gmail.com']);
-isError($re, ERROR_EMPTY_PASSWORD, ERROR_EMPTY_PASSWORD);
+testError($re, ERROR_EMPTY_PASSWORD, ERROR_EMPTY_PASSWORD);
 
 
 $re = register(['user_email' => 'thruthesky@gmail.com', 'user_pass' => 'expect: error email_exists']);
-isError($re, ERROR_EMAIL_EXISTS, ERROR_EMAIL_EXISTS);
+testError($re, ERROR_EMAIL_EXISTS, ERROR_EMAIL_EXISTS);
 
 $re = register(['user_email' => '@wrong format', 'user_pass' => 'expect: error wrong email format']);
-isError($re, ERROR_WRONG_EMAIL_FORMAT, ERROR_WRONG_EMAIL_FORMAT);
+testError($re, ERROR_WRONG_EMAIL_FORMAT, ERROR_WRONG_EMAIL_FORMAT);
 
 
 $user = register(['user_email' => $email, 'user_pass' => $password]);
-isSuccess($user, "User registered: {$user['ID']}");
+testSuccess($user, "User registered: {$user['ID']}");
 
 
 
 /// Step 2.
-include V3_DIR . '/routes/user.route.php';
+include API_DIR . '/routes/user.route.php';
 $user = new UserRoute();
 $heResult = $user->register(['user_email' => $he, 'user_pass' => $password]);
-isSuccess($heResult, "He registered: {$heResult['ID']}");
+testSuccess($heResult, "He registered: {$heResult['ID']}");
 
 /// Step 3.
 $she = getRoute(['route' => 'user.register', 'user_email' => $she, 'user_pass' => $password]);
-isSuccess($she, "She registered: {$she['data']['ID']}");
+testSuccess($she, "She registered: {$she['data']['ID']}");
 
 
 

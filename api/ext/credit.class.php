@@ -397,7 +397,7 @@ class Credit {
         if ( $my_gender && $my_gender == $other_gender ) return ERROR_TRANSFER_SAME_GENDER;
 
         $bonus = $this->getMyBonusJewelry() ?? $this->_empty_jewelry();
-        if ( _is_error($bonus) ) return $bonus;
+        if ( api_error($bonus) ) return $bonus;
 
         $credit = $this->getMyCreditJewelry();
 

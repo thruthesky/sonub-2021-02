@@ -40,8 +40,8 @@ define('DIAMONDBOX_RATE', [
 ]);
 
 
-define("SERVICE_ACCOUNT_FIREBASE_JSON_FILE_PATH", V3_DIR . "/keys/nalia-app-firebase-admin-sdk-service-account-key.json");
-define("SERVICE_ACCOUNT_LINK_TO_APP_JSON_FILE_PATH", V3_DIR . "/keys/android-pub-key-api-6678595955257701195-92794-iam-gserviceaccount.com.json");
+define("SERVICE_ACCOUNT_FIREBASE_JSON_FILE_PATH", API_DIR . "/keys/nalia-app-firebase-admin-sdk-service-account-key.json");
+define("SERVICE_ACCOUNT_LINK_TO_APP_JSON_FILE_PATH", API_DIR . "/keys/android-pub-key-api-6678595955257701195-92794-iam-gserviceaccount.com.json");
 
 
 

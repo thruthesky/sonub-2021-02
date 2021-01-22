@@ -1,8 +1,8 @@
 <?php
-define('V3_DIR', '.');
-require_once(V3_DIR . '/../wp-load.php');
-require_once(V3_DIR . '/v3-load.php');
-include V3_DIR . '/var/pass/pass_loginOrRegister.php';
+define('API_DIR', '.');
+require_once(API_DIR . '/../wp-load.php');
+require_once(API_DIR . '/api-load.php');
+include API_DIR . '/var/pass/pass_loginOrRegister.php';
 $client_id = "gvC47PHoY7kS3DfpGfff";
 $client_secret = "32729fcbc8e2a597c42704a855cbd16c9104d1930a516b6a24a0c69d113fe8d8";
 

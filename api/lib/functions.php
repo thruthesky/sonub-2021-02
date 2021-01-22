@@ -483,7 +483,7 @@ function profile($user_ID=null)
  * @return bool
  * @todo change name to api_error()
  */
-function _is_error($obj) {
+function api_error($obj) {
     if ( $obj && is_string($obj) && strpos($obj, 'ERROR_') === 0 ) return true;
     else return false;
 }
@@ -577,11 +577,11 @@ function get_route($in) {
     $arr = explode('.', $route);
     if ( count($arr) != 2 ) return ERROR_MALFORMED_ROUTE;
 
-    $path = V3_DIR . "/routes/{$arr[0]}.route.php";
+    $path = API_DIR . "/routes/{$arr[0]}.route.php";
     if (file_exists($path)) {
         include_once $path;
     } else {
-        $path = V3_DIR . "/ext/{$arr[0]}.route.php";
+        $path = API_DIR . "/ext/{$arr[0]}.route.php";
         if (file_exists($path)) {
             include_once $path;
         } else {
@@ -598,7 +598,7 @@ function get_route($in) {
 }
 
 function end_if_error($code) {
-    if ( _is_error($code) ) error($code);
+    if ( api_error($code) ) error($code);
     return $code;
 }
 
@@ -613,11 +613,11 @@ function end_if_error($code) {
 function loginOrRegister($in) {
     $re = login($in);
     debug_log("login:", $re);
-    if ( _is_error($re) ) {
+    if ( api_error($re) ) {
         if ( $re == ERROR_USER_NOT_FOUND_BY_THAT_EMAIL ) {
             $re = register($in);
             debug_log("register: ", $re);
-            if ( _is_error($re) ) return $re;
+            if ( api_error($re) ) return $re;
             $re['mode'] = 'register';
         } else {
             /// ERROR

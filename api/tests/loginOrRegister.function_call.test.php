@@ -1,10 +1,10 @@
 <?php
-define('V3_DIR', '.');
-require_once(V3_DIR . '/../wp-load.php');
-require_once(V3_DIR .'/defines.php');
-require_once(V3_DIR . '/functions.php');
-require_once(V3_DIR . '/router.php');
-require_once(V3_DIR . '/test.helper.php');
+define('API_DIR', '.');
+require_once(API_DIR . '/../wp-load.php');
+require_once(API_DIR .'/defines.php');
+require_once(API_DIR . '/functions.php');
+require_once(API_DIR . '/router.php');
+require_once(API_DIR . '/test.helper.php');
 
 date_default_timezone_set('Asia/Seoul');
 

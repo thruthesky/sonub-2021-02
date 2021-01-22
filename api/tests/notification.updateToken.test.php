@@ -1,7 +1,7 @@
 <?php
-define('V3_DIR', '.');
-require_once(V3_DIR . '/../wp-load.php');
-require_once(V3_DIR . '/v3-load.php');
+define('API_DIR', '.');
+require_once(API_DIR . '/../wp-load.php');
+require_once(API_DIR . '/api-load.php');
 
 
 /// Prepare test data set.
@@ -15,11 +15,11 @@ $extraTokenA = 'Apple';
 
 // Input test: expect error.
 $re = update_token([]);
-isError($re, ERROR_EMPTY_TOKEN, ERROR_EMPTY_TOKEN);
+testError($re, ERROR_EMPTY_TOKEN, ERROR_EMPTY_TOKEN);
 
 // update token without login
 $re = update_token(['token' => $tokenA]);
-isSuccess($re, $tokenA);
+testSuccess($re, $tokenA);
 
 $record = get_token($tokenA);
 isTrue($record['user_ID'] == 0, 'token saved without user id');
@@ -36,14 +36,14 @@ isTrue($re['token'] == $extraTokenA && $re['user_ID'] == $A, "$extraTokenA is up
 
 /// Step 2. Test route.
 
-include_once V3_DIR . '/routes/notification.route.php';
+include_once API_DIR . '/routes/notification.route.php';
 $notification = new NotificationRoute();
 $re = $notification->updateToken(['token' => $tokenB]);
-isSuccess($re, "$tokenB == {$re['token']} is updated.");
+testSuccess($re, "$tokenB == {$re['token']} is updated.");
 
 /// Step 3. Test Api call.
 $re = getRoute(['route' => 'notification.updateToken', 'token' => $tokenB]);
-isSuccess($re, "Token update by Api call");
+testSuccess($re, "Token update by Api call");
 
 
 /** Display the summary of test results. */

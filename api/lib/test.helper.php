@@ -29,9 +29,9 @@ function getRoute($params) {
  * @param string $msg
  * @todo change name to `testSuccess`
  */
-function isSuccess($re, $msg = '') {
-    if ( is_string($re) && _is_error($re) ) isTrue(false, "$msg, Error code: $re");
-    else if ( isset($re['code']) && _is_error($re['code']) )  isTrue(false, "$msg, Error code: $re[code]");
+function testSuccess($re, $msg = '') {
+    if ( is_string($re) && api_error($re) ) isTrue(false, "$msg, Error code: $re");
+    else if ( isset($re['code']) && api_error($re['code']) )  isTrue(false, "$msg, Error code: $re[code]");
     else isTrue(true, $msg);
 }
 
@@ -41,7 +41,7 @@ function isSuccess($re, $msg = '') {
  * @param string $msg
  * @todo change name to `testError`
  */
-function isError($re, $error_code, $msg = '') {
+function testError($re, $error_code, $msg = '') {
     $code = is_string($re) ? $re : $re['code'];
     if ( $code === $error_code )
      isTrue($code === $error_code, "Expected error code: $error_code, $msg");
@@ -50,11 +50,11 @@ function isError($re, $error_code, $msg = '') {
 
 function isTrue($re, $msg='') {
     global $failure_count;
-    if ( $re && !_is_error($re) ) {
+    if ( $re && !api_error($re) ) {
         echo "SUCCESS: $msg\n";
     } else {
         $failure_count ++;
-        if ( _is_error($re) ) echo "FAILURE:  $msg, $re <<<<<<<<<<<<<<<<\n";
+        if ( api_error($re) ) echo "FAILURE:  $msg, $re <<<<<<<<<<<<<<<<\n";
 else        echo "FAILURE: $msg <<<<<<<<<<<<<<<<<<<<<<<\n";
     }
 }

@@ -1,11 +1,11 @@
 <?php
-define('V3_DIR', '.');
-require_once(V3_DIR . '/../wp-load.php');
-require_once(V3_DIR .'/defines.php');
-require_once(V3_DIR .'/config.php');
-require_once(V3_DIR . '/functions.php');
-require_once(V3_DIR . '/router.php');
-require_once(V3_DIR . '/test.helper.php');
+define('API_DIR', '.');
+require_once(API_DIR . '/../wp-load.php');
+require_once(API_DIR .'/defines.php');
+require_once(API_DIR .'/config.php');
+require_once(API_DIR . '/functions.php');
+require_once(API_DIR . '/router.php');
+require_once(API_DIR . '/test.helper.php');
 
 date_default_timezone_set('Asia/Seoul');
 
@@ -17,34 +17,34 @@ clearDatabase();
 
 /// Input tests
 $re = giveJewelry([]);
-isError($re, ERROR_EMPTY_JEWELRY);
+testError($re, ERROR_EMPTY_JEWELRY);
 
 $re = giveJewelry(['jewelry']);
-isError($re, ERROR_EMPTY_JEWELRY);
+testError($re, ERROR_EMPTY_JEWELRY);
 
 $re = giveJewelry(['jewelry'=>'ruby']);
-isError($re, ERROR_WRONG_JEWELRY);
+testError($re, ERROR_WRONG_JEWELRY);
 
 $re = giveJewelry(['jewelry'=>'diamond']);
-isError($re, ERROR_EMPTY_COUNT);
+testError($re, ERROR_EMPTY_COUNT);
 
 $re = giveJewelry(['jewelry'=>'diamond', 'count' => 'abc']);
-isError($re, ERROR_WRONG_COUNT);
+testError($re, ERROR_WRONG_COUNT);
 
 $re = giveJewelry(['jewelry'=>'diamond', 'count' => '123']);
-isError($re, ERROR_EMPTY_USER_ID);
+testError($re, ERROR_EMPTY_USER_ID);
 
 $re = giveJewelry(['jewelry'=>'diamond', 'count' => 12, 'user_ID' => 99912345]);
-isError($re, ERROR_USER_NOT_FOUND);
+testError($re, ERROR_USER_NOT_FOUND);
 
 $re = giveJewelry(['jewelry'=>'diamond', 'count' => 12, 'user_ID' => 1]);
-isError($re, ERROR_LOGIN_FIRST);
+testError($re, ERROR_LOGIN_FIRST);
 
 $re = updateBonusJewelry(0, 'gold', 1);
-isError($re, ERROR_EMPTY_USER_ID);
+testError($re, ERROR_EMPTY_USER_ID);
 
 $re = updateBonusJewelry(1, 'ruby', 1);
-isError($re, ERROR_WRONG_JEWELRY);
+testError($re, ERROR_WRONG_JEWELRY);
 
 /// Login
 wp_set_current_user(1);
@@ -72,7 +72,7 @@ update_user_meta($male2, 'gender', 'M');
 
 
 $re = updateBonusJewelry($user_ID, 'gold', 1);
-isError($re, ERROR_DAILY_BONUS_NOT_GENERATED,  "updateBonusJewelry(1, 'gold', 1)");
+testError($re, ERROR_DAILY_BONUS_NOT_GENERATED,  "updateBonusJewelry(1, 'gold', 1)");
 
 $bonus = generateDailyBonus($user_ID);
 updateBonusJewelry($user_ID, 'gold', 1);
@@ -122,18 +122,18 @@ isTrue($b3['diamond'] == 31, "Update jewelry test: {$b3['diamond']} == 31");
 wp_set_current_user($he_3);
 generateDailyBonus($he_3);
 $re = giveJewelry(['jewelry' => 'silver', 'count' => 1, 'user_ID' => $other_ID]);
-isSuccess($re, "Give 1 silver to user $other_ID");
+testSuccess($re, "Give 1 silver to user $other_ID");
 
 
 /// Give gold from he to her
 clearDatabase();
 addJewelry($he_3, 0, 1, 0, 'test');
 $re = giveJewelry(['jewelry' => 'gold', 'count' => 1, 'user_ID' => $other_ID]);
-isError($re, ERROR_EMPTY_GOLD_ITEM);
+testError($re, ERROR_EMPTY_GOLD_ITEM);
 
 
 $re = giveJewelry(['jewelry' => 'gold', 'count' => 1, 'user_ID' => $you_5, 'item' => 'bag']);
-isSuccess($re, "Give 1 gold to user $you");
+testSuccess($re, "Give 1 gold to user $you");
 isTrue($re['diamond'] == 0 && $re['gold'] == 0 && $re['silver'] == 0, 'Give 1 gold to user $you and no more jewelry left.');
 
 /// Give many silver from he to her
@@ -147,14 +147,14 @@ clearDatabase();
 wp_set_current_user($male);
 generateDailyBonus($male);
 $re = giveJewelry(['user_ID'=>$male, 'jewelry' => SILVER, 'count'=>1]);
-isError($re, ERROR_TRANSFER_MYSELF, ERROR_TRANSFER_MYSELF);
+testError($re, ERROR_TRANSFER_MYSELF, ERROR_TRANSFER_MYSELF);
 
 /// 같은 성별(남자끼리, 여자끼리) 보석 전송 불가.
 $re = giveJewelry(['user_ID'=>$male2, 'jewelry' => SILVER, 'count'=>1]);
-isError($re, ERROR_TRANSFER_SAME_GENDER, ERROR_TRANSFER_SAME_GENDER);
+testError($re, ERROR_TRANSFER_SAME_GENDER, ERROR_TRANSFER_SAME_GENDER);
 
 $re = giveJewelry(['user_ID'=>$female, 'jewelry' => SILVER, 'count'=>1]);
-isSuccess($re, '같은 성별 전송 테스트');
+testSuccess($re, '같은 성별 전송 테스트');
 
 
 
@@ -174,7 +174,7 @@ giveJewelry(['user_ID' => $jenny, 'jewelry' => 'diamond', 'count' => 80]);
 
 /// Over hit
 $re = giveJewelry(['user_ID' => $jenny, 'jewelry' => 'diamond', 'count' => 10]);
-isError($re, ERROR_NOT_ENOUGH_JEWELRY, "Giving diamonds over 100.");
+testError($re, ERROR_NOT_ENOUGH_JEWELRY, "Giving diamonds over 100.");
 
 
 /// Giving Silver
@@ -186,12 +186,12 @@ giveJewelry(['user_ID' => $you, 'jewelry' => 'silver', 'count' => 1]);
 
 /// Over hit
 $re = giveJewelry(['user_ID' => $you, 'jewelry' => 'silver', 'count' => 1]);
-isError($re, ERROR_NOT_ENOUGH_JEWELRY, "Giving silvers over 300.");
+testError($re, ERROR_NOT_ENOUGH_JEWELRY, "Giving silvers over 300.");
 
 
 /// Over hit
 $re = giveJewelry(['user_ID' => $you, 'jewelry' => 'silver', 'count' => 0]);
-isError($re, ERROR_EMPTY_COUNT, "Giving 0 silver.");
+testError($re, ERROR_EMPTY_COUNT, "Giving 0 silver.");
 
 
 
@@ -204,14 +204,14 @@ $after = giveJewelry(['user_ID' => $you, 'jewelry' => 'gold', 'count' => 50, 'it
 
 //// 제한 걸림.
 $re = giveJewelry(['user_ID' => $you, 'jewelry' => 'gold', 'count' => 51, 'item' => JEWELRY_ITEM_BAG]);
-isError($re, ERROR_NOT_ENOUGH_JEWELRY, "골드 전송 제한. 50개 남았는데. 51개 전송 시도.");
+testError($re, ERROR_NOT_ENOUGH_JEWELRY, "골드 전송 제한. 50개 남았는데. 51개 전송 시도.");
 
 // 무료 보너스 생성. 그러면 제한이 풀림.
 $generatedBonus = generateDailyBonus($me);
 
 // 금이 50개 남았는데, 무료 보석 보너스를 타서, 금을 더 추가한 후, 전송
 $re = giveJewelry(['user_ID' => $you, 'jewelry' => 'gold', 'count' => 51, 'item' => JEWELRY_ITEM_BAG]);
-isSuccess($re, "보석 보너스 추가하여, 골드 전송 200 개 이상 전송.");
+testSuccess($re, "보석 보너스 추가하여, 골드 전송 200 개 이상 전송.");
 
 
 // 더 많이 추천. 단, 보석이 모자라 에러가 날 수 있으나, 결과에는 영향이 미치지 않으며, 로그 합산도 일치해야 함.

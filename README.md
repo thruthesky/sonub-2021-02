@@ -99,7 +99,7 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
 ### Precautions
 
 * There are some functions that have confusing names.
-  * `_is_error()` is the one to check if API function call is error or not.
+  * `api_error()` is the one to check if API function call is error or not.
   * `isError()` is to test if the result of API call is error or not.
 
 * Return value of route must be an array.
@@ -112,7 +112,7 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
   * And the class call route, the route name must be lower case without `Route` from the route class name.
 
 * Naming for vars and functions in `api/lib` folder scripts is kebab case.
-  like `user_login`, `get_route`, `_is_error`.
+  like `user_login`, `get_route`, `api_error`.
    * Naming for other vars and functions outside of `api/lib` may go camel case.
 
 * Error codes must begin with `ERROR_`.
@@ -153,7 +153,18 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
   * `V3 unit test` is developed by the core team. And is not recommended simply because it is not a standard.
   * The other one is `PHPUnit` which is more likely a standard unit testing tool for PHP. And `PHPUnit` is recommended simply because it is a de-facto standard.
 
+* To run phpunit, just do it as phpunit way.
 
+Running all unit tests at once.
+
+```shell script
+phpunit phpunit 
+```
+
+Running each test
+```shell script
+$ phpunit phpunit/VerifyIOSPurchaseTest.php 
+```
 
 ## PHPUNIT - Unit testing
 
@@ -198,7 +209,7 @@ Examples)
 <?php
 define('V3_DIR', '.');
 require_once(V3_DIR . '/../wp-load.php');
-require_once(V3_DIR . '/v3-load.php');
+require_once(V3_DIR . '/api-load.php');
 
 
 /// Prepare test data set.

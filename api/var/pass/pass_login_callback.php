@@ -1,10 +1,10 @@
 <?php
-if ( ! defined( 'V3_DIR' ) ) {
-    define( 'V3_DIR', '../..' );
+if ( ! defined( 'API_DIR' ) ) {
+    define( 'API_DIR', '../..' );
 }
-require_once(V3_DIR . '/../wp-load.php');
-require_once(V3_DIR . '/v3-load.php');
-require_once(V3_DIR . '/var/pass/pass_loginOrRegister.php');
+require_once(API_DIR . '/../wp-load.php');
+require_once(API_DIR . '/api-load.php');
+require_once(API_DIR . '/var/pass/pass_loginOrRegister.php');
 
 date_default_timezone_set('Asia/Seoul');
 

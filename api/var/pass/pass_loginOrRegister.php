@@ -1,5 +1,5 @@
 <?php
-include V3_DIR . '/var/pass/AES_decode.php';
+include API_DIR . '/var/pass/AES_decode.php';
 function pass_loginOrRegister($user, $client_secret) {
 
     $re = [

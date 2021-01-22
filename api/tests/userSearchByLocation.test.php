@@ -1,7 +1,7 @@
 <?php
-define('V3_DIR', '.');
-require_once(V3_DIR . '/../wp-load.php');
-require_once(V3_DIR . '/v3-load.php');
+define('API_DIR', '.');
+require_once(API_DIR . '/../wp-load.php');
+require_once(API_DIR . '/api-load.php');
 
 /**
  * Test IDs
