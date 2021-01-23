@@ -1471,8 +1471,60 @@ function get_post_from_guid( $guid ) {
     return null;
 }
 
+/**
+ * Returns an array of the namd and slugs of categories of the $post_ID
+ * @param $post_ID
+ * @return array
+ */
+function get_categories_of_post($post_ID) {
+    $post_categories = wp_get_post_categories( $post_ID );
+    $cats = [];
 
+    foreach($post_categories as $c){
+        $cat = get_category( $c );
+        $cats[] = array( 'name' => $cat->name, 'slug' => $cat->slug );
+    }
+    return $cats;
+}
 
+/**
+ * Returns an array of slugs of the $post_ID
+ * @param $post_ID
+ * @return array
+ */
+function get_slugs_of_post($post_ID) {
+    $post_categories = wp_get_post_categories( $post_ID );
+    $cats = [];
+
+    foreach($post_categories as $c){
+        $cat = get_category( $c );
+        $cats[] = $cat->slug;
+    }
+    return $cats;
+}
+/**
+ * Returns an array of category IDs of the $post_ID
+ * @param $post_ID
+ * @return array
+ */
+function get_category_IDs_of_post($post_ID) {
+    $post_categories = wp_get_post_categories( $post_ID );
+    $cats = [];
+
+    foreach($post_categories as $c){
+        $cat = get_category( $c );
+        $cats[] = $cat->ID;
+    }
+    return $cats;
+}
+
+/**
+ * @param $in
+ *   - when $in['ID'] is set, post_title, post_content, category will be preserved even if they are not set.
+ * @return array|mixed|string
+ *
+ *
+ */
 function api_edit_post($in) {
 
     if (!isset($in['ID']) && !isset($in['category'])) {
@@ -1486,43 +1538,46 @@ function api_edit_post($in) {
 
 
     if (isset($in['ID'])) {
-//        $post = get_post($in['ID']);
+        $post = get_post($in['ID']);
         // Preserve old properties.
 //            if (in('category') == null) $data['post_category'] = $post->post_category;
 //            if (in('post_title') == null) $data['post_title'] = $post->post_title;
 //            if (in('post_content') == null) $data['post_content'] = $post->post_content;
 
-        $data['post_title'] = $in['post_title'];
-        $data['post_content'] = $in['post_content'];
+        $data['post_title'] = isset($in['post_title']) ? $in['post_title'] : $post->post_title;
+        $data['post_content'] = isset($in['post_content']) ? $in['post_content'] : $post->post_content;
+        $data['post_category'] = get_category_IDs_of_post($post->ID);
         $data['ID'] = $in['ID'];
-        debug_log('data: ', $data);
+        debug_log('Updating data: ', $data);
     } else {
-        $data['post_title'] = $in['post_title'];
-        $data['post_content'] = $in['post_content'];
+        $data['post_title'] = $in['post_title'] ?? '';
+        $data['post_content'] = $in['post_content'] ?? '';
     }
 
     // If in('ID') is set, it will change category. Or It will create new.
-    if ($in['category']) {
+    if (isset($in['category'])) {
         $catID = get_category_ID($in['category']);
         if (!$catID) return ERROR_WRONG_CATEGORY;
         $data['post_category'] = [$catID];
     }
+
     debug_log('post create or update data: ', $data);
     $ID = wp_insert_post($data, true);
     if (is_wp_error($ID)) {
         return ERROR_FAILED_ON_EDIT_POST . ':' . $ID->get_error_message();
     }
 
+
     /**
      * Attach files to the post
      * And save the file IDs as 'files' meta property of the post.
      */
-    if ($in['files']) {
+    if (isset($in['files'])) {
         $fileIDs = attach_files($ID, $in['files']);
         update_post_meta($ID, 'files', $fileIDs);
     }
 
-    if ($in['featured_image_ID']) {
+    if (isset($in['featured_image_ID'])) {
         set_post_thumbnail($ID, $in['featured_image_ID']);
     }
 
