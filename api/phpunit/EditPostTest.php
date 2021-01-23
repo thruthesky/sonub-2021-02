@@ -32,7 +32,7 @@ final class EditPostTest extends TestCase
         self::assertTrue($edited['post_title'] == 'title', 'Success: title');
         self::assertTrue($edited['post_content'] == 'content', 'Success: content');
 
-        
+
         self::assertTrue($edited['category'] == $re['category'], 'Category');
 
     }
