@@ -17,61 +17,10 @@ class ForumRoute
      *  These properties are remained.
      * @note for creating, category, post_title, post_content are required.
      */
-    public function editPost()
+    public function editPost($in)
     {
-        if (in('ID') == null && in('category') == null) {
-            return ERROR_EMPTY_CATEGORY_OR_ID;
-        }
+        return api_edit_post($in);
 
-        $data = [
-            'post_author' => my('ID'),
-            'post_status' => 'publish'
-        ];
-
-        if (in('ID')) {
-            $post = get_post(in('ID'));
-            // Preserve old properties.
-//            if (in('category') == null) $data['post_category'] = $post->post_category;
-//            if (in('post_title') == null) $data['post_title'] = $post->post_title;
-//            if (in('post_content') == null) $data['post_content'] = $post->post_content;
-
-            $data['post_title'] = in('post_title');
-            $data['post_content'] = in('post_content');
-            $data['ID'] = in('ID');
-            debug_log('data: ', $data);
-        } else {
-            $data['post_title'] = in('post_title');
-            $data['post_content'] = in('post_content');
-        }
-
-        // If in('ID') is set, it will change category. Or It will create new.
-        if (in('category')) {
-            $catID = get_category_ID(in('category'));
-            if (!$catID) return ERROR_WRONG_CATEGORY;
-            $data['post_category'] = [$catID];
-        }
-        debug_log('post create or update data: ', $data);
-        $ID = wp_insert_post($data, true);
-        if (is_wp_error($ID)) {
-            return ERROR_FAILED_ON_EDIT_POST . ':' . $ID->get_error_message();
-        }
-
-        /**
-         * Attach files to the post
-         * And save the file IDs as 'files' meta property of the post.
-         */
-        if (in('files')) {
-            $fileIDs = attach_files($ID, in('files'));
-            update_post_meta($ID, 'files', $fileIDs);
-        }
-
-        if (in('featured_image_ID')) {
-            set_post_thumbnail($ID, in('featured_image_ID'));
-        }
-
-        update_post_properties($ID, in());
-
-        return post_response($ID);
     }
 
 

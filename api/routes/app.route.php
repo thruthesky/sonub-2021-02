@@ -73,7 +73,10 @@ class AppRoute {
     }
 
 
-
+    /**
+     * @param $in
+     * @return array|object|string|null
+     */
     public function query($in) {
         return sql_query($in);
     }

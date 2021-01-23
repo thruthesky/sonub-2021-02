@@ -1321,6 +1321,15 @@ function get_gallery_featured_image_url($user_ID) {
 
 
 /**
+ * Returns requested url's domain
+ * @return mixed
+ */
+function get_host_name() {
+    return $_SERVER['HTTP_HOST'];
+}
+
+
+/**
  * Returns the URL of the domain.
  *
  * Wordpress `home_url()` returns the url that is set on `wp_options`. But we made it as multi theme supporting multi
@@ -1329,8 +1338,8 @@ function get_gallery_featured_image_url($user_ID) {
  * @attention it depends on the api url. if the client browser url is 'abc.com' and apiUrl domain is 'def.com', it wil return 'def.com'.
  *
  * @return string
- *  - https://abc.com
  *  - http://abc.com
+ *  - https://xxx.abc.com
  */
 function get_request_home_url() {
 
@@ -1338,8 +1347,7 @@ function get_request_home_url() {
         $url = "https://";
     else
         $url = "http://";
-    // Append the host(domain name, ip) to the URL.
-    $url.= $_SERVER['HTTP_HOST'];
+    $url.= get_host_name();
 
     return $url;
 }
@@ -1369,6 +1377,14 @@ function sql_injection_test($sql) {
     return null;
 }
 
+/**
+ * Direct SQL query to database.
+ *
+ * @note Only public tables can be queries.
+ *
+ * @param $in
+ * @return array|object|string|null
+ */
 function sql_query($in) {
 
     global $wpdb;
@@ -1457,8 +1473,60 @@ function get_post_from_guid( $guid ) {
 
 
 
+function api_edit_post($in) {
+
+    if (!isset($in['ID']) && !isset($in['category'])) {
+        return ERROR_EMPTY_CATEGORY_OR_ID;
+    }
+
+    $data = [
+        'post_author' => my('ID'),
+        'post_status' => 'publish'
+    ];
 
 
-function get_host_name() {
-    return $_SERVER['HTTP_HOST'];
+    if (isset($in['ID'])) {
+//        $post = get_post($in['ID']);
+        // Preserve old properties.
+//            if (in('category') == null) $data['post_category'] = $post->post_category;
+//            if (in('post_title') == null) $data['post_title'] = $post->post_title;
+//            if (in('post_content') == null) $data['post_content'] = $post->post_content;
+
+        $data['post_title'] = $in['post_title'];
+        $data['post_content'] = $in['post_content'];
+        $data['ID'] = $in['ID'];
+        debug_log('data: ', $data);
+    } else {
+        $data['post_title'] = $in['post_title'];
+        $data['post_content'] = $in['post_content'];
+    }
+
+    // If in('ID') is set, it will change category. Or It will create new.
+    if ($in['category']) {
+        $catID = get_category_ID($in['category']);
+        if (!$catID) return ERROR_WRONG_CATEGORY;
+        $data['post_category'] = [$catID];
+    }
+    debug_log('post create or update data: ', $data);
+    $ID = wp_insert_post($data, true);
+    if (is_wp_error($ID)) {
+        return ERROR_FAILED_ON_EDIT_POST . ':' . $ID->get_error_message();
+    }
+
+    /**
+     * Attach files to the post
+     * And save the file IDs as 'files' meta property of the post.
+     */
+    if ($in['files']) {
+        $fileIDs = attach_files($ID, $in['files']);
+        update_post_meta($ID, 'files', $fileIDs);
+    }
+
+    if ($in['featured_image_ID']) {
+        set_post_thumbnail($ID, $in['featured_image_ID']);
+    }
+
+    update_post_properties($ID, $in);
+
+    return post_response($ID);
 }

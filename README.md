@@ -113,7 +113,9 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
 
 * Naming for vars and functions in `api/lib` folder scripts is kebab case.
   like `user_login`, `get_route`, `api_error`.
+   * If a function name is conflicting with existing one, then add prefix of 'api_' like `api_edit_post()` 
    * Naming for other vars and functions outside of `api/lib` may go camel case.
+   
 
 * Error codes must begin with `ERROR_`.
   * Attention: Some error codes have extra information after clone(:).
@@ -155,23 +157,20 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
 
 * To run phpunit, just do it as phpunit way.
 
-Running all unit tests at once.
+  * Running all unit tests at once.
 
 ```shell script
-phpunit phpunit 
+php phpunit.phar phpunit 
 ```
 
-Running each test
+  * Running each test
+
 ```shell script
-$ phpunit phpunit/VerifyIOSPurchaseTest.php 
+php phpunit.phar phpunit/AppVersionTest.php
 ```
 
-## PHPUNIT - Unit testing
-
-* Test files are under `phpunit` folder.
-* Run test like below
 ```shell script
-$ php phpunit.phar phpunit/AppVersionTest.php
+phpunit phpunit/VerifyIOSPurchaseTest.php 
 ```
 
 ## V3 Unit Testing
