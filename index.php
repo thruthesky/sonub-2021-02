@@ -100,7 +100,7 @@ if ( !file_exists($script) ) {
 
 <script>
     const config = {
-        apiUrl: "https://local.nalia.kr/v3/index.php",
+        apiUrl: "<?php echo $config->apiUrl?>",
         firebaseConfig: {
             apiKey: "AIzaSyBqOcOhdonMMimHAt7Iq4aodp2KwQBc61M",
             authDomain: "nalia-app.firebaseapp.com",

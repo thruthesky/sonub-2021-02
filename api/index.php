@@ -3,13 +3,13 @@
  * @file index.php
  * @description theme folder
  */
-if ( ! defined( 'API_DIR' ) ) {
-    define( 'API_DIR', dirname( __FILE__ ) );
+if ( ! defined( 'THEME_DIR' ) ) {
+    define( 'THEME_DIR', dirname( __FILE__ ) );
 }
 require_once(API_DIR . '/api-load.php');
 
 
-debug_log('----- v3 begin', in());
+debug_log('----- theme begin', in());
 
 
 list($instance, $methodName, $route) = end_if_error(get_route(in()));

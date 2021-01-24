@@ -2,8 +2,8 @@
 var fs = require('fs');
 var https = require('https');
 var svrOptions = {
-    key: fs.readFileSync('v3/tmp/ssl/nalia/privkey.pem'),
-    cert: fs.readFileSync('v3/tmp/ssl/nalia/fullchain.pem'),
+    key: fs.readFileSync('tmp/ssl/sonub.com/privkey.pem'),
+    cert: fs.readFileSync('tmp/ssl/sonub.com/fullchain.pem'),
     // key: fs.readFileSync('../../../v3/tmp/ssl/nalia/privkey.pem'),
     // cert: fs.readFileSync('../../../v3/tmp/ssl/nalia/fullchain.pem'),
 };
