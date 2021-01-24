@@ -22,7 +22,12 @@
         }
     }
 </script>
-
+<style>
+    body {
+        background-color: #333B38;
+        color: white;
+    }
+</style>
 TODO: style 태그를 여기서 뺀 다음, template 다음으로 밀어 넣을 것.
 <style>
     button {

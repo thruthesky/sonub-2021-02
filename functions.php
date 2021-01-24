@@ -146,6 +146,82 @@ EOJ;
     }
 }
 
-function extract_styles_from_script($script) {
 
+function get_theme_script_path($theme, $page) {
+	$script = THEME_DIR . "/themes/$theme/$page.php";
+	if ( !file_exists($script) ) {
+		$script = THEME_DIR . "/themes/default/$page.php";
+	}
+	if ( !file_exists($script) ) {
+		$script = get_error_script('File not found', 'The file you are referring does not exists on server');
+	}
+	return $script;
+}
+
+/**
+ * @return string
+ */
+function get_theme_script() {
+	if ( isset($_REQUEST['page']) ) {
+		$page = $_REQUEST['page'];
+	} else {
+		$uri = $_SERVER['REQUEST_URI'];
+		if ( empty($uri) || $uri == '/' ) $page = 'home';
+		else $page = 'forum/view';
+	}
+	return get_theme_script_path(DOMAIN_THEME, $page);
+}
+
+/**
+ * Error script with title and description
+ * @param $title
+ * @param $description
+ *
+ * @return string
+ */
+global $_error_title;
+global $_error_description;
+function get_error_script($title, $description) {
+	global $_error_title, $_error_description;
+	$_error_title = $title;
+	$_error_description = $description;
+	return THEME_DIR . "/themes/default/error.php";
+}
+function get_error_title() {
+	global $_error_title;
+	return $_error_title;
+}
+function get_error_description() {
+	global $_error_description;
+	return $_error_description;
+}
+
+
+/**
+ * Extract Style Tags since Vue.js does not support style tags inside template.
+ *
+ * Vue.js 에서 template 에 <style>...</style> 태그를 지원하지 않으므로, script 파일 내에 기록된 style 태그를
+ * 추출해서 따로 모은 다음, 필요한 곳에 출력한다.
+ */
+global $_extracted_styles_from_script;
+function insert_extracted_styles_from_script() {
+	global $_extracted_styles_from_script;
+	echo $_extracted_styles_from_script;
+}
+function begin_capture_style() {
+	ob_start();
+}
+function end_capture_style() {
+	global $_extracted_styles_from_script;
+	$_extracted_styles_from_script = null;
+	$content = ob_get_clean();
+	$re = preg_match_all("/\<style\>[^(\<)]*\<\/style\>/s", $content, $m);
+	if ( $re ) {
+		$styles = $m[0];
+		foreach($styles as $style) {
+			$content = str_replace($style, '', $content);
+		}
+		$_extracted_styles_from_script = implode("\n", $styles);
+	}
+	echo $content;
 }

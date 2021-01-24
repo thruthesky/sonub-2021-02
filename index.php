@@ -5,37 +5,7 @@
 
 
 
-function get_theme_script($theme) {
-    if ( isset($_REQUEST['page']) ) {
-        $script = THEME_DIR . "/themes/$theme/$_REQUEST[page].php";
-    } else {
-        $_uri = $_SERVER['REQUEST_URI'];
-        if ( empty($_uri) || $_uri == '/' ) $script = THEME_DIR . "/themes/$theme/home.php";
-        else $script = THEME_DIR . "/themes/$theme/forum/view.php";
-    }
-
-    return $script;
-}
-
-function get_error_script($title, $content) {
-    global $config;
-    $config->error_title = $title;
-    $config->error_content = $content;
-    return THEME_DIR . "/themes/default/error.php";
-}
-
-
-$script = get_theme_script(DOMAIN_THEME);
-
-
-
-if ( !file_exists($script) ) {
-    $script = get_theme_script('default');
-}
-
-if ( !file_exists($script) ) {
-    $script = get_error_script('File not found', 'The file you are referring does not exists on server');
-}
+$script = get_theme_script();
 
 ?>
 <!doctype html>
@@ -47,10 +17,8 @@ if ( !file_exists($script) ) {
     <?php live_reload_js() ?>
 </head>
 <body>
-
-<section id="layout" class="container">
+<section id="app" class="container">
     <h1>WiGo</h1>
-
     <div>
         Menu:
         <a href="/">Home</a> |
@@ -73,33 +41,17 @@ if ( !file_exists($script) ) {
             | <a href="/?page=admin/index">Admin</a>
         </span>
     </div>
-
-
-    <ul>
-        <li>Done Install Bootstrap 4</li>
-        <li>Done Vue.js 3 https://v3.vuejs.org/guide/introduction.html#what-is-vue-js</li>
-        <li>Done Node SASS</li>
-        <li>Done Create <a href="/?page=user/register">Register page</a>, Login Page.</li>
-        <li>Create Forum.</li>
-        <li>Admin push notification.</li>
-        <li>
-            Goal:
-            Travel Diary.
-
-            User can run the app and start filming(or photo shotting) or capturing scense with the phone.
-            Every place when the user moves, he can open the app and take photo or memo.
-            And in the end of the jurney, the app will display nice diary. And it can be shared to the public.
-            The user can share travel information.
-
-        </li>
-    </ul>
-
     <section id="router">
         <?php
-        include $script;
+            begin_capture_style();
+            include $script;
+            end_capture_style();
         ?>
     </section>
 </section>
+
+<? insert_extracted_styles_from_script() ?>
+
 
 <script>
     const config = {

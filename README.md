@@ -327,17 +327,36 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
         }
     }
 </script>
+<style>
+    body {
+        background-color: #333B38;
+        color: white;
+    }
+</style>
+NOTE: style 태그를 여기서 뺀 다음, template 다음으로 밀어 넣는다.
+<style>
+    button {
+        background-color: #4CAF50; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+    }
+</style>
 ```
-* Though, javascript files can be separately created and automatically loaded by the system as described in `Theme booting`.
+* Though, the script javascript file can be separately created and automatically loaded by the system as described in `Theme booting`.
   * For instance, on profile page, `theme/default/user/profile.js` will be loaded automatically if exists.
   
 ## CSS for each script page
 
 * The system is using `Vue.js` and the entire body tag is wrapped as Vue.js template.
   * By default, `<style>` tags in Vue.js template are ignored. But the system handles it nicely.
-    All `<style>` tags in the script file will be extracted and added at the of the template.
+    All `<style>` tags in the script file will be extracted and added after the vue template.
   
-* Though, javascript files can be separately created and automatically loaded by the system as described in `Theme booting`.
+* Though, the script css file can be separately created and automatically loaded by the system as described in `Theme booting`.
   * For instance, on profile page, `theme/default/user/profile.css` will be loaded automatically if exists.
 
 

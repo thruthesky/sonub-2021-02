@@ -1683,9 +1683,11 @@ function getDomainTheme() {
  * d(DOMAIN_THEME_URL);
  */
 function d($obj) {
-    echo "<xmp>";
-    print_r($obj);
-    echo "</xmp>";
+    echo "<pre>";
+	$str = print_r($obj, true);
+	$str = str_replace("<", "&lt;", $str);
+	echo $str;
+    echo "</pre>";
 }
 
 

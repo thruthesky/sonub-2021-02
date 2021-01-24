@@ -207,5 +207,5 @@ const _app = Vue.createApp(AttributeBinding);
 if ( typeof mixin !== 'undefined' ) {
     _app.mixin(mixin);
 }
-const app = _app.mount('#layout');
+const app = _app.mount('#app');
 
