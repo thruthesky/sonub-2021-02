@@ -141,28 +141,16 @@ node watch specific file
  ./node_modules/.bin/sass --watch scss/index.scss css/index.css
 ```
 
-## Multi Themes
-
-* it can be set by wigo/config.php
-
-* if theme script does not exist, then default theme script file will be used.
-
-
-## SEO Friendly URL
-
-* To make the URL (of the post view page) friendly as human-readable, we use this format below.
-
-```url
-https://xxx.domain.com/post_ID/post-title
-```
-where the `post_ID` is the post ID and `post-title` is the post title(part of guid.).
 
 
 
 
+# Development Guideline
 
+## Theme
 
-## Development Guideline
+* Theme folder is only for themes. Theme folder does not have any information or meta data(files) that are related in API.
+* All api things are inside 'api' folder.
 
 ### Hot reload
 
@@ -181,6 +169,25 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
 
 * The very first version on this module is on [`0.1` branch](https://github.com/thruthesky/v3/tree/0.1). It has user, forum, push notification functionality.
   * This [`0.1` branch](https://github.com/thruthesky/v3/tree/0.1) works with [nalia_app flutter-v3 branch](https://github.com/thruthesky/nalia_app/tree/flutter-v3) which works with the v3 0.1 branch. These two would be a good example.
+
+
+
+## Multi Themes
+
+* it can be set by wigo/config.php
+
+* if theme script does not exist, then default theme script file will be used.
+
+
+## SEO Friendly URL
+
+* To make the URL (of the post view page) friendly as human-readable, we use this format below.
+
+```url
+https://xxx.domain.com/post_ID/post-title
+```
+where the `post_ID` is the post ID and `post-title` is the post title(part of guid.).
+
 
 
 
