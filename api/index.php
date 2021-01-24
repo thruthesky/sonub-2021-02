@@ -3,8 +3,8 @@
  * @file index.php
  * @description theme folder
  */
-if ( ! defined( 'THEME_DIR' ) ) {
-    define( 'THEME_DIR', dirname( __FILE__ ) );
+if ( ! defined( 'API_DIR' ) ) {
+    define( 'API_DIR', dirname( __FILE__ ) );
 }
 require_once(API_DIR . '/api-load.php');
 

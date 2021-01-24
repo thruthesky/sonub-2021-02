@@ -12,6 +12,7 @@ if ( WP_DEBUG ) {
     define('REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST', true);
 }
 
+
 /**
  * For firebase connection
  */

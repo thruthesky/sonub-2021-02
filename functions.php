@@ -23,9 +23,9 @@ add_filter( 'redirect_canonical', 'remove_redirect_guess_404_permalink' );
 function live_reload_js() {
     /// TODO print this only for localhost(local dev)
     echo <<<EOH
-   <script src="https://local.nalia.kr:12345/socket.io/socket.io.js"></script>
+   <script src="https://local.sonub.com:12345/socket.io/socket.io.js"></script>
    <script>
-       var socket = io('https://local.nalia.kr:12345');
+       var socket = io('https://local.sonub.com:12345');
        socket.on('reload', function (data) {
            console.log(data);
            // window.location.reload(true);

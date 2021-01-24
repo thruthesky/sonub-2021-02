@@ -1,7 +1,6 @@
 <?php
 
-global $config;
-include_once('load.php');
+include_once('theme-load.php');
 
 function get_theme_script($theme) {
     if ( isset($_REQUEST['page']) ) {

@@ -176,8 +176,8 @@ define('API_CALL', in('route') != null );
 
 /// Tables
 define('TABLE_PREFIX', 'api_');
-define('PUSH_TOKEN_TABLE', 'push_token');
-define('LOCATION_TABLE', 'location');
+define('PUSH_TOKEN_TABLE', TABLE_PREFIX . 'push_token');
+define('LOCATION_TABLE', TABLE_PREFIX . 'location');
 
 
 

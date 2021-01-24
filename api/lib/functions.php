@@ -2,6 +2,65 @@
 
 
 
+/**
+ * JSON input from Client
+ * @return mixed|null
+ */
+function get_JSON_input()
+{
+
+	// Receive the RAW post data.
+	$content = trim(file_get_contents("php://input"));
+
+	// Attempt to decode the incoming RAW post data from JSON.
+	$decoded = json_decode($content, true);
+
+	// If json_decode failed, the JSON is invalid.
+	if (!is_array($decoded)) {
+		return null;
+	}
+
+	return $decoded;
+}
+
+/**
+ *
+ * @note By default it returns null if the key does not exist.
+ *
+ *
+ * @param $name
+ * @param null $default
+ * @return mixed|null
+ *
+ */
+function in($name = null, $default = null)
+{
+
+	// If the request is made by application/json content-type,
+	// Then get the data as JSON input.
+	$contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
+
+//
+//debug_log("CONTENT_TYPE: $contentType");
+//debug_log($_SERVER);
+//debug_log($_REQUEST);
+
+
+
+	if (stripos($contentType, 'application/json') !== false ) {
+		$_REQUEST = get_JSON_input();
+	}
+
+	if ($name === null) {
+		return $_REQUEST;
+	}
+	if (isset($_REQUEST[$name])) {
+		return $_REQUEST[$name];
+	} else {
+		return $default;
+	}
+}
+
 
 
 
@@ -86,7 +145,7 @@ function success_or_error($data) {
  */
 function replace_host_of_image_url_to_request_host($data, $apiUrl = null) {
 
-    if ( REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST == false) return $data;
+	if(!defined('REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST') || REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST == false) return $data;
 
 
     // Get current(API) url like "https://abc.com/v3/index.php"
@@ -630,9 +689,16 @@ function loginOrRegister($in) {
 }
 
 
+/**
+ * Get record of the token
+ *
+ * @param $token
+ *
+ * @return array|object|void|null
+ */
 function get_token($token) {
     global $wpdb;
-    return   $wpdb->get_row("SELECT * FROM " . PUSH_TOKEN_TABLE .  " WHERE token='$token'", ARRAY_A);
+    return $wpdb->get_row("SELECT * FROM " . PUSH_TOKEN_TABLE .  " WHERE token='$token'", ARRAY_A);
 }
 
 /**
@@ -677,10 +743,15 @@ function update_token($in) {
 
     $record = get_token($token);
 
+
+
     if ( empty($record) ) {
         // insert
         debug_log(" ['user_ID' => $user_ID, 'token' => $token, 'stamp' => time()] ");
-        $wpdb->insert(PUSH_TOKEN_TABLE, ['user_ID' => $user_ID, 'token' => $token, 'stamp' => time()]);
+        $re = $wpdb->insert(PUSH_TOKEN_TABLE, ['user_ID' => $user_ID, 'token' => $token, 'stamp' => time()]);
+        if ( $re === false ) {
+        	return ERROR_INSERT;
+        }
     } else {
         // update
         $wpdb->update(PUSH_TOKEN_TABLE, ['user_ID' => $user_ID], ['token' => $token]);

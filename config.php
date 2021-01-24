@@ -7,15 +7,15 @@ define('_THEMES', [
 
 
 
+
 class Config {
-	public $apiUrl;
+	public $apiUrl = API_URL;
 	public $theme;
 	public function __construct() {
 		$this->initTheme();
 	}
 
 	private function initTheme() {
-
 		$_host = get_host_name();
 		$this->theme = 'default';
 		foreach( _THEMES as $_domain => $_theme ) {
@@ -23,7 +23,6 @@ class Config {
 				$this->theme = $_theme;
 			}
 		}
-
 	}
 }
 
