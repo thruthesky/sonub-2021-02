@@ -253,3 +253,112 @@ displayTestSummary();
     Meaning, the user may not get push notification.
   * You may need to go for a heavy surgery of your code to make it perfectly.
   
+  
+
+## Reference
+
+- [Sonub Plan & Features](https://docs.google.com/document/d/1m5n72Ue0diSB7jZaD9_rMrIV_JoOTJPUZ2kRaqeWXas/edit)
+
+
+## Installation
+
+### Requirement
+
+* PHP 7.4.x and above
+* Nginx
+* MariaDB
+
+
+### Git repo source
+
+```sh
+git clone https://github.com/thruthesky/sonub
+```
+
+
+
+
+
+
+### Nginx Configuration on Server
+
+* This is the sample configuration on live Nginx server.
+
+```text
+server {
+  server_name  .sonub.com;
+  listen       80;
+  rewrite ^ https://$host$request_uri? permanent;
+}
+server {
+  server_name .sonub.com;
+  listen 443 ssl http2;
+  root /home/sonub/www;
+  index index.php;
+
+  location / {
+    add_header Access-Control-Allow-Origin *;
+    try_files $uri $uri/ /index.php?$args;
+  }
+  location ~ \.php$ {
+    fastcgi_param REQUEST_METHOD $request_method;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    include fastcgi_params;
+    fastcgi_pass 127.0.0.1:9000;
+  }
+
+  ssl_certificate /etc/letsencrypt/live/sonub.com/fullchain.pem; # managed by Certbot
+  ssl_certificate_key /etc/letsencrypt/live/sonub.com/privkey.pem; # managed by Certbot
+  include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+}
+```
+
+### Location Setup
+
+
+* Setting on local development computer may be slightly different on each developer depending on their environment.
+
+
+* First, set test domains in hosts.
+
+  * local.sonub.com as the main root site
+  * api-local.sonub.com as the api site
+  * apple.sonub.com as multisite
+  * banana.sonub.com as multisite
+  * cherry.sonub.com as multisite.
+ 
+ 
+ * Nginx configuration. Careful on updating root, SSL paths.
+ 
+ ```text
+server {
+  server_name  .sonub.com;
+  listen       80;
+  rewrite ^ https://$host$request_uri? permanent;
+}
+server {
+  server_name .sonub.com;
+  listen 443 ssl http2;
+  root /Users/thruthesky/www/sonub;
+  index index.php;
+  location / {
+    add_header Access-Control-Allow-Origin *;
+    try_files $uri $uri/ /index.php?$args;
+  }
+  location ~ \.php$ {
+    fastcgi_param REQUEST_METHOD $request_method;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    include fastcgi_params;
+    fastcgi_pass 127.0.0.1:9000;
+  }
+
+    ssl_certificate /Users/thruthesky/www/sonub/etc/ssl/sonub.com/fullchain1.pem;
+    ssl_certificate_key /Users/thruthesky/www/sonub/etc/ssl/sonub.com/privkey1.pem;
+
+}
+```
+
+* Create database. Same database name, id, password.
+* Pour tmp/sql/sonub.sql into database
+* Fix urls in wp_options to 'https://local.sonub.com'
