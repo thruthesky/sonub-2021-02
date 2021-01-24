@@ -2,8 +2,7 @@
 use PHPUnit\Framework\TestCase;
 
 
-if ( !defined('API_DIR') ) define('API_DIR', '.');
-require_once(API_DIR . '/api-load.php');
+require_once("../../../wp-load.php");
 
 define('URL_TEST_SET', [
     'a' => 'Apple',
@@ -28,6 +27,10 @@ define('URL_TEST_SET', [
 
 final class ReplaceHostOfImageUrlToRequestHostTest extends TestCase {
     public function testUrl(): void {
+        if(!defined('REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST') || REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST == false) {
+            self::assertTrue(true);
+            return;
+        }
         $re = replace_host_of_image_url_to_request_host(['code' => 0, 'data'=>URL_TEST_SET], 'https://abc.com/v3/index.php');
         self::assertTrue($re['code'] === 0, 'code to be 0');
         self::assertTrue($re['data']['a'] == 'Apple', 'a to be Apple');
@@ -38,6 +41,10 @@ final class ReplaceHostOfImageUrlToRequestHostTest extends TestCase {
         self::assertTrue($re['data']['files'][5]['url'] == 'https://abc.com/wp-content/uploads/2021/01/534ff9b4261873f831d2a0a2190ecf86.jpg', 'https://abc.com/wp-content/uploads/2021/01/534ff9b4261873f831d2a0a2190ecf86.jpg');
     }
     public function testUrlWithFolder(): void {
+        if(!defined('REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST') || REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST == false) {
+            self::assertTrue(true);
+            return;
+        }
         $re = replace_host_of_image_url_to_request_host(['code' => 0, 'data'=>URL_TEST_SET], 'http://192.168.0.5/wordpress/v506/v3/index.php');
 //        print_r($re);
         self::assertTrue($re['code'] === 0, 'code to be 0');
@@ -49,6 +56,10 @@ final class ReplaceHostOfImageUrlToRequestHostTest extends TestCase {
         self::assertTrue($re['data']['files'][5]['url'] == 'http://192.168.0.5/wordpress/v506/wp-content/uploads/2021/01/534ff9b4261873f831d2a0a2190ecf86.jpg', 'http://192.168.0.5/wordpress/v506/wp-content/uploads/2021/01/534ff9b4261873f831d2a0a2190ecf86.jpg');
     }
     public function testUrlWithFolderAndQuery(): void {
+        if(!defined('REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST') || REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST == false) {
+            self::assertTrue(true);
+            return;
+        }
         $re = replace_host_of_image_url_to_request_host(['code' => 0, 'data'=>URL_TEST_SET], 'http://192.168.0.5/wordpress/v506/v3/index.php?route=abc');
 //        print_r($re);
         self::assertTrue($re['code'] === 0, 'code to be 0');
@@ -60,6 +71,10 @@ final class ReplaceHostOfImageUrlToRequestHostTest extends TestCase {
         self::assertTrue($re['data']['files'][5]['url'] == 'http://192.168.0.5/wordpress/v506/wp-content/uploads/2021/01/534ff9b4261873f831d2a0a2190ecf86.jpg', 'http://192.168.0.5/wordpress/v506/wp-content/uploads/2021/01/534ff9b4261873f831d2a0a2190ecf86.jpg');
     }
     public function testUrlWithFolderAndQueryWithoutIndex(): void {
+        if(!defined('REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST') || REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST == false) {
+            self::assertTrue(true);
+            return;
+        }
         $re = replace_host_of_image_url_to_request_host(['code' => 0, 'data'=>URL_TEST_SET], 'http://192.168.0.5/wordpress/v506/v3?route=abc');
 //        print_r($re);
         self::assertTrue($re['code'] === 0, 'code to be 0');

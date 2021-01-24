@@ -2,10 +2,13 @@
 use PHPUnit\Framework\TestCase;
 
 
-if ( !defined('API_DIR') ) define('API_DIR', '.');
-require_once(API_DIR . '/api-load.php');
+
+require_once("../../../wp-load.php");
 require_once(API_DIR . '/ext/credit.class.php');
 require_once(API_DIR . '/ext/nalia.route.php');
+require_once(API_DIR . '/lib/test.helper.php');
+
+
 
 
 
@@ -24,7 +27,6 @@ class JewelryTest extends TestCase {
     private $male = 8;
     private $female = 9;
     private $male2 = 10;
-
 
 
     public function __construct(?string $name = null, array $data = [], $dataName = '')
@@ -139,6 +141,8 @@ class JewelryTest extends TestCase {
     }
 
 
+
+
 /// Update bonus jewelry test
     public function testUpdateBonusJewelryTest() {
         $this->credit->todate = 20191212;
@@ -149,7 +153,6 @@ class JewelryTest extends TestCase {
         \PHPUnit\Framework\assertTrue($gotBonus['date'] == 20191212, "date: $gotBonus[date]");
         \PHPUnit\Framework\assertTrue($gotBonus['diamond'] == 31, "Update jewelry test: {$gotBonus['diamond']} == 31");
     }
-
 
     /**
      * give jewelry to she

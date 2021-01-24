@@ -1,6 +1,9 @@
 <?php
+/**
+ * @file index.php
+ */
 
-include_once('theme-load.php');
+
 
 function get_theme_script($theme) {
     if ( isset($_REQUEST['page']) ) {
@@ -22,7 +25,7 @@ function get_error_script($title, $content) {
 }
 
 
-$script = get_theme_script($config->theme);
+$script = get_theme_script(DOMAIN_THEME);
 
 
 
@@ -40,6 +43,7 @@ if ( !file_exists($script) ) {
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
     <link rel="stylesheet" href="/wp-content/themes/wigo/css/index.css">
+    <?php load_theme_css($script); ?>
     <?php live_reload_js() ?>
 </head>
 <body>
@@ -99,7 +103,7 @@ if ( !file_exists($script) ) {
 
 <script>
     const config = {
-        apiUrl: "<?php echo $config->apiUrl?>",
+        apiUrl: "<?=API_URL?>",
         firebaseConfig: {
             apiKey: "AIzaSyBqOcOhdonMMimHAt7Iq4aodp2KwQBc61M",
             authDomain: "nalia-app.firebaseapp.com",
@@ -116,7 +120,8 @@ if ( !file_exists($script) ) {
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-messaging.js"></script>
 <script src="/wp-content/themes/wigo/js/firebase.js"></script>
-<script src="<?php echo THEME_URL . '/js/app.js'?>"></script>
+<?php load_theme_js($script); ?>
+<script src="<?php echo THEME_URL . '/js/app.js'?>?v=1"></script>
 <script>
     request('app.version', {}, function (x) {
         console.log('version: ', x);

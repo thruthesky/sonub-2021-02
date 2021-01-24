@@ -112,21 +112,21 @@ const AttributeBinding = {
         },
         /**
          * Transform form event data to an object.
-         * 
-         * @param {event} event 
+         *
+         * @param {event} event
          */
         getFormData(event) {
             const formData = new FormData(event.target); // reference to form element
             const data = {}; // need to convert it before using not with XMLHttpRequest
             for (let [key, val] of formData.entries()) {
-              Object.assign(data, { [key]: val })
+                Object.assign(data, { [key]: val })
             }
             return data;
         },
         /**
          * Request call for editting(creating / updating) post.
-         * 
-         * @param {event} event 
+         *
+         * @param {event} event
          */
         onPostEditFormSubmit(event) {
             const data = this.getFormData(event);
@@ -138,9 +138,9 @@ const AttributeBinding = {
         },
         /**
          * Request call for deleting post.
-         * 
-         * @param {string|number} ID 
-         * @param {string} category 
+         *
+         * @param {string|number} ID
+         * @param {string} category
          */
         onPostDelete(ID, category) {
             const conf = confirm('Delete Post?');
@@ -152,8 +152,8 @@ const AttributeBinding = {
         },
         /**
          * Request call for editting(creating / updating) comment.
-         * 
-         * @param {event} event 
+         *
+         * @param {event} event
          */
         onCommentEditFormSubmit(event) {
             const data = this.getFormData(event);
@@ -165,7 +165,7 @@ const AttributeBinding = {
         },
         /**
          * Request call for deleting comment.
-         * 
+         *
          * @param {string|number} ID
          */
         onCommentDelete(ID) {
@@ -203,5 +203,9 @@ const AttributeBinding = {
         },
     }
 };
-const app = Vue.createApp(AttributeBinding).mount('#layout');
+const _app = Vue.createApp(AttributeBinding);
+if ( typeof mixin !== 'undefined' ) {
+    _app.mixin(mixin);
+}
+const app = _app.mount('#layout');
 

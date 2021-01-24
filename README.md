@@ -2,8 +2,9 @@
 
 Withcenter Wordpress Multisite Theme
 
-* It's a theme that a multisite theme functionality inside.
-* And it has an API for clientend.
+* This project is a Wordpress theme that supports
+  * its own multisite functionality,
+  * and Restful API for clientend.
 
 
 # TODO
@@ -56,6 +57,7 @@ git clone https://github.com/thruthesky/wigo wp-content/themes/wigo
 
 * Setting on local development computer may be slightly different on each developer depending on their environment.
 
+* Enable 'wigo' theme.
 
 * First, set test domains in hosts.
 
@@ -235,16 +237,15 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
 ```
 
 
-## Coding Guideline
+# Developer Guideline
 
-### Precautions
+## Precautions
 
 * There are some functions that have confusing names.
-  * `api_error()` is the one to check if API function call is error or not.
-  * `isError()` is to test if the result of API call is error or not.
+  * `api_error()` is the one to check if the result of API function call is error or not.
+  * `isError()` is used to test if the result of API call is error or not.
 
-* Return value of route must be an array.
-
+* Return value of route call must be an array. Or it's an error.
 
 * Route is divided into two parts by 'comma'. The first one is class name of route, and the second is the name of the method of the route class.
   Ex) `user.login` where `user` is the route class at `routes/user.route.php` and `login` is the method of the class.
@@ -265,11 +266,89 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
 
 * Route cannot return null or empty string to client. It will response error instead.
 
-### Extension - Write your own route
+## Booting
+
+### Theme booting
+
+* When theme is loading, the following scripts will be loaded in order.
+  * functions.php ( will be loaded by Wordpress before index.php. Don't put anything here except the hooks and filters. )
+    * `functions.php` loads
+      * `api/lib/functions.php`,
+      * `defines.php`
+      * `config.php`
+  * index.php ( this is the theme/index.php that is the layout )
+    * `index.php` loads
+      * Bootstrap 4.6 css
+      * css/index.css ( compiled from scss/index.scss sass code )
+      * `theme/[DOMAIN_THEME]/[MODULE]/[SCRIPT_NAME].css` if exists.
+      * Page script file `wp-content/themes/wigo/themes/[DOMAIN_THEM]/[MODULE]/[SCRIPT_NAME].php` will be loaded.
+      * vue.prod.js
+      * axios.min.js
+      * firebase-app.js, firebase-messaging.js and other firebase-****.js files.
+      * `theme/[DOMAIN_THEME]/[MODULE]/[SCRIPT_NAME].js` if exists.
+      * js/app.js
+
+### API booting
+
+* When client-end connects to backend Restful API, the following scripts will be loaded in order
+  * First, client will connect to `themes/wigo/api/index.php`
+  * Then, `api/index.php` will load `wp-laod.php`
+  * Then, functions.php will be loaded by Wordpress,
+    and it will do all initialization and make all functions ready.
+
+  
+## Javascript for each script page
+
+* It is recommend to write Javascript code inside the PHP script like below.
+  * Use `mixin` const name for applying it as Vue.js Mixin into the `app.js`.
+
+```html
+<h1>Profile</h1>
+<button type="button" @click="showProfile">Show Profile</button>
+<hr>
+<div v-if="show">
+    {{ user }}
+</div>
+<script>
+    const mixin = {
+        created() {
+            console.log('profile.created!');
+        },
+        data() {
+            return {
+                show: false,
+            }
+        },
+        methods: {
+            showProfile() {
+                this.$data.show = !this.$data.show;
+                console.log('user', this.$data.user);
+            }
+        }
+    }
+</script>
+```
+* Though, javascript files can be separately created and automatically loaded by the system as described in `Theme booting`.
+  * For instance, on profile page, `theme/default/user/profile.js` will be loaded automatically if exists.
+  
+## CSS for each script page
+
+* The system is using `Vue.js` and the entire body tag is wrapped as Vue.js template.
+  * By default, `<style>` tags in Vue.js template are ignored. But the system handles it nicely.
+    All `<style>` tags in the script file will be extracted and added at the of the template.
+  
+* Though, javascript files can be separately created and automatically loaded by the system as described in `Theme booting`.
+  * For instance, on profile page, `theme/default/user/profile.css` will be loaded automatically if exists.
+
+
+
+
+
+## Extension - Write your own route
 
 * When you need to write your own routes, write your route class under `ext` folder.
 
-### Customizing
+## Customizing
 
 * You should not edit the core source files that are
   - index.php
@@ -301,17 +380,17 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
   * Running all unit tests at once.
 
 ```shell script
-php phpunit.phar phpunit 
+php phpunit.phar api/phpunit 
 ```
 
   * Running each test
 
 ```shell script
-php phpunit.phar phpunit/AppVersionTest.php
+php phpunit.phar api/phpunit/AppVersionTest.php
 ```
 
 ```shell script
-phpunit phpunit/VerifyIOSPurchaseTest.php 
+phpunit api/phpunit/VerifyIOSPurchaseTest.php 
 ```
 
 ## V3 Unit Testing

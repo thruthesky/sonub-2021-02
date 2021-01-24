@@ -2,8 +2,8 @@
 use PHPUnit\Framework\TestCase;
 
 
-if ( !defined('API_DIR') ) define('API_DIR', '.');
-require_once(API_DIR . '/api-load.php');
+
+require_once("../../../wp-load.php");
 
 
 final class EditPostTest extends TestCase
@@ -23,6 +23,7 @@ final class EditPostTest extends TestCase
         self::assertTrue($re['ID'] > 0, 'Success: create');
         self::assertTrue($re['post_title'] == 'title', 'Success: title');
         self::assertTrue($re['post_content'] == 'content', 'Success: content');
+        self::assertTrue($re['category'] == 'uncategorized', 'Expect success: Category == uncategorized');
 
 
 
@@ -31,6 +32,7 @@ final class EditPostTest extends TestCase
         self::assertTrue($edited['ID'] === $re['ID'], "ID check: $edited[ID] === $re[ID]");
         self::assertTrue($edited['post_title'] == 'title', 'Success: title');
         self::assertTrue($edited['post_content'] == 'content', 'Success: content');
+
 
 
         self::assertTrue($edited['category'] == $re['category'], 'Category');

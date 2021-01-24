@@ -1,6 +1,12 @@
 <?php
+/**
+ * @file bio.php
+ */
+/**
+ * @TODO This script must be merged into nalia.class.php
+ */
 
-define('BIO_TABLE', 'bio');
+define('BIO_TABLE', TABLE_PREFIX . 'bio');
 
 
 class BioRoute {

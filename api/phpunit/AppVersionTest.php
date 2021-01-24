@@ -2,8 +2,8 @@
 use PHPUnit\Framework\TestCase;
 
 
-if ( !defined('API_DIR') ) define('API_DIR', '.');
-require_once(API_DIR . '/api-load.php');
+
+require_once("../../../wp-load.php");
 
 
 final class AppVersionTest extends TestCase

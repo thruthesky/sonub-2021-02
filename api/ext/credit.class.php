@@ -52,12 +52,10 @@ define('ERROR_EMPTY_SERVER_VERIFICATION_DATA', 'ERROR_EMPTY_SERVER_VERIFICATION_
 
 
 
-define('JEWELRY_DAILY_BONUS_TABLE', 'jewelry_daily_bonus');
-define('JEWELRY_CREDIT_TABLE', 'jewelry_credit');
-define('JEWELRY_LOG_TABLE', 'jewelry_log');
-
-
-define('PURCHASE_HISTORY_TABLE', 'purchase_history');
+define('JEWELRY_DAILY_BONUS_TABLE', TABLE_PREFIX . 'jewelry_daily_bonus');
+define('JEWELRY_CREDIT_TABLE', TABLE_PREFIX . 'jewelry_credit');
+define('JEWELRY_LOG_TABLE', TABLE_PREFIX . 'jewelry_log');
+define('PURCHASE_HISTORY_TABLE', TABLE_PREFIX . 'purchase_history');
 
 
 

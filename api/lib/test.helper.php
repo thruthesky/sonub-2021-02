@@ -3,28 +3,6 @@
 $failure_count = 0;
 
 /**
- * @param $params
- * @return mixed
- *
- * @example
- *  wp_set_current_user(2);
- *  $profile = profile();
- *  $re = getRoute(['route' => 'purchase.createHistory', 'session_id' => $profile['session_id']]);
- */
-function getRoute($params) {
-    $url = "http://127.0.0.1/wordpress/wp-content/themes/wigo/api/index.php?" . http_build_query($params);
-//    echo "\nREQUEST URL: $url\n";
-    $re = file_get_contents($url);
-//    print("RE:\n");
-//    print_r($re);
-    $json = json_decode($re, true);
-    if ( !$json ) {
-        print_r($re);
-    }
-    return $json;
-}
-
-/**
  * @param $re
  * @param string $msg
  * @todo change name to `testSuccess`

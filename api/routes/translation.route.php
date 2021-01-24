@@ -1,6 +1,5 @@
 <?php
 
-define('TRANSLATIONS_TABLE', 'translations');
 
 ///
 define('LANGUAGES', 'languages');
@@ -18,6 +17,7 @@ define('ERROR_TRANSLATION_NOT_EXIST', 'ERROR_TRANSLATION_NOT_EXIST');
 
 
 
+
 class TranslationRoute
 {
 
@@ -30,6 +30,7 @@ class TranslationRoute
         update_option(LANGUAGES, $languages, false);
         return $languages;
     }
+
 
     private function get_translation_by_code($code)
     {

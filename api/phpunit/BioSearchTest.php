@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 
-if ( !defined('API_DIR') ) define('API_DIR', '.');
-require_once(API_DIR . '/api-load.php');
+
+require_once("../../../wp-load.php");
 require_once(API_DIR . '/ext/bio.route.php');
 
 
@@ -89,6 +89,7 @@ define('BIO_TEST_SET', [
         'from' => 'yongsan', 'away' => 328.87
     ],
 ]);
+
 
 
 final class BioSearchTest extends TestCase {

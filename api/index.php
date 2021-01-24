@@ -3,13 +3,13 @@
  * @file index.php
  * @description theme folder
  */
-if ( ! defined( 'API_DIR' ) ) {
-    define( 'API_DIR', dirname( __FILE__ ) );
-}
-require_once(API_DIR . '/api-load.php');
 
 
-debug_log('----- theme begin', in());
+require_once('../../../../wp-load.php');
+
+
+
+debug_log('----- api begin', in());
 
 
 list($instance, $methodName, $route) = end_if_error(get_route(in()));
@@ -25,7 +25,7 @@ if ( (!isset($session_id) || empty($session_id)) && in_array($route, PUBLIC_ROUT
 
 $response = $instance->$methodName(in());
 //if ( in('route') == 'app.query') {
-    debug_log("response ---->", $response);
+    debug_log("api response ---->", $response);
 //}
 success_or_error($response);
 

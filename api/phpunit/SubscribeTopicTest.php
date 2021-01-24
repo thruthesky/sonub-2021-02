@@ -2,8 +2,8 @@
 use PHPUnit\Framework\TestCase;
 
 
-if ( !defined('API_DIR') ) define('API_DIR', '.');
-require_once(API_DIR . '/api-load.php');
+
+require_once("../../../wp-load.php");
 require_once(API_DIR . '/routes/notification.route.php');
 
 class SubscribeTopicTest extends TestCase{
@@ -13,7 +13,6 @@ class SubscribeTopicTest extends TestCase{
 
         $re = $noti->updateToken(['']);
         self::assertTrue($re === ERROR_EMPTY_TOKEN);
-
 
         /// clear existing tokens
 
@@ -42,9 +41,6 @@ class SubscribeTopicTest extends TestCase{
 
         $re = $noti->subscribeTopic(['topic' => 'T']);
         self::assertTrue(count($re['T']) === 2);
-
-
-
 
     }
 }

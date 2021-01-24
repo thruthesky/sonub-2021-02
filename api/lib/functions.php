@@ -1,7 +1,5 @@
 <?php
 
-
-
 /**
  * JSON input from Client
  * @return mixed|null
@@ -9,18 +7,18 @@
 function get_JSON_input()
 {
 
-	// Receive the RAW post data.
-	$content = trim(file_get_contents("php://input"));
+    // Receive the RAW post data.
+    $content = trim(file_get_contents("php://input"));
 
-	// Attempt to decode the incoming RAW post data from JSON.
-	$decoded = json_decode($content, true);
+    // Attempt to decode the incoming RAW post data from JSON.
+    $decoded = json_decode($content, true);
 
-	// If json_decode failed, the JSON is invalid.
-	if (!is_array($decoded)) {
-		return null;
-	}
+    // If json_decode failed, the JSON is invalid.
+    if (!is_array($decoded)) {
+        return null;
+    }
 
-	return $decoded;
+    return $decoded;
 }
 
 /**
@@ -36,9 +34,9 @@ function get_JSON_input()
 function in($name = null, $default = null)
 {
 
-	// If the request is made by application/json content-type,
-	// Then get the data as JSON input.
-	$contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
+    // If the request is made by application/json content-type,
+    // Then get the data as JSON input.
+    $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
 
 //
 //debug_log("CONTENT_TYPE: $contentType");
@@ -47,18 +45,18 @@ function in($name = null, $default = null)
 
 
 
-	if (stripos($contentType, 'application/json') !== false ) {
-		$_REQUEST = get_JSON_input();
-	}
+    if (stripos($contentType, 'application/json') !== false ) {
+        $_REQUEST = get_JSON_input();
+    }
 
-	if ($name === null) {
-		return $_REQUEST;
-	}
-	if (isset($_REQUEST[$name])) {
-		return $_REQUEST[$name];
-	} else {
-		return $default;
-	}
+    if ($name === null) {
+        return $_REQUEST;
+    }
+    if (isset($_REQUEST[$name])) {
+        return $_REQUEST[$name];
+    } else {
+        return $default;
+    }
 }
 
 
@@ -125,6 +123,8 @@ function success_or_error($data) {
 /**
  * Replace host url of image to request host.
  *
+ * @warning Replacing host url image is not recommended. Use it only for test purpose.
+ *
  * @usage Use this method when you need to adjust your image URL.
  *  For instance,
  *  - your API URL is `http://192.168.0.1/wordpress/v56/v3/inde.php`
@@ -145,8 +145,7 @@ function success_or_error($data) {
  */
 function replace_host_of_image_url_to_request_host($data, $apiUrl = null) {
 
-	if(!defined('REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST') || REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST == false) return $data;
-
+    if(!defined('REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST') || REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST == false) return $data;
 
     // Get current(API) url like "https://abc.com/v3/index.php"
     if ( $apiUrl ) $current_url = $apiUrl;
@@ -750,7 +749,7 @@ function update_token($in) {
         debug_log(" ['user_ID' => $user_ID, 'token' => $token, 'stamp' => time()] ");
         $re = $wpdb->insert(PUSH_TOKEN_TABLE, ['user_ID' => $user_ID, 'token' => $token, 'stamp' => time()]);
         if ( $re === false ) {
-        	return ERROR_INSERT;
+            return ERROR_INSERT;
         }
     } else {
         // update
@@ -975,6 +974,7 @@ function post_response($ID_or_post, $options = [])
     }
 
 
+    unset($post['_pingme']);
     unset($post['_encloseme']);
     unset($post['post_date_gmt']);
     unset($post['post_excerpt']);
@@ -1399,6 +1399,9 @@ function get_host_name() {
     return $_SERVER['HTTP_HOST'];
 }
 
+function isCli() {
+    return php_sapi_name() == 'cli';
+}
 
 /**
  * Returns the URL of the domain.
@@ -1412,7 +1415,7 @@ function get_host_name() {
  *  - http://abc.com
  *  - https://xxx.abc.com
  */
-function get_request_home_url() {
+function get_requested_host_url() {
 
     if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
         $url = "https://";
@@ -1428,7 +1431,7 @@ function get_request_home_url() {
  */
 function get_current_url() {
     // Append the requested resource location to the URL
-    return get_request_home_url() . $_SERVER['REQUEST_URI'];
+    return get_requested_host_url() . $_SERVER['REQUEST_URI'];
 }
 
 
@@ -1543,12 +1546,12 @@ function get_post_from_guid( $guid ) {
 }
 
 /**
- * Returns an array of the namd and slugs of categories of the $post_ID
+ * Returns an array of the names and slugs of categories of the $post_ID
  * @param $post_ID
  * @return array
  */
 function get_categories_of_post($post_ID) {
-    $post_categories = wp_get_post_categories( $post_ID );
+    $post_categories = wp_get_post_categories( $post_ID, ['fields' => 'all'] );
     $cats = [];
 
     foreach($post_categories as $c){
@@ -1564,7 +1567,7 @@ function get_categories_of_post($post_ID) {
  * @return array
  */
 function get_slugs_of_post($post_ID) {
-    $post_categories = wp_get_post_categories( $post_ID );
+    $post_categories = wp_get_post_categories( $post_ID, ['fields' => 'all'] );
     $cats = [];
 
     foreach($post_categories as $c){
@@ -1579,14 +1582,7 @@ function get_slugs_of_post($post_ID) {
  * @return array
  */
 function get_category_IDs_of_post($post_ID) {
-    $post_categories = wp_get_post_categories( $post_ID );
-    $cats = [];
-
-    foreach($post_categories as $c){
-        $cat = get_category( $c );
-        $cats[] = $cat->ID;
-    }
-    return $cats;
+    return wp_get_post_categories( $post_ID );
 }
 
 /**
@@ -1655,4 +1651,63 @@ function api_edit_post($in) {
     update_post_properties($ID, $in);
 
     return post_response($ID);
+}
+
+
+
+
+/**
+ * Get domain theme name
+ * @return string
+ */
+function getDomainTheme() {
+    if ( API_CALL ) return null;
+    global $domain_themes;
+    if ( !isset($domain_themes) ) return null;
+    $_host = get_host_name();
+    $theme = 'default';
+    foreach ($domain_themes as $_domain => $_theme) {
+        if (stripos($_host, $_domain) !== false) {
+            $theme = $_theme;
+        }
+    }
+    return $theme;
+}
+
+
+/**
+ * Debug print on web
+ *
+ * @param $obj
+ * @example
+ * d(DOMAIN_THEME_URL);
+ */
+function d($obj) {
+    echo "<xmp>";
+    print_r($obj);
+    echo "</xmp>";
+}
+
+
+/**
+ * This accesses(calls) the route.
+ *
+ * Use this function to test(or to call) the route.
+ *
+ * @param $params
+ * @return mixed
+ *
+ * @example
+ *  wp_set_current_user(2);
+ *  $profile = profile();
+ *  $re = getRoute(['route' => 'purchase.createHistory', 'session_id' => $profile['session_id']]);
+ */
+function getRoute($params) {
+    $url = API_URL . "?" . http_build_query($params);
+    $re = file_get_contents($url);
+    $json = json_decode($re, true);
+    if ( !$json ) {
+        print_r($re);
+    }
+    return $json;
 }
