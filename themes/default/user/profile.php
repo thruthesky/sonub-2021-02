@@ -28,7 +28,7 @@
         color: white;
     }
 </style>
-TODO: style 태그를 여기서 뺀 다음, template 다음으로 밀어 넣을 것.
+Note: style tags will be moved after #app template.
 <style>
     button {
         background-color: #4CAF50; /* Green */
