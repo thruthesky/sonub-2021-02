@@ -6,6 +6,25 @@ Withcenter Wordpress Multisite Theme
 * And it has an API for clientend.
 
 
+# TODO
+
+* for theme loading
+
+  * index.php
+  * functions.php
+  * api/functions.php
+  * defines.php
+  * config.php
+  
+* for API loading
+
+  * api/index.php
+  * api/functions.php
+  * defines.php
+  * config.php
+  
+* All app specific code must go in ext folder.
+
 # Server Environment
 
 * Server passwords. See Withcenter working 
