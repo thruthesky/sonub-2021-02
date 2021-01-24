@@ -1,4 +1,5 @@
 node_modules/
 keys
+api/keys
 .phpunit.result.cache
 .DS_Store
