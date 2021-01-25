@@ -113,7 +113,6 @@ const AttributeBinding = {
 };
 const _app = Vue.createApp(AttributeBinding);
 _app.mixin(forumMixin);
-_app.mixin(translationMixin);
 if ( typeof mixin !== 'undefined' ) {
     _app.mixin(mixin);
 }

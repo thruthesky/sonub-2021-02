@@ -75,7 +75,6 @@ $script = get_theme_script();
 <?php load_theme_js($script); ?>
 <script src="<?php echo THEME_URL . '/js/helpers.js'?>?v=<?=build_version()?>"></script>
 <script src="<?php echo THEME_URL . '/js/app.forum.js'?>?v=<?=build_version()?>"></script>
-<script src="<?php echo THEME_URL . '/js/app.translation.js'?>?v=<?=build_version()?>"></script>
 <script src="<?php echo THEME_URL . '/js/app.js'?>?v=<?=build_version()?>"></script>
 <script>
     request('app.version', {}, function (x) {
