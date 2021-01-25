@@ -37,11 +37,13 @@ $script = get_theme_script();
         <a href="/?page=forum/list&category=qna">QnA</a> |
         <a href="/?page=forum/list&category=discussion">Discussion</a>
 
+        | <a href="/?page=user/settings">Settings</a>
+
         <span v-if="isAdmin()">
             | <a href="/?page=admin/index">Admin</a>
         </span>
     </div>
-    
+
     <section id="router">
         <?php
             begin_capture_style();

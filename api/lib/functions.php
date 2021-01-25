@@ -803,7 +803,7 @@ function send_message_to_users($in) {
     if ( empty($all_tokens) ) return ERROR_EMPTY_TOKENS;
     if ( !isset($in['data'])) $in['data'] = [];
     if ( !isset($in['imageUrl'])) $in['imageUrl'] = '';
-    return sendMessageToTokens($all_tokens, $in['title'], $in['body'], $in['data'], $in['imageUrl']);
+    return sendMessageToTokens($all_tokens, $in['title'], $in['body'], $in['imageUrl'], $in['click_action'], $in['data']);
 }
 
 

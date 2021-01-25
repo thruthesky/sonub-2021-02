@@ -39,7 +39,11 @@ const AttributeBinding = {
             // loggedIn: user.session_id,
             // notLoggedIn: !this.$data.user.loggedIn,
             pushNotification: {
-                sendTo: 'topic'
+                sendTo: 'tokens',
+                receiverInfo: 'eiV0BhcxEMJ2iUa-BC5tb2:APA91bGL6PeuIgri5xDQ7amb6SSEu3lCS_4cTumfpP6SbTRayntsHhq0Ay-4yY0qNwoXc8QzSkJ8VfCERC4UnUTHNWAQVX36cc9I2FeIWusAKUOiqu6U2RTCrMhX7DnO60lc0CWCnjod',
+                title: 'abcd',
+                body: 'efgh',
+                click_action: '/'
             },
             modal: {
                 active: false,
@@ -191,7 +195,8 @@ const AttributeBinding = {
             let route = '';
             const data = {
                 title: this.$data.pushNotification.title,
-                body: this.$data.pushNotification.body
+                body: this.$data.pushNotification.body,
+                click_action: this.$data.pushNotification.click_action
             };
             if (this.$data.pushNotification.sendTo === 'topic' ) {
                 route = 'notification.sendMessageToTopic';
