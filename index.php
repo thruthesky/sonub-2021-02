@@ -90,7 +90,7 @@ if ( !file_exists($script) ) {
 
         </li>
     </ul>
-    <button class="btn btn-primary" @click="showModal()">Show Modal</button>
+    <button class="btn btn-primary" @click="showModal('pushNotification')">Show Modal</button>
 
     <section id="router">
         <?php
@@ -119,6 +119,12 @@ if ( !file_exists($script) ) {
 </section>
 
 <script>
+
+    addEventListener('pushNotification', function(){
+        console.log('hi');
+    });
+
+
     const config = {
         apiUrl: "https://local.nalia.kr/v3/index.php",
         firebaseConfig: {
@@ -144,6 +150,8 @@ if ( !file_exists($script) ) {
     }, function(e) {
         console.log('error: ', e);
     });
+
+
 </script>
 
 </body>

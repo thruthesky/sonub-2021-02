@@ -33,6 +33,7 @@ const AttributeBinding = {
             },
             modal: {
                 active: false,
+                eventName: '',
                 title: '',
                 content: '',
             }
@@ -196,13 +197,19 @@ const AttributeBinding = {
                 // console.log(res);
             }, this.error);
         },
-        showModal() {
+        showModal(eventName) {
             this.$data.modal.active = true;
+            this.$data.modal.eventName = eventName;
         },
-        hideModal() {
+        hideModal(trigger = false) {
             this.$data.modal.active = false;
+            if (trigger) {
+                this.$emit(this.$data.modal.eventName)
+                console.log(this.$data.modal.eventName);
+            }
         },
     }
 };
 const app = Vue.createApp(AttributeBinding).mount('#layout');
+
 

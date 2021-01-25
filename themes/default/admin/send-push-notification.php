@@ -2,6 +2,18 @@
 
 ?>
 <h1>Admin send push notification</h1>
+
+@TODO
+*when reply send notification
+
+
+*send notification on forum if admin and selected a forum/post
+
+
+*add click/route so when notification is click,
+move the notification to the specific page.
+
+
 <form @submit.prevent="sendPushNotification">
     <div class="form-group">
         <select class="form-control mb-2 col-12 col-sm-6 col-md-3" v-model="pushNotification.sendTo">
