@@ -1,8 +1,46 @@
-.div {
-  red {
-    color: red;
-  }
-  blue {
-    color: blue;
-  }
+.fs-md {
+  font-size: 16px !important;
+}
+.fs-lg {
+  font-size: 24px !important;
+}
+.fs-xl {
+  font-size: 32px !important;
+}
+
+[depth="1"] {
+  margin-left: 0;
+}
+[depth="2"] {
+  margin-left: 1em;
+}
+[depth="3"] {
+  margin-left: 2em;
+}
+[depth="4"] {
+  margin-left: 3em;
+}
+[depth="5"] {
+  margin-left: 3.5em;
+}
+[depth="6"] {
+  margin-left: 4em;
+}
+[depth="7"] {
+  margin-left: 4.5em;
+}
+[depth="8"] {
+  margin-left: 5em;
+}
+[depth="9"] {
+  margin-left: 5.25em;
+}
+[depth="10"] {
+  margin-left: 5.5em;
+}
+[depth="11"] {
+  margin-left: 5.75em;
+}
+[depth="12"] {
+  margin-left: 6em;
 }

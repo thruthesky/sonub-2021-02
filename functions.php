@@ -208,10 +208,10 @@ function insert_extracted_styles_from_script() {
 	global $_extracted_styles_from_script;
 	echo $_extracted_styles_from_script;
 }
-function begin_capture_style() {
+function begin_capture_script_style() {
 	ob_start();
 }
-function end_capture_style() {
+function end_capture_script_style() {
 	global $_extracted_styles_from_script;
 	$_extracted_styles_from_script = null;
 	$content = ob_get_clean();
@@ -224,4 +224,15 @@ function end_capture_style() {
 		$_extracted_styles_from_script = implode("\n", $styles);
 	}
 	echo $content;
+}
+
+
+/**
+ * Build version
+ *
+ *
+ */
+function build_version() {
+    if (is_localhost()) return time();
+    else return '1';
 }

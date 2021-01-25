@@ -4,21 +4,20 @@
  */
 
 
-
 $script = get_theme_script();
-
 ?>
 <!doctype html>
 <html>
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
-    <link rel="stylesheet" href="/wp-content/themes/wigo/css/index.css">
+    <link href="<?=THEME_URL?>/css/fontawesome-pro-5.15.2-web/css/all.css" rel="stylesheet">
+    <link rel="stylesheet" href="<?=THEME_URL?>/css/index.css?v=<?=build_version()?>">
     <?php load_theme_css($script); ?>
-    <?php live_reload_js() ?>
+    <!-- <?php live_reload_js() ?> -->
 </head>
 <body>
 <section id="app" class="container">
-    <h1>WiGo</h1>
+    <h1>WiGo Theme</h1>
     <div>
         Menu:
         <a href="/">Home</a> |
@@ -41,11 +40,12 @@ $script = get_theme_script();
             | <a href="/?page=admin/index">Admin</a>
         </span>
     </div>
+
     <section id="router">
         <?php
-            begin_capture_style();
+            begin_capture_script_style();
             include $script;
-            end_capture_style();
+            end_capture_script_style();
         ?>
     </section>
 </section>
@@ -69,11 +69,14 @@ $script = get_theme_script();
 </script>
 <script src="https://unpkg.com/vue@3.0.5/dist/vue.global.prod.js"></script>
 <script src="/wp-content/themes/wigo/js/axios.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
+<!-- <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-messaging.js"></script>
-<script src="/wp-content/themes/wigo/js/firebase.js"></script>
+<script src="/wp-content/themes/wigo/js/firebase.js"></script> -->
 <?php load_theme_js($script); ?>
-<script src="<?php echo THEME_URL . '/js/app.js'?>?v=1"></script>
+<script src="<?php echo THEME_URL . '/js/helpers.js'?>?v=<?=build_version()?>"></script>
+<script src="<?php echo THEME_URL . '/js/app.forum.js'?>?v=<?=build_version()?>"></script>
+<script src="<?php echo THEME_URL . '/js/app.translation.js'?>?v=<?=build_version()?>"></script>
+<script src="<?php echo THEME_URL . '/js/app.js'?>?v=<?=build_version()?>"></script>
 <script>
     request('app.version', {}, function (x) {
         console.log('version: ', x);

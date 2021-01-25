@@ -4,6 +4,7 @@
 <div v-if="show">
     {{ user }}
 </div>
+Note: style tags will be moved after #app template.
 <script>
     const mixin = {
         created() {
@@ -28,7 +29,6 @@
         color: white;
     }
 </style>
-Note: style tags will be moved after #app template.
 <style>
     button {
         background-color: #4CAF50; /* Green */

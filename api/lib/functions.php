@@ -1745,3 +1745,20 @@ function getRoute($params) {
     }
     return $json;
 }
+
+
+/**
+ * Returns true if the web is running on localhost (or developers computer).
+ * @return bool
+ */
+function is_localhost() {
+    if ( isCli() ) return false;
+    $localhost = false;
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' || PHP_OS === 'Darwin') $localhost = true;
+    else {
+        $ip = $_SERVER['SERVER_ADDR'];
+        if ( strpos($ip, '127.0.') !== false) $localhost = true;
+        else if ( strpos($ip, '192.168.') !== false) $localhost = true;
+    }
+    return $localhost;
+}

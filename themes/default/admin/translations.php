@@ -1,46 +1,45 @@
 <?php
-
-
-
-$trans = api_get_translations(['format' => 'language-first']);
+$trans = api_get_translations([]);
 
 $languages = $trans['languages'];
 $translations = $trans['translations'];
 
-print_r($languages);
+
 print_r($translations);
 
 ?>
-
-
 <hr>
-<h1>TRANSLATIONS PAGE</h1>
+<h3 class="mt-5">Add Language</h3>
+<form class="d-flex w-25" @submit.prevent="onNewLanguageFormSubmit">
+    <input class="form-control" type="text" placeholder="Language" v-model="newLanguage" />
+    <button type="submit" class="btn btn-success btn-sm">Add</button>
+</form>
 
-<section class="p-5">
-    <table class="table table-striped">
-        <thead>
+
+<h3 class="mt-5">Add Translation</h3>
+<form class="d-flex w-100" @submit.prevent='onTranslationEditFormSubmit(<?php echo json_encode($languages); ?>, null)'>
+    <input class="form-control" type="text" placeholder="Translation Code" v-model="newTranslation.code" />
+    <?php foreach ($languages as $ln) { ?>
+        <input class="form-control" type="text" placeholder="<?php echo $ln ?>" v-model="newTranslation.<?php echo $ln ?>" />
+    <?php } ?>
+    <button type="submit" class="btn btn-success btn-sm">Add</button>
+</form>
+
+<h3 class="mt-5">Translation Table</h3>
+<?php foreach ($translations as $translation) { ?>
+    <form class="table table-striped" @submit.prevent='onTranslationEditFormSubmit(<?php echo json_encode($languages); ?>, $event)'>
+        <tbody>
             <tr>
-                <th scope="col">Code</th>
+                <td><input type="hidden" name="oldCode" value="<?php echo $translation['code'] ?>"></td>
+                <td><input type="text" name="code" value="<?php echo $translation['code'] ?>"></td>
                 <?php foreach ($languages as $ln) { ?>
-                    <th scope="col"><?php echo $ln ?></th>
+                    <td><input type="text" name="<?php echo $ln ?>" value="<?php echo $translation[$ln] ?>"></td>
                 <?php } ?>
-                <th scope="col">Action</th>
+                <td>
+                    <button type="submit" class="btn btn-success"> Save </button>
+                    <button type="button" class="btn btn-warning"> Cancel </button>
+                </td>
             </tr>
-        </thead>
-        <!-- <tbody>
-            <?php
-            foreach ($categories as $category) {
-                $category->list_on_view = get_term_meta($category->cat_ID, 'list_on_view', true);
-                print_r($category);
-            ?>
-                <tr>
-                    <td><?php echo $category->cat_ID ?></td>
-                    <td><?php echo $category->slug ?> </td>
-                    <td><?php echo $category->name ?></td>
-                    <td><?php echo $category->description ?></td>
-                    <td><input type="checkbox" <?php if ($category->list_on_view) echo 'checked' ?>></td>
-                </tr>
-            <?php } ?>
-        </tbody> -->
-    </table>
-</section>
+        </tbody>
+    </form>
+<?php } ?>
