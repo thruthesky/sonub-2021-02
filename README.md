@@ -271,6 +271,7 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
 ### Theme booting
 
 * When theme is loading, the following scripts will be loaded in order.
+  * wordpress index.php and its initialization files.
   * functions.php ( will be loaded by Wordpress before index.php. Don't put anything here except the hooks and filters. )
     * `functions.php` loads
       * `api/lib/functions.php`,
