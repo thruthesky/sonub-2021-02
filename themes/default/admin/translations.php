@@ -37,7 +37,7 @@ print_r($translations);
                 <?php } ?>
                 <td>
                     <button type="submit" class="btn btn-success"> Save </button>
-                    <button type="button" @click='onTranslationDelete(<?php echo $translation['code'] ?>)' class="btn btn-warning"> Delete </button>
+                    <button type="button" @click='onTranslationDelete(<?php echo $translation["code"] ?>)' class="btn btn-warning"> Delete </button>
                 </td>
             </tr>
         </tbody>
