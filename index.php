@@ -13,7 +13,7 @@ $script = get_theme_script();
     <link href="<?=THEME_URL?>/css/fontawesome-pro-5.15.2-web/css/all.css" rel="stylesheet">
     <link rel="stylesheet" href="<?=THEME_URL?>/css/index.css?v=<?=build_version()?>">
     <?php load_theme_css($script); ?>
-    <!-- <?php live_reload_js() ?> -->
+    <?php live_reload_js() ?>
 </head>
 <body>
 <section id="app" class="container">
@@ -69,9 +69,9 @@ $script = get_theme_script();
 </script>
 <script src="https://unpkg.com/vue@3.0.5/dist/vue.global.prod.js"></script>
 <script src="/wp-content/themes/wigo/js/axios.min.js"></script>
-<!-- <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-messaging.js"></script>
-<script src="/wp-content/themes/wigo/js/firebase.js"></script> -->
+<script src="/wp-content/themes/wigo/js/firebase.js"></script>
 <?php load_theme_js($script); ?>
 <script src="<?php echo THEME_URL . '/js/helpers.js'?>?v=<?=build_version()?>"></script>
 <script src="<?php echo THEME_URL . '/js/app.forum.js'?>?v=<?=build_version()?>"></script>
