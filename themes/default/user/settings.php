@@ -1,40 +1,48 @@
 <h1>Settings</h1>
-<button type="button" @click="showProfile">Show Profile</button>
 <hr>
-<div v-if="show">
-    {{ user }}
+<!--    {{ user }}-->
+
+<div class="custom-control custom-switch">
+    <input type="checkbox" class="custom-control-input" id="notificationUnderMyPost" v-model="alertOnNewPost" @change="onChangeAlertOnNewPost">
+    <label class="custom-control-label" for="notificationUnderMyPost">Receive notification under my post.</label>
+</div>
+<div class="custom-control custom-switch">
+    <input type="checkbox" class="custom-control-input" id="notificationUnderMyComment" v-model="alertOnNewComment" @change="onChangeAlertOnNewComment">
+    <label class="custom-control-label" for="notificationUnderMyComment">Receive notification under my comment.</label>
 </div>
 <script>
     const mixin = {
         created() {
-            console.log('profile.created!');
+            console.log('settings.created!');
+        },
+        mounted() {
+            console.log('settings.mounted!');
+            this.$data.alertOnNewPost = this.$data.user.notifyPost === 'Y';
+            this.$data.alertOnNewComment = this.$data.user.notifyComment === 'Y';
         },
         data() {
             return {
-                show: false,
+                alertOnNewPost: true,
+                alertOnNewComment:  true,
             }
         },
         methods: {
-            showProfile() {
-                this.$data.show = !this.$data.show;
-                console.log('user', this.$data.user);
+            onChangeAlertOnNewPost() {
+                console.log(this.$data.alertOnNewPost);
+                this.onProfileUpdateSubmit({
+                    'notify_post': this.$data.alertOnNewPost ? "Y" : "N"
+                })
+            },
+            onChangeAlertOnNewComment() {
+                console.log(this.$data.alertOnNewComment);
+                this.onProfileUpdateSubmit({
+                    'notify_comment': this.$data.alertOnNewComment ? "Y" : "N"
+                })
             }
         }
     }
 </script>
 
 <style>
-</style>
 
-<style>
-    button {
-        background-color: #4CAF50; /* Green */
-        border: none;
-        color: white;
-        padding: 15px 32px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-    }
 </style>

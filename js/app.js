@@ -54,6 +54,9 @@ const AttributeBinding = {
                 move('/');
             }, this.error);
         },
+        onProfileUpdateSubmit(data) {
+            request('user.profileUpdate', data, this.setUser, this.error);
+        },
         logout() {
             localStorage.removeItem('user');
             this.$data.user = null;
