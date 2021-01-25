@@ -1654,6 +1654,38 @@ function api_edit_post($in) {
 }
 
 
+function api_get_translations($in) {
+    global $wpdb;
+    $rows = $wpdb->get_results("SELECT * FROM " . TRANSLATIONS_TABLE . " ORDER BY code ASC", ARRAY_A);
+
+
+    // VUE
+    // [ 'code' => ['ko' => '...', 'en' => '...' ], 'name' => ['ko' => '이름', 'en' => 'Name' ],
+    // 
+    // FLUTTER (GetX recommended structure)
+    // [
+    //   'ko' => ['code' => '...', 'name' => '이름', ...........],
+    //   'en' => ['code' => '...', 'name' => 'Name', .......],
+    // ]
+    
+    $rets = [];
+    // This is for GetX
+    if ( isset($in['format']) && $in['format'] === 'language-first' ) {
+        foreach($rows as $row) {
+            if ( !isset($rets[$row['language']]) ) $rets[$row['language']] = [];
+            $rets[$row['language']][$row['code']] = $row['value'];
+        }
+    } else {
+        foreach($rows as $row) {
+            if ( !isset($rets[$row['code']]) ) $rets[$row['code']] = [
+                'code' => $row['code'],
+            ];
+            $rets[$row['code']][$row['language']] = $row['value'];
+        }
+    }
+
+    return ['languages' => get_option(LANGUAGES), 'translations' => $rets];
+}
 
 
 /**
