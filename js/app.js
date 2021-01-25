@@ -1,10 +1,16 @@
+function build_query(params) {
+    const esc = encodeURIComponent;
+    return Object.keys(params)
+        .map(function(k) {return esc(k) + '=' + esc(params[k]);})
+        .join('&');
+}
 function request(route, data, successCallback, errorCallback) {
     data = Object.assign({}, data, {route: route});
 
     if (app.loggedIn()) {
         data['session_id'] = app.sessionId();
     }
-    console.log('data', data);
+    console.log('URL:', config.apiUrl + '?' + build_query(data));
     axios.post(config.apiUrl, data).then(function (res) {
         if ( res.data.code !== 0 ) {
             if ( typeof errorCallback === 'function' ) {
@@ -19,6 +25,10 @@ function request(route, data, successCallback, errorCallback) {
 function move(uri) {
     location.href = uri;
 }
+function refresh() {
+    location.reload();
+}
+
 
 const AttributeBinding = {
     data() {
@@ -54,7 +64,7 @@ const AttributeBinding = {
             return this.$data.user !== null && this.$data.user.session_id;
         },
         sessionId() {
-            return this.$data.user.session_id;
+            return this.$data.user && this.$data.user.session_id;
         },
         notLoggedIn() {
             return ! this.loggedIn();
@@ -75,7 +85,7 @@ const AttributeBinding = {
             this.$data.user = null;
         },
         error(e) {
-            console.log('e');
+            console.log('alert(e)', e);
             alert(e);
         },
         setUser(profile) {
@@ -108,39 +118,39 @@ const AttributeBinding = {
         },
         /**
          * Transform form event data to an object.
-         * 
-         * @param {event} event 
+         *
+         * @param {event} event
          */
         getFormData(event) {
             const formData = new FormData(event.target); // reference to form element
             const data = {}; // need to convert it before using not with XMLHttpRequest
             for (let [key, val] of formData.entries()) {
-              Object.assign(data, { [key]: val })
+                Object.assign(data, { [key]: val })
             }
             return data;
         },
         /**
          * Request call for editting(creating / updating) post.
-         * 
-         * @param {event} event 
+         *
+         * @param {event} event
          */
         onPostEditFormSubmit(event) {
             const data = this.getFormData(event);
             console.log('Post Edit Form Data', data);
             request('forum.editPost', data, function(post) {
                 console.log('post edit', post);
-                window.location.replace(post['guid']);
+                move(post['url']);
             }, this.error);
         },
         /**
          * Request call for deleting post.
-         * 
-         * @param {string|number} ID 
-         * @param {string} category 
+         *
+         * @param {string|number} ID
+         * @param {string} category
          */
         onPostDelete(ID, category) {
             const conf = confirm('Delete Post?');
-            if (conf == false) return; 
+            if (conf === false) return;
             request('forum.deletePost', { ID: ID }, function(post) {
                 console.log('post delete', post);
                 move("/?page=forum/list&category=" + category);
@@ -148,25 +158,25 @@ const AttributeBinding = {
         },
         /**
          * Request call for editting(creating / updating) comment.
-         * 
-         * @param {event} event 
+         *
+         * @param {event} event
          */
         onCommentEditFormSubmit(event) {
             const data = this.getFormData(event);
             console.log('Post Edit Form Data', data);
             request('forum.editComment', data, function(comment) {
                 console.log('comment edit', comment);
-                /// TODO: insert to post comments
+                refresh();
             }, this.error);
         },
         /**
          * Request call for deleting comment.
-         * 
+         *
          * @param {string|number} ID
          */
         onCommentDelete(ID) {
             const conf = confirm('Delete Comment?');
-            if (conf == false) return; 
+            if (conf === false) return;
             request('forum.deleteComment', { comment_ID: ID }, function(post) {
                 console.log('comment delete', post);
                 var el = document.getElementById("comment_" + ID);
@@ -210,6 +220,10 @@ const AttributeBinding = {
         },
     }
 };
-const app = Vue.createApp(AttributeBinding).mount('#layout');
+const _app = Vue.createApp(AttributeBinding);
+if ( typeof mixin !== 'undefined' ) {
+    _app.mixin(mixin);
+}
+const app = _app.mount('#app');
 
 
