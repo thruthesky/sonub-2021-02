@@ -43,7 +43,7 @@ $translations = $trans['translations'];
             <input type="hidden" name="code" value="<?php echo $translation['code'] ?>">
             <div class="row mt-2">
                 <div class="col-sm text-center">
-                    <button type="button" class="text-button" @click="onClickCode('<?php echo $translation['code'] ?>')">
+                    <button type="button" class="text-button w-100" @click="onClickCode('<?php echo $translation['code'] ?>')">
                         <?php echo $translation['code'] ?>
                     </button>
                 </div>
