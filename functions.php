@@ -4,12 +4,11 @@
  */
 
 
-
-
 /**
  * Directory(Folder) Constants.
  */
-define( 'THEME_DIR', __DIR__ );
+//define( 'THEME_DIR', __DIR__ );   /// WINDOWS \wp-content\themes\withcenter-backend-v3
+define( 'THEME_DIR', get_template_directory() );  /// /wp-content/themes/withcenter-backend-v3
 
 /**
  * THEME_FOLDER_NAME is the folder name of the theme.
