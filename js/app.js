@@ -11,6 +11,10 @@ const AttributeBinding = {
             pushNotification: {
                 sendTo: 'topic'
             },
+            /// translation
+            newLanguage: '',
+            languages: [],
+            translations: [],
         }
     },
     created() {
@@ -80,24 +84,6 @@ const AttributeBinding = {
                 // console.log(re);
             }, this.error);
         },
-        // /**
-        //  * Transform form event data to an object.
-        //  *
-        //  * @param {event} event
-        //  */
-        // getFormData(event) {
-        //     const formData = new FormData(event.target); // reference to form element
-        //     const data = {}; // need to convert it before using not with XMLHttpRequest
-        //     for (let [key, val] of formData.entries()) {
-        //         Object.assign(data, { [key]: val })
-        //     }
-        //     return data;
-        // },
-        /**
-         * Request call for editting(creating / updating) post.
-         *
-         * @param {event} event
-         */
 
         sendPushNotification() {
             // console.log(this.$data.pushNotification.title);
