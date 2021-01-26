@@ -131,33 +131,15 @@ $translations = $trans['translations'];
              * @param {string[]} languages
              */
             onTranslationEdit(languages, translation) {
-
                 const req = {
                     'code': translation.code,
                 };
                 languages.forEach(function(ln) {
                     req[ ln ] = translation[ln];
                 });
-
-                console.log('onTrans.. req: ', req);
                 request('translation.edit', req, function(data) {
                     refresh();
                 }, this.error);
-
-                // _this = this;
-                // languages.forEach(function(ln) {
-                //     const req = {
-                //         'code': translation.code,
-                //         'language': ln,
-                //         'value': translation[ln],
-                //     }
-                //     console.log(req);
-                //     request('translation.edit', req, function(data) {
-                //         console.log('new translation added :', data);
-                //         refresh();
-                //     }, this.error);
-                // });
-                // refresh();
             },
             /**
              * Delete Translation for all language.
