@@ -1,15 +1,23 @@
 <?php
+/**
+ * @file firebase
+ */
+
+use Kreait\Firebase\Database;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
-use Kreait\Firebase\Messaging\Notification;
+
+
 /**
+ * This returns the firebase factory (instance)
  * @return Factory
  *
  * @example
  *  $factory = getFirebase();
+ *
  */
 function getFirebase() {
-    return (new Factory)->withServiceAccount(SERVICE_ACCOUNT_FIREBASE_JSON_FILE_PATH);
+    return (new Factory)->withServiceAccount(SERVICE_ACCOUNT_FIREBASE_JSON_FILE_PATH)->withDatabaseUri(FIREBASE_DATABASE_URI);
 }
 
 
@@ -22,6 +30,17 @@ function getFirebase() {
 function getMessaging() {
     return getFirebase()->createMessaging();
 }
+
+/**
+ * Returns Firebase Realtime Database instance.
+ *
+ * @return Database
+ */
+function getDatabase() {
+    return getFirebase()->createDatabase();
+}
+
+
 
 
 /**

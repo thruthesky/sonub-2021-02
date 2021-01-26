@@ -45,9 +45,20 @@ git clone https://github.com/thruthesky/wigo wp-content/themes/withcenter-backen
 ```
 
 
-## Put keys folder with proper key files
+## Firebase
 
-* If you are using firebase, put a firebase admin key file.
+* Many of features are depending on Firebase. So it is a must to set Firebase project in Firebase console
+  and put the admin sdk key file in `keys` folder
+  and set it to `SERVICE_ACCOUNT_FIREBASE_JSON_FILE_PATH` constant the path in config.php
+
+* Setup Realtime Database.
+  * Create realtime database on firebase console
+  * Set the database uri to `FIREBASE_DATABASE_URI`.
+
+
+
+## In app purchase key
+
 * If you are using in_app_purchase, then put a proper key file.
 
 

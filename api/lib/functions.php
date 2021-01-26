@@ -1739,22 +1739,31 @@ function api_edit_post($in) {
 }
 
 
+/**
+ *
+ * @param $in
+ *
+ *
+ * if $in['format'] is set to 'language-first', then language will be the key on its first dimensional array. This may
+ * be used for GetX translation.
+ * i.e) Return of 'language-first' for FLUTTER (GetX recommended structure)
+ *  [
+ *   'ko' => ['code' => '...', 'name' => '이름', ...........],
+ *   'en' => ['code' => '...', 'name' => 'Name', .......],
+ *  ]
+ * Other wise, code will be the key of its first dimensional array like below.
+ * i.e)
+ *   [ 'code' => ['ko' => '...', 'en' => '...' ], 'name' => ['ko' => '이름', 'en' => 'Name' ],
+ * @return array
+ *
+ *
+ */
 function api_get_translations($in) {
     global $wpdb;
     $rows = $wpdb->get_results("SELECT * FROM " . TRANSLATIONS_TABLE . " ORDER BY code ASC", ARRAY_A);
-
-
-    // VUE
-    // [ 'code' => ['ko' => '...', 'en' => '...' ], 'name' => ['ko' => '이름', 'en' => 'Name' ],
-    // 
-    // FLUTTER (GetX recommended structure)
-    // [
-    //   'ko' => ['code' => '...', 'name' => '이름', ...........],
-    //   'en' => ['code' => '...', 'name' => 'Name', .......],
-    // ]
     
     $rets = [];
-    // This is for GetX
+    // This is 'language-first' format for GetX translation.
     if ( isset($in['format']) && $in['format'] === 'language-first' ) {
         foreach($rows as $row) {
             if ( !isset($rets[$row['language']]) ) $rets[$row['language']] = [];
@@ -1802,6 +1811,7 @@ function api_edit_translation($in) {
         $re = $wpdb->replace(TRANSLATIONS_TABLE, ['code' => $in['code'], 'language' => $ln, 'value' => $val ]);
         if ( $re === false ) return sql_error(ERROR_LANGUAGE_REPLACE);
     }
+    api_notify_translation_update();
     return $data;
 }
 
@@ -1811,7 +1821,8 @@ function api_change_translation_code ($in) {
     if (!isset($in['newCode'])) return ERROR_EMPTY_NEW_CODE;
     global $wpdb;
     $re = $wpdb->update(TRANSLATIONS_TABLE, ['code' => $in['newCode'] ], ['code' => $in['oldCode']]);
-    if ( $re === false ) return ERROR_CHANGE_CODE;
+    if ( $re === false ) return sql_error(ERROR_CHANGE_CODE);
+    api_notify_translation_update();
     return $in;
 }
 
@@ -1828,9 +1839,21 @@ function api_delete_translation($in) {
     if (!$tr) return ERROR_TRANSLATION_NOT_EXIST;
 
     $re = $wpdb->delete(TRANSLATIONS_TABLE, ['code' => $code]);
-    if (!$re) return ERROR_DELETING_TRANSLATION;
-
+    if (!$re) return sql_error(ERROR_DELETING_TRANSLATION);
+    api_notify_translation_update();
     return $in;
+}
+
+/**
+ * Update the 'notification/translation' document in Firebase RealTime Database.
+ * Clients may listen the document change and update the translations.
+ * @throws \Kreait\Firebase\Exception\DatabaseException
+ */
+function api_notify_translation_update() {
+    $db = getDatabase();
+    $reference = $db->getReference('notifications/translation');
+    $stamp = time();
+    $reference->set(['updatedAt' => $stamp]);
 }
 
 
