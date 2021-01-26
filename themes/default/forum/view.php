@@ -16,7 +16,7 @@ $comments = $post['comments'];
 ?>
 <hr>
 <article class="card border border-dark p-2 m-3">
-    <h1><?php echo $post->post_title ?></h1>
+    <h1><?php echo $post['post_title'] ?></h1>
     <p>
         ID: <?php echo $post_ID ?> <br>
         Content: <?php echo $post['post_content'] ?>

@@ -7,12 +7,24 @@ const forumMixin = {
     },
     methods: {
 
+        /**
+         * Transform form event data to an object.
+         *
+         * @param {event} event
+         */
+        getFormData(event) {
+            const formData = new FormData(event.target); // reference to form element
+            const data = {}; // need to convert it before using not with XMLHttpRequest
+            for (let [key, val] of formData.entries()) {
+                Object.assign(data, { [key]: val })
+            }
+            return data;
+        },
         commentEditFormCanSubmit() {
             return this.$data.commentEditForm.comment_content;
         },
         onPostEditFormSubmit(event) {
-            // const data = this.getFormData(event);
-            console.log('Post Edit Form Data', commentEditForm);
+            const data = this.getFormData(event);
             request('forum.editPost', data, function(post) {
                 console.log('post edit', post);
                 move(post['url']);
