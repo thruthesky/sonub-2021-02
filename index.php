@@ -51,25 +51,6 @@ $script = get_theme_script();
             end_capture_script_style();
         ?>
     </section>
-    <div class="modal" :class="{ 'd-block': modal.active }" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{modal.title}}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="hideModal()">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>Modal body text goes here.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="hideModal()">Close</button>
-                    <button type="button" class="btn btn-primary" @click="hideModal(true)">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
 </section>
 
 <? insert_extracted_styles_from_script() ?>
@@ -93,7 +74,8 @@ $script = get_theme_script();
             appId: "1:973770265003:web:dd304f98a421a733d8c2ee"
         },
         allTopic: "allTopic",
-
+        post_notification_prefix: '<?=NOTIFY_POST?>',
+        comment_notification_prefix: '<?=NOTIFY_COMMENT?>'
     };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>

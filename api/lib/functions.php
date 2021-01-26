@@ -466,10 +466,16 @@ function register($in)
     return profile();
 }
 
+define('NOTIFY_POST', 'notifyPost');
+define('NOTIFY_COMMENT', 'notifyComment');
+
 function userUpdateMeta($user_ID, $data) {
     foreach ($data as $k => $v) {
         if (!in_array($k, USER_META_EXCEPTIONS)) {
             update_user_meta($user_ID, $k, $v);
+            if( strpos($k, NOTIFY_POST) === 0 || strpos($k, NOTIFY_COMMENT) === 0) {
+                // @TODO Subscribe here when meta was updated.
+            }
         }
     }
 }

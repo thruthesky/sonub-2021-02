@@ -36,17 +36,6 @@ function getMessaging() {
  * @return \Kreait\Firebase\Messaging\MulticastSendReport
  */
 function sendMessageToTokens($tokens, $title, $body, $imageUrl="https://philgo.com/theme/philgo/img/logo-small.png", $click_action, $data = []) {
-
-//    $message = CloudMessage::fromArray([
-//        'notification' => [
-//            'title' => $title,
-//            'body' => $body,
-//            'image' => $imageUrl,
-//            'click_action' => $click_action,
-//        ], // optional
-//        'data' => $data, // optional
-//    ]);
-
     $message = CloudMessage::fromArray([
         'notification' => getNotificationData($title, $body, $imageUrl, $click_action, $data),
         'webpush' => getWebPushData($title, $body, $imageUrl, $click_action, $data),
@@ -65,20 +54,9 @@ function sendMessageToTokens($tokens, $title, $body, $imageUrl="https://philgo.c
  * @param string $imageUrl
  * @return array
  */
-function sendMessageToTopic($topic, $title, $body, $click_action, $data = [], $imageUrl="https://philgo.com/theme/philgo/img/logo-small.png") {
-
-//    $message = CloudMessage::fromArray([
-//        'topic' => $topic,
-//        'notification' => [
-//            'title' => $title,
-//            'body' => $body,
-//            'image' => $imageUrl,
-//            'click_action' => $click_action,
-//        ], // optional
-//        'data' => $data, // optional
-//    ]);
-
+function sendMessageToTopic($topic, $title, $body, $imageUrl="https://philgo.com/theme/philgo/img/logo-small.png", $click_action, $data = [] ) {
     $message = CloudMessage::fromArray([
+        'topic' => $topic,
         'notification' => getNotificationData($title, $body, $imageUrl, $click_action, $data),
         'webpush' => getWebPushData($title, $body, $imageUrl, $click_action, $data),
         'android' => getAndroidPushData(),

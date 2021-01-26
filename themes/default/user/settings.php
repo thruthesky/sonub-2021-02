@@ -30,7 +30,7 @@
             onChangeAlertOnNewPost() {
                 console.log(this.$data.alertOnNewPost);
                 this.onProfileUpdateSubmit({
-                    [post_notification_prefix]: this.$data.alertOnNewPost ? "Y" : "N"
+                    [config.post_notification_prefix]: this.$data.alertOnNewPost ? "Y" : "N"
                 })
             },
             onChangeAlertOnNewComment() {

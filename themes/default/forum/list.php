@@ -43,8 +43,8 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
         },
         mounted() {
             console.log('list.mounted!');
-            this.$data.alertOnNewPost = this.$data.user[post_notification_prefix + category] === 'Y';
-            this.$data.alertOnNewComment = this.$data.user[comment_notification_prefix + category] === 'Y';
+            this.$data.alertOnNewPost = this.$data.user[config.post_notification_prefix + category] === 'Y';
+            this.$data.alertOnNewComment = this.$data.user[config.comment_notification_prefix + category] === 'Y';
         },
         data() {
             return {
@@ -55,13 +55,13 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
         methods: {
             onChangeAlertOnNewPost() {
                 const data = {
-                    [post_notification_prefix + category]:this.$data.alertOnNewPost ? "Y" : "N"
+                    [config.post_notification_prefix + category]:this.$data.alertOnNewPost ? "Y" : "N"
                 };
                 this.onProfileUpdateSubmit(data);
             },
             onChangeAlertOnNewComment() {
                 const data = {
-                    [comment_notification_prefix + category]: this.$data.alertOnNewComment ? "Y" : "N"
+                    [config.comment_notification_prefix + category]: this.$data.alertOnNewComment ? "Y" : "N"
                 };
 //                data[comment_notification_prefix + category] =  this.$data.alertOnNewComment ? "Y" : "N";
 

@@ -42,7 +42,6 @@ class NotificationRoute {
      * @throws \Kreait\Firebase\Exception\MessagingException
      */
     public function sendMessageToTopic($in) {
-
         if ( !isset($in['topic']) ) return ERROR_EMPTY_TOPIC;
         if ( !isset($in['data'])) $in['data'] = [];
         if ( !isset($in['imageUrl'])) $in['imageUrl'] = '';
