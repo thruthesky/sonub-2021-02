@@ -121,6 +121,7 @@ function success_or_error($data) {
 
 
 /**
+ * @deprecated this function has an error.
  * Replace host url of image to request host.
  *
  * @warning Replacing host url image is not recommended. Use it only for test purpose.
@@ -188,7 +189,7 @@ function response($data)
 {
     try {
         /// Convert into json string
-        $data = replace_host_of_image_url_to_request_host($data);
+//        $data = replace_host_of_image_url_to_request_host($data);
         $re = json_encode($data);
         if ($re) {
             // JSON 으로 출
@@ -1310,14 +1311,14 @@ function is_my_comment($comment_ID)
 
 
 /**
- * General function to update a field of a table.
+ * General function to update a field of the login user's record.
  *
  * It can insert or update a field of any table.
  *
  * @requirement
  *  - The table must have `user_ID` field as unique index and its value must be the login user's ID.
- *  - The field must exists in the table.
  *  - The table must also have `createdAt` and `updatedAt` integer field.
+ *  - The $in['field'] must exists in the table.
  *  - All the fields of the table should have default value, so it would not produce SQL error while inserting.
  *
  * @note
@@ -1331,7 +1332,11 @@ function is_my_comment($comment_ID)
  *  $in['value'] is the value to update.
  *
  * @return array|string
- *  Returns the record of the table. Be careful not to put too big data in a record.
+ *  - returns an array with ['action' => 'UPDATE'] on update.
+ *  - returns an array with ['action' => 'INSERT'] on insert.
+ *  - ERROR_UPDATE on update error
+ *  - ERROR_INSERT on insert error
+ *
  *
  * @example
  *  - See tests/app.update.test.php
@@ -1343,11 +1348,14 @@ function table_update($in) {
     global $wpdb;
     $row = table_get($in);
     if ( $row ) {
-        $wpdb->update($in['table'], [$in['field'] => $in['value'], 'updatedAt' => time()], ['user_ID' => $user_ID]);
+        $re = $wpdb->update($in['table'], [$in['field'] => $in['value'], 'updatedAt' => time()], ['user_ID' => $user_ID]);
+        if ( $re === false ) return ERROR_UPDATE;
+        else return ['action' => 'UPDATE'];
     } else {
-        $wpdb->insert($in['table'], ['user_ID' => $user_ID, $in['field'] => $in['value'], 'updatedAt'=>time(), 'createdAt'=>time()]);
+        $re = $wpdb->insert($in['table'], ['user_ID' => $user_ID, $in['field'] => $in['value'], 'updatedAt'=>time(), 'createdAt'=>time()]);
+        if ( $re === false ) return ERROR_INSERT;
+        else return ['action' => 'INSERT'];
     }
-    return table_get($in);
 }
 
 /**
