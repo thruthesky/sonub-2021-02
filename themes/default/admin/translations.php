@@ -24,16 +24,16 @@ $translations = $trans['translations'];
 
 <h3 class="mt-5">Translation Table</h3>
 <div class="container">
-    <div class="row text-center font-weight-bold border border-bottom">
-        <div class="col-sm">
+    <div class="row font-weight-bold">
+        <div class="col-sm border">
             Code
         </div>
         <?php foreach ($languages as $ln) { ?>
-            <div class="col-sm">
+            <div class="col-sm border">
                 <?php echo $ln ?>
             </div>
         <?php } ?>
-        <div class="col-sm">
+        <div class="col-sm border">
             Actions
         </div>
     </div>
@@ -42,7 +42,7 @@ $translations = $trans['translations'];
         <form @submit.prevent='onTranslationEditFormSubmit($event)'>
             <input type="hidden" name="code" value="<?php echo $translation['code'] ?>">
             <div class="row mt-2">
-                <div class="col-sm text-center">
+                <div class="col-sm ">
                     <button type="button" class="text-button w-100" @click="onClickCode('<?php echo $translation['code'] ?>')">
                         <?php echo $translation['code'] ?>
                     </button>
@@ -53,8 +53,8 @@ $translations = $trans['translations'];
                     </div>
                 <?php } ?>
                 <div class="col-sm">
-                    <button type="submit" class="btn btn-success mr-1"> Save </button>
-                    <button type="button" @click='onTranslationDelete("<?php echo $translation["code"] ?>")' class="btn btn-warning"> Delete </button>
+                    <button type="submit" class="btn btn-success"> Save </button>
+                    <button class="btn btn-warning ml-1" type="button" @click='onTranslationDelete("<?php echo $translation["code"] ?>")'> Delete </button>
                 </div>
             </div>
         </form>
