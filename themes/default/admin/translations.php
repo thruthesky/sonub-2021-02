@@ -49,7 +49,7 @@ $translations = $trans['translations'];
                 </div>
                 <?php foreach ($languages as $ln) { ?>
                     <div class="col-sm">
-                        <input type="text" class="form-control w-100" name="<?php echo $ln ?>" value="<?php echo $translation[$ln] ?>">
+                        <input type="text" class="form-control w-100" name="<?php echo $ln ?>" value="<?=$translation[$ln] ?? ''?>">
                     </div>
                 <?php } ?>
                 <div class="col-sm">
@@ -118,11 +118,12 @@ $translations = $trans['translations'];
                     translation = this.$data.newTranslation;
                 }
 
-                console.log('onNewTranslationFormSubmit :', translation, languages);
+                // console.log('onNewTranslationFormSubmit :', translation, languages);
                 if (translation.code === '') {
                     return this.error("PLEASE INPUT TRANSLATION CODE");
                 }
                 this.onTranslationEdit(languages, translation);
+
             },
             /**
              * Create new translation set.
@@ -130,20 +131,33 @@ $translations = $trans['translations'];
              * @param {string[]} languages
              */
             onTranslationEdit(languages, translation) {
-                _this = this;
+
+                const req = {
+                    'code': translation.code,
+                };
                 languages.forEach(function(ln) {
-                    const req = {
-                        'code': translation.code,
-                        'language': ln,
-                        'value': translation[ln],
-                    }
-                    console.log(req);
-                    request('translation.edit', req, function(data) {
-                        console.log('new translation added :', data);
-                        refresh();
-                    }, this.error);
+                    req[ ln ] = translation[ln];
                 });
-                refresh();
+
+                console.log('onTrans.. req: ', req);
+                request('translation.edit', req, function(data) {
+                    refresh();
+                }, this.error);
+
+                // _this = this;
+                // languages.forEach(function(ln) {
+                //     const req = {
+                //         'code': translation.code,
+                //         'language': ln,
+                //         'value': translation[ln],
+                //     }
+                //     console.log(req);
+                //     request('translation.edit', req, function(data) {
+                //         console.log('new translation added :', data);
+                //         refresh();
+                //     }, this.error);
+                // });
+                // refresh();
             },
             /**
              * Delete Translation for all language.

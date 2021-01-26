@@ -41,8 +41,14 @@ Withcenter Multisite & API Theme
 ## Git repo source
 
 ```sh
-git clone https://github.com/thruthesky/wigo wp-content/themes/wigo
+git clone https://github.com/thruthesky/wigo wp-content/themes/withcenter-backend-v3
 ```
+
+
+## Put keys folder with proper key files
+
+* If you are using firebase, put a firebase admin key file.
+* If you are using in_app_purchase, then put a proper key file.
 
 
 ## Setup on Local Development Computer

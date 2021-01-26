@@ -1790,22 +1790,18 @@ function api_add_translation_language($in) {
 
 function api_edit_translation($in) {
     if ( admin() === false ) return ERROR_PERMISSION_DENIED;
-    if (!isset($in['language'])) return ERROR_EMPTY_LANGUAGE;
     if (!isset($in['code'])) return ERROR_EMPTY_CODE;
-    if (!isset($in['value'])) return ERROR_EMPTY_VALUE;
 
-    $languages = get_option(LANGUAGES, []);
-    if ( ! in_array($in['language'], $languages) ) return ERROR_LANGUAGE_NOT_EXISTS;
 
-    $data = [
-        'language' => $in['language'],
-        'code' => $in['code'],
-        'value' => $in['value']
-    ];
+    $data = $in;
+
+    unset($data['route'], $data['session_id'], $data['code']);
 
     global $wpdb;
-    $re = $wpdb->replace(TRANSLATIONS_TABLE, $data);
-    if ( $re === false ) return ERROR_LANGUAGE_REPLACE;
+    foreach( $data as $ln => $val ) {
+        $re = $wpdb->replace(TRANSLATIONS_TABLE, ['code' => $in['code'], 'language' => $ln, 'value' => $val ]);
+        if ( $re === false ) return ERROR_LANGUAGE_REPLACE;
+    }
     return $data;
 }
 
