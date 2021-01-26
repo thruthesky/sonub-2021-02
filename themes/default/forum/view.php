@@ -16,7 +16,7 @@ $comments = $post['comments'];
 ?>
 <hr>
 <article class="card border border-dark p-2 m-3">
-    <h1><?php echo $post->post_title ?></h1>
+    <h1><?php echo $post['post_title'] ?></h1>
     <p>
         ID: <?php echo $post_ID ?> <br>
         Content: <?php echo $post['post_content'] ?>
@@ -67,8 +67,8 @@ $comments = $post['comments'];
 
                         <!-- TODO: MINE BUTTON -->
                         <div class="mt-2">
-                            <button class="btn btn-secondary mr-2" onclick="toggleCommentReplyDisplay('<?php echo $comment_ID ?>', 'block')">Reply</button>
-                            <button class="btn btn-success mr-2" onclick="toggleCommentEditDisplay('<?php echo $comment_ID ?>', 'none')">Edit</button>
+                            <button class="btn btn-secondary mr-2" @click="toggleCommentReplyDisplay('<?php echo $comment_ID ?>', 'block')">Reply</button>
+                            <button class="btn btn-success mr-2" @click="toggleCommentEditDisplay('<?php echo $comment_ID ?>', 'none')">Edit</button>
                             <button class="btn btn-danger" @click="onCommentDelete('<?php echo $comment_ID ?>')">DELETE</button>
                         </div>
                         <hr>
@@ -79,7 +79,7 @@ $comments = $post['comments'];
                             <input type="hidden" name="comment_parent" value="<?php echo $comment_ID ?>" />
                             <input class="form-control" type="text" placeholder="Input Reply"  v-model="commentEditForm.comment_content" />
                             <div class="mt-2">
-                                <button type="button" class="btn btn-danger" onclick="toggleCommentReplyDisplay('<?php echo $comment_ID ?>', 'none')">Cancel</button>
+                                <button type="button" class="btn btn-danger" @click="toggleCommentReplyDisplay('<?php echo $comment_ID ?>', 'none')">Cancel</button>
                                 <button class="btn btn-success ml-2" type="submit">Submit</button>
                             </div>
                         </form>
@@ -88,11 +88,11 @@ $comments = $post['comments'];
                     <!-- Comment edit form -->
                     <div style="display: none;" id="comment_content_edit_<?php echo $comment_ID ?>">
                         <form @submit.prevent="onCommentEditFormSubmit($event)">
-                            <input type="hidden" name="comment_post_ID" value="<?php echo $comment->comment_post_ID ?>" />
-                            <input type="hidden" name="comment_parent" value="<?php echo $comment_ID ?>" />
+                            <input type="hidden" name="comment_post_ID" value="<?php echo $post_ID ?>" />
+                            <input type="hidden" name="comment_ID" value="<?php echo $comment_ID ?>" />
                             <input class="form-control" type="text" name="comment_content" id="comment_content" value="<?php echo $comment_content ?>" />
                             <div class="mt-2">
-                                <button type="button" class="btn btn-danger" onclick="toggleCommentEditDisplay('<?php echo $comment_ID ?>', 'block')">Cancel</button>
+                                <button type="button" class="btn btn-danger" @click="toggleCommentEditDisplay('<?php echo $comment_ID ?>', 'block')">Cancel</button>
                                 <button class="btn btn-success ml-2" type="submit">Submit</button>
                             </div>
                         </form>
@@ -102,18 +102,3 @@ $comments = $post['comments'];
         </section>
     <?php } ?>
 </article>
-
-<script>
-
-    function toggleCommentEditDisplay(elementID, display) {
-        var el = document.getElementById('comment_content_' + elementID);
-        var el2 = document.getElementById('comment_content_edit_' + elementID)
-        el.style.display = display;
-        el2.style.display = display == 'block' ? 'none' : 'block';
-    }
-
-    function toggleCommentReplyDisplay(elementID, display) {
-        var el = document.getElementById('comment_reply_' + elementID);
-        el.style.display = display;
-    }
-</script>

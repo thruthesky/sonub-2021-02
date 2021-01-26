@@ -127,7 +127,4 @@ EOS;
         else return [];
     }
 
-    public function update() {
-
-    }
 }

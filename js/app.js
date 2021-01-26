@@ -24,10 +24,6 @@ const AttributeBinding = {
                 title: '',
                 content: '',
             },
-            /// translation
-            newLanguage: '',
-            languages: [],
-            translations: [],
         }
     },
     created() {
