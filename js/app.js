@@ -11,10 +11,6 @@ const AttributeBinding = {
             pushNotification: {
                 sendTo: 'topic'
             },
-            /// translation
-            newLanguage: '',
-            languages: [],
-            translations: [],
         }
     },
     created() {
