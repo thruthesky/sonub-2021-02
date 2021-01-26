@@ -3,11 +3,8 @@ $trans = api_get_translations([]);
 
 $languages = $trans['languages'];
 $translations = $trans['translations'];
-
-
-print_r($translations);
-
 ?>
+
 <hr>
 <h3 class="mt-5">Add Language</h3>
 <form class="d-flex w-25" @submit.prevent="onNewLanguageFormSubmit">
@@ -140,11 +137,17 @@ print_r($translations);
                     refresh();
                 }, this.error);
             },
-            onClickCode(code) {
-                const re = prompt('Input new code', code);
-                if ( ! re ) return;
-                if ( re === code ) return;
-                console.log('TODO: change code from: ' + code + ', to: ' + re);
+            onClickCode(oldCode) {
+                const newCode = prompt('Input new code', oldCode);
+                if ( ! newCode ) return;
+                if ( newCode === oldCode ) return;
+                console.log('TODO: change code from: ' + oldCode + ', to: ' + newCode);
+
+                request('translation.changeCode', { 'oldCode': oldCode, 'newCode': newCode }, function(data) {
+                    console.log('Translation code updated :', data);
+                    alert("Translation code updated!");
+                    refresh();
+                }, this.error);
             }
         }
     }
