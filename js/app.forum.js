@@ -87,12 +87,27 @@ const forumMixin = {
                 el.remove();
             }, this.error);
         },
+        onFileUpload() {
+
+        },
+        /**
+         * toggle visibility of comment update form
+         * 
+         * @param {string} elementID 
+         * @param {string} display - 'none' | 'block
+         */
         toggleCommentEditDisplay(elementID, display) {
             var el = document.getElementById('comment_content_' + elementID);
             var el2 = document.getElementById('comment_content_edit_' + elementID)
             el.style.display = display;
             el2.style.display = display == 'block' ? 'none' : 'block';
         },
+        /**
+         * toggle visibility of comment reply form
+         * 
+         * @param {string} elementID 
+         * @param {string} display - 'none' | 'block
+         */
         toggleCommentReplyDisplay(elementID, display) {
             var el = document.getElementById('comment_reply_' + elementID);
             el.style.display = display;
