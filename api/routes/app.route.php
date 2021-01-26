@@ -15,6 +15,14 @@ class AppRoute {
         if ( ! is_user_logged_in() ) return ERROR_LOGIN_FIRST;
         return table_update($in);
     }
+    /**
+     * @see table_updates()
+     */
+    public function updates(array $in) {
+        if ( !isset($in['table']) ) return ERROR_EMPTY_TABLE;
+        if ( ! is_user_logged_in() ) return ERROR_LOGIN_FIRST;
+        return table_updates($in);
+    }
 
     /**
      * Get the record of user.

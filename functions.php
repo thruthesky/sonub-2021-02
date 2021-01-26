@@ -4,12 +4,19 @@
  */
 
 
-
-
 /**
  * Directory(Folder) Constants.
  */
-define( 'THEME_DIR', __DIR__ );
+//define( 'THEME_DIR', __DIR__ );   /// WINDOWS \wp-content\themes\withcenter-backend-v3
+define( 'THEME_DIR', get_template_directory() );  /// /wp-content/themes/withcenter-backend-v3
+
+/**
+ * THEME_FOLDER_NAME is the folder name of the theme.
+ *
+ * @example 'withcenter-backend-v3', 'wigo'
+ */
+$_paths = explode('/', THEME_DIR);
+define( 'THEME_FOLDER_NAME', array_pop( $_paths ));
 define( 'API_DIR', THEME_DIR . '/api' );
 
 /**
@@ -22,11 +29,9 @@ require_once(API_DIR .'/lib/functions.php');
  * Other constants
  */
 define( 'REQUESTED_HOME_URL', get_requested_host_url());
-define( 'THEME_URL', REQUESTED_HOME_URL . '/wp-content/themes/wigo');
+define( 'THEME_URL', REQUESTED_HOME_URL . '/wp-content/themes/' . THEME_FOLDER_NAME);
 
 define('API_CALL', in('route') != null );
-
-
 
 
 /**
@@ -42,6 +47,9 @@ if ( API_CALL ) {
         echo ''; // No return data for preflight.
         return;
     }
+
+    /// Force to hide error message on API CALL
+    $wpdb->show_errors = false;
 }
 
 /**

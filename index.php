@@ -97,10 +97,10 @@ $script = get_theme_script();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/vue@3.0.5/dist/vue.global.prod.js"></script>
-<script src="/wp-content/themes/wigo/js/axios.min.js"></script>
+<script src="<?=THEME_URL?>/js/axios.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-messaging.js"></script>
-<script src="/wp-content/themes/wigo/js/firebase.js"></script>
+<script src="<?=THEME_URL?>/js/firebase.js"></script>
 <?php load_theme_js($script); ?>
 <script src="<?php echo THEME_URL . '/js/helpers.js'?>?v=<?=build_version()?>"></script>
 <script src="<?php echo THEME_URL . '/js/app.forum.js'?>?v=<?=build_version()?>"></script>

@@ -1327,13 +1327,12 @@ function is_my_comment($comment_ID)
  *
  * @param $in array
  *  $in['table'] is the table to update.
- *  $in['user_ID'] is the login user's ID. The user may login with session ID.
  *  $in['field'] is the field to update.
  *  $in['value'] is the value to update.
  *
  * @return array|string
- *  - returns an array with ['action' => 'UPDATE'] on update.
- *  - returns an array with ['action' => 'INSERT'] on insert.
+ *  - returns an array of the record with ['action' => 'UPDATE'] on update.
+ *  - returns an array of the record with ['action' => 'INSERT'] on insert.
  *  - ERROR_UPDATE on update error
  *  - ERROR_INSERT on insert error
  *
@@ -1350,13 +1349,77 @@ function table_update($in) {
     if ( $row ) {
         $re = $wpdb->update($in['table'], [$in['field'] => $in['value'], 'updatedAt' => time()], ['user_ID' => $user_ID]);
         if ( $re === false ) return ERROR_UPDATE;
-        else return ['action' => 'UPDATE'];
+        else $action = ['action' => 'UPDATE'];
     } else {
         $re = $wpdb->insert($in['table'], ['user_ID' => $user_ID, $in['field'] => $in['value'], 'updatedAt'=>time(), 'createdAt'=>time()]);
         if ( $re === false ) return ERROR_INSERT;
-        else return ['action' => 'INSERT'];
+        else $action = ['action' => 'INSERT'];
     }
+
+    $row = table_get($in);
+    return array_merge($action, $row);
 }
+
+/**
+ * This function updates(or inserts) multiples fields.
+ * - table_update() updates only one(1, single) field while this function updates many fields.
+ * - Note that admin can update other user's record.
+ * - If the login user is not admin, then he can only update his record.
+ *
+ * Using this method is recommended since it has better functionality and better tested.
+ *
+ * @param $in array
+ *  - $in['table'] is the table name to update.
+ *  - $in['user_ID'] is the unique index for the table to update the record of. So, `user_ID` field must exist as primary key or unique key.
+ *  - $in['session_id'] is the login user's session id and this will be ignored.
+ *  - The rest of the properties will be saved as table fields. And the fields must exists on the table.
+ *
+ * @return array|string
+ *  - returns an array of the record with ['action' => 'UPDATE'] on update.
+ *  - returns an array of the record with ['action' => 'INSERT'] on insert.
+ *  - ERROR_UPDATE on update error
+ *  - ERROR_INSERT on insert error
+ */
+function table_updates($in) {
+    $fields = $in;
+    unset($fields['route'], $fields['user_ID'], $fields['session_id'], $fields['table']);
+
+    if ( isset($in['user_ID']) ) {
+        if ( admin() ) {
+            $user_ID = $in['user_ID'];
+        } else {
+            return ERROR_PERMISSION_DENIED;
+        }
+    } else {
+        $user_ID = wp_get_current_user()->ID;
+    }
+
+    debug_log("fields::", $fields);
+    if ( count($fields) == 0 ) return ERROR_NO_FIELDS;
+
+    global $wpdb;
+    $row = $wpdb->get_row("SELECT user_ID FROM $in[table] WHERE user_ID=$user_ID", ARRAY_A);
+
+    if ( $row ) {
+        $fields['updatedAt'] = time();
+        $re = $wpdb->update($in['table'], $fields, ['user_ID' => $user_ID]);
+        if ( $re === false ) return sql_error(ERROR_UPDATE);
+        else $action = ['action' => 'UPDATE'];
+    } else {
+        $fields['createdAt'] = time();
+        $fields['updatedAt'] = time();
+        $re = $wpdb->insert($in['table'], $fields);
+        if ( $re === false ) return sql_error(ERROR_INSERT);
+        else $action = ['action' => 'INSERT'];
+    }
+
+
+    $row = $wpdb->get_row("SELECT * FROM $in[table] WHERE user_ID=$user_ID", ARRAY_A);
+    return array_merge($action, $row);
+}
+
+
+
 
 /**
  * Get the record of user.
@@ -1381,30 +1444,25 @@ function table_get($in) {
  * @return mixed|string
  */
 function get_gallery_featured_image_url($user_ID) {
-
     $posts = get_posts(['category_name' => 'gallery', 'author' => $user_ID]);
-
     if ( $posts && count($posts) > 0 ) {
         $post = $posts[0];
         $post_thumbnail_id = get_post_thumbnail_id($post);
         if ($post_thumbnail_id) {
             return wp_get_attachment_image_url($post_thumbnail_id, 'full');
         }
-
-        ////
-//        $post = post_response($posts[0]);
-//        return $post['featured_image_url'];
     }
     return '';
 }
 
 
 /**
- * Returns requested url's domain
+ * Returns requested url domain
  * @return mixed
  */
 function get_host_name() {
-    return $_SERVER['HTTP_HOST'];
+    if ( isset($_SERVER['HTTP_HOST']) ) return $_SERVER['HTTP_HOST'];
+    else return null;
 }
 
 function isCli() {
@@ -1486,6 +1544,27 @@ function sql_query($in) {
 }
 
 
+
+/**
+ * Returns an error code based on wordpress SQL error message.
+ *
+ * @usage Use this method to return proper SQL error code whenever there is an SQL query error.
+ *
+ * @param null $default_error is the default error code when the last error is unknown.
+ * @return mixed|null
+ */
+function sql_error($default_error = null) {
+    global $wpdb;
+    $last_error = $wpdb->last_error;
+    if ( $last_error ) {
+        if ( strpos($last_error, 'Unknown column') !== false ) {
+            return ERROR_UNKNOWN_COLUMN;
+        }
+    }
+    return $default_error;
+}
+
+
 /**
  * Gets user_ID ( or any field ) from two dimensional array.
  *
@@ -1509,8 +1588,6 @@ function ids($users, $field='user_ID')
 function between($val, $min, $max) {
     return $val >= $min && $val <= $max;
 }
-
-
 
 
 
@@ -1713,22 +1790,18 @@ function api_add_translation_language($in) {
 
 function api_edit_translation($in) {
     if ( admin() === false ) return ERROR_PERMISSION_DENIED;
-    if (!isset($in['language'])) return ERROR_EMPTY_LANGUAGE;
     if (!isset($in['code'])) return ERROR_EMPTY_CODE;
-    if (!isset($in['value'])) return ERROR_EMPTY_VALUE;
 
-    $languages = get_option(LANGUAGES, []);
-    if ( ! in_array($in['language'], $languages) ) return ERROR_LANGUAGE_NOT_EXISTS;
 
-    $data = [
-        'language' => $in['language'],
-        'code' => $in['code'],
-        'value' => $in['value']
-    ];
+    $data = $in;
+
+    unset($data['route'], $data['session_id'], $data['code']);
 
     global $wpdb;
-    $re = $wpdb->replace(TRANSLATIONS_TABLE, $data);
-    if ( $re === false ) return ERROR_LANGUAGE_REPLACE;
+    foreach( $data as $ln => $val ) {
+        $re = $wpdb->replace(TRANSLATIONS_TABLE, ['code' => $in['code'], 'language' => $ln, 'value' => $val ]);
+        if ( $re === false ) return ERROR_LANGUAGE_REPLACE;
+    }
     return $data;
 }
 
@@ -1811,6 +1884,7 @@ function d($obj) {
  */
 function getRoute($params) {
     $url = API_URL . "?" . http_build_query($params);
+//    echo "url: $url\n";
     $re = file_get_contents($url);
     $json = json_decode($re, true);
     if ( !$json ) {
