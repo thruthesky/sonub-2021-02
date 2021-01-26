@@ -2,39 +2,13 @@
 
 
 ///
-define('ERROR_LANGUAGE_EXISTS', 'ERROR_LANGUAGE_EXISTS');
-define('ERROR_EMPTY_LANGUAGE', 'ERROR_EMPTY_LANGUAGE');
-define('ERROR_EMPTY_CODE', 'ERROR_EMPTY_CODE');
-define('ERROR_EMPTY_OLD_CODE', 'ERROR_EMPTY_OLD_CODE');
-define('ERROR_EMPTY_NEW_CODE', 'ERROR_EMPTY_NEW_CODE');
-define('ERROR_EMPTY_VALUE', 'ERROR_EMPTY_VALUE');
-define('ERROR_LANGUAGE_NOT_EXISTS', 'ERROR_LANGUAGE_NOT_EXISTS');
-define('ERROR_LANGUAGE_REPLACE', 'ERROR_LANGUAGE_REPLACE');
-define('ERROR_CHANGE_CODE', 'ERROR_CHANGE_CODE');
-define('ERROR_DELETING_TRANSLATION', 'ERROR_DELETING_TRANSLATION');
-define('ERROR_TRANSLATION_NOT_EXIST', 'ERROR_TRANSLATION_NOT_EXIST');
-
-
-
 
 class TranslationRoute
 {
 
-    public function addLanguage($in) {
-        if ( admin() === false ) return ERROR_PERMISSION_DENIED;
-        if ( ! isset($in['language']) ) return ERROR_EMPTY_LANGUAGE;
-        $languages = get_option(LANGUAGES, []);
-        if ( in_array($in['language'], $languages) ) return ERROR_LANGUAGE_EXISTS;
-        $languages[] = $in['language'];
-        update_option(LANGUAGES, $languages, false);
-        return $languages;
-    }
-
-
-    private function get_translation_by_code($code)
+    public function addLanguage($in)
     {
-        global $wpdb;
-        return $wpdb->get_results("SELECT * FROM " . TRANSLATIONS_TABLE . " WHERE code='$code'", ARRAY_A);
+        return api_add_translation_language($in);
     }
 
     /**
@@ -43,34 +17,17 @@ class TranslationRoute
     public function list($in)
     {
         return api_get_translations($in);
-    }   
+    }
 
     /**
      * Add new code & value or replace existing one.
      */
     public function edit($in)
     {
-        if ( admin() === false ) return ERROR_PERMISSION_DENIED;
-        if (!isset($in['language'])) return ERROR_EMPTY_LANGUAGE;
-        if (!isset($in['code'])) return ERROR_EMPTY_CODE;
-        if (!isset($in['value'])) return ERROR_EMPTY_VALUE;
-
-        $languages = get_option(LANGUAGES, []);
-        if ( ! in_array($in['language'], $languages) ) return ERROR_LANGUAGE_NOT_EXISTS;
-
-        $data = [
-            'language' => $in['language'],
-            'code' => $in['code'],
-            'value' => $in['value']
-        ];
-
-        global $wpdb;
-        $re = $wpdb->replace(TRANSLATIONS_TABLE, $data);
-        if ( $re === false ) return ERROR_LANGUAGE_REPLACE;
-        return $data;
+        return api_edit_translation($in);
     }
 
-    
+
     /**
      * Change existing code with new code.
      *
@@ -78,14 +35,9 @@ class TranslationRoute
      *
      * Values of the code will be attached to the new code.
      */
-    public function changeCode($in) {
-        if ( admin() === false ) return ERROR_PERMISSION_DENIED;
-        if (!isset($in['oldCode'])) return ERROR_EMPTY_OLD_CODE;
-        if (!isset($in['newCode'])) return ERROR_EMPTY_NEW_CODE;
-        global $wpdb;
-        $re = $wpdb->update(TRANSLATIONS_TABLE, ['code' => $in['newCode'] ], ['code' => $in['oldCode']]);
-        if ( $re === false ) return ERROR_CHANGE_CODE;
-        return $in;
+    public function changeCode($in)
+    {
+        return api_change_translation_code($in);
     }
 
     /**
@@ -93,21 +45,6 @@ class TranslationRoute
      */
     public function delete($in)
     {
-
-        if ( admin() === false ) return ERROR_PERMISSION_DENIED;
-        if (!isset($in['code'])) return ERROR_EMPTY_CODE;
-
-        global $wpdb;
-
-        $code = $in['code'];
-
-        /// check if it exist, return error if not.
-        $tr = $this->get_translation_by_code($code);
-        if (!$tr) return ERROR_TRANSLATION_NOT_EXIST;
-
-        $re = $wpdb->delete(TRANSLATIONS_TABLE, ['code' => $code]);
-        if (!$re) return ERROR_DELETING_TRANSLATION;
-
-        return $in;
+        return api_delete_translation($in);
     }
 }
