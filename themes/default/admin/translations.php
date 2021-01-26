@@ -23,23 +23,43 @@ $translations = $trans['translations'];
 </form>
 
 <h3 class="mt-5">Translation Table</h3>
-<?php foreach ($translations as $translation) { ?>
-    <form class="table table-striped" @submit.prevent='onTranslationEditFormSubmit($event)'>
-        <input type="hidden" name="code" value="<?php echo $translation['code'] ?>">
-        <tbody>
-            <tr>
-                <td><button type="button" class="text-button" @click="onClickCode('<?php echo $translation['code'] ?>')"><?php echo $translation['code'] ?></button></td>
+<div class="container">
+    <div class="row text-center font-weight-bold border border-bottom">
+        <div class="col-sm">
+            Code
+        </div>
+        <?php foreach ($languages as $ln) { ?>
+            <div class="col-sm">
+                <?php echo $ln ?>
+            </div>
+        <?php } ?>
+        <div class="col-sm">
+            Actions
+        </div>
+    </div>
+
+    <?php foreach ($translations as $translation) { ?>
+        <form @submit.prevent='onTranslationEditFormSubmit($event)'>
+            <input type="hidden" name="code" value="<?php echo $translation['code'] ?>">
+            <div class="row mt-2">
+                <div class="col-sm text-center">
+                    <button type="button" class="text-button" @click="onClickCode('<?php echo $translation['code'] ?>')">
+                        <?php echo $translation['code'] ?>
+                    </button>
+                </div>
                 <?php foreach ($languages as $ln) { ?>
-                    <td><input type="text" name="<?php echo $ln ?>" value="<?php echo $translation[$ln] ?>"></td>
+                    <div class="col-sm">
+                        <input type="text" class="form-control w-100" name="<?php echo $ln ?>" value="<?php echo $translation[$ln] ?>">
+                    </div>
                 <?php } ?>
-                <td>
-                    <button type="submit" class="btn btn-success"> Save </button>
+                <div class="col-sm">
+                    <button type="submit" class="btn btn-success mr-1"> Save </button>
                     <button type="button" @click='onTranslationDelete("<?php echo $translation["code"] ?>")' class="btn btn-warning"> Delete </button>
-                </td>
-            </tr>
-        </tbody>
-    </form>
-<?php } ?>
+                </div>
+            </div>
+        </form>
+    <?php } ?>
+</div>
 
 <script>
     const languages = <?php echo json_encode($languages); ?>;
@@ -62,7 +82,9 @@ $translations = $trans['translations'];
                     return this.error("PLEASE INPUT LANGUAGE");
                 }
 
-                request('translation.addLanguage', { 'language': this.$data.newLanguage }, function(data) {
+                request('translation.addLanguage', {
+                    'language': this.$data.newLanguage
+                }, function(data) {
                     console.log('new language added :', data);
                     alert("Language Added!");
                     refresh();
@@ -76,7 +98,9 @@ $translations = $trans['translations'];
                 const formData = new FormData(form); // reference to form element
                 const data = {}; // need to convert it before using not with XMLHttpRequest
                 for (let [key, val] of formData.entries()) {
-                    Object.assign(data, { [key]: val });
+                    Object.assign(data, {
+                        [key]: val
+                    });
                 }
                 return data;
             },
@@ -89,7 +113,7 @@ $translations = $trans['translations'];
                 translation = {};
 
                 if (event !== null) {
-                    translation =  this.getFormData(event.target);
+                    translation = this.getFormData(event.target);
                 } else {
                     translation = this.$data.newTranslation;
                 }
@@ -131,7 +155,9 @@ $translations = $trans['translations'];
                 const conf = confirm('Delete Translation - ' + code + '?');
                 if (conf === false) return;
 
-                request('translation.delete', { 'code': code }, function(data) {
+                request('translation.delete', {
+                    'code': code
+                }, function(data) {
                     console.log('Translation deleted :', data);
                     alert("Translation Deleted!");
                     refresh();
@@ -139,11 +165,14 @@ $translations = $trans['translations'];
             },
             onClickCode(oldCode) {
                 const newCode = prompt('Input new code', oldCode);
-                if ( ! newCode ) return;
-                if ( newCode === oldCode ) return;
+                if (!newCode) return;
+                if (newCode === oldCode) return;
                 console.log('TODO: change code from: ' + oldCode + ', to: ' + newCode);
 
-                request('translation.changeCode', { 'oldCode': oldCode, 'newCode': newCode }, function(data) {
+                request('translation.changeCode', {
+                    'oldCode': oldCode,
+                    'newCode': newCode
+                }, function(data) {
                     console.log('Translation code updated :', data);
                     alert("Translation code updated!");
                     refresh();
@@ -151,5 +180,4 @@ $translations = $trans['translations'];
             }
         }
     }
-
 </script>
