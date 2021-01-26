@@ -1800,7 +1800,7 @@ function api_edit_translation($in) {
     global $wpdb;
     foreach( $data as $ln => $val ) {
         $re = $wpdb->replace(TRANSLATIONS_TABLE, ['code' => $in['code'], 'language' => $ln, 'value' => $val ]);
-        if ( $re === false ) return ERROR_LANGUAGE_REPLACE;
+        if ( $re === false ) return sql_error(ERROR_LANGUAGE_REPLACE);
     }
     return $data;
 }
