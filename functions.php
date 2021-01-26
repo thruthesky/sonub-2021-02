@@ -42,6 +42,9 @@ if ( API_CALL ) {
         echo ''; // No return data for preflight.
         return;
     }
+
+    /// Force to hide error message on API CALL
+    $wpdb->show_errors = false;
 }
 
 /**

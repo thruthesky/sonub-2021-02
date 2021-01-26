@@ -126,4 +126,8 @@ EOS;
         if ( $results ) return $results;
         else return [];
     }
+
+    public function update() {
+
+    }
 }

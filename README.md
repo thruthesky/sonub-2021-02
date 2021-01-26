@@ -1,34 +1,27 @@
-# wigo
+# Wigo
 
-Withcenter Wordpress Multisite Theme
+Withcenter Multisite & API Theme
 
 * This project is a Wordpress theme that supports
   * its own multisite functionality,
   * and Restful API for clientend.
 
 
+# Development Concept
+
+* Build PWA with PHP. Not based on SPA.
+  * To support natural SEO.\
+    There might be some workarounds for SEO supporting like SSR or half PHP and haf SPA. But none of them are natural.
+  * Use Vue.js 3.x
+    * Don't use CLI bundling tool because it needs to be compiled and published. It may be a good choice for admin site to be SPA, but to remove CLI bundling tool, it was built with PHP.
+
 # TODO
 
-* for theme loading
-
-  * index.php
-  * functions.php
-  * api/functions.php
-  * defines.php
-  * config.php
-  
-* for API loading
-
-  * api/index.php
-  * api/functions.php
-  * defines.php
-  * config.php
-  
-* All app specific code must go in ext folder.
+* See git issues.
 
 # Server Environment
 
-* Server passwords. See Withcenter working 
+* Server passwords. See Withcenter work information doc.
 
 # Installation
 
