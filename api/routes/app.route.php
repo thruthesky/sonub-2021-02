@@ -60,7 +60,9 @@ class AppRoute {
     public function get(array $in) {
 
         if ( !isset($in['table']) ) return ERROR_EMPTY_TABLE;
-        return table_get($in);
+        $row = table_get($in);
+        if ( ! $row ) return ERROR_APP_GET_NO_RECORD;
+        return $row;
     }
 
     // TODO: Only admin can update.
