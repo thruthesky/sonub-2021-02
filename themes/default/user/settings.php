@@ -2,13 +2,13 @@
 <hr>
 <!--    {{ user }}-->
 
-<div class="custom-control custom-switch">
-    <input type="checkbox" class="custom-control-input" id="notificationUnderMyPost" v-model="alertOnNewPost" @change="onChangeAlertOnNewPost">
-    <label class="custom-control-label" for="notificationUnderMyPost">Receive notification under my post.</label>
+<div class="form-check form-switch">
+    <input class="form-check-input" type="checkbox" id="notificationUnderMyPost" v-model="alertOnNewPost" @change="onChangeAlertOnNewPost">
+    <label class="form-check-label" for="notificationUnderMyPost">Receive notification under my post.</label>
 </div>
-<div class="custom-control custom-switch">
-    <input type="checkbox" class="custom-control-input" id="notificationUnderMyComment" v-model="alertOnNewComment" @change="onChangeAlertOnNewComment">
-    <label class="custom-control-label" for="notificationUnderMyComment">Receive notification under my comment.</label>
+<div class="form-check form-switch">
+    <input class="form-check-input" type="checkbox" id="notificationUnderMyComment" v-model="alertOnNewComment" @change="onChangeAlertOnNewComment">
+    <label class="form-check-label" for="notificationUnderMyComment">Receive notification under my comment.</label>
 </div>
 <script>
     const mixin = {
@@ -30,13 +30,13 @@
             onChangeAlertOnNewPost() {
                 console.log(this.$data.alertOnNewPost);
                 this.onProfileUpdateSubmit({
-                    'notify_post': this.$data.alertOnNewPost ? "Y" : "N"
+                    [post_notification_prefix]: this.$data.alertOnNewPost ? "Y" : "N"
                 })
             },
             onChangeAlertOnNewComment() {
                 console.log(this.$data.alertOnNewComment);
                 this.onProfileUpdateSubmit({
-                    'notify_comment': this.$data.alertOnNewComment ? "Y" : "N"
+                    [comment_notification_prefix]: this.$data.alertOnNewComment ? "Y" : "N"
                 })
             }
         }

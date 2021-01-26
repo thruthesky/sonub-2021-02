@@ -1,3 +1,6 @@
+const post_notification_prefix = 'notifyPost';
+const comment_notification_prefix = 'notifyComment';
+
 
 
 const AttributeBinding = {

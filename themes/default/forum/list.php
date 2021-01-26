@@ -7,13 +7,13 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
     <a class="btn btn-success" href="/?page=forum/edit&category=<?php echo $category ?>">Create</a>
 </div>
 <div>
-    <div class="custom-control custom-switch">
-        <input type="checkbox" class="custom-control-input" id="notificationUnderMyPost" v-model="alertOnNewPost" @change="onChangeAlertOnNewPost">
-        <label class="custom-control-label" for="notificationUnderMyPost">Notification on New Post</label>
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="notificationUnderMyPost"  v-model="alertOnNewPost" @change="onChangeAlertOnNewPost">
+        <label class="form-check-label" for="notificationUnderMyPost">Notification on New Post</label>
     </div>
-    <div class="custom-control custom-switch">
-        <input type="checkbox" class="custom-control-input" id="notificationUnderMyComment" v-model="alertOnNewPostAndComment" @change="onChangeAlertOnNewComment">
-        <label class="custom-control-label" for="notificationUnderMyComment">Notification on New Post and Comment</label>
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="notificationUnderMyComment" v-model="alertOnNewComment" @change="onChangeAlertOnNewComment">
+        <label class="form-check-label" for="notificationUnderMyComment">Notification on New Comment</label>
     </div>
 </div>
 <hr>
@@ -39,34 +39,35 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
     const category = "<?php echo $category ?>";
     const mixin = {
         created() {
-            console.log('settings.created!');
+            console.log('list.created!');
         },
         mounted() {
-            console.log('settings.mounted!');
-            this.$data.alertOnNewPost = this.$data.user['notify_post_' + category] === 'Y';
-            this.$data.alertOnNewPostAndComment = this.$data.user['notify_post_and_comment_' + category] === 'Y';
+            console.log('list.mounted!');
+            this.$data.alertOnNewPost = this.$data.user[post_notification_prefix + category] === 'Y';
+            this.$data.alertOnNewComment = this.$data.user[comment_notification_prefix + category] === 'Y';
         },
         data() {
             return {
                 alertOnNewPost: false,
-                alertOnNewPostAndComment:  false,
+                alertOnNewComment:  false,
             }
         },
         methods: {
             onChangeAlertOnNewPost() {
-                const data = {};
-                data["notify_post_" + category] = this.$data.alertOnNewPost ? "Y" : "N"
-                console.log(data);
+                const data = {
+                    [post_notification_prefix + category]:this.$data.alertOnNewPost ? "Y" : "N"
+                };
                 this.onProfileUpdateSubmit(data);
             },
             onChangeAlertOnNewComment() {
-                const data = {};
-                data["notify_post_and_comment_" + category] =  this.$data.alertOnNewPostAndComment ? "Y" : "N";
-                console.log('this.$data.alertOnNewPost', this.$data.alertOnNewPost);
-                if ( this.$data.alertOnNewPost === false &&  this.$data.alertOnNewPostAndComment === "Y") {
-                    data["notify_post_" + category] =  "Y";
-                }
-                console.log(data);
+                const data = {
+                    [comment_notification_prefix + category]: this.$data.alertOnNewComment ? "Y" : "N"
+                };
+//                data[comment_notification_prefix + category] =  this.$data.alertOnNewComment ? "Y" : "N";
+
+//                if ( this.$data.alertOnNewPost === false &&  this.$data.alertOnNewComment === true) {
+//                    data[post_notification_prefix + category] =  "Y";
+//                }
                 this.onProfileUpdateSubmit(data);
             }
         }
