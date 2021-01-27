@@ -6,6 +6,7 @@ $post_ID = $arr[1];
 //$post = get_post($arr[1]);
 
 $post = post_response($post_ID);
+$category =  get_the_category($post_ID)[0]->slug;
 $comments = $post['comments'];
 
 ?>
@@ -19,8 +20,8 @@ $comments = $post['comments'];
 
     <!-- TODO: MINE BUTTONS -->
     <div>
-        <a class="btn btn-success mr-3" href="/?page=forum/edit&ID=<?php echo $post_ID ?>">Edit</a>
-        <button class="btn btn-danger" @click="onPostDelete('<?php echo $post_ID ?>', '<?php echo get_the_category($post_ID)[0]->slug ?>')">
+        <a class="btn btn-success mr-3" href="/?page=forum/edit&category=<?php echo $category ?>&ID=<?php echo $post_ID ?>">Edit</a>
+        <button class="btn btn-danger" @click="onPostDelete('<?php echo $post_ID ?>', '<?php echo $category ?>')">
             Delete
         </button>
     </div>

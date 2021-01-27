@@ -39,12 +39,9 @@ function fileUpload(file, uploadProgress, successCallback, errorCallback) {
 
   const formData = new FormData();
 
-    console.log(file.type);
-
   formData.append("userfile", file);
   formData.append("session_id", app.sessionId());
   formData.append("route", "file.upload");
-
 
   const apiUrl = window.location.origin + "/wp-content/themes/withcenter-backend-v3/api/index.php";
 
