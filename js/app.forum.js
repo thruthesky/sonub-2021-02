@@ -3,6 +3,8 @@ const forumMixin = {
     data() {
         return {
             commentEditForm: {},
+            replyNo: 0,
+            editNo: 0,
         };
     },
     methods: {
@@ -113,4 +115,49 @@ const forumMixin = {
             el.style.display = display;
         },
     },
-}
+};
+
+
+
+const commentForm = {
+    props: ['comment_id', 'comment_parent', 'comment_content', 'comment_post_id'],
+    template: '<form @submit.prevent="onSubmit"> parent comment id: {{ comment_ID }}' +
+        '<i class="fa fa-camera fs-xl"></i>' +
+        '<input type="text" v-model="comment_content">' +
+        '<button class="btn btn-secondary ml-2" type="button" @click="hide" v-if="canShow">Cancel</button>' +
+        '<button class="btn btn-success ml-2" type="submit">Submit</button>' +
+        '</form>',
+    data() {
+        return {
+            comment_ID: this.comment_id,
+            comment_parent: this.comment_parent,
+            comment_post_ID: this.comment_post_id,
+            comment_content: this.comment_content,
+        };
+    },
+    computed: {
+        canShow() {
+            return !!this.$data.comment_ID;
+        }
+    },
+    watch: {
+
+    },
+    methods: {
+        hide() {
+            this.$root.replyNo = 0;
+            this.$root.editNo = 0;
+        },
+        onSubmit() {
+            request('forum.editComment', this.$data, refresh, app.error);
+        },
+        show() {
+            console.log('show');
+        }
+    },
+};
+addComponent('comment-form', commentForm);
+
+
+
+

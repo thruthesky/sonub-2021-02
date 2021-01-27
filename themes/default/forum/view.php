@@ -8,11 +8,6 @@ $post_ID = $arr[1];
 $post = post_response($post_ID);
 $comments = $post['comments'];
 
-
-
-
-
-
 ?>
 <hr>
 <article class="card border border-dark p-2 m-3">
@@ -32,12 +27,7 @@ $comments = $post['comments'];
 
     <hr>
 
-    <form class="d-flex" @submit.prevent="onCommentEditFormSubmit($event)">
-        <input type="hidden" name="comment_post_ID" value="<?php echo $post_ID ?>" />
-        <i class="fa fa-camera fs-xl"></i>
-        <input class="form-control" type="text" name="comment_content" placeholder="Input Comment" v-model="commentEditForm.comment_content" />
-        <button class="btn btn-success ml-2" type="submit" v-if="commentEditFormCanSubmit()">Submit</button>
-    </form>
+    <comment-form :comment_post_id="<?=$post_ID?>"></comment-form>
 
     <!-- TODO: Comment order -->
     <?php if (count($comments)) { ?>
@@ -57,7 +47,7 @@ $comments = $post['comments'];
                 $depth = $comment['depth'];
                 $files = $comment['files'];
             ?>
-                <!-- TODO: comment depth -->
+                <!-- TODO: comment sorting between brothers. -->
                 <div class="card p-2 mt-2 border border-dark" id="comment_<?php echo $comment_ID ?>" depth="<?=$depth?>">
                     ID: <?php echo $comment_ID ?> |
                     Author: <?php echo $comment_author ?>
@@ -67,36 +57,14 @@ $comments = $post['comments'];
 
                         <!-- TODO: MINE BUTTON -->
                         <div class="mt-2">
-                            <button class="btn btn-secondary mr-2" @click="toggleCommentReplyDisplay('<?php echo $comment_ID ?>', 'block')">Reply</button>
-                            <button class="btn btn-success mr-2" @click="toggleCommentEditDisplay('<?php echo $comment_ID ?>', 'none')">Edit</button>
+                            <button class="btn btn-secondary mr-2" @click="replyNo=<?=$comment_ID?>">Reply</button>
+                            <button class="btn btn-success mr-2" @click="editNo=<?=$comment_ID?>">Edit</button>
                             <button class="btn btn-danger" @click="onCommentDelete('<?php echo $comment_ID ?>')">DELETE</button>
                         </div>
                         <hr>
-
-                        <!-- Comment Reply form -->
-                        <form style="display: none;" @submit.prevent="onCommentEditFormSubmit($event)" id="comment_reply_<?php echo $comment_ID ?>">
-                            <input type="hidden" name="comment_post_ID" value="<?php echo $post_ID ?>" />
-                            <input type="hidden" name="comment_parent" value="<?php echo $comment_ID ?>" />
-                            <input class="form-control" type="text" placeholder="Input Reply"  v-model="commentEditForm.comment_content" />
-                            <div class="mt-2">
-                                <button type="button" class="btn btn-danger" @click="toggleCommentReplyDisplay('<?php echo $comment_ID ?>', 'none')">Cancel</button>
-                                <button class="btn btn-success ml-2" type="submit">Submit</button>
-                            </div>
-                        </form>
+                        <comment-form :comment_post_id="<?=$post_ID?>" :comment_parent="<?=$comment_ID?>" v-if="replyNo == <?=$comment_ID?>"></comment-form>
                     </div>
-
-                    <!-- Comment edit form -->
-                    <div style="display: none;" id="comment_content_edit_<?php echo $comment_ID ?>">
-                        <form @submit.prevent="onCommentEditFormSubmit($event)">
-                            <input type="hidden" name="comment_post_ID" value="<?php echo $post_ID ?>" />
-                            <input type="hidden" name="comment_ID" value="<?php echo $comment_ID ?>" />
-                            <input class="form-control" type="text" name="comment_content" id="comment_content" value="<?php echo $comment_content ?>" />
-                            <div class="mt-2">
-                                <button type="button" class="btn btn-danger" @click="toggleCommentEditDisplay('<?php echo $comment_ID ?>', 'block')">Cancel</button>
-                                <button class="btn btn-success ml-2" type="submit">Submit</button>
-                            </div>
-                        </form>
-                    </div>
+                    <comment-form :comment_post_id="<?=$post_ID?>" :comment_id="<?=$comment_ID?>" :comment_content='"<?=htmlentities2(str_replace('"', "'", $comment_content))?>"' v-if="editNo == <?=$comment_ID?>"></comment-form>
                 </div>
             <?php } ?>
         </section>

@@ -380,6 +380,8 @@ NOTE: style 태그를 여기서 뺀 다음, template 다음으로 밀어 넣는�
 
 
 
+
+
 ## Extension - Write your own route
 
 * When you need to write your own routes, write your route class under `ext` folder.
@@ -495,6 +497,13 @@ displayTestSummary();
   * Second, load the route class file and test route methods.
   * Lastly, test as client.
 
+
+
+## Notable Javascript Codes
+
+### Debouncer in app.js
+
+* See `debounce` in app.js
 
 
 

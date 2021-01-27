@@ -4,6 +4,7 @@
 var _inDebounce = {};
 
 const AttributeBinding = {
+    components: getComponents(),
     data() {
         return {
             // @todo name it registerForm,

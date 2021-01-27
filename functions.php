@@ -244,3 +244,27 @@ function build_version() {
     if (is_localhost()) return time();
     else return '1';
 }
+
+/**
+ * This will insert some javascript inside <HEAD> tags.
+ *
+ * Put javascript codes that are mandatory for the app.
+ *
+ * @todo always minify the javascript code.
+ */
+function insert_initial_javascript() {
+    $js = <<<EOJ
+<script>
+const _components = {};
+function addComponent(name, obj) {
+    _components[name] = obj;
+}
+function getComponents() {
+    return _components;
+}
+</script>
+EOJ;
+
+    echo '<script>const _components={};function addComponent(n,o){_components[n]=o}function getComponents(){return _components}</script>';
+
+}
