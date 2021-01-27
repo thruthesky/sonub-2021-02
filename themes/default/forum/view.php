@@ -8,11 +8,6 @@ $post_ID = $arr[1];
 $post = post_response($post_ID);
 $comments = $post['comments'];
 
-
-
-
-
-
 ?>
 <hr>
 <article class="card border border-dark p-2 m-3">
@@ -34,10 +29,15 @@ $comments = $post['comments'];
 
     <form class="d-flex" @submit.prevent="onCommentEditFormSubmit($event)">
         <input type="hidden" name="comment_post_ID" value="<?php echo $post_ID ?>" />
-        <i class="fa fa-camera fs-xl"></i>
+        <div style="overflow: hidden;" class="position-relative mr-2">
+            <input style="opacity: 0" class="position-absolute" type="file" name="file" @change="onFileChange($event)" />
+            <i class="fa fa-camera fs-xl"></i>
+        </div>
         <input class="form-control" type="text" name="comment_content" placeholder="Input Comment" v-model="commentEditForm.comment_content" />
         <button class="btn btn-success ml-2" type="submit" v-if="commentEditFormCanSubmit()">Submit</button>
     </form>
+
+    Upload Progress : {{ uploadProgress }}
 
     <!-- TODO: Comment order -->
     <?php if (count($comments)) { ?>
@@ -58,7 +58,7 @@ $comments = $post['comments'];
                 $files = $comment['files'];
             ?>
                 <!-- TODO: comment depth -->
-                <div class="card p-2 mt-2 border border-dark" id="comment_<?php echo $comment_ID ?>" depth="<?=$depth?>">
+                <div class="card p-2 mt-2 border border-dark" id="comment_<?php echo $comment_ID ?>" depth="<?= $depth ?>">
                     ID: <?php echo $comment_ID ?> |
                     Author: <?php echo $comment_author ?>
 
@@ -74,10 +74,12 @@ $comments = $post['comments'];
                         <hr>
 
                         <!-- Comment Reply form -->
-                        <form style="display: none;" @submit.prevent="onCommentEditFormSubmit($event)" id="comment_reply_<?php echo $comment_ID ?>">
+                        <form @submit.prevent="onCommentEditFormSubmit($event)">
+                            <!-- always present -->
                             <input type="hidden" name="comment_post_ID" value="<?php echo $post_ID ?>" />
+                            <!-- only when reply -->
                             <input type="hidden" name="comment_parent" value="<?php echo $comment_ID ?>" />
-                            <input class="form-control" type="text" placeholder="Input Reply"  v-model="commentEditForm.comment_content" />
+                            <input class="form-control" type="text" placeholder="Input Comment" v-model="commentEditForm.comment_content" />
                             <div class="mt-2">
                                 <button type="button" class="btn btn-danger" @click="toggleCommentReplyDisplay('<?php echo $comment_ID ?>', 'none')">Cancel</button>
                                 <button class="btn btn-success ml-2" type="submit">Submit</button>

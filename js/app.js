@@ -80,7 +80,6 @@ const AttributeBinding = {
                 // console.log(re);
             }, this.error);
         },
-
         sendPushNotification() {
             // console.log(this.$data.pushNotification.title);
             // if (this.$data.pushNotification.title === void 0 && this.$data.pushNotification.title === void 0) return alert('Title or Body is missing');
