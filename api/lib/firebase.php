@@ -63,7 +63,6 @@ function sendMessageToTopic($topic, $title, $body, $imageUrl="https://philgo.com
         'data' => $data,
     ]);
 
-
     return getMessaging()->send($message);
 }
 

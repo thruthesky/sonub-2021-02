@@ -54,21 +54,33 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
         },
         methods: {
             onChangeAlertOnNewPost() {
-                const data = {
-                    [config.post_notification_prefix + category]:this.$data.alertOnNewPost ? "Y" : "N"
-                };
-                this.onProfileUpdateSubmit(data);
+                const topic = config.post_notification_prefix + category;
+                const notificationRoute = this.$data.alertOnNewPost === true
+                    ? "notification.subscribeTopic"
+                    : "notification.unsubscribeTopic";
+                request(notificationRoute, {topic: topic}, function () {
+                    const data = {
+                        [topic]:app.alertOnNewPost ? "Y" : "N"
+                    };
+                    app.onProfileUpdateSubmit(data);
+                }, this.error);
             },
             onChangeAlertOnNewComment() {
-                const data = {
-                    [config.comment_notification_prefix + category]: this.$data.alertOnNewComment ? "Y" : "N"
-                };
-//                data[comment_notification_prefix + category] =  this.$data.alertOnNewComment ? "Y" : "N";
-
-//                if ( this.$data.alertOnNewPost === false &&  this.$data.alertOnNewComment === true) {
-//                    data[post_notification_prefix + category] =  "Y";
-//                }
-                this.onProfileUpdateSubmit(data);
+                const topic = config.comment_notification_prefix + category;
+                const notificationRoute = this.$data.alertOnNewComment === true
+                    ? "notification.subscribeTopic"
+                    : "notification.unsubscribeTopic";
+                request(notificationRoute, {topic: topic}, function () {
+                    const data = {
+                        [topic]: app.alertOnNewComment ? "Y" : "N"
+                    };
+//                    data[comment_notification_prefix + category] =  this.$data.alertOnNewComment ? "Y" : "N";
+//
+//                    if ( this.$data.alertOnNewPost === false &&  this.$data.alertOnNewComment === true) {
+//                        data[post_notification_prefix + category] =  "Y";
+//                    }
+                    app.onProfileUpdateSubmit(data);
+                }, this.error);
             }
         }
     }

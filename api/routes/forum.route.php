@@ -84,6 +84,10 @@ class ForumRoute
                 }
                 return ERROR_COMMENT_EDIT . ':' . $msg;
             }
+            /**
+             * NEW COMMENT IS CREATED ==>  Send notification to forum comment subscriber
+             */
+            onCommentCreateSendNotification(in());
         } else {
             if (!is_my_comment(in('comment_ID'))) return ERROR_NOT_YOUR_COMMENT;
             /**
@@ -108,6 +112,7 @@ class ForumRoute
 
         return comment_response($comment_id);
     }
+
 
     public function deleteComment()
     {

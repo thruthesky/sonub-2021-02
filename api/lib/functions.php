@@ -1741,6 +1741,15 @@ function api_edit_post($in) {
 
     update_post_properties($ID, $in);
 
+    // NEW POST IS CREATED => Send notification to forum subscriber
+    if (!isset($in['ID'])) {
+        $title = $in['post_title'];
+        $body = $in['post_content'];
+        $post = get_post($ID, ARRAY_A);
+        $slug = get_first_slug($post['post_category']);
+        sendMessageToTopic(NOTIFY_POST . $slug, $title, $body, '', $post['guid'], $data = ['sender' => login('ID')]);
+    }
+
     return post_response($ID);
 }
 
@@ -1915,3 +1924,161 @@ function is_localhost() {
     }
     return $localhost;
 }
+
+
+function onCommentCreateSendNotification($in) {
+    /**
+     * 1) check if post owner want to receive message from his post
+     * 2) get notification comment ancestors
+     * 3) make it unique
+     * 4) get topic subscriber
+     * 5) remove all subscriber from token users
+     * 6) get users token
+     * 7) send batch 500 is maximum
+     */
+
+    /**
+     *  get all the user id of post and comment ancestors. - name as 'token users'
+     *  get all the user id of topic subscribers. - named as 'topic subscribers'.
+     *  remove users of 'topic subscribers' from 'token users'. - with array_diff($array1, $array2) return the array1 that has no match from array2
+     *
+     */
+
+    // 1 post owner
+    $post = get_post( $in['comment_post_ID'], ARRAY_A );
+    $token_users = [];
+    if ( !is_my_post( $post['post_author']) ) {
+        $notifyPostOwner = get_user_meta( $post['post_author'], NOTIFY_POST, true );
+        if ( $notifyPostOwner === 'Y' )  $token_users[] = $post['post_author'];   // check if this is needed since it will send via topic
+    }
+
+    //2 ancestors
+    $comment = get_comment( $comment_id );
+    if ( $comment->comment_parent ) {
+        $token_users = array_merge($token_users, getAncestors($comment->comment_ID));
+    }
+
+    // 3 unique
+    $token_users = array_unique( $token_users );
+
+    // 4 get topic subscriber
+    $slug = get_first_slug($post['post_category']);
+    $topic_subscribers = getForumSubscribers( $slug, NOTIFY_COMMENT);
+
+    // 5 remove all subscriber to token users
+    $token_users = array_diff($token_users, $topic_subscribers);
+
+
+    // 6 token
+    $tokens = getTokensFromUserIDs($token_users, NOTIFY_COMMENT);
+
+    //7 send notification to tokens and topic
+    $title              = $post['post_title'];
+    $body               = $in['comment_content'];
+
+
+    sendMessageToTopic(NOTIFY_COMMENT . $slug, $title, $body, '', $post['guid'], $data = ['sender' => login('ID')]);
+    sendMessageToTokens( $tokens, $title, $body,  '', $post['guid'], $data = json_encode(['sender' => login('ID')]));
+}
+
+function get_ancestor_tokens_for_push_notifications($comment_ID) {
+    $asc = $this->getAncestors($comment_ID);
+    return $this->getTokensFromUserIDs($asc);
+}
+
+
+/**
+ * @param array $ids
+ * @param null $filter 'notifyComment' || 'notifyPost'
+ * @return array
+ */
+function getTokensFromUserIDs($ids = [], $filter = null) {
+    $tokens = [];
+    foreach( $ids as $user_id ) {
+        $rows = $this->getUserTokens($user_id);
+        if ($filter) {
+            if ( get_user_meta($user_id, $filter, true) == 'Y' ) {
+                foreach( $rows as $token ) {
+                    $tokens[] = $token;
+                }
+            }
+        } else {
+            foreach( $rows as $token ) {
+                $tokens[] = $token;
+            }
+        }
+    }
+    return $tokens;
+}
+
+/**
+ * Returns an array of user ids that are in the path(tree) of comment hierarchy.
+ *
+ * @note it does not include the login user and it does not have duplicated user id.
+ *
+ * @param $comment_ID
+ *
+ * @return array
+ *
+ *
+ */
+function getAncestors( $comment_ID ) {
+
+    $comment = get_comment( $comment_ID );
+    $asc     = [];
+
+    while ( true ) {
+        $comment = get_comment( $comment->comment_parent );
+        if ( $comment ) {
+            if ( $comment->user_id == login( 'ID' ) ) {
+                continue;
+            }
+            $asc[] = $comment->user_id;
+        } else {
+            break;
+        }
+    }
+
+    $asc = array_unique( $asc );
+
+    return $asc;
+
+}
+
+function getUserTokens($user_ID) {
+    global $wpdb;
+    $rows =  $wpdb->get_results("SELECT token FROM " . PUSH_TOKENS ." WHERE user_ID=$user_ID", ARRAY_A);
+    $tokens = [];
+    foreach( $rows as $user ) {
+        $tokens[] = $user['token'];
+    }
+    return $tokens;
+}
+
+
+/**
+ * @param string $slug
+ * @param null $mode 'post' | 'comment'
+ * @return array
+ */
+function getForumSubscribers($slug = '', $mode = null ) {
+    $topic = $mode ? "meta_key='{$mode}{$slug}'" : "meta_key LIKE 'notify%{$slug}'";
+    global $wpdb;
+    $rows = $wpdb->get_results("SELECT user_id FROM wp_usermeta WHERE $topic AND meta_value='Y' ", ARRAY_A);
+    $ids = [];
+    foreach( $rows as $user ) {
+        $ids[] = $user['user_id'];
+    }
+    return $ids;
+}
+
+function getUserForumTopics($user_ID) {
+    global $wpdb;
+    $rows = $wpdb->get_results("SELECT meta_key FROM wp_usermeta WHERE meta_key LIKE 'notify%' AND meta_value='Y' AND user_id=$user_ID ", ARRAY_A);
+    $topics = [];
+    foreach( $rows as $user ) {
+        $topics[] = $user['meta_key'];
+    }
+    return $topics;
+}
+
