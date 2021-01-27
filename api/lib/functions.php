@@ -1979,7 +1979,8 @@ function onCommentCreateSendNotification($in) {
 
     //2 ancestors
     $comment = get_comment( $comment_id );
-    if ( $comment->comment_parent ) {
+
+    if ( $comment && $comment->comment_parent ) {
         $token_users = array_merge($token_users, getAncestors($comment->comment_ID));
     }
 
@@ -2003,7 +2004,7 @@ function onCommentCreateSendNotification($in) {
 
 
     sendMessageToTopic(NOTIFY_COMMENT . $slug, $title, $body, '', $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
-    sendMessageToTokens( $tokens, $title, $body,  '', $post['guid'], $data = json_encode(['sender' => wp_get_current_user()->ID]));
+    if ($tokens) sendMessageToTokens( $tokens, $title, $body,  '', $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
 }
 
 function get_ancestor_tokens_for_push_notifications($comment_ID) {
@@ -2051,6 +2052,7 @@ function getAncestors( $comment_ID ) {
 
     $comment = get_comment( $comment_ID );
     $asc     = [];
+
 
     while ( true ) {
         $comment = get_comment( $comment->comment_parent );
