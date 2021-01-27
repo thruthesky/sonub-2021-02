@@ -1965,12 +1965,18 @@ function update_category($in) {
             return $re->get_error_message();
         }
     } else {
-        $re = update_term_meta($in['term_id'], $in['name'], $in['value']);
+        $re = update_term_meta($in['cat_ID'], $in['name'], $in['value']);
         if ( is_wp_error($re) ) {
             return $re->get_error_message();
         }
     }
 
     $ret = get_category($in['cat_ID'])->to_array();
+
+    $metas = get_term_meta($in['cat_ID'], '', true);
+    foreach($metas as $key => $values) {
+        $ret[$key] = $values[0];
+    }
+
     return $ret;
 }

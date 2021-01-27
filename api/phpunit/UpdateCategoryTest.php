@@ -33,7 +33,13 @@ final class UpdateCategoryTest extends TestCase {
         self::assertTrue($re['category_description'] === $desc);
     }
 
-
+    public function testUpdateMeta() {
+        $re = update_category(['cat_ID' => 1, 'name' => 'key1', 'value' => 'value1']);
+        self::assertTrue($re['key1'] === 'value1');
+        $re = update_category(['cat_ID' => 1, 'name' => 'a', 'value' => 'Apple']);
+        self::assertTrue($re['a'] === 'Apple');
+    }
+    
 }
 
 
