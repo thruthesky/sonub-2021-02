@@ -120,14 +120,15 @@ const forumMixin = {
       if (!file) return;
 
       //   console.log("files", files);
-
+      _this = this;
       fileUpload(
         file,
         function (progress) {
-          this.$data.uploadProgress = progress;
+          _this.$data.uploadProgress = progress;
         },
         function (data) {
           console.log(data);
+          _this.$data.uploadProgress = 0;
           // TODO: add to post or comment
         },
         this.error
