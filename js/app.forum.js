@@ -124,11 +124,11 @@ const forumMixin = {
       fileUpload(
         file,
         function (progress) {
-          console.log(progress);
-          //   this.$data.uploadProgress = progress;
+          this.$data.uploadProgress = progress;
         },
         function (data) {
           console.log(data);
+          // TODO: add to post or comment
         },
         this.error
       );
