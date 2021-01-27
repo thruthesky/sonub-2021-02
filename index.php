@@ -15,6 +15,7 @@ $script = get_theme_script();
     <link rel="stylesheet" href="<?=THEME_URL?>/css/index.css?v=<?=build_version()?>">
     <?php load_theme_css($script); ?>
     <?php live_reload_js() ?>
+    <?php insert_initial_javascript() ?>
 </head>
 <body>
 <section id="app" class="container">
