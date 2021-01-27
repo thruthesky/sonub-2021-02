@@ -4,7 +4,6 @@
 var _inDebounce = {};
 
 const AttributeBinding = {
-
     data() {
         return {
             // @todo name it registerForm,
@@ -25,7 +24,6 @@ const AttributeBinding = {
         console.log('mounted!');
     },
     methods: {
-
         /**
          * Debouncing functions
          *
