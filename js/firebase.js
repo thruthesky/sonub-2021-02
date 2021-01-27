@@ -69,6 +69,9 @@ messaging.onMessage(function(payload) {
     //     image: 'https://c.disquscdn.com/uploads/users/34896/2802/avatar92.jpg'
     // };
     console.log('onMessage::',payload);
+    console.log('app.$data.user::',app.$data.user);
     const notification = payload.notification;
+    const data = payload.data ? payload.data : {};
+    if (app.loggedIn() && app.$data.user.ID === data['sender']) return;
     app.alert(notification.title,notification.body);
 });

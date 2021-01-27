@@ -1749,7 +1749,7 @@ function api_edit_post($in) {
         $body = $in['post_content'];
         $post = get_post($ID, ARRAY_A);
         $slug = get_first_slug($post['post_category']);
-        sendMessageToTopic(NOTIFY_POST . $slug, $title, $body, '', $post['guid'], $data = ['sender' => login('ID')]);
+        sendMessageToTopic(NOTIFY_POST . $slug, $title, $body, '', $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
     }
 
     return post_response($ID);
@@ -2002,8 +2002,8 @@ function onCommentCreateSendNotification($in) {
     $body               = $in['comment_content'];
 
 
-    sendMessageToTopic(NOTIFY_COMMENT . $slug, $title, $body, '', $post['guid'], $data = ['sender' => login('ID')]);
-    sendMessageToTokens( $tokens, $title, $body,  '', $post['guid'], $data = json_encode(['sender' => login('ID')]));
+    sendMessageToTopic(NOTIFY_COMMENT . $slug, $title, $body, '', $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
+    sendMessageToTokens( $tokens, $title, $body,  '', $post['guid'], $data = json_encode(['sender' => wp_get_current_user()->ID]));
 }
 
 function get_ancestor_tokens_for_push_notifications($comment_ID) {
@@ -2150,4 +2150,21 @@ function update_category($in) {
     }
 
     return $ret;
+}
+
+
+/**
+ * Returns the slug of first category of the post categories
+ * @param $categories
+ *
+ * @return string
+ */
+function get_first_slug($categories) {
+    // get post slug as category name and pass
+    if (count($categories)) {
+        $cat = get_category($categories[0]);
+        return $cat->slug;
+    } else {
+        return '';
+    }
 }
