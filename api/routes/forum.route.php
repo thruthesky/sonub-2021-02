@@ -135,14 +135,25 @@ class ForumRoute
     }
 
 
-    public function setCategoryMeta($in)
+    public function updateCategory($in)
     {
-        if (!isset($in['category_ID'])) return "ERROR_EMPTY_CATEGORY_ID";
-        if (!isset($in['meta_key'])) return "ERROR_EMPTY_META_KEY";
-        if (!isset($in['meta_value'])) return "ERROR_EMPTY_META_VALUE";
 
-        $re = update_term_meta($in['category_ID'], $in['meta_key'], $in['meta_value']);
-        if ($re == false) return "ERROR_EDITTING_CATEGORY_META";
+        if (!isset($in['cat_ID'])) return ERROR_EMPTY_TERM_ID;
+        if (!isset($in['name'])) return ERROR_EMPTY_NAME;
+        if (!isset($in['value'])) return ERROR_EMPTY_VALUE;
+
+        if ( in_array($in['name'], ['cat_name', 'category_description']) ) {
+            $re = wp_insert_category(['cat_ID' => $in['cat_ID'], $in['name'] => $in['value']], true);
+            if ( is_wp_error($re) ) {
+                return $re->get_error_message();
+            }
+        } else {
+            $re = update_term_meta($in['term_id'], $in['name'], $in['value']);
+            if ( is_wp_error($re) ) {
+                return $re->get_error_message();
+            }
+        }
+
         return $in;
     }
 }
