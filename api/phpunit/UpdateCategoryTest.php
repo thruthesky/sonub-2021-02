@@ -39,7 +39,7 @@ final class UpdateCategoryTest extends TestCase {
         $re = update_category(['cat_ID' => 1, 'name' => 'a', 'value' => 'Apple']);
         self::assertTrue($re['a'] === 'Apple');
     }
-    
+
 }
 
 
