@@ -1,5 +1,7 @@
 <?php
 
+require_once(ABSPATH . 'wp-admin/includes/taxonomy.php');
+
 /**
  * JSON input from Client
  * @return mixed|null
@@ -1931,4 +1933,44 @@ function is_localhost() {
         else if ( strpos($ip, '192.168.') !== false) $localhost = true;
     }
     return $localhost;
+}
+
+
+/**
+ *
+ * @param $in
+ *  - $in['cat_ID'] is the category term id
+ *  - $in['name'] is the category property to update.
+ *      - 'cat_name' and 'category_description' are predefined for category name(or title) and description.
+ *      - And any name & value can be saved as property and value
+ *  - $in['value'] is the value.
+ *
+ * @return mixed
+ *  - error code on error.
+ *  - Array of WP_Term Object of the category term object. @see https://developer.wordpress.org/reference/classes/wp_term/
+ */
+function update_category($in) {
+
+    if (!isset($in['cat_ID'])) return ERROR_EMPTY_CATEGORY_ID;
+    $cat = get_category($in['cat_ID']);
+    if ( $cat == null ) return ERROR_CATEGORY_NOT_EXIST_BY_THAT_ID;
+
+    if (!isset($in['name'])) return ERROR_EMPTY_NAME;
+    if (!isset($in['value'])) return ERROR_EMPTY_VALUE;
+
+
+    if ( in_array($in['name'], ['cat_name', 'category_description']) ) {
+        $re = wp_update_category(['cat_ID' => $in['cat_ID'], $in['name'] => $in['value']], true);
+        if ( is_wp_error($re) ) {
+            return $re->get_error_message();
+        }
+    } else {
+        $re = update_term_meta($in['term_id'], $in['name'], $in['value']);
+        if ( is_wp_error($re) ) {
+            return $re->get_error_message();
+        }
+    }
+
+    $ret = get_category($in['cat_ID'])->to_array();
+    return $ret;
 }
