@@ -161,7 +161,7 @@ function get_theme_script_path($theme, $page) {
 		$script = THEME_DIR . "/themes/default/$page.php";
 	}
 	if ( !file_exists($script) ) {
-		$script = get_error_script('File not found', 'The file you are referring does not exists on server');
+		$script = get_error_script('File not found', "file: $script<br>" . 'The file you are referring does not exists on server');
 	}
 	return $script;
 }

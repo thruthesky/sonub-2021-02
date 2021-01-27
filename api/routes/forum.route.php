@@ -140,14 +140,8 @@ class ForumRoute
     }
 
 
-    public function setCategoryMeta($in)
+    public function updateCategory($in)
     {
-        if (!isset($in['category_ID'])) return "ERROR_EMPTY_CATEGORY_ID";
-        if (!isset($in['meta_key'])) return "ERROR_EMPTY_META_KEY";
-        if (!isset($in['meta_value'])) return "ERROR_EMPTY_META_VALUE";
-
-        $re = update_term_meta($in['category_ID'], $in['meta_key'], $in['meta_value']);
-        if ($re == false) return "ERROR_EDITTING_CATEGORY_META";
-        return $in;
+        return update_category($in);
     }
 }
