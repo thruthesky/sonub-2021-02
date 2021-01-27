@@ -18,7 +18,7 @@ d($cat);
     <tbody>
     <tr>
         <td>Title</td>
-        <td><input name="name" value="<?=$cat->name?>"></td>
+        <td><input name="name" value="<?=$cat->name?>" @keyup="debounce(updateName, 500, 'name')"></td>
     </tr>
     <tr>
         <td>Post list under view page</td>
@@ -26,7 +26,7 @@ d($cat);
     </tr>
     <tr>
         <td>No of posts per page</td>
-        <td><input type="text"></td>
+        <td><input type="text" @keyup="debounce(updateNoPosts, 500, 'no')"></td>
     </tr>
     <tr>
         <td>No of pages on navigator</td>
@@ -34,3 +34,26 @@ d($cat);
     </tr>
     </tbody>
 </table>
+
+<script>
+
+
+
+
+
+
+    const mixin = {
+
+        created() {
+
+        },
+        methods: {
+            updateName() {
+                console.log("update category name(title)")
+            },
+            updateNoPosts() {
+                console.log("update no posts...");
+            }
+        }
+    }
+</script>

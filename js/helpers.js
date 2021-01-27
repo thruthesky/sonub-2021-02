@@ -74,3 +74,4 @@ function move(uri) {
 function refresh() {
   location.reload();
 }
+

@@ -178,6 +178,12 @@ node watch specific file
 
 # Development Guideline
 
+## Modules & Components
+
+
+* It uses full build of `lodash.js`.
+  * Be sure where it is loaded, so you will know where to write lodash codes. You may see undefiend error if you use `_` before loading lodash.
+
 ## Theme
 
 * Theme folder is only for themes. Theme folder does not have any information or meta data(files) that are related in API.
