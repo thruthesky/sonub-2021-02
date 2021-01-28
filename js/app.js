@@ -13,6 +13,7 @@ const AttributeBinding = {
             // @todo change it to loginForm,
             login: {},
             user: null,
+            token: null
         }
     },
     created() {
@@ -58,9 +59,12 @@ const AttributeBinding = {
             return ! this.loggedIn();
         },
         onRegisterFormSubmit() {
-            console.log('register form submitted');
-            console.log(this.$data.register);
-            request('user.register', this.$data.register, this.setUser, this.error);
+            const data = Object.assign({}, this.$data.register);
+            if ( this.$data.token ) {
+                data['token'] = this.$data.token;
+            }
+            console.log("onRegisterFormSubmit::", data);
+            request('user.register', data, this.setUser, this.error);
         },
         onLoginFormSubmit() {
             request('user.login', this.$data.login, function(profile) {
@@ -103,6 +107,7 @@ const AttributeBinding = {
             alert(title + "\n" + body);
         },
         saveToken(token, topic = '') {
+            this.$data.token = token;
             request('notification.updateToken', { token: token, topic: topic }, function (re) {
                 // console.log(re);
             }, this.error);

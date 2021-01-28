@@ -439,7 +439,6 @@ function profileUpdate($in) {
 function register($in)
 {
 
-
     if (!isset($in['user_email'])) return ERROR_EMPTY_EMAIL;
     if (!isset($in['user_pass'])) return ERROR_EMPTY_PASSWORD;
     if (get_user_by('email', $in['user_email'])) return ERROR_EMAIL_EXISTS;
@@ -461,6 +460,16 @@ function register($in)
         return $user_ID->get_error_code();
     }
 
+    if ( isset($in['token'] ) ){
+        $token = $in['token'];
+        unset($in['token']);
+        $in[NOTIFY_POST] = "Y";
+        subscribeTopic(NOTIFY_POST, $token);
+        $in[NOTIFY_COMMENT] = "Y";
+        subscribeTopic(NOTIFY_COMMENT, $token);
+    }
+
+
     userUpdateMeta($user_ID, $in);
 
     wp_set_current_user($user_ID);
@@ -468,16 +477,11 @@ function register($in)
     return profile();
 }
 
-define('NOTIFY_POST', 'notifyPost');
-define('NOTIFY_COMMENT', 'notifyComment');
 
 function userUpdateMeta($user_ID, $data) {
     foreach ($data as $k => $v) {
         if (!in_array($k, USER_META_EXCEPTIONS)) {
             update_user_meta($user_ID, $k, $v);
-            if( strpos($k, NOTIFY_POST) === 0 || strpos($k, NOTIFY_COMMENT) === 0) {
-                // @TODO Subscribe here when meta was updated.
-            }
         }
     }
 }

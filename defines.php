@@ -207,3 +207,6 @@ define('TRANSLATIONS_TABLE', TABLE_PREFIX . 'translations');
 define('LANGUAGES', 'languages');
 
 
+
+define('NOTIFY_POST', 'notifyPost');
+define('NOTIFY_COMMENT', 'notifyComment');
