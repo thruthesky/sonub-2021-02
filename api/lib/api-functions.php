@@ -1938,7 +1938,7 @@ function is_localhost() {
 }
 
 
-function onCommentCreateSendNotification($in) {
+function onCommentCreateSendNotification($in, $comment_id) {
     /**
      * 1) check if post owner want to receive message from his post
      * 2) get notification comment ancestors
@@ -1995,8 +1995,8 @@ function onCommentCreateSendNotification($in) {
 }
 
 function get_ancestor_tokens_for_push_notifications($comment_ID) {
-    $asc = $this->getAncestors($comment_ID);
-    return $this->getTokensFromUserIDs($asc);
+    $asc = getAncestors($comment_ID);
+    return getTokensFromUserIDs($asc);
 }
 
 
@@ -2008,7 +2008,7 @@ function get_ancestor_tokens_for_push_notifications($comment_ID) {
 function getTokensFromUserIDs($ids = [], $filter = null) {
     $tokens = [];
     foreach( $ids as $user_id ) {
-        $rows = $this->getUserTokens($user_id);
+        $rows = getUserTokens($user_id);
         if ($filter) {
             if ( get_user_meta($user_id, $filter, true) == 'Y' ) {
                 foreach( $rows as $token ) {

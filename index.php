@@ -65,6 +65,7 @@ $script = get_theme_page_script_path();
 
     const config = {
         apiUrl: "<?=API_URL?>",
+        themeFolderName: "<?=THEME_FOLDER_NAME?>",
         firebaseConfig: {
             apiKey: "AIzaSyBqOcOhdonMMimHAt7Iq4aodp2KwQBc61M",
             authDomain: "nalia-app.firebaseapp.com",

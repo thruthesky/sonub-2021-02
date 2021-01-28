@@ -16,7 +16,7 @@ var messaging = firebase.messaging();
 /** Register your service worker here
  *  It starts listening to incoming push notifications from here
  */
-navigator.serviceWorker.register('/wp-content/themes/wigo/firebase-messaging-sw.js')
+navigator.serviceWorker.register('/wp-content/themes/' + config.themeFolderName + '/firebase-messaging-sw.js')
     .then(function (registration) {
         /** Since we are using our own service worker ie firebase-messaging-sw.js file */
         messaging.useServiceWorker(registration);

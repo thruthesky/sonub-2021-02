@@ -87,7 +87,7 @@ class ForumRoute
             /**
              * NEW COMMENT IS CREATED ==>  Send notification to forum comment subscriber
              */
-            onCommentCreateSendNotification(in());
+            onCommentCreateSendNotification(in(), $comment_id);
         } else {
             if (!is_my_comment(in('comment_ID'))) return ERROR_NOT_YOUR_COMMENT;
             /**

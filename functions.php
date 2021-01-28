@@ -315,3 +315,69 @@ function is_forum_page() {
     $page = get_theme_page_file_name();
     return strpos($page, 'forum') !== false;
 }
+
+
+
+/**
+ * Includes a widget script
+ *
+ * If a widget script exists under `cms/pages/[domain]/widgets` folder, then it will load this first.
+ * Or it will look for the widget script under `cms/widgets` folder.
+ *
+ * @param $name
+ *
+ * @return string
+ */
+$__widget_options = null;
+
+function set_widget_options( $options ) {
+    global $__widget_options;
+    $__widget_options = $options;
+}
+
+function get_widget_options() {
+    global $__widget_options;
+
+    return $__widget_options;
+}
+
+
+/**
+ * @param $name
+ * @param null $options
+ *
+ * @return string - PHP script path for widget loading
+ *
+ * @code
+ *  <?php include widget('social-login/icons/index') ?>
+ *  <?php include widget('social-login.icons') ?>
+ *  <?php include widget('social-login') ?>
+ * @endcode
+ */
+function widget( $name, $options = null ) {
+
+    set_widget_options( $options );
+
+    $domain = 'default';
+
+    if ( strpos( $name, '/' ) !== false ) {
+        $rel_path = "/widgets/$name.php";
+    } else if ( strpos( $name, '.' ) !== false ) {
+        $arr      = explode( '.', $name );
+        $rel_path = "/widgets/$arr[0]/$arr[1].php";
+    } else {
+        $rel_path = "/widgets/$name/$name.php";
+    }
+    $p = THEME_DIR . "/theme/$domain$rel_path";
+    if ( file_exists( $p ) ) {
+        $widget_path = $p;
+    } else {
+        $widget_path = THEME_DIR . $rel_path;
+    }
+
+
+    global $__included_files;
+    $__included_files[] = $widget_path;
+
+    return $widget_path;
+}
