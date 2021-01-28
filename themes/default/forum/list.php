@@ -83,11 +83,6 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
                     const data = {
                         [topic]: app.alertOnNewComment ? "Y" : "N"
                     };
-//                    data[comment_notification_prefix + category] =  this.$data.alertOnNewComment ? "Y" : "N";
-//
-//                    if ( this.$data.alertOnNewPost === false &&  this.$data.alertOnNewComment === true) {
-//                        data[post_notification_prefix + category] =  "Y";
-//                    }
                     app.onProfileMetaUpdateSubmit(data);
                 }, this.error);
             }

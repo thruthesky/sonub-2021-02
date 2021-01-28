@@ -45,7 +45,7 @@ class NotificationRoute {
         if ( !isset($in['topic']) ) return ERROR_EMPTY_TOPIC;
         if ( !isset($in['data'])) $in['data'] = [];
         if ( !isset($in['imageUrl'])) $in['imageUrl'] = '';
-        return sendMessageToTopic($in['topic'], $in['title'], $in['body'], $in['imageUrl'], $in['click_action'], $in['data']);
+        return sendMessageToTopic($in['topic'], $in['title'], $in['body'], $in['click_action'], $in['data'], $in['imageUrl']);
     }
 
 

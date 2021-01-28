@@ -66,7 +66,7 @@ const AttributeBinding = {
             if ( this.$data.token ) {
                 data['token'] = this.$data.token;
             }
-            request('user.register', this.$data.register, function(profile) {
+            request('user.register', data, function(profile) {
                 app.setUser(profile);
                 // todo: let the form controll to move to which page like 'home' or 'user/profile'.
                 move('/');
