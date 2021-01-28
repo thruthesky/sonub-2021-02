@@ -49,24 +49,42 @@ $comments = $post['comments'];
             ?>
                 <!-- TODO: comment sorting between brothers. -->
                 <div class="card p-2 mt-2 border border-dark" id="comment_<?php echo $comment_ID ?>" depth="<?=$depth?>">
-                    ID: <?php echo $comment_ID ?> |
-                    Author: <?php echo $comment_author ?>
-
-                    <div style="display: block;" id="comment_content_<?php echo $comment_ID ?>">
-                        Content: <?php echo $comment_content ?>
-
-                        <!-- TODO: MINE BUTTON -->
-                        <div class="mt-2">
-                            <button class="btn btn-secondary mr-2" @click="replyNo=<?=$comment_ID?>">Reply</button>
-                            <button class="btn btn-success mr-2" @click="editNo=<?=$comment_ID?>">Edit</button>
-                            <button class="btn btn-danger" @click="onCommentDelete('<?php echo $comment_ID ?>')">DELETE</button>
+                    <article :class="{ 'd-none': editNo == <?=$comment_ID?>, }">
+                        ID: <?php echo $comment_ID ?> |
+                        Author: <?php echo $comment_author ?>
+                        <div style="display: block;" id="comment_content_<?php echo $comment_ID ?>">
+                            Content: <?php echo $comment_content ?>
+                            <? if ( count($files) ) { ?>
+                                <div class="bg-light">
+                                    <? foreach($files as $file) { ?>
+                                        <div><img class="w-100" src="<?=$file['url']?>"></div>
+                                    <? } ?>
+                                </div>
+                            <? } ?>
+                            <!-- TODO: MINE BUTTON -->
+                            <div class="mt-2">
+                                <button class="btn btn-secondary mr-2" @click="replyNo=<?=$comment_ID?>">Reply</button>
+                                <button class="btn btn-success mr-2" @click="editNo=<?=$comment_ID?>">Edit</button>
+                                <button class="btn btn-danger" @click="onCommentDelete('<?php echo $comment_ID ?>')">DELETE</button>
+                            </div>
+                            <hr>
+                            <comment-form :comment_post_id="<?=$post_ID?>" :comment_parent="<?=$comment_ID?>" v-if="replyNo == <?=$comment_ID?>"></comment-form>
                         </div>
-                        <hr>
-                        <comment-form :comment_post_id="<?=$post_ID?>" :comment_parent="<?=$comment_ID?>" v-if="replyNo == <?=$comment_ID?>"></comment-form>
-                    </div>
-                    <comment-form :comment_post_id="<?=$post_ID?>" :comment_id="<?=$comment_ID?>" :comment_content='"<?=htmlentities2(str_replace('"', "'", $comment_content))?>"' v-if="editNo == <?=$comment_ID?>"></comment-form>
+                    </article>
+                    <comment-form
+                            :comment_post_id="<?=$post_ID?>"
+                            :comment_id="<?=$comment_ID?>"
+                            :comment_content='"<?=htmlentities2(str_replace('"', "'", $comment_content))?>"'
+                            :files='<?=json_encode($files)?>'
+                            v-if="editNo == <?=$comment_ID?>"></comment-form>
                 </div>
             <?php } ?>
         </section>
     <?php } ?>
 </article>
+
+<script>
+    later(function() {
+        app.editNo = 45;
+    })
+</script>

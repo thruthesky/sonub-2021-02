@@ -588,3 +588,16 @@ addComponent('comment-form', commentForm);
   * You may need to go for a heavy surgery of your code to make it perfectly.
   
 
+
+
+# Debugging Tips
+
+## For comment edit and upload
+
+* You can open the edit form when it is refreshed.
+
+```js
+    later(function() {
+        app.editNo = 45;
+    })
+```

@@ -16,6 +16,9 @@ const AttributeBinding = {
             pushNotification: {
                 sendTo: 'topic'
             },
+
+            // progress bar of file uploads. it is shared for all kinds of file(photo) upload including profile photo, forum photo.
+            uploadPercentage: 0,
         }
     },
     created() {
@@ -89,34 +92,65 @@ const AttributeBinding = {
                 app.alert('saved');
             }, this.error);
         },
+
         /**
-         *
+         * It's a wrapper of calling global fileUpload function.
          * @param event
+         * @param successCallback
          */
-        onProfilePhotoUpload(event) {
+        onFileUpload(event, successCallback) {
+
             if ( event.target.files.length === 0 ) {
                 console.log('User cancelled upload');
                 return;
             }
             const file = event.target.files[0];
-
+            app.uploadPercentage = 0;
             const options = {
                 onUploadProgress: function(progressEvent) {
-                    var percentCompleted = Math.round( (progressEvent.loaded * 100) / progressEvent.total );
-                    console.log('percentCompleted:', percentCompleted);
+                    app.uploadPercentage = Math.round( (progressEvent.loaded * 100) / progressEvent.total );
                 }
             };
+
+
             // Upload photo
             fileUpload(file, options, function(res) {
                 console.log('success: res.url: ', res.url);
+                successCallback(res);
+            }, this.error);
+        },
+
+        /**
+         *
+         * @param event
+         */
+        onProfilePhotoUpload(event) {
+            this.onFileUpload(event, function(res) {
                 // Update user profile photo url
                 request('user.profileUpdate', {'profile_photo_url': res.url}, function(profile) {
                     console.log('new profile: ', profile);
                     app.profile.profile_photo_url = profile.profile_photo_url;
                     app.user.profile_photo_url = profile.profile_photo_url;
                     app.setUser(profile);
+                    app.uploadPercentage = 0;
                 }, this.error);
-            }, this.error);
+            });
+        },
+        /**
+         * Forum file upload.
+         * @param event
+         */
+        onForumFileUpload(event){
+            this.onFileUpload(event, function(res) {
+                // Update user profile photo url
+                // request('user.profileUpdate', {'profile_photo_url': res.url}, function(profile) {
+                //     console.log('new profile: ', profile);
+                //     app.profile.profile_photo_url = profile.profile_photo_url;
+                //     app.user.profile_photo_url = profile.profile_photo_url;
+                //     app.setUser(profile);
+                //     app.uploadPercentage = 0;
+                // }, this.error);
+            });
         },
         logout() {
             localStorage.removeItem('user');
