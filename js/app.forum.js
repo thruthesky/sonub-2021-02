@@ -1,24 +1,16 @@
+/**
+ * @file app.forum.js
+ * @description forum related Vue.js 3 javascript. It can only be included on forum pages.
+ * @type {{data(): {commentEditForm: {}, replyNo: number, editNo: number}, methods: {onPostEditFormSubmit(event): void, commentEditFormCanSubmit(): forumMixin.methods.$data.commentEditForm.comment_content, onCommentEditFormSubmit(event): void, onFileUpload(), toggleCommentReplyDisplay(string, string): void, getFormData(event): {}, onPostDelete((string|number), string): (undefined), onCommentDelete((string|number)): (undefined), toggleCommentEditDisplay(string, string): void}}}
+ */
+
 const forumMixin = {
-  data() {
-    return {
-      uploadProgress: 0,
-      replyNo: 0,
-      editNo: 0,
-    };
-  },
-  methods: {
-    /**
-     * Transform form event data to an object.
-     *
-     * @param {event} event
-     */
-    getFormData(event) {
-      const formData = new FormData(event.target); // reference to form element
-      const data = {}; // need to convert it before using not with XMLHttpRequest
-      for (let [key, val] of formData.entries()) {
-        Object.assign(data, { [key]: val });
-      }
-      return data;
+    data() {
+        return {
+            commentEditForm: {},
+            replyNo: 0,
+            editNo: 0,
+        };
     },
     /**
      * create or update post.
