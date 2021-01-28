@@ -63,7 +63,7 @@ class ForumRoute
 
         if ( in('comment_post_ID') == null ) return ERROR_EMPTY_COMMENT_POST_ID;
 
-        if (in('comment_ID') == null) {
+        if (in('comment_ID') == null || in('comment_ID') == 'undefined') {
             $commentdata = [
                 'comment_post_ID' => in('comment_post_ID'),
                 'comment_content' => in('comment_content'),

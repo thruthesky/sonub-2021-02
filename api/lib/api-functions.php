@@ -1977,6 +1977,7 @@ function onCommentCreateSendNotification($comment_id, $in) {
     $token_users = array_diff($token_users, $topic_subscribers);
 
 
+
     // 6 token
     $tokens = getTokensFromUserIDs($token_users, NOTIFY_COMMENT);
 
@@ -1984,7 +1985,7 @@ function onCommentCreateSendNotification($comment_id, $in) {
     $title              = $post['post_title'];
     $body               = $in['comment_content'];
 
-    
+
     sendMessageToTopic(NOTIFY_COMMENT . $slug, $title, $body, $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
     if ($tokens) sendMessageToTokens( $tokens, $title, $body, $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
 }
@@ -2061,7 +2062,7 @@ function getAncestors( $comment_ID ) {
 
 function getUserTokens($user_ID) {
     global $wpdb;
-    $rows =  $wpdb->get_results("SELECT token FROM " . PUSH_TOKENS ." WHERE user_ID=$user_ID", ARRAY_A);
+    $rows =  $wpdb->get_results("SELECT token FROM " . PUSH_TOKEN_TABLE ." WHERE user_ID=$user_ID", ARRAY_A);
     $tokens = [];
     foreach( $rows as $user ) {
         $tokens[] = $user['token'];

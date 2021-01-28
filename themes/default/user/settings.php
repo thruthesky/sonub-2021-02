@@ -28,16 +28,24 @@
         },
         methods: {
             onChangeAlertOnNewPost() {
-                console.log(this.$data.alertOnNewPost);
-                this.onProfileMetaUpdateSubmit({
-                    [config.post_notification_prefix]: this.$data.alertOnNewPost ? "Y" : "N"
-                })
+                const notificationRoute = this.$data.alertOnNewPost === true
+                    ? "notification.subscribeTopic"
+                    : "notification.unsubscribeTopic";
+                request(notificationRoute, {topic: config.post_notification_prefix}, function () {
+                    app.onProfileMetaUpdateSubmit({
+                        [config.post_notification_prefix]: app.$data.alertOnNewPost ? "Y" : "N"
+                    });
+                }, this.error);
             },
             onChangeAlertOnNewComment() {
-                console.log(this.$data.alertOnNewComment);
-                this.onProfileMetaUpdateSubmit({
-                    [config.comment_notification_prefix]: this.$data.alertOnNewComment ? "Y" : "N"
-                })
+                const notificationRoute = this.$data.alertOnNewComment === true
+                    ? "notification.subscribeTopic"
+                    : "notification.unsubscribeTopic";
+                request(notificationRoute, {topic: config.post_notification_prefix}, function () {
+                    app.onProfileMetaUpdateSubmit({
+                        [config.post_notification_prefix]: app.$data.alertOnNewComment ? "Y" : "N"
+                    });
+                }, this.error);
             }
         }
     }
