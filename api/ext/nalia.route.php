@@ -95,6 +95,25 @@ class NaliaRoute {
         }
     }
 
+    /**
+     * @TODO 이전에 funtions.php 에 있었는데, 따로 떼 내었다. 이 부분 에러가 난다.
+     * gallery category 에서 나의 글 중, featured image url 을 가져오는데, 범용적이지 못하다. 훅으로 처리를 한다.
+     * @param $user_ID
+     * @return mixed|string
+     */
+    function get_gallery_featured_image_url($user_ID) {
+        $posts = get_posts(['category_name' => 'gallery', 'author' => $user_ID]);
+        if ( $posts && count($posts) > 0 ) {
+            $post = $posts[0];
+            $post_thumbnail_id = get_post_thumbnail_id($post);
+            if ($post_thumbnail_id) {
+                return wp_get_attachment_image_url($post_thumbnail_id, 'full');
+            }
+        }
+        return '';
+    }
+
+
 
 
 

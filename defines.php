@@ -125,7 +125,9 @@ define('ERROR_WRONG_PLATFORM', 'ERROR_WRONG_PLATFORM');
 
 
 // Do not save these properties on wp_usermea table
+// possible properties to be saved: first_name, last_name, gender, locale, nickname, profile_photo_url
 define('USER_META_EXCEPTIONS', [
+    'ID',
     'route',
     'session_id',
     'category',

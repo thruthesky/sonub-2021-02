@@ -22,7 +22,7 @@ define( 'API_DIR', THEME_DIR . '/api' );
 /**
  * Load API functions
  */
-require_once(API_DIR .'/lib/functions.php');
+require_once(API_DIR .'/lib/api-functions.php');
 
 
 /**
@@ -155,7 +155,14 @@ EOJ;
 }
 
 
-function get_theme_script_path($theme, $page) {
+/**
+ * Returns theme script file path from the input $page
+ * @param $theme
+ * @param $page
+ * @return string
+ *  - an example of return string: /Users/thruthesky/www/wordpress/wp-content/themes/sonub/themes/forum/view.php
+ */
+function get_theme_page_path($theme, $page) {
 	$script = THEME_DIR . "/themes/$theme/$page.php";
 	if ( !file_exists($script) ) {
 		$script = THEME_DIR . "/themes/default/$page.php";
@@ -167,17 +174,44 @@ function get_theme_script_path($theme, $page) {
 }
 
 /**
- * @return string
+ * Returns the theme script filename from the http request.
+ *
+ * Example of returns would be
+ *  - 'home' for home page or if there is no information from http request.
+ *  - 'user/register' for user register page.
+ *  - 'user/profile' for user profile page
+ *  - 'user/login' for user login page
+ *  - 'forum/view'
+ *  - 'forum/list'
  */
-function get_theme_script() {
-	if ( isset($_REQUEST['page']) ) {
-		$page = $_REQUEST['page'];
-	} else {
-		$uri = $_SERVER['REQUEST_URI'];
-		if ( empty($uri) || $uri == '/' ) $page = 'home';
-		else $page = 'forum/view';
-	}
-	return get_theme_script_path(DOMAIN_THEME, $page);
+function get_theme_page_file_name() {
+    if ( isset($_REQUEST['page']) ) {
+        $page = $_REQUEST['page'];
+    } else {
+        $uri = $_SERVER['REQUEST_URI'];
+        if ( empty($uri) || $uri == '/' ) $page = 'home';
+        else $page = 'forum/view';
+    }
+    return $page;
+}
+
+/**
+ * Returns a string to be used as HTML 'class' attribute name.
+ * @usage Use this as class name for the theme page.
+ *
+ * @return mixed|string|string[]
+ */
+function get_theme_page_class_name() {
+    return str_replace('/', '-', get_theme_page_file_name());
+}
+
+/**
+ * Returns theme script file path from the http request input
+ * @return string
+ *  - see get_theme_page_path()
+ */
+function get_theme_page_script_path() {
+	return get_theme_page_path(DOMAIN_THEME, get_theme_page_file_name());
 }
 
 /**
@@ -262,9 +296,22 @@ function addComponent(name, obj) {
 function getComponents() {
     return _components;
 }
+function later(fn) {
+    window.addEventListener('load', fn);
+}
 </script>
 EOJ;
 
-    echo '<script>const _components={};function addComponent(n,o){_components[n]=o}function getComponents(){return _components}</script>';
+    echo $js;
+//    echo '<script>const _components={};function addComponent(n,o){_components[n]=o}function getComponents(){return _components}</script>';
 
+}
+
+
+/**
+ * Returns true if the theme page is in forum related pages like 'forum/list', 'forum/view', or any other pages in forum.
+ */
+function is_forum_page() {
+    $page = get_theme_page_file_name();
+    return strpos($page, 'forum') !== false;
 }
