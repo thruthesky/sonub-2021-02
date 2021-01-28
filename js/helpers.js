@@ -78,3 +78,27 @@ function getLocalStorage(name) {
 }
 
 
+/**
+ * Serialize an class object. So, the class object can be used as an array object.
+ *
+ * @usage Use this to serialize FormData object.
+ * @param data
+ * @returns {{}}
+ */
+function serialize (data) {
+    let obj = {};
+    for (let [key, value] of data) {
+        obj[key] = value;
+    }
+    return obj;
+}
+
+/**
+ * Get data from form event.
+ *
+ * @param event
+ * @returns {{}}
+ */
+function serializeFormEvent(event) {
+    return serialize(new FormData(event.target));
+}
