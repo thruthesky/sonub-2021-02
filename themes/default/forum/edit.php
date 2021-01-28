@@ -25,5 +25,16 @@ if (isset($_REQUEST['category'])) {
         <label for="register_user_pass">Content</label>
         <input type="text" class="form-control" id="post_content" name="post_content" value="<?php echo $post != null ? $post->post_content : '' ?>">
     </div>
+    <file-upload-form></file-upload-form>
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+
+
+<script>
+    addComponent('file-upload-form', {
+        template: '<form>' +
+            '<input type="file">' +
+            '</form>'
+    });
+
+</script>

@@ -15,6 +15,7 @@ $script = get_theme_script();
     <link rel="stylesheet" href="<?=THEME_URL?>/css/index.css?v=<?=build_version()?>">
     <?php load_theme_css($script); ?>
     <?php live_reload_js() ?>
+    <? insert_initial_javascript() ?>
 </head>
 <body>
 <section id="app" class="container">
@@ -81,6 +82,7 @@ $script = get_theme_script();
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/vue@3.0.5/dist/vue.global.prod.js"></script>
 <script src="<?=THEME_URL?>/js/axios.min.js"></script>
+<script src="https://unpkg.com/rxjs@6.6.3/bundles/rxjs.umd.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-messaging.js"></script>
 <script src="<?=THEME_URL?>/js/firebase.js"></script>

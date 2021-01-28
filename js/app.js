@@ -1,5 +1,11 @@
 
+
+
+var _inDebounce = {};
+
+
 const AttributeBinding = {
+    components: getComponents(),
     data() {
         return {
             // @todo name it registerForm,
@@ -17,6 +23,28 @@ const AttributeBinding = {
         console.log('mounted!');
     },
     methods: {
+        /**
+         * Debouncing functions
+         *
+         * if 'id' is not set, then 'default' id will be used and only one(1) debounce can run at once.
+         * if you want to run many debounce at once, use 'id'.
+         *
+         * @usage use case of 'id' would be that, when a user is editing title and description on the same page,
+         *  only one of title or description may be edited if it does not use 'id'.
+         *
+         * @param fn
+         * @param delay
+         * @param id
+         *
+         * @example
+         *  <input name="name" value="<?=$cat->name?>" @keyup="debounce(updateName, 3000, 'name')">
+         *  <input type="text" @keyup="debounce(updateNoPosts, 3000, 'no')">
+         */
+        debounce(fn, delay, id) {
+            if ( typeof id === 'undefined' ) id = 'default';
+            clearTimeout(_inDebounce[id]);
+            _inDebounce[id] = setTimeout(fn, delay);
+        },
         isAdmin() {
             return this.$data.user && this.$data.user.admin;
         },
