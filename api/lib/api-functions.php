@@ -784,11 +784,12 @@ function update_token($in) {
 
 
 /**
- * @param $in - Array of user id.
- *  $in['subscription'] is the subscription name. If it is set to 'Y', then message will be delivered to the user.
- *    if $in['subscription'] is missing, then it will send message to the user.
- *  For instance, if a user already have 'chat_room_123' with value 'Y' in this meta data,
- *   and $in['subscribe'] is set to 'chat_room_123', then the user will get message.
+ *
+ * Send messages to all users in $in['users']
+ *
+ * @param $in
+ *  - $in['users'] is an array of user id.
+ *
  *
  * @return mixed \Kreait\Firebase\Messaging\MulticastSendReport
  * @throws \Kreait\Firebase\Exception\FirebaseException
@@ -802,11 +803,6 @@ function send_message_to_users($in) {
 
     $users = explode(',', $in['users']);
     foreach($users as $ID) {
-        if ( isset($in['subscription']) ) {
-            $re = get_user_meta($ID, $in['subscription'], true);
-            debug_log("ID: $ID, subscription ID: $in[subscription] re: $re");
-            if ( $re != 'Y' ) continue;
-        }
         $tokens = get_user_tokens($ID);
         $all_tokens = array_merge($all_tokens, $tokens);
     }
@@ -1994,6 +1990,11 @@ function onCommentCreateSendNotification($in, $comment_id) {
     if ($tokens) sendMessageToTokens( $tokens, $title, $body, $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
 }
 
+
+/**
+ * @param $comment_ID
+ * @return mixed
+ */
 function get_ancestor_tokens_for_push_notifications($comment_ID) {
     $asc = getAncestors($comment_ID);
     return getTokensFromUserIDs($asc);

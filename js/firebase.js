@@ -29,7 +29,7 @@ navigator.serviceWorker.register('/wp-content/themes/' + config.themeFolderName 
                     .then(function(token) {
                         /** Here I am logging to my console. This token I will use for testing with PHP Notification */
                         // console.log(token);
-                        app.saveToken(token, config.allTopic);
+                        app.saveToken(token, config.defaultTopic);
                         /** SAVE TOKEN::From here you need to store the TOKEN by AJAX request to your server */
                     })
                     .catch(function(error) {
@@ -51,7 +51,7 @@ navigator.serviceWorker.register('/wp-content/themes/' + config.themeFolderName 
 messaging.onTokenRefresh(function() {
     messaging.getToken()
         .then(function(renewedToken) {
-            app.saveToken(renewedToken, config.allTopic);
+            app.saveToken(renewedToken, config.defaultTopic);
             /** UPDATE TOKEN::From here you need to store the TOKEN by AJAX request to your server */
         })
         .catch(function(error) {
