@@ -1951,35 +1951,43 @@ function onCommentCreateSendNotification($comment_id, $in) {
      *
      */
 
-    // 1 post owner
     $post = get_post( $in['comment_post_ID'], ARRAY_A );
-    $token_users = [];
-    if ( !is_my_post( $post['post_author']) ) {
-        $notifyPostOwner = get_user_meta( $post['post_author'], NOTIFY_POST, true );
-        if ( $notifyPostOwner === 'Y' )  $token_users[] = $post['post_author'];   // check if this is needed since it will send via topic
-    }
+    $users_id = [];
 
     //2 ancestors
     $comment = get_comment( $comment_id );
-
     if ( $comment && $comment->comment_parent ) {
-        $token_users = array_merge($token_users, getAncestors($comment->comment_ID));
+        $users_id = array_merge($users_id, getAncestors($comment->comment_ID));
     }
 
     // 3 unique
-    $token_users = array_unique( $token_users );
+    $users_id = array_unique( $users_id );
 
     // 4 get topic subscriber
     $slug = get_first_slug($post['post_category']);
     $topic_subscribers = getForumSubscribers( $slug, NOTIFY_COMMENT);
 
     // 5 remove all subscriber to token users
-    $token_users = array_diff($token_users, $topic_subscribers);
+    $users_id = array_diff($users_id, $topic_subscribers);
 
 
 
     // 6 token
-    $tokens = getTokensFromUserIDs($token_users, NOTIFY_COMMENT);
+    $tokens = getTokensFromUserIDs($users_id, NOTIFY_COMMENT);
+
+
+    // post owner
+    $owner_token = [];
+    if ( !is_my_post($post['post_author']) ) {
+        $notifyPostOwner = get_user_meta( $post['post_author'], NOTIFY_POST, true );
+        if ( $notifyPostOwner === 'Y' && !in_array($post['post_author'], $topic_subscribers) ) {
+            $owner_token = getUserTokens($post['post_author']);
+        }
+    }
+
+    $tokens = array_merge($tokens, $owner_token);
+    $tokens = array_unique( $tokens );
+
 
     //7 send notification to tokens and topic
     $title              = $post['post_title'];

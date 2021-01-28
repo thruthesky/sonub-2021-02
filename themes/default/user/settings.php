@@ -41,9 +41,9 @@
                 const notificationRoute = this.$data.alertOnNewComment === true
                     ? "notification.subscribeTopic"
                     : "notification.unsubscribeTopic";
-                request(notificationRoute, {topic: config.post_notification_prefix}, function () {
+                request(notificationRoute, {topic: config.comment_notification_prefix}, function () {
                     app.onProfileMetaUpdateSubmit({
-                        [config.post_notification_prefix]: app.$data.alertOnNewComment ? "Y" : "N"
+                        [config.comment_notification_prefix]: app.$data.alertOnNewComment ? "Y" : "N"
                     });
                 }, this.error);
             }
