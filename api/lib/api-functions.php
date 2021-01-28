@@ -1935,12 +1935,13 @@ function is_localhost() {
 
 function onCommentCreateSendNotification($comment_id, $in) {
     /**
-     * 1) check if post owner want to receive message from his post
-     * 2) get notification comment ancestors
-     * 3) make it unique
-     * 4) get topic subscriber
-     * 5) remove all subscriber from token users
-     * 6) get users token
+
+     * 1) get notification comment ancestors
+     * 2) make it unique
+     * 3) get topic subscriber
+     * 4) remove all subscriber from token users
+     * 5) get users token
+     * 6) check if post owner want to receive message from his post
      * 7) send batch 500 is maximum
      */
 
@@ -1954,29 +1955,29 @@ function onCommentCreateSendNotification($comment_id, $in) {
     $post = get_post( $in['comment_post_ID'], ARRAY_A );
     $users_id = [];
 
-    //2 ancestors
+    //1 ancestors
     $comment = get_comment( $comment_id );
     if ( $comment && $comment->comment_parent ) {
         $users_id = array_merge($users_id, getAncestors($comment->comment_ID));
     }
 
-    // 3 unique
+    //2 unique
     $users_id = array_unique( $users_id );
 
-    // 4 get topic subscriber
+    //3 get topic subscriber
     $slug = get_first_slug($post['post_category']);
     $topic_subscribers = getForumSubscribers( $slug, NOTIFY_COMMENT);
 
-    // 5 remove all subscriber to token users
+    //4 remove all subscriber to token users
     $users_id = array_diff($users_id, $topic_subscribers);
 
 
 
-    // 6 token
+    //5 get tokens of user who will receive notification
     $tokens = getTokensFromUserIDs($users_id, NOTIFY_COMMENT);
 
 
-    // post owner
+    //6 post owner if he want to receive notification if it is direct descendant
     $owner_token = [];
     if ( !is_my_post($post['post_author']) ) {
         $notifyPostOwner = get_user_meta( $post['post_author'], NOTIFY_POST, true );
@@ -1984,7 +1985,7 @@ function onCommentCreateSendNotification($comment_id, $in) {
             $owner_token = getUserTokens($post['post_author']);
         }
     }
-
+    
     $tokens = array_merge($tokens, $owner_token);
     $tokens = array_unique( $tokens );
 
