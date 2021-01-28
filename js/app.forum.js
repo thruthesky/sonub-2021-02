@@ -125,40 +125,79 @@ const forumMixin = {
 
 
 const commentForm = {
-    props: ['comment_id', 'comment_parent', 'comment_content', 'comment_post_id'],
-    template: '<form @submit.prevent="onSubmit"> parent comment id: {{ comment_ID }}' +
+    props: ['comment_id', 'comment_parent', 'comment_content', 'comment_post_id', 'files'],
+    template: '<form @submit.prevent="onSubmit">' +
+        '<div class="d-flex bg-light">' +
+        '<div class="position-relative d-inline-block of-hidden">' +
         '<i class="fa fa-camera fs-xl"></i>' +
-        '<input type="text" v-model="comment_content">' +
-        '<button class="btn btn-secondary ml-2" type="button" @click="hide" v-if="canShow">Cancel</button>' +
-        '<button class="btn btn-success ml-2" type="submit">Submit</button>' +
-        '</form>',
+        '<input class="position-absolute cover fs-xxl opacity-0" type="file" @change="onCommentFileUpload($event)">' +
+        '</div>' +
+        '<textarea class="w-100" v-model="form.comment_content"></textarea>' +
+        '</div>' +
+
+        '<button class="btn btn-secondary ml-2" type="button" @click="onCancel()" v-if="canCancel()">Cancel</button>' +
+        '<button class="btn btn-success ml-2" type="submit" v-if="canSubmit()">Submit</button>' +
+        '</form>' +
+        '<div>' +
+        '<div class="progress mt-3" style="height: 5px;" v-if="$root.uploadPercentage > 0">' +
+        '   <div class="progress-bar" role="progressbar" :style="{width: $root.uploadPercentage + \'%\'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>' +
+        '</div>' +
+        '<div class="uploaded-files d-flex">' +
+        '<div class="position-relative p-1" v-for="file in uploaded_files">' +
+        '<img class="size-100" :src="file.url">' +
+        '<i class="fa fa-trash fs-lg position-absolute top left"></i>' +
+        '</div>' +
+        '</div>' +
+        '{{ uploaded_files }}' +
+        '</div>',
     data() {
         return {
-            comment_ID: this.comment_id,
-            comment_parent: this.comment_parent,
-            comment_post_ID: this.comment_post_id,
-            comment_content: this.comment_content,
+            form: {
+                comment_ID: this.comment_id,
+                comment_parent: this.comment_parent,
+                comment_post_ID: this.comment_post_id,
+                comment_content: this.comment_content,
+                files: [],
+            },
+            uploaded_files: this.files,
         };
     },
-    computed: {
-        canShow() {
-            return !!this.$data.comment_ID;
+    created() {
+        if ( this.$data.uploaded_files && this.$data.uploaded_files.length > 0 ) {
+            const $this = this;
+            this.$data.uploaded_files.forEach(function(v) {
+               $this.$data.form.files.push( v.ID );
+            });
         }
-    },
-    watch: {
-
     },
     methods: {
-        hide() {
+
+        canCancel() {
+            return !!this.$data.form.comment_ID || !!this.$data.form.comment_parent || this.canSubmit();
+        },
+        canSubmit() {
+            return !!this.$data.form.comment_content || this.$data.form.files.length > 0;
+        },
+        onCancel() {
             this.$root.replyNo = 0;
             this.$root.editNo = 0;
+            this.$data.form.comment_content = '';
+            this.$data.form.files = [];
+            this.$data.uploaded_files = [];
         },
         onSubmit() {
-            request('forum.editComment', this.$data, refresh, app.error);
+            request('forum.editComment', this.$data.form, refresh, app.error);
         },
-        show() {
-            console.log('show');
-        }
+        onCommentFileUpload(event) {
+            const $this = this;
+            app.uploadPercentage = 0;
+            this.$root.onFileUpload(event, function(res) {
+                console.log('file upload: ', res);
+                $this.$data.form.files.push(res.ID);
+                $this.$data.uploaded_files.push(res);
+                app.uploadPercentage = 0;
+            });
+        },
     },
 };
 addComponent('comment-form', commentForm);

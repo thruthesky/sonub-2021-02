@@ -78,6 +78,10 @@
   height: 100px;
 }
 
+.w-100px {
+  width: 100px;
+}
+
 .size-40 {
   width: 40px;
   height: 40px;
@@ -131,6 +135,13 @@ input[type=file]::-webkit-file-upload-button {
 
 .opacity-0 {
   opacity: 0;
+}
+
+.cover {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 /*# sourceMappingURL=index.css.map */
