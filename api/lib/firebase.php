@@ -53,7 +53,7 @@ function getDatabase() {
  * @param string $imageUrl
  * @return \Kreait\Firebase\Messaging\MulticastSendReport
  */
-function sendMessageToTokens($tokens, $title, $body, $click_action, $data = [], $imageUrl="https://philgo.com/theme/philgo/img/logo-small.png") {
+function sendMessageToTokens($tokens, $title, $body, $click_action, $data = [], $imageUrl="") {
     $message = CloudMessage::fromArray([
         'notification' => getNotificationData($title, $body, $click_action, $data, $imageUrl),
         'webpush' => getWebPushData($title, $body, $click_action, $data, $imageUrl),
@@ -72,7 +72,7 @@ function sendMessageToTokens($tokens, $title, $body, $click_action, $data = [], 
  * @param string $imageUrl
  * @return array
  */
-function sendMessageToTopic($topic, $title, $body, $click_action, $data = [], $imageUrl="https://philgo.com/theme/philgo/img/logo-small.png") {
+function sendMessageToTopic($topic, $title, $body, $click_action, $data = [], $imageUrl="") {
     $message = CloudMessage::fromArray([
         'topic' => $topic,
         'notification' => getNotificationData($title, $body, $click_action, $data, $imageUrl),

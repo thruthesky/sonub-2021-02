@@ -3,8 +3,6 @@
  * @file config.php
  */
 
-define('DEFAULT_TOPIC', 'DefaultTopic');
-
 /**
  * Below are not recommended to be edited.
  */

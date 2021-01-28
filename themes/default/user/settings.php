@@ -36,7 +36,7 @@
             onChangeAlertOnNewComment() {
                 console.log(this.$data.alertOnNewComment);
                 this.onProfileMetaUpdateSubmit({
-                    [comment_notification_prefix]: this.$data.alertOnNewComment ? "Y" : "N"
+                    [config.comment_notification_prefix]: this.$data.alertOnNewComment ? "Y" : "N"
                 })
             }
         }

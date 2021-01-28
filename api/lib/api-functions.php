@@ -784,7 +784,6 @@ function update_token($in) {
 
 
 /**
- *
  * Send messages to all users in $in['users']
  *
  * @param $in
