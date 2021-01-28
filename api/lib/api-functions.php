@@ -1934,7 +1934,7 @@ function is_localhost() {
 }
 
 
-function onCommentCreateSendNotification($in, $comment_id) {
+function onCommentCreateSendNotification($comment_id, $in) {
     /**
      * 1) check if post owner want to receive message from his post
      * 2) get notification comment ancestors
