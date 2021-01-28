@@ -29,13 +29,13 @@
         methods: {
             onChangeAlertOnNewPost() {
                 console.log(this.$data.alertOnNewPost);
-                this.onProfileUpdateSubmit({
+                this.onProfileMetaUpdateSubmit({
                     [config.post_notification_prefix]: this.$data.alertOnNewPost ? "Y" : "N"
                 })
             },
             onChangeAlertOnNewComment() {
                 console.log(this.$data.alertOnNewComment);
-                this.onProfileUpdateSubmit({
+                this.onProfileMetaUpdateSubmit({
                     [comment_notification_prefix]: this.$data.alertOnNewComment ? "Y" : "N"
                 })
             }

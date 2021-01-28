@@ -4,7 +4,7 @@
  */
 
 
-$script = get_theme_script();
+$script = get_theme_page_script_path();
 ?>
 <!doctype html>
 <html>
@@ -17,39 +17,38 @@ $script = get_theme_script();
     <?php live_reload_js() ?>
     <? insert_initial_javascript() ?>
 </head>
-<body>
+<body class="<?=get_theme_page_class_name()?>">
 <section id="app" class="container">
     <h1>WiGo Theme</h1>
-    <div>
-        Menu:
-        <a href="/">Home</a> |
+    <div class="d-flex justify-content-between">
+        <div>
 
-        <span v-if="notLoggedIn()">
-        <a href="/?page=user/register">Register page</a> |
-        <a href="/?page=user/login">Login page</a> |
-        </span>
+            <a href="/">Home</a>
+            <span v-if="notLoggedIn()">
+            <a href="/?page=user/register">Register page</a>
+            <a href="/?page=user/login">Login page</a>
+            </span>
+                <span v-if="loggedIn()">
+            <a href="/?page=user/profile">Profile page</a>
+            <a href="/?page=user/logout">Logout</a>
+            </span>
+            <a href="/?page=forum/list&category=reminder">Reminder</a>
+            <a href="/?page=forum/list&category=qna">QnA</a>
+            <a href="/?page=forum/list&category=discussion">Discussion</a>
 
-        <span v-if="loggedIn()">
-        <a href="/?page=user/profile">Profile page</a> |
-        <a href="/?page=user/logout">Logout</a> |
-        </span>
+        </div>
+        <div>
+            <a href="/?page=admin/index" v-if="isAdmin()">Admin</a>
+            <a href="/?page=user/profile"><img class="size-40 circle" :src="user.profile_photo_url" v-if="user && user.profile_photo_url"></a>
+        </div>
 
-        <a href="/?page=forum/list&category=reminder">Reminder</a> |
-        <a href="/?page=forum/list&category=qna">QnA</a> |
-        <a href="/?page=forum/list&category=discussion">Discussion</a>
-
-        | <a href="/?page=user/settings">Settings</a>
-
-        <span v-if="isAdmin()">
-            | <a href="/?page=admin/index">Admin</a>
-        </span>
     </div>
 
     <section id="router">
         <?php
-            begin_capture_script_style();
-            include $script;
-            end_capture_script_style();
+        begin_capture_script_style();
+        include $script;
+        end_capture_script_style();
         ?>
     </section>
 </section>
@@ -88,7 +87,7 @@ $script = get_theme_script();
 <script src="<?=THEME_URL?>/js/firebase.js"></script>
 <?php load_theme_js($script); ?>
 <script src="<?php echo THEME_URL . '/js/helpers.js'?>?v=<?=build_version()?>"></script>
-<script src="<?php echo THEME_URL . '/js/app.forum.js'?>?v=<?=build_version()?>"></script>
+<? if ( is_forum_page() ) { ?><script src="<?php echo THEME_URL . '/js/app.forum.js'?>?v=<?=build_version()?>"></script><? } ?>
 <script src="<?php echo THEME_URL . '/js/app.js'?>?v=<?=build_version()?>"></script>
 <script>
     request('app.version', {}, function (x) {

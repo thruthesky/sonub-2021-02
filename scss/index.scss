@@ -7,6 +7,10 @@
 .fs-xl {
   font-size: 32px !important;
 }
+.fs-xxl {
+  font-size: 64px !important;
+}
+
 
 [depth="1"] {
   margin-left: 0;
@@ -49,4 +53,59 @@
 .text-button {
   background-color: white;
   border: 0;
+}
+
+
+.d-center {
+  display: flex; justify-content: center; align-items: center;
+}
+.size-100 {
+  width: 100px; height: 100px;
+}
+.size-40 {
+  width: 40px; height: 40px;
+}
+
+.photo-background {
+  background-color: #e8e8e8;
+}
+
+.circle {
+  border-radius: 50%;
+}
+
+
+.top {
+  top: 0;
+}
+.right {
+  right: 0;
+}
+
+.bottom {
+  bottom: 0;
+}
+.left {
+  left: 0;
+}
+
+.grey {
+  color: grey;
+}
+.red {
+  color: red;
+}
+.pointer {
+  cursor: pointer;
+}
+/** Cursor on file upload button */
+input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
+  cursor: pointer;
+}
+
+.of-hidden {
+  overflow: hidden;
+}
+.opacity-0 {
+  opacity: 0;
 }

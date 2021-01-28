@@ -1,6 +1,3 @@
-
-
-
 var _inDebounce = {};
 
 
@@ -8,10 +5,14 @@ const AttributeBinding = {
     components: getComponents(),
     data() {
         return {
-            // @todo name it registerForm,
+            // user register form data object.
             register: {},
-            // @todo change it to loginForm,
+            // user login form data object.
             login: {},
+            // user profile update form data object.
+            profile: {},
+
+            // User information loaded from localStorage.
             user: null,
             token: null
         }
@@ -63,8 +64,11 @@ const AttributeBinding = {
             if ( this.$data.token ) {
                 data['token'] = this.$data.token;
             }
-            console.log("onRegisterFormSubmit::", data);
-            request('user.register', data, this.setUser, this.error);
+            request('user.register', this.$data.register, function(profile) {
+                app.setUser(profile);
+                // todo: let the form controll to move to which page like 'home' or 'user/profile'.
+                move('/');
+            }, this.error);
         },
         onLoginFormSubmit() {
             request('user.login', this.$data.login, function(profile) {
@@ -72,36 +76,67 @@ const AttributeBinding = {
                 move('/');
             }, this.error);
         },
-        onProfileUpdateSubmit(data) {
+        loadProfileUpdateForm() {
+            request('user.profile', {}, function(profile) {
+                console.log('loadProfileUpdateForm: ', profile);
+                app.$data.profile = profile;
+            }, this.error);
+        },
+        onProfileMetaUpdateSubmit(data) {
             request('user.profileUpdate', data, this.setUser, this.error);
+        },
+        onProfileUpdateFormSubmit() {
+            console.log(this.$data.profile);
+            request('user.profileUpdate', this.$data.profile, function(profile) {
+                console.log('profile saved: ', profile);
+                app.setUser(profile);
+                app.alert('saved');
+            }, this.error);
+        },
+        /**
+         *
+         * @param event
+         */
+        onProfilePhotoUpload(event) {
+            if ( event.target.files.length === 0 ) {
+                console.log('User cancelled upload');
+                return;
+            }
+            const file = event.target.files[0];
+
+            const options = {
+                onUploadProgress: function(progressEvent) {
+                    var percentCompleted = Math.round( (progressEvent.loaded * 100) / progressEvent.total );
+                    console.log('percentCompleted:', percentCompleted);
+                }
+            };
+            // Upload photo
+            fileUpload(file, options, function(res) {
+                console.log('success: res.url: ', res.url);
+                // Update user profile photo url
+                request('user.profileUpdate', {'profile_photo_url': res.url}, function(profile) {
+                    console.log('new profile: ', profile);
+                    app.profile.profile_photo_url = profile.profile_photo_url;
+                    app.user.profile_photo_url = profile.profile_photo_url;
+                    app.setUser(profile);
+                }, this.error);
+            }, this.error);
         },
         logout() {
             localStorage.removeItem('user');
             this.$data.user = null;
         },
         error(e) {
-            console.log('alert(e)', e);
+            console.log('error(e)', e);
             alert(e);
         },
         setUser(profile) {
-            this.set('user', profile);
+            setLocalStorage('user', profile);
             this.$data.user = profile;
         },
         getUser() {
-            this.$data.user = this.get('user');
+            this.$data.user = getLocalStorage('user');
             return this.$data.user;
-        },
-        set(name, value) {
-            value = JSON.stringify(value);
-            localStorage.setItem(name, value);
-        },
-        get(name) {
-            const val = localStorage.getItem(name);
-            if ( val ) {
-                return JSON.parse(val);
-            } else {
-                return val;
-            }
         },
         alert(title, body) {
             alert(title + "\n" + body);
@@ -114,8 +149,9 @@ const AttributeBinding = {
         },
     }
 };
+
 const _app = Vue.createApp(AttributeBinding);
-_app.mixin(forumMixin);
+if ( typeof forumMixin !== 'undefined' ) _app.mixin(forumMixin);
 if ( typeof mixin !== 'undefined' ) {
     _app.mixin(mixin);
 }

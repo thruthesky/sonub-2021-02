@@ -381,7 +381,6 @@ NOTE: style 태그를 여기서 뺀 다음, template 다음으로 밀어 넣는�
 
 
 
-
 ## Extension - Write your own route
 
 * When you need to write your own routes, write your route class under `ext` folder.
@@ -397,6 +396,16 @@ NOTE: style 태그를 여기서 뺀 다음, template 다음으로 밀어 넣는�
 * If you need to add your own routes, you can save your routes files under `ext` folder.
 * And if you need to write extra files, then write it under `var` folder.
 
+
+
+## User management
+
+* Wordpress has `wp_users` database for storing default user information like user_login, user_email, user_pass and other information.
+  * `ID`, `user_email` and `user_login` should never changed once it has set.
+  * `user_pass` may be changed on a separated page(UI) from the profile edit page.
+  * we only use `ID`, `user_email`, `user_login` and `user_pass` from `wp_users` table.
+  * All other properties like nickname(display name), full name, gender, birthday goes into `wp_usermeta` table.
+  * You may also maintain your own table for keeping user information by fixing routes.
 
 
 ## Protocols
@@ -506,6 +515,66 @@ displayTestSummary();
 * See `debounce` in app.js
 
 
+### Run vue app code in script page with later()
+
+* With `later()` function, you can use `app` in theme page script.  `later()` will be called after all javascript is ready.
+
+```js
+later(function () {
+   app.loadProfileUpdateForm();
+});
+```
+
+### Adding component into Vue App
+
+* Define a component and add it with `addComponent()` function.
+* `addComponent()` must be called before mounting.
+* Example of adding a comment box component into Vue app)
+```js
+const commentForm = {
+    props: ['comment_id', 'comment_parent', 'comment_content', 'comment_post_id'],
+    template: '<form @submit.prevent="onSubmit"> parent comment id: {{ comment_ID }}' +
+        '<i class="fa fa-camera fs-xl"></i>' +
+        '<input type="text" v-model="comment_content">' +
+        '<button class="btn btn-secondary ml-2" type="button" @click="hide" v-if="canShow">Cancel</button>' +
+        '<button class="btn btn-success ml-2" type="submit">Submit</button>' +
+        '</form>',
+    data() {
+        return {
+            comment_ID: this.comment_id,
+            comment_parent: this.comment_parent,
+            comment_post_ID: this.comment_post_id,
+            comment_content: this.comment_content,
+        };
+    },
+    computed: {
+        canShow() {
+            return !!this.$data.comment_ID;
+        }
+    },
+    watch: {
+
+    },
+    methods: {
+        hide() {
+            this.$root.replyNo = 0;
+            this.$root.editNo = 0;
+        },
+        onSubmit() {
+            request('forum.editComment', this.$data, refresh, app.error);
+        },
+        show() {
+            console.log('show');
+        }
+    },
+};
+addComponent('comment-form', commentForm);
+```
+
+## Profile page
+
+* `app.loadProfileUpdateForm()` will fill the `app.profile` object. So, you can display it in the form.
+* `app.onProfileUpdateFormSubmit()` should be called on update button clicked.
 
 # Push notification
 

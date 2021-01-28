@@ -397,7 +397,7 @@ function login($data)
     if (is_wp_error($user)) return ERROR_WRONG_PASSWORD;
 
 
-    userUpdateMeta($user->ID, $data);
+    user_update_meta($user->ID, $data);
 
     wp_set_current_user($user->ID);
 
@@ -405,10 +405,14 @@ function login($data)
 }
 
 
-
-
-function profileUpdate($in) {
-    userUpdateMeta(wp_get_current_user()->ID, $in);
+/**
+ * @attention it saves user profile data only in `wp_usermeta` table. It does not change data in `wp_users` table.
+ * @param $in
+ * @return array
+ *  - returns the user profile after update user meta.
+ */
+function profile_update($in) {
+    user_update_meta(wp_get_current_user()->ID, $in);
     return profile();
 }
 
@@ -470,15 +474,14 @@ function register($in)
     }
 
 
-    userUpdateMeta($user_ID, $in);
+    user_update_meta($user_ID, $in);
 
     wp_set_current_user($user_ID);
 
     return profile();
 }
 
-
-function userUpdateMeta($user_ID, $data) {
+function user_update_meta($user_ID, $data) {
     foreach ($data as $k => $v) {
         if (!in_array($k, USER_META_EXCEPTIONS)) {
             update_user_meta($user_ID, $k, $v);
@@ -487,11 +490,7 @@ function userUpdateMeta($user_ID, $data) {
 }
 
 
-
-
-
-
-function userMetas($user_ID)
+function user_metas($user_ID)
 {
     if (empty($user_ID)) return [];
     $all_metas = get_user_meta($user_ID, '', true);
@@ -505,7 +504,10 @@ function userMetas($user_ID)
 
 /**
  *
- * @WARNING This must be the ONLY method to be used to return user information to client end.
+ * Returns user's profile including user's ID, email from `wp_users` table and all other properties in `wp_usermeta`.
+ *
+ * @WARNING This must be the ONLY method to return user profile to client.
+ *
  *
  *
  * @param number $user_ID - user ID or session id.
@@ -532,11 +534,7 @@ function profile($user_ID=null)
 
     $data['session_id'] = get_session_id($user);
 
-    $data = array_merge(userMetas($user_ID), $data);
-
-    // profile photo url
-    $data['profile_photo_url'] = get_gallery_featured_image_url($user_ID);
-
+    $data = array_merge(user_metas($user_ID), $data);
 
     foreach($data as $k => $v ) {
         if ( in_array($k, USER_META_EXCEPTIONS_FOR_CLIENT) ) unset($data[$k]);
@@ -948,7 +946,8 @@ function post_response($ID_or_post, $options = [])
     $post['author_name'] = get_the_author_meta('display_name', $post['post_author']);
 
     // profile photo url
-    $post['profile_photo_url'] = get_gallery_featured_image_url($post['post_author']);
+    $profile = profile($post['post_author']);
+    $post['profile_photo_url'] = $profile['profile_photo_url'] ?? '';
 
     /// post author profile photo
     ///
@@ -1450,22 +1449,6 @@ function table_get($in) {
 }
 
 
-/**
- * @TODO gallery category 에서 나의 글 중, featured image url 을 가져오는데, 범용적이지 못하다. 훅으로 처리를 한다.
- * @param $user_ID
- * @return mixed|string
- */
-function get_gallery_featured_image_url($user_ID) {
-    $posts = get_posts(['category_name' => 'gallery', 'author' => $user_ID]);
-    if ( $posts && count($posts) > 0 ) {
-        $post = $posts[0];
-        $post_thumbnail_id = get_post_thumbnail_id($post);
-        if ($post_thumbnail_id) {
-            return wp_get_attachment_image_url($post_thumbnail_id, 'full');
-        }
-    }
-    return '';
-}
 
 
 /**

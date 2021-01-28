@@ -24,13 +24,22 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
 
     foreach ($posts as $post) {
         // print_r($post);
-    ?>
-        <div class="p-2 m-2 card border border-dark">
-            <a class="d-block mb-2" href="<?php echo $post['url'] ?>">
-                <?php echo $post['post_title'] ?>
+        ?>
+
+        <a class="d-flex justify-content-between mb-2" href="<?php echo $post['url'] ?>">
+
+            <div class="d-flex">
+                <? if ( $post['profile_photo_url'] ) { ?>
+                    <img class="me-3 size-40 circle" src="<?=$post['profile_photo_url']?>">
+                <? } ?>
+                <h1><?php echo $post['post_title'] ?></h1>
+            </div>
+
+            <div class="meta">
                 By <?php echo $post['author_name'] ?>
-            </a>
-        </div>
+            </div>
+        </a>
+
     <?php } ?>
 </section>
 
@@ -62,7 +71,7 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
                     const data = {
                         [topic]:app.alertOnNewPost ? "Y" : "N"
                     };
-                    app.onProfileUpdateSubmit(data);
+                    app.onProfileMetaUpdateSubmit(data);
                 }, this.error);
             },
             onChangeAlertOnNewComment() {
@@ -79,7 +88,7 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
 //                    if ( this.$data.alertOnNewPost === false &&  this.$data.alertOnNewComment === true) {
 //                        data[post_notification_prefix + category] =  "Y";
 //                    }
-                    app.onProfileUpdateSubmit(data);
+                    app.onProfileMetaUpdateSubmit(data);
                 }, this.error);
             }
         }
