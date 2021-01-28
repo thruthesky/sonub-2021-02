@@ -5,7 +5,7 @@ $post_ID = $arr[1];
 
 //$post = get_post($arr[1]);
 
-$post = post_response($post_ID);
+$post = post_response($post_ID, ['with_autop' => true]);
 $comments = $post['comments'];
 
 ?>
@@ -14,7 +14,7 @@ $comments = $post['comments'];
     <h1><?php echo $post['post_title'] ?></h1>
     <p>
         ID: <?php echo $post_ID ?> <br>
-        Content: <?php echo $post['post_content'] ?>
+        Content: <?php echo $post['post_content_autop'] ?>
     </p>
 
 
@@ -35,7 +35,9 @@ $comments = $post['comments'];
 
     <hr>
 
-    <comment-form :comment_post_id="<?= $post_ID ?>"></comment-form>
+<!--    <comment-form :comment_post_id="--><?//= $post_ID ?><!--"></comment-form>-->
+
+    <? include 'comment-form.php' ?>
 
     Upload Progress : {{ uploadProgress }}
 
@@ -78,10 +80,14 @@ $comments = $post['comments'];
                                 <button class="btn btn-danger" @click="onCommentDelete('<?php echo $comment_ID ?>')">DELETE</button>
                             </div>
                             <hr>
-                            <comment-form :comment_post_id="<?= $post_ID ?>" :comment_parent="<?= $comment_ID ?>" v-if="replyNo == <?= $comment_ID ?>"></comment-form>
+
+                            <? include 'comment-form.php' ?>
+<!--                            <comment-form :comment_post_id="--><?//= $post_ID ?><!--" :comment_parent="--><?//= $comment_ID ?><!--" v-if="replyNo == --><?//= $comment_ID ?><!--"></comment-form>-->
                         </div>
                     </article>
-                    <comment-form :comment_post_id="<?= $post_ID ?>" :comment_id="<?= $comment_ID ?>" :comment_content='"<?= htmlentities2(str_replace('"', "'", $comment_content)) ?>"' :files='<?= json_encode($files) ?>' v-if="editNo == <?= $comment_ID ?>"></comment-form>
+
+                    <? include 'comment-form.php' ?>
+<!--                    <comment-form v-if="editNo == --><?//= $comment_ID ?><!--"></comment-form>-->
                 </div>
             <?php } ?>
         </section>
