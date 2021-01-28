@@ -2045,7 +2045,7 @@ function getAncestors( $comment_ID ) {
     while ( true ) {
         $comment = get_comment( $comment->comment_parent );
         if ( $comment ) {
-            if ( $comment->user_id == login( 'ID' ) ) {
+            if ( $comment->user_id == wp_get_current_user()->ID ) {
                 continue;
             }
             $asc[] = $comment->user_id;
