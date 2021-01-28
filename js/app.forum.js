@@ -1,5 +1,10 @@
-const forumMixin = {
+/**
+ * @file app.forum.js
+ * @description forum related Vue.js 3 javascript. It can only be included on forum pages.
+ * @type {{data(): {commentEditForm: {}, replyNo: number, editNo: number}, methods: {onPostEditFormSubmit(event): void, commentEditFormCanSubmit(): forumMixin.methods.$data.commentEditForm.comment_content, onCommentEditFormSubmit(event): void, onFileUpload(), toggleCommentReplyDisplay(string, string): void, getFormData(event): {}, onPostDelete((string|number), string): (undefined), onCommentDelete((string|number)): (undefined), toggleCommentEditDisplay(string, string): void}}}
+ */
 
+const forumMixin = {
     data() {
         return {
             commentEditForm: {},
