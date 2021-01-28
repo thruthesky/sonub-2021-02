@@ -3,6 +3,7 @@
 $category = '';
 $post = null;
 
+
 if (isset($_REQUEST['category'])) {
     $category = $_REQUEST['category'];
 } else {
@@ -17,8 +18,9 @@ if (isset($_REQUEST['category'])) {
 
 <h1> POST EDIT : <?php echo $category ?></h1>
 
+<!-- TODO: Error on content when it contains <br/>-->
 <post-edit-form 
-    :category="<?=$category?>"
+    :category="'<?=$category?>'"
     :post_id="<?=$post_ID?>"
     :post_title='"<?=htmlentities2(str_replace('"', "'", $post_title))?>"'
     :post_content='"<?=htmlentities2(str_replace('"', "'", $post_content))?>"'

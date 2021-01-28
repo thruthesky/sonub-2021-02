@@ -81,15 +81,16 @@ const postEditForm = {
   props: ["post_id", "category", "post_title", "post_content", "files"],
   template:
     '<form @submit.prevent="onSubmit">' +
+    /// title
     '<div class="form-group">' +
     '<label for="post_title">Title</label>' +
     '<input type="text" class="form-control" id="post_title" name="post_title" v-model="form.post_title" />' +
     "</div>" +
+    /// content
     '<div class="form-group">' +
     '<label for="post_content">Content</label>' +
     '<textarea type="text" class="form-control" id="post_content" name="post_content" v-model="form.post_content"></textarea>' +
     "</div>" +
-
     /// upload button
     '<div class="d-flex justify-content-between mt-3">' +
     '<div class="position-relative d-inline-block of-hidden">' +
@@ -99,12 +100,10 @@ const postEditForm = {
     '<button type="submit" class="btn btn-primary">Submit</button>' +
     "</div>" +
     "</form>" +
-    
     /// progress bar
     '<div class="progress mt-3" style="height: 5px;" v-if="$root.uploadPercentage > 0">' +
     '   <div class="progress-bar" role="progressbar" :style="{width: $root.uploadPercentage + \'%\'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>' +
     "</div>" +
-
     /// Uploaded file display
     '<div class="uploaded-files d-flex mt-2">' +
     '<div class="position-relative p-1" v-for="(file, index) in uploaded_files">' +
