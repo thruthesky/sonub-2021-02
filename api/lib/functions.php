@@ -460,7 +460,7 @@ function register($in)
         return $user_ID->get_error_code();
     }
 
-    if ( isset($in['token'] ) ){
+    if ( isset($in['token']) ){
         $token = $in['token'];
         unset($in['token']);
         $in[NOTIFY_POST] = "Y";
