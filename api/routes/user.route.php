@@ -18,7 +18,7 @@ class UserRoute {
     }
 
     public function profileUpdate($in) {
-        return profileUpdate($in);
+        return profile_update($in);
     }
 
 
