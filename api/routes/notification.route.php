@@ -31,7 +31,7 @@ class NotificationRoute {
     public function sendMessageToTokens($in) {
         if ( !isset($in['data'])) $in['data'] = [];
         if ( !isset($in['imageUrl'])) $in['imageUrl'] = '';
-        return sendMessageToTokens($in['tokens'], $in['title'], $in['body'], $in['imageUrl'], $in['click_action'], $in['data']);
+        return sendMessageToTokens($in['tokens'], $in['title'], $in['body'], $in['click_action'], $in['data'], $in['imageUrl']);
     }
 
 

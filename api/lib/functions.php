@@ -812,7 +812,7 @@ function send_message_to_users($in) {
     if ( empty($all_tokens) ) return ERROR_EMPTY_TOKENS;
     if ( !isset($in['data'])) $in['data'] = [];
     if ( !isset($in['imageUrl'])) $in['imageUrl'] = '';
-    return sendMessageToTokens($all_tokens, $in['title'], $in['body'], $in['imageUrl'], $in['click_action'], $in['data']);
+    return sendMessageToTokens($all_tokens, $in['title'], $in['body'], $in['click_action'], $in['data'], $in['imageUrl']);
 }
 
 
@@ -1749,7 +1749,7 @@ function api_edit_post($in) {
         $body = $in['post_content'];
         $post = get_post($ID, ARRAY_A);
         $slug = get_first_slug($post['post_category']);
-        sendMessageToTopic(NOTIFY_POST . $slug, $title, $body, '', $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
+        sendMessageToTopic(NOTIFY_POST . $slug, $title, $body, $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
     }
 
     return post_response($ID);
@@ -2002,9 +2002,9 @@ function onCommentCreateSendNotification($in) {
     $title              = $post['post_title'];
     $body               = $in['comment_content'];
 
-
-    sendMessageToTopic(NOTIFY_COMMENT . $slug, $title, $body, '', $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
-    if ($tokens) sendMessageToTokens( $tokens, $title, $body,  '', $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
+    
+    sendMessageToTopic(NOTIFY_COMMENT . $slug, $title, $body, $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
+    if ($tokens) sendMessageToTokens( $tokens, $title, $body, $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
 }
 
 function get_ancestor_tokens_for_push_notifications($comment_ID) {

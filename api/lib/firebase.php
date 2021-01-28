@@ -53,10 +53,10 @@ function getDatabase() {
  * @param string $imageUrl
  * @return \Kreait\Firebase\Messaging\MulticastSendReport
  */
-function sendMessageToTokens($tokens, $title, $body, $imageUrl="https://philgo.com/theme/philgo/img/logo-small.png", $click_action, $data = []) {
+function sendMessageToTokens($tokens, $title, $body, $click_action, $data = [], $imageUrl="https://philgo.com/theme/philgo/img/logo-small.png") {
     $message = CloudMessage::fromArray([
-        'notification' => getNotificationData($title, $body, $imageUrl, $click_action, $data),
-        'webpush' => getWebPushData($title, $body, $imageUrl, $click_action, $data),
+        'notification' => getNotificationData($title, $body, $click_action, $data, $imageUrl),
+        'webpush' => getWebPushData($title, $body, $click_action, $data, $imageUrl),
         'android' => getAndroidPushData(),
         'data' => $data,
     ]);
@@ -72,11 +72,11 @@ function sendMessageToTokens($tokens, $title, $body, $imageUrl="https://philgo.c
  * @param string $imageUrl
  * @return array
  */
-function sendMessageToTopic($topic, $title, $body, $imageUrl="https://philgo.com/theme/philgo/img/logo-small.png", $click_action, $data = [] ) {
+function sendMessageToTopic($topic, $title, $body, $click_action, $data = [], $imageUrl="https://philgo.com/theme/philgo/img/logo-small.png") {
     $message = CloudMessage::fromArray([
         'topic' => $topic,
-        'notification' => getNotificationData($title, $body, $imageUrl, $click_action, $data),
-        'webpush' => getWebPushData($title, $body, $imageUrl, $click_action, $data),
+        'notification' => getNotificationData($title, $body, $click_action, $data, $imageUrl),
+        'webpush' => getWebPushData($title, $body, $click_action, $data, $imageUrl),
         'android' => getAndroidPushData(),
         'data' => $data,
     ]);
@@ -117,7 +117,7 @@ function unsubscribeTopic($topic, $tokens) {
  * @param $data
  * @return array
  */
-function getData($title, $body, $imageUrl, $clickUrl, $data) {
+function getData($title, $body, $clickUrl, $data, $imageUrl) {
     $notification = [
         'title' => $title,
         'body' => $body,
@@ -128,7 +128,7 @@ function getData($title, $body, $imageUrl, $clickUrl, $data) {
     return $notification;
 }
 
-function getNotificationData($title, $body, $imageUrl, $clickUrl, $data) {
+function getNotificationData($title, $body, $clickUrl, $data, $imageUrl) {
     $notification = Notification::fromArray([
         'title' => $title,
         'body' => $body,
@@ -139,14 +139,14 @@ function getNotificationData($title, $body, $imageUrl, $clickUrl, $data) {
     return $notification;
 }
 
-function getWebPushData($title, $body, $iconUrl, $clickUrl, $data) {
+function getWebPushData($title, $body, $clickUrl, $data, $imageUrl) {
     $title = mb_strcut($title, 0, 64);
     $body = mb_strcut($body, 0, 128);
     return [
         'notification' => [
             'title' => $title,
             'body' => $body,
-            'icon' => $iconUrl,
+            'icon' => $imageUrl,
             'click_action' => $clickUrl ?? "/",
             'data' => $data
         ],
