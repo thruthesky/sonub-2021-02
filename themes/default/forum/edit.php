@@ -16,17 +16,6 @@ echo ($post->post_content);
 
 <h1> POST EDIT : <?php echo $category ?></h1>
 
-<<<<<<< HEAD
-<!-- TODO: Error on content when it contains <br/>-->
-<post-edit-form 
-    :category="'<?=$category?>'"
-    :post_id="<?=$post_ID?>"
-    :post_title='"<?=htmlentities2(str_replace('"', "'", $post_title))?>"'
-    :post_content='"<?=htmlentities2(str_replace('"', "'", $post_content))?>"'
-    :files='<?=json_encode($post['files'])?>'
-    >
-</post-edit-form>
-=======
 <form @submit.prevent="onPostEditFormSubmit($event)">
     <?php if ($post != null) { ?> <input type="hidden" id="ID" name="ID" value="<?php echo $post->ID ?>"> <?php } ?>
     <input type="hidden" id="category" name="category" value="<?php echo $category ?>">
@@ -51,4 +40,3 @@ echo ($post->post_content);
     });
 
 </script>
->>>>>>> b03439f204410a8d50c86a6d303a2259504f3ed8
