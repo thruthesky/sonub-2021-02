@@ -16,32 +16,17 @@ if (isset($_REQUEST['category'])) {
 
 <h1>Admin send push notification</h1>
 
-@TODO
-*when reply send notification
-
-*send notification on forum if admin and selected a forum/post
-***forum subscription/ comment subscription (topic)<br>
-
-post only
-post and comment
-
-***comment is created ancestors
-
-*add click/route so when notification is click,
-move the notification to the specific page.
-
-user settings page
-push notification under his comment/post
-
 
 <form @submit.prevent="sendPushNotification">
     <div class="form-group">
-        <select class="form-control mb-2 col-12 col-sm-6 col-md-3" v-model="pushNotification.sendTo">
+        <select class="form-control mb-2 col-12 col-sm-6 col-md-3" v-model="pushNotification.sendTo" @change="onChangeSelect()">
+            <option value="allTopic">Default Topic</option>
             <option value="topic">Topic</option>
             <option value="tokens">Tokens</option>
             <option value="users">Users</option>
         </select>
         <input type="text" class="form-control" id="sendTo" name="sendTo" :placeholder="pushNotification.sendTo" v-model="pushNotification.receiverInfo">
+        <small id="sendTo" class="form-text text-muted">Token and User ID must be separated by comma.</small>
     </div>
     <div class="form-group">
         <label for="title">Title</label>
@@ -55,7 +40,7 @@ push notification under his comment/post
         <label for="click_action">Click Action</label>
         <input type="text" class="form-control" id="click_action" name="click_action" aria-describedby="click_action" v-model="pushNotification.click_action">
     </div>
-    <button type="submit" class="btn btn-primary px-5" type="submit">Send</button>
+    <button type="submit" class="btn btn-primary mt-3 px-5" type="submit">Send</button>
 </form>
 
 
@@ -74,8 +59,8 @@ push notification under his comment/post
         mounted() {
             console.log('send push notification.mounted!');
             this.$data.pushNotification = {
-                sendTo: ID ? 'topic' : 'tokens',
-                receiverInfo: topic ? config.post_notification_prefix + topic : '',
+                sendTo: 'topic',
+                receiverInfo: topic ? config.post_notification_prefix + topic : 'allTopic',
                 title: title,
                 body: body,
                 click_action: click_action ?? "/"
@@ -103,7 +88,7 @@ push notification under his comment/post
                     body: this.$data.pushNotification.body,
                     click_action: this.$data.pushNotification.click_action
                 };
-                if (this.$data.pushNotification.sendTo === 'topic' ) {
+                if (this.$data.pushNotification.sendTo === 'topic' || this.$data.pushNotification.sendTo === 'allTopic' ) {
                     route = 'notification.sendMessageToTopic';
                     data['topic'] = this.$data.pushNotification.receiverInfo;
                 } else if (this.$data.pushNotification.sendTo === 'tokens' ) {
@@ -118,6 +103,13 @@ push notification under his comment/post
                     alert('Send Push Success');
                 }, this.error);
             },
+            onChangeSelect() {
+                if (this.$data.pushNotification.sendTo === "allTopic") {
+                    this.$data.pushNotification.receiverInfo = "allTopic";
+                } else {
+                    this.$data.pushNotification.receiverInfo = "";
+                }
+            }
         }
     }
 </script>
