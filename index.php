@@ -73,7 +73,7 @@ $script = get_theme_page_script_path();
             messagingSenderId: "973770265003",
             appId: "1:973770265003:web:dd304f98a421a733d8c2ee"
         },
-        allTopic: "allTopic",
+        defaultTopic: "<?=DEFAULT_TOPIC?>",
         post_notification_prefix: '<?=NOTIFY_POST?>',
         comment_notification_prefix: '<?=NOTIFY_COMMENT?>'
     };

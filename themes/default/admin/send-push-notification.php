@@ -19,19 +19,26 @@ if (isset($_REQUEST['category'])) {
 
 <form @submit.prevent="sendPushNotification">
     <div class="form-group">
-        <select class="form-control mb-2 col-12 col-sm-6 col-md-3" v-model="pushNotification.sendTo" @change="onChangeSelect()">
-            <option value="allTopic">Default Topic</option>
+
+        Send a message to
+        <select class="form-control mb-2 col-12 col-sm-6 col-md-3" v-model="pushNotification.targetType" @change="onChangeSelect()">
+            <option value="">All users</option>
             <option value="topic">Topic</option>
             <option value="tokens">Tokens</option>
             <option value="users">Users</option>
         </select>
-        <input type="text" class="form-control" id="sendTo" name="sendTo" :placeholder="pushNotification.sendTo" v-model="pushNotification.receiverInfo">
-        <small id="sendTo" class="form-text text-muted">Token and User ID must be separated by comma.</small>
+        <div v-if="pushNotification.targetType">
+            <input type="text" class="form-control" id="sendTo" name="sendTo" :placeholder="pushNotification.targetType" v-model="pushNotification.target">
+            <small class="d-block form-text text-muted" @click="pushNotification.targetType = ''">To send message to all users, Choose 'all users'. Or click here.</small>
+            <small id="sendTo" class="d-block form-text text-muted">Token and User ID must be separated by comma.</small>
+        </div>
     </div>
+
     <div class="form-group">
         <label for="title">Title</label>
         <input type="text" class="form-control" id="title" name="title" aria-describedby="title" v-model="pushNotification.title">
     </div>
+
     <div class="form-group">
         <label for="body">Body</label>
         <input type="text" class="form-control" id="body" name="body" aria-describedby="body" v-model="pushNotification.body">
@@ -59,8 +66,8 @@ if (isset($_REQUEST['category'])) {
         mounted() {
             console.log('send push notification.mounted!');
             this.$data.pushNotification = {
-                sendTo: 'topic',
-                receiverInfo: topic ? config.post_notification_prefix + topic : 'allTopic',
+                targetType: '',
+                target: config.defaultTopic,
                 title: title,
                 body: body,
                 click_action: click_action ?? "/"
@@ -69,8 +76,8 @@ if (isset($_REQUEST['category'])) {
         data() {
             return {
                 pushNotification: {
-                    sendTo: 'topic',
-                    receiverInfo: config.allTopic,
+                    targetType: '',
+                    target: config.defaultTopic,
                     title: '',
                     body: '',
                     click_action: "/"
@@ -88,15 +95,19 @@ if (isset($_REQUEST['category'])) {
                     body: this.$data.pushNotification.body,
                     click_action: this.$data.pushNotification.click_action
                 };
-                if (this.$data.pushNotification.sendTo === 'topic' || this.$data.pushNotification.sendTo === 'allTopic' ) {
+                if ( this.$data.pushNotification.targetType === '') {
                     route = 'notification.sendMessageToTopic';
-                    data['topic'] = this.$data.pushNotification.receiverInfo;
-                } else if (this.$data.pushNotification.sendTo === 'tokens' ) {
+                    data['topic'] = config.defaultTopic;
+                }
+                else if (this.$data.pushNotification.targetType === 'topic' ) {
+                    route = 'notification.sendMessageToTopic';
+                    data['topic'] = this.$data.pushNotification.target;
+                } else if (this.$data.pushNotification.targetType === 'tokens' ) {
                     route = 'notification.sendMessageToTokens';
-                    data['tokens'] = this.$data.pushNotification.receiverInfo;
-                } else if (this.$data.pushNotification.sendTo === 'users' ) {
+                    data['tokens'] = this.$data.pushNotification.target;
+                } else if (this.$data.pushNotification.targetType === 'users' ) {
                     route = 'notification.sendMessageToUsers';
-                    data['users'] = this.$data.pushNotification.receiverInfo;
+                    data['users'] = this.$data.pushNotification.target;
                 }
                 request(route, data, function(res) {
                     console.log(res);
@@ -104,10 +115,10 @@ if (isset($_REQUEST['category'])) {
                 }, this.error);
             },
             onChangeSelect() {
-                if (this.$data.pushNotification.sendTo === "allTopic") {
-                    this.$data.pushNotification.receiverInfo = "allTopic";
+                if (this.$data.pushNotification.targetType === config.defaultTopic) {
+                    this.$data.pushNotification.target = config.defaultTopic;
                 } else {
-                    this.$data.pushNotification.receiverInfo = "";
+                    this.$data.pushNotification.target = "";
                 }
             }
         }
