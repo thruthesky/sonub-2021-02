@@ -3,6 +3,7 @@
 $category = '';
 $post = null;
 
+
 if (isset($_REQUEST['category'])) {
     $category = $_REQUEST['category'];
 } else {
