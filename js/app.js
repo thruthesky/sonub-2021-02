@@ -112,22 +112,44 @@ const AttributeBinding = {
         this.error
       );
     },
-    onProfileUpdateFormSubmit() {
-      console.log(this.$data.profile);
+    /**
+     * This updates user profile to backend.
+     *
+     * @logic
+     *  - It saves input `data` into backend.
+     *    - If there is erorr, it handles error.
+     *    - If there is no error, it updates the localStorage with new data.
+     * @param data
+     */
+    userProfileUpdate(data, onSuccessCallback) {
       request(
-        "user.profileUpdate",
-        this.$data.profile,
-        function (profile) {
-          console.log("profile saved: ", profile);
-          app.setUser(profile);
-          app.alert("saved");
-        },
-        this.error
+          "user.profileUpdate",
+          data,
+          function (profile) {
+            console.log("userProfileUpdate success. saving: ", profile);
+            app.setUser(profile);
+            if ( typeof onSuccessCallback === 'function' ) onSuccessCallback(profile);
+          },
+          this.error
       );
     },
-    onProfileMetaUpdateSubmit(data) {
-      request('user.profileUpdate', data, this.setUser, this.error);
+    onProfileUpdateFormSubmit() {
+      console.log(this.$data.profile);
+      this.userProfileUpdate(this.$data.profile);
+      // request(
+      //   "user.profileUpdate",
+      //   this.$data.profile,
+      //   function (profile) {
+      //     console.log("profile saved: ", profile);
+      //     app.setUser(profile);
+      //     app.alert("saved");
+      //   },
+      //   this.error
+      // );
     },
+    // onProfileMetaUpdateSubmit(data) {
+    //   request('user.profileUpdate', data, this.setUser, this.error);
+    // },
     /**
      * It's a wrapper of calling global fileUpload function.
      * @param event

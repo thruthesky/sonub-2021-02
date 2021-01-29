@@ -464,13 +464,15 @@ function register($in)
         return $user_ID->get_error_code();
     }
 
-    if ( isset($in['token']) ){
-        $token = $in['token'];
-        unset($in['token']);
-        $in[NOTIFY_POST] = "Y";
-        subscribeTopic(NOTIFY_POST, $token);
-        $in[NOTIFY_COMMENT] = "Y";
-        subscribeTopic(NOTIFY_COMMENT, $token);
+    if ( isset($in['token']) ) {
+        if ( SUBSCRIBE_NEW_COMMENT_ON_REGISTRATION ) {
+            $token = $in['token'];
+            unset($in['token']);
+            $in[NOTIFY_POST] = "Y";
+            subscribeTopic(NOTIFY_POST, $token);
+            $in[NOTIFY_COMMENT] = "Y";
+            subscribeTopic(NOTIFY_COMMENT, $token);
+        }
     }
 
 
@@ -481,6 +483,11 @@ function register($in)
     return profile();
 }
 
+
+/**
+ * @param $user_ID
+ * @param $data
+ */
 function user_update_meta($user_ID, $data) {
     foreach ($data as $k => $v) {
         if (!in_array($k, USER_META_EXCEPTIONS)) {
@@ -1947,10 +1954,13 @@ function onCommentCreateSendNotification($comment_id, $in) {
      */
 
     /**
-     *  get all the user id of post and comment ancestors. - name as 'token users'
+     *  get all the user id of comment ancestors. - name as '$users_id'
      *  get all the user id of topic subscribers. - named as 'topic subscribers'.
      *  remove users of 'topic subscribers' from 'token users'. - with array_diff($array1, $array2) return the array1 that has no match from array2
-     *
+     *  get the tokens of the users_id and filtering those who want to get comment notification
+     *  check if the sender is not the owner of the post,
+     *  check if the post author want to get push notification and he didn't subscribe to forum topic
+     *  
      */
 
     $post = get_post( $in['comment_post_ID'], ARRAY_A );
@@ -1972,11 +1982,8 @@ function onCommentCreateSendNotification($comment_id, $in) {
     //4 remove all subscriber to token users
     $users_id = array_diff($users_id, $topic_subscribers);
 
-
-
-    //5 get tokens of user who will receive notification
+    //5 get tokens of user who will receive comment notification
     $tokens = getTokensFromUserIDs($users_id, NOTIFY_COMMENT);
-
 
     //6 post owner if he want to receive notification if it is direct descendant
     $owner_token = [];
@@ -1990,11 +1997,9 @@ function onCommentCreateSendNotification($comment_id, $in) {
     $tokens = array_merge($tokens, $owner_token);
     $tokens = array_unique( $tokens );
 
-
     //7 send notification to tokens and topic
     $title              = $post['post_title'];
     $body               = $in['comment_content'];
-
 
     sendMessageToTopic(NOTIFY_COMMENT . $slug, $title, $body, $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
     if ($tokens) sendMessageToTokens( $tokens, $title, $body, $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
