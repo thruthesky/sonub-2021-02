@@ -1,10 +1,9 @@
 <?php
 
-$cat = get_category_by_slug(in('slug'));
-$catMeta = get_term_meta($cat->term_id);
+// $cat = get_category_settings(['slug' => in('slug')]);
 
-$postListOnView = $catMeta['list_on_view'] ? $catMeta['list_on_view'][0] : false;
-$postPerPage = $catMeta['posts_per_page'] ? $catMeta['posts_per_page'][0] : 20;
+$cat = get_category_by_slug(in('slug'));
+$catMetas = get_term_meta($cat->term_id);
 
 // d($cat);
 ?>
@@ -21,22 +20,46 @@ $postPerPage = $catMeta['posts_per_page'] ? $catMeta['posts_per_page'][0] : 20;
     <tbody>
         <tr>
             <td>Title</td>
-            <td><input name="name" value="<?= $cat->name ?>" @keyup="debounce(updateTitle($event), 500, 'name')"></td>
+            <td>
+                <input name="name" value="<?= $cat->name ?>" @keyup="debounce(updateTitle($event), 500, 'name')">
+            </td>
         </tr>
         <tr>
             <td>Post list under view page</td>
-            <td><input type="checkbox" @change="debounce(updateListOnView($event), 500, 'no')" <?php if ($postListOnView) echo 'checked' ?>></td>
+            <td>
+                <input 
+                    type="checkbox" 
+                    name="list_on_view" 
+                    @change="debounce(updateListOnView($event), 500, 'list')" 
+                    <?php if ($catMetas['list_on_view'][0]) echo 'checked' ?>>
+            </td>
         </tr>
         <tr>
             <td>No of posts per page</td>
-            <td><input type="number" value="<?= $postPerPage ?>" @keyup="debounce(updatePostsPerPage($event), 500, 'no')"></td>
+            <td>
+                <input 
+                    type="number" 
+                    value="<?= $catMetas['posts_per_page'][0] ?? 20 ?>" 
+                    @keyup="debounce(updatePostsPerPage($event), 500, 'no')">
+            </td>
         </tr>
         <tr>
             <td>No of pages on navigator</td>
-            <td><input type="text"></td>
+            <td>
+                <input 
+                    type="number" 
+                    value="<?= $catMetas['no_of_pages_on_nav'][0] ?? 5 ?>" 
+                    @keyup="debounce(updateNoOfPagesOnNav($event), 500, 'pages')">
+            </td>
         </tr>
     </tbody>
 </table>
+
+<ul>
+    <li>
+        Post list under view page - is enabled if the box is checked.
+    </li>
+</ul>
 
 <script>
     const mixin = {
@@ -45,25 +68,34 @@ $postPerPage = $catMeta['posts_per_page'] ? $catMeta['posts_per_page'][0] : 20;
 
         },
         methods: {
-            updateListOnView(event) {
-                this.updateCategory('list_on_view', event.target.checked);
-            },
             updateTitle(event) {
-                this.updateCategory('cat_name', event.target.value);
+                this.updateCategory('cat_name', event.target.value, function(data) {
+                    alert('Title updated to : ' + event.target.value)
+                });
+            },
+            updateListOnView(event) {
+                this.updateCategory('list_on_view', event.target.checked, function(data) {
+                    alert('Listing on view page updated to : ' + event.target.checked)
+                });
             },
             updatePostsPerPage(event) {
-                this.updateCategory('posts_per_page', event.target.value);
+                this.updateCategory('posts_per_page', event.target.value, function(data) {
+                    alert('Post per page updated to : ' + event.target.value)
+                });
             },
-            updateCategory(key, value) {
+            updateNoOfPagesOnNav(event) {
+                this.updateCategory('no_of_pages_on_nav', event.target.value, function(data) {
+                    alert('Number of pagers on navigation updated to : ' + event.target.value)
+                });
+            },
+            updateCategory(key, value, successCallback) {
                 data = {
                     'cat_ID': <?= $cat->term_id ?>,
                     'name': key,
                     'value': value
                 };
                 console.log(data);
-                request('forum.updateCategory', data, function(data) {
-                    console.log('category updated!');
-                }, app.error);
+                request('forum.updateCategory', data, successCallback, app.error);
             }
         }
     }

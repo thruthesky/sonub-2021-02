@@ -4,7 +4,7 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
 <hr>
 <div class="p-2 d-flex justify-content-between">
     <h2>Forum List</h2>
-    <a class="btn btn-success" href="/?page=forum/edit&category=<?php echo $category ?>">Create</a>
+    <a class="btn btn-success" href="/?page=forum/edit&category=<?= $category ?>">Create</a>
 </div>
 <div>
     <div class="form-check form-switch">
@@ -47,14 +47,14 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
 
 <nav aria-label="Page navigation example">
     <ul class="pagination">
-        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+        <li class="page-item"><a class="page-link" href="">Previous</a></li>
         <?php for ($i = 0; $i <= 10; $i++) {
-            $nextPage = $i + 1;
-            $nextLink = '/?page=forum/list&category=' . $category . '&page_no=' . $nextPage;
+            $paged = $i + 1;
+            $href = '/?page=forum/list&category=' . $category . '&page_no=' . $paged;
         ?>
-            <li class="page-item"><a class="page-link" href="<?= $nextLink ?>"><?= $nextPage ?></a></li>
+            <li class="page-item"><a class="page-link" href="<?= $href ?>"><?= $paged ?></a></li>
         <?php } ?>
-        <li class="page-item"><a class="page-link" href="<?= $nextLink ?>">Next</a></li>
+        <li class="page-item"><a class="page-link" href="<?= $href ?>">Next</a></li>
     </ul>
 </nav>
 

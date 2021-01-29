@@ -20,10 +20,7 @@ class ForumRoute
     public function editPost($in)
     {
         return api_edit_post($in);
-
     }
-
-
 
     /**
      * Get a post.
@@ -55,7 +52,8 @@ class ForumRoute
 
 
 
-    public function getComment() {
+    public function getComment()
+    {
         return comment_response(in('comment_ID'));
     }
 
@@ -65,7 +63,7 @@ class ForumRoute
         $user = wp_get_current_user();
 
 
-        if ( in('comment_post_ID') == null ) return ERROR_EMPTY_COMMENT_POST_ID;
+        if (in('comment_post_ID') == null) return ERROR_EMPTY_COMMENT_POST_ID;
 
         if (in('comment_ID') == null || in('comment_ID') == 'undefined') {
             $commentdata = [
@@ -106,7 +104,7 @@ class ForumRoute
             }
             if ($re == 0) {
                 // This is fine. comment_content may not be updated. files or anything else may be updated, instead.
-//                return ERROR_COMMENT_NOT_UPDATED;
+                //                return ERROR_COMMENT_NOT_UPDATED;
             }
             $comment_id = in('comment_ID');
         }
