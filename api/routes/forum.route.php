@@ -55,6 +55,10 @@ class ForumRoute
 
 
 
+    public function getComment() {
+        return comment_response(in('comment_ID'));
+    }
+
 
     public function editComment()
     {
