@@ -87,7 +87,7 @@ define('PASS_LOGIN_PASSWORD', 'S_oO0Oo_S.0.48.PM');
 /**
  * Firebase Admin Service Account Key, for firebase connection
  */
-define("SERVICE_ACCOUNT_FIREBASE_JSON_FILE_PATH", THEME_DIR . "/keys/nalia-app-firebase-admin-sdk-service-account-key.json");
+define("FIREBASE_ADMIN_SDK_SERVICE_ACCOUNT_KEY_PATH", THEME_DIR . "/keys/nalia-app-firebase-admin-sdk-service-account-key.json");
 define("FIREBASE_DATABASE_URI", "https://nalia-app-default-rtdb.firebaseio.com");
 
 

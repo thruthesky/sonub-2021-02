@@ -17,7 +17,7 @@ use Kreait\Firebase\Messaging\CloudMessage;
  *
  */
 function getFirebase() {
-    return (new Factory)->withServiceAccount(SERVICE_ACCOUNT_FIREBASE_JSON_FILE_PATH)->withDatabaseUri(FIREBASE_DATABASE_URI);
+    return (new Factory)->withServiceAccount(FIREBASE_ADMIN_SDK_SERVICE_ACCOUNT_KEY_PATH)->withDatabaseUri(FIREBASE_DATABASE_URI);
 }
 
 

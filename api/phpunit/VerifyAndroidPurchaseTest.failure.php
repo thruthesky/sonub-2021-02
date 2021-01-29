@@ -20,7 +20,7 @@ class failure extends TestCase
     }
 
     public function testAndroidPurchaseInputTest() {
-        self::assertTrue( file_exists(SERVICE_ACCOUNT_FIREBASE_JSON_FILE_PATH) === true, 'service account json file exists' );
+        self::assertTrue( file_exists(FIREBASE_ADMIN_SDK_SERVICE_ACCOUNT_KEY_PATH) === true, 'service account json file exists' );
 
 
         $serverVerificationData = "...";

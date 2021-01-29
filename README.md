@@ -1,59 +1,69 @@
-# Wigo
+# Sonub Theme API
 
-Withcenter Multisite & API Theme
+* Sonub(Sonub Network Hub) is an open source, complete CMS with modern functionalities like realtime update, push notification, and more.
+* It is build on Apache(or Nginx) + MySQL(or MariaDB) + PHP stack based Wordpress. It works as a theme but has very much fixed.
 
-* This project is a Wordpress theme that supports
-  * its own multisite functionality,
-  * and Restful API for clientend.
+# Overview
 
+* Build with PHP.
+  * Main reason is to support SEO naturally.\
+    When you build web as SPA, there might be several ways for supporting SEO like SSR or half PHP and haf SPA.\
+    But none of them are natural and takes extra effort.
+  * Vanilla Vue.js 3.x
+    * It uses Vue.js over jQuery and it does not use CLI bundling tools, simply to avoid extra compiling and publishing.
+  * It may be a good choice to do SPA for sites(like admin site) that does not need SEO.
 
-# Development Concept
+* Firebase
+  * There are lots of benefits with Firebase.
+    * With firebase, you can do Social login, push notification, realtime updates.
+  * And yes, you may use the free version only.
 
-* Build PWA with PHP. Not based on SPA.
-  * To support natural SEO.\
-    There might be some workarounds for SEO supporting like SSR or half PHP and haf SPA. But none of them are natural.
-  * Use Vue.js 3.x
-    * Don't use CLI bundling tool because it needs to be compiled and published. It may be a good choice for admin site to be SPA, but to remove CLI bundling tool, it was built with PHP.
+* Supporting Full Restful API.
+  * Sonub is built with Restful API in mind and all functionalities are supported as Restful API.
+  * So, any client like Vue, Angular, React, Flutter, 
+
 
 # TODO
 
-* See git issues.
-
-# Server Environment
-
-* Server passwords. See Withcenter work information doc.
+* See [sonub git issues](https://github.com/thruthesky/sonub/issues).
 
 # Installation
 
 
 ## Requirement
 
-* Wordpress 5.6
+* Wordpress 5.6 and above.
 * PHP 7.4.x and above
 * Nginx
 * MariaDB
 
 ## Wordpress Installation
 
-* Install wordpress on HTTPS domain
-* And make it working.
+* Install wordpress on HTTPS domain. It should work as normal.
 
 ## Git repo source
 
+* Clone the source into wordpress themes folder.
+
 ```sh
-git clone https://github.com/thruthesky/wigo wp-content/themes/withcenter-backend-v3
+cd wp-content/theme/sonub
+git clone https://github.com/thruthesky/sonub
 ```
+
+* And enable it on admin page.
 
 
 ## Firebase
 
-* Many of features are depending on Firebase. So it is a must to set Firebase project in Firebase console
-  and put the admin sdk key file in `keys` folder
-  and set it to `SERVICE_ACCOUNT_FIREBASE_JSON_FILE_PATH` constant the path in config.php
+Many of features are depending on firebase. So it is mandatory to setup firebase.
+
+* First, create a firebase project in firebase console
+* Then, put the `firebase admin sdk account key` file in `keys` folder. If `wp-content/themes/sonub/keys` folder does not exist, then create the folder.
+* Lastly, set the path to `FIREBASE_ADMIN_SDK_SERVICE_ACCOUNT_KEY_PATH` constant in config.php
 
 * Setup Realtime Database.
   * Create realtime database on firebase console
-  * Set the database uri to `FIREBASE_DATABASE_URI`.
+  * And set the database uri to `FIREBASE_DATABASE_URI`.
 
 
 
@@ -62,20 +72,68 @@ git clone https://github.com/thruthesky/wigo wp-content/themes/withcenter-backen
 * If you are using in_app_purchase, then put a proper key file.
 
 
+## Installing SASS Reloader
+
+* Install node modules.
+
+```
+cd wp-content/themes/sonub
+npm i
+```
+
+* and watch folder and complile `scss/*.scss` to `css/*.css` like below.
+
+```
+ ./node_modules/.bin/sass --watch scss:css
+```
+
+* You may do below to watch specific file.
+
+```
+ ./node_modules/.bin/sass --watch scss/index.scss css/index.css
+```
+
+
+
+# Development Guideline
+
+## Modules & Components
+
+* It uses
+
+  * Vue.js in PHP page scripts.
+  * Bootstrap v5
+  * Font awesome
+  * Firebase Javascript SDK
+  * Axios Javascript
+
+
+## Theme
+
+* Theme folder is only for themes. Theme folder does not have any information or meta data(files) that are related in API.
+* All api things are inside 'api' folder.
+
+### Hot reload
+
+* Run the command below.
+
+```
+ % node wp-content/themes/wigo/live-reload.js
+```
+
+
+
+
 ## Setup on Local Development Computer
+
 
 
 * Setting on local development computer may be slightly different on each developer depending on their environment.
 
-* Enable 'wigo' theme.
-
 * First, set test domains in hosts.
-
   * local.sonub.com as the main root site
-  * api-local.sonub.com as the api site
   * apple.sonub.com as multisite
   * banana.sonub.com as multisite
-  * cherry.sonub.com as multisite.
  
  
 * Nginx configuration. Careful on updating root, SSL certs paths. SSL certs is on wigo/tmp/ssl folder.
@@ -112,91 +170,6 @@ server {
 * Create database. Same database name, id, password.
 * Pour tmp/sql/sonub.sql into database
 * Fix urls in wp_options to 'https://local.sonub.com'
-
-
-
-
-## Nginx Configuration on Live Server
-
-* Skip if you are not installing on live server.
-* This is the sample configuration on live Nginx server.
-
-```text
-server {
-  server_name  .sonub.com;
-  listen       80;
-  rewrite ^ https://$host$request_uri? permanent;
-}
-server {
-  server_name .sonub.com;
-  listen 443 ssl http2;
-  root /home/sonub/www;
-  index index.php;
-
-  location / {
-    add_header Access-Control-Allow-Origin *;
-    try_files $uri $uri/ /index.php?$args;
-  }
-  location ~ \.php$ {
-    fastcgi_param REQUEST_METHOD $request_method;
-    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-    include fastcgi_params;
-    fastcgi_pass 127.0.0.1:9000;
-  }
-
-  ssl_certificate /etc/letsencrypt/live/sonub.com/fullchain.pem; # managed by Certbot
-  ssl_certificate_key /etc/letsencrypt/live/sonub.com/privkey.pem; # managed by Certbot
-  include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-}
-```
-
-## Installing SASS Reloader
-
-Installation if npm not set
-```
-    npm init -y
-    npm i -D sass
-```
-Or Simply run `npm install` to install node packages
-```
-    npm i
-```
-
-node watch folder
-```
- ./node_modules/.bin/sass --watch scss:css
-```
-node watch specific file
-```
- ./node_modules/.bin/sass --watch scss/index.scss css/index.css
-```
-
-
-
-
-
-# Development Guideline
-
-## Modules & Components
-
-
-* It uses full build of `lodash.js`.
-  * Be sure where it is loaded, so you will know where to write lodash codes. You may see undefiend error if you use `_` before loading lodash.
-
-## Theme
-
-* Theme folder is only for themes. Theme folder does not have any information or meta data(files) that are related in API.
-* All api things are inside 'api' folder.
-
-### Hot reload
-
-* Run the command below.
-
-```
- % node wp-content/themes/wigo/live-reload.js
-```
-
 
 
 
