@@ -53,6 +53,15 @@ git clone https://github.com/thruthesky/sonub
 * And enable it on admin page.
 
 
+## Database Setup
+
+It has some database tables to install.
+
+* `api_push_token` for push notifications
+* `api_translations` for supporting multi languages.
+
+
+
 ## Firebase
 
 Many of features are depending on firebase. So it is mandatory to setup firebase.
@@ -108,25 +117,31 @@ npm i
   * Axios Javascript
 
 
-## Theme
+## Folder structures
 
-* Theme folder is only for themes. Theme folder does not have any information or meta data(files) that are related in API.
-* All api things are inside 'api' folder.
+* `sonub` is the theme folder.
+* `sonub/api` is the api folder and most of codes goes in this folder.
+  * `composer` is installed in this folder.
+  * `sonub/api/lib/api-functions.php` is the PHP script that holds most of the core functions.
+  * `sonub/api/phpunit` is the unit testing folder.
+  * `sonub/api/ext` folder is where you can put your own custom routes.
+  * `sonub/api/var` folder is where you can put any data there.
+* `sonub/api/routes/*.route.php` is the routes(or interfaces) that client can connect using Restful API protocols.
+* `sonub/themes` is the theme folder to support different themes based on different domains or options.
+* `sonub/js` folder has common javascrit files.
+* `sonub/css` folder has common css files.
 
-### Hot reload
 
-* Run the command below.
+## PHP Live Reload
+
+* If you want the browser reload whenever you edit php, css, javascript files, run the command below.
 
 ```
- % node wp-content/themes/wigo/live-reload.js
+cd wp-content/themes/sonub
+node live-reload.js
 ```
-
-
-
 
 ## Setup on Local Development Computer
-
-
 
 * Setting on local development computer may be slightly different on each developer depending on their environment.
 
@@ -170,9 +185,6 @@ server {
 * Create database. Same database name, id, password.
 * Pour tmp/sql/sonub.sql into database
 * Fix urls in wp_options to 'https://local.sonub.com'
-
-
-
 
 
 ## Reference

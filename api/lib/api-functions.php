@@ -699,7 +699,7 @@ function loginOrRegister($in) {
  */
 function get_token($token) {
     global $wpdb;
-    return $wpdb->get_row("SELECT * FROM " . PUSH_TOKEN_TABLE .  " WHERE token='$token'", ARRAY_A);
+    return $wpdb->get_row("SELECT * FROM " . PUSH_TOKENS_TABLE .  " WHERE token='$token'", ARRAY_A);
 }
 
 /**
@@ -712,7 +712,7 @@ function get_user_tokens($ID=null) {
     global $wpdb;
     if ( $ID ) $user_ID = $ID;
     else $user_ID = wp_get_current_user()->ID;
-    $rows = $wpdb->get_results("SELECT * FROM " . PUSH_TOKEN_TABLE .  " WHERE user_ID='$user_ID'", ARRAY_A);
+    $rows = $wpdb->get_results("SELECT * FROM " . PUSH_TOKENS_TABLE .  " WHERE user_ID='$user_ID'", ARRAY_A);
     return ids($rows, 'token');
 }
 
@@ -749,13 +749,13 @@ function update_token($in) {
     if ( empty($record) ) {
         // insert
         debug_log(" ['user_ID' => $user_ID, 'token' => $token, 'stamp' => time()] ");
-        $re = $wpdb->insert(PUSH_TOKEN_TABLE, ['user_ID' => $user_ID, 'token' => $token, 'stamp' => time()]);
+        $re = $wpdb->insert(PUSH_TOKENS_TABLE, ['user_ID' => $user_ID, 'token' => $token, 'stamp' => time()]);
         if ( $re === false ) {
             return ERROR_INSERT;
         }
     } else {
         // update
-        $wpdb->update(PUSH_TOKEN_TABLE, ['user_ID' => $user_ID], ['token' => $token]);
+        $wpdb->update(PUSH_TOKENS_TABLE, ['user_ID' => $user_ID], ['token' => $token]);
     }
 
 
