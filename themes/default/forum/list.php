@@ -9,11 +9,11 @@ $category = get_category_by_slug(in('category'));
 </div>
 <div>
     <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" id="notificationUnderMyPost" v-model="alertOnNewPost" @change="onChangeAlertOnNewPost">
+        <input class="form-check-input" type="checkbox" id="notificationUnderMyPost" v-model="alertOnNewPost" @change="onChangeAlertOnNewPost(currentListCategory)">
         <label class="form-check-label" for="notificationUnderMyPost">Notification on New Post</label>
     </div>
     <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" id="notificationUnderMyComment" v-model="alertOnNewComment" @change="onChangeAlertOnNewComment">
+        <input class="form-check-input" type="checkbox" id="notificationUnderMyComment" v-model="alertOnNewComment" @change="onChangeAlertOnNewComment(currentListCategory)">
         <label class="form-check-label" for="notificationUnderMyComment">Notification on New Comment</label>
     </div>
 </div>
@@ -66,35 +66,6 @@ $category = get_category_by_slug(in('category'));
             console.log('list.created!');
         },
         mounted() {
-            console.log('list.mounted!');
-            if ( this.loggedIn() ) {
-                this.$data.alertOnNewPost = this.$data.user[config.post_notification_prefix + category] === 'Y';
-                this.$data.alertOnNewComment = this.$data.user[config.comment_notification_prefix + category] === 'Y';
-            }
-        },
-        data() {
-            return {
-                alertOnNewPost: false,
-                alertOnNewComment: false,
-            }
-        },
-        methods: {
-            onChangeAlertOnNewPost() {
-                const topic = config.post_notification_prefix + category;
-                const notificationRoute = this.$data.alertOnNewPost === true
-                    ? "notification.subscribeTopic"
-                    : "notification.unsubscribeTopic";
-                request(notificationRoute, {topic: topic}, function (res) {
-                    console.log(res);
-                }, this.error);
-            },
-            onChangeAlertOnNewComment() {
-                const topic = config.comment_notification_prefix + category;
-                const notificationRoute = this.$data.alertOnNewComment === true
-                    ? "notification.subscribeTopic"
-                    : "notification.unsubscribeTopic";
-                request(notificationRoute, {topic: topic}, null, this.error);
-            }
         }
     }
 </script>
