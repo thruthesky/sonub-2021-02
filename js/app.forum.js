@@ -96,30 +96,33 @@ const forumMixin = {
 
 
 const commentForm = {
-  props: ['comment_id', 'comment_parent', 'comment_content', 'comment_post_id', 'files'],
-  template: '<form @submit.prevent="onSubmit">' +
-      '<div class="d-flex bg-light">' +
-      '<div class="position-relative d-inline-block of-hidden">' +
-      '<i class="fa fa-camera fs-xl"></i>' +
-      '<input class="position-absolute cover fs-xxl opacity-0" type="file" @change="onCommentFileUpload($event)">' +
-      '</div>' +
-      '<textarea class="w-100" v-model="form.comment_content"></textarea>' +
-      '</div>' +
+  props: ['comment_id', 'comment_parent', 'comment_post_id'],
+  template: '' +
 
-      '<button class="btn btn-secondary ml-2" type="button" @click="onCancel()" v-if="canCancel()">Cancel</button>' +
-      '<button class="btn btn-success ml-2" type="submit" v-if="canSubmit()">Submit</button>' +
+      '<form @submit.prevent="onSubmit">' +
+      ' <div class="d-flex bg-light">' +
+      '   <div class="position-relative d-inline-block of-hidden">' +
+      '     <i class="fa fa-camera fs-xl"></i>' +
+      '     <input class="position-absolute cover fs-xxl opacity-0" type="file" @change="onCommentFileUpload($event)">' +
+      '   </div>' +
+      '   <textarea class="w-100" v-model="form.comment_content"></textarea>' +
+      ' </div>' +
+
+      ' <button class="btn btn-secondary ml-2" type="button" @click="onCancel()" v-if="canCancel()">Cancel</button>' +
+      ' <button class="btn btn-success ml-2" type="submit" v-if="canSubmit()">Submit</button>' +
       '</form>' +
+
       '<div>' +
-      '<div class="progress mt-3" style="height: 5px;" v-if="$root.uploadPercentage > 0">' +
+      ' <div class="progress mt-3" style="height: 5px;" v-if="$root.uploadPercentage > 0">' +
       '   <div class="progress-bar" role="progressbar" :style="{width: $root.uploadPercentage + \'%\'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>' +
-      '</div>' +
-      '<div class="uploaded-files d-flex">' +
-      '<div class="position-relative p-1" v-for="file in uploaded_files">' +
-      '<img class="size-100" :src="file.url">' +
-      '<i class="fa fa-trash fs-lg position-absolute top left"></i>' +
-      '</div>' +
-      '</div>' +
-      '{{ uploaded_files }}' +
+      ' </div>' +
+      ' <div class="uploaded-files d-flex">' +
+      '   <div class="position-relative p-1" v-for="file in uploaded_files">' +
+      '     <img class="size-100" :src="file.url">' +
+      '     <i class="fa fa-trash fs-lg position-absolute top left"></i>' +
+      '   </div>' +
+      ' </div>' +
+      ' {{ uploaded_files }}' +
       '</div>',
   data() {
     return {
@@ -127,30 +130,27 @@ const commentForm = {
         comment_ID: this.comment_id,
         comment_parent: this.comment_parent,
         comment_post_ID: this.comment_post_id,
-        comment_content: this.comment_content,
+        comment_content: '',
         files: [],
       },
-      uploaded_files: this.files,
+      uploaded_files: [],
     };
   },
   created() {
+    /**
+     * For comment edit, Vue will strip out all the special chars of 'comment_content' like quotes comment from from PHP
+     * So, it loads content from backend and fills in textarea.
+     */
     if ( this.form.comment_ID ) {
-      console.log("it is editing");
       const $this = this;
       request('forum.getComment', {comment_ID: this.form.comment_ID}, function (cmt) {
         console.log(cmt);
         $this.form.comment_content = cmt.comment_content;
+        $this.uploaded_files = cmt.files;
       }, this.error);
-    }
-    if ( this.$data.uploaded_files && this.$data.uploaded_files.length > 0 ) {
-      const $this = this;
-      this.$data.uploaded_files.forEach(function(v) {
-        $this.$data.form.files.push( v.ID );
-      });
     }
   },
   methods: {
-
     canCancel() {
       return !!this.$data.form.comment_ID || !!this.$data.form.comment_parent || this.canSubmit();
     },
@@ -165,13 +165,17 @@ const commentForm = {
       this.$data.uploaded_files = [];
     },
     onSubmit() {
+      // Get file ID(s) of the comment.
+      const $this = this;
+      $this.uploaded_files.forEach(function(f) {
+        $this.form.files.push( f.ID );
+      });
+      // Save.
       request('forum.editComment', this.$data.form, refresh, app.error);
     },
     onCommentFileUpload(event) {
       const $this = this;
       this.$root.onFileUpload(event, function(res) {
-        console.log('file upload: ', res);
-        $this.$data.form.files.push(res.ID);
         $this.$data.uploaded_files.push(res);
       });
     },

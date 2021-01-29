@@ -101,8 +101,6 @@ $comments = $post['comments'];
                     <comment-form
                             :comment_post_id="<?=$post_ID?>"
                             :comment_id="<?=$comment_ID?>"
-                            :comment_content=''
-                            :files='<?=json_encode($files)?>'
                             v-if="editNo == <?=$comment_ID?>"></comment-form>
                 </div>
             <?php } ?>

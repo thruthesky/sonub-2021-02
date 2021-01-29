@@ -105,7 +105,8 @@ class ForumRoute
                 return ERROR_COMMENT_EDIT . ':' . $re->get_error_message();
             }
             if ($re == 0) {
-                return ERROR_COMMENT_NOT_UPDATED;
+                // This is fine. comment_content may not be updated. files or anything else may be updated, instead.
+//                return ERROR_COMMENT_NOT_UPDATED;
             }
             $comment_id = in('comment_ID');
         }
