@@ -20,10 +20,7 @@ class ForumRoute
     public function editPost($in)
     {
         return api_edit_post($in);
-
     }
-
-
 
     /**
      * Get a post.
@@ -55,7 +52,8 @@ class ForumRoute
 
 
 
-    public function getComment() {
+    public function getComment()
+    {
         return comment_response(in('comment_ID'));
     }
 
@@ -65,7 +63,7 @@ class ForumRoute
         $user = wp_get_current_user();
 
 
-        if ( in('comment_post_ID') == null ) return ERROR_EMPTY_COMMENT_POST_ID;
+        if (in('comment_post_ID') == null) return ERROR_EMPTY_COMMENT_POST_ID;
 
         if (in('comment_ID') == null || in('comment_ID') == 'undefined') {
             $commentdata = [
