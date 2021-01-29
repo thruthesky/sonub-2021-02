@@ -2071,7 +2071,7 @@ function getAncestors( $comment_ID ) {
 
 function getUserTokens($user_ID) {
     global $wpdb;
-    $rows =  $wpdb->get_results("SELECT token FROM " . PUSH_TOKEN_TABLE ." WHERE user_ID=$user_ID", ARRAY_A);
+    $rows =  $wpdb->get_results("SELECT token FROM " . PUSH_TOKENS_TABLE ." WHERE user_ID=$user_ID", ARRAY_A);
     $tokens = [];
     foreach( $rows as $user ) {
         $tokens[] = $user['token'];
