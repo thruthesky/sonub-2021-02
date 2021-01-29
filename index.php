@@ -14,7 +14,7 @@ $script = get_theme_page_script_path();
     <link href="<?=THEME_URL?>/css/fontawesome-free-5.15.2-web/css/all.css" rel="stylesheet">
     <link rel="stylesheet" href="<?=THEME_URL?>/css/index.css?v=<?=build_version()?>">
     <?php load_theme_css($script); ?>
-    <!-- <?php live_reload_js() ?> -->
+    <?php live_reload_js() ?>
     <?php insert_initial_javascript() ?>
 </head>
 <body class="<?=get_theme_page_class_name()?>">
@@ -83,9 +83,9 @@ $script = get_theme_page_script_path();
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/vue@3.0.5/dist/vue.global.prod.js"></script>
 <script src="<?=THEME_URL?>/js/axios.min.js"></script>
-<!-- <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-messaging.js"></script>
-<script src="<?=THEME_URL?>/js/firebase.js"></script> -->
+<script src="<?=THEME_URL?>/js/firebase.js"></script>
 <?php load_theme_js($script); ?>
 <script src="<?php echo THEME_URL . '/js/helpers.js'?>?v=<?=build_version()?>"></script>
 <? if ( is_forum_page() ) { ?><script src="<?php echo THEME_URL . '/js/app.forum.js'?>?v=<?=build_version()?>"></script><? } ?>
