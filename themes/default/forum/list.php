@@ -77,32 +77,21 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
         },
         methods: {
             onChangeAlertOnNewPost() {
+
                 const topic = config.post_notification_prefix + category;
-                const notificationRoute = this.$data.alertOnNewPost === true ?
-                    "notification.subscribeTopic" :
-                    "notification.unsubscribeTopic";
-                request(notificationRoute, {
-                    topic: topic
-                }, function() {
-                    const data = {
-                        [topic]: app.alertOnNewPost ? "Y" : "N"
-                    };
-                    app.onProfileMetaUpdateSubmit(data);
+                const notificationRoute = this.$data.alertOnNewPost === true
+                    ? "notification.subscribeTopic"
+                    : "notification.unsubscribeTopic";
+                request(notificationRoute, {topic: topic}, function (res) {
+                    console.log(res);
                 }, this.error);
             },
             onChangeAlertOnNewComment() {
                 const topic = config.comment_notification_prefix + category;
-                const notificationRoute = this.$data.alertOnNewComment === true ?
-                    "notification.subscribeTopic" :
-                    "notification.unsubscribeTopic";
-                request(notificationRoute, {
-                    topic: topic
-                }, function() {
-                    const data = {
-                        [topic]: app.alertOnNewComment ? "Y" : "N"
-                    };
-                    app.onProfileMetaUpdateSubmit(data);
-                }, this.error);
+                const notificationRoute = this.$data.alertOnNewComment === true
+                    ? "notification.subscribeTopic"
+                    : "notification.unsubscribeTopic";
+                request(notificationRoute, {topic: topic}, null, this.error);
             }
         }
     }
