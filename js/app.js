@@ -245,6 +245,13 @@ const AttributeBinding = {
         this.error
       );
     },
+    onChangeSubscribeOrUnsubscribe(topic, mode = true) {
+        const notificationRoute = mode ? "notification.subscribeTopic"
+            : "notification.unsubscribeTopic";
+        request(notificationRoute, {topic: topic}, function (res) {
+            // this.$data.user[topic] = mode ? "Y" : "N";
+        }, this.error);
+    }
   },
 };
 

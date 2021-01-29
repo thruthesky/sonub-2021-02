@@ -99,7 +99,7 @@ const forumMixin = {
             ? "notification.subscribeTopic"
             : "notification.unsubscribeTopic";
         request(notificationRoute, {topic: topic}, function (res) {
-            console.log(res);
+            // this.$data.user[topic] = alertOnNewPost ? "Y" : "N";
         }, this.error);
     },
     onChangeAlertOnNewComment(category) {
@@ -108,9 +108,9 @@ const forumMixin = {
             ? "notification.subscribeTopic"
             : "notification.unsubscribeTopic";
         request(notificationRoute, {topic: topic}, function (res) {
-            console.log(res);
+            // this.$data.user[topic] = alertOnNewComment ? "Y" : "N";
         }, this.error);
-    }
+    },
   },
 };
 

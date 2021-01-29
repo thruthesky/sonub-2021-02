@@ -1,5 +1,7 @@
 <?php
 $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
+$post_topic = NOTIFY_POST . $category;
+$comment_topic = NOTIFY_COMMENT . $category;
 ?>
 <hr>
 <div class="p-2 d-flex justify-content-between">
@@ -8,11 +10,13 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
 </div>
 <div>
     <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" id="notificationUnderMyPost" v-model="alertOnNewPost" @change="onChangeAlertOnNewPost(currentListCategory)">
+        <input class="form-check-input" type="checkbox" id="notificationUnderMyPost"
+               v-model="alertOnNewPost" @change="onChangeSubscribeOrUnsubscribe('<?=$post_topic?>', alertOnNewPost)">
         <label class="form-check-label" for="notificationUnderMyPost">Notification on New Post</label>
     </div>
     <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" id="notificationUnderMyComment" v-model="alertOnNewComment" @change="onChangeAlertOnNewComment(currentListCategory)">
+        <input class="form-check-input" type="checkbox" id="notificationUnderMyComment"
+               v-model="alertOnNewComment" @change="onChangeSubscribeOrUnsubscribe('<?=$comment_topic?>', alertOnNewComment)">
         <label class="form-check-label" for="notificationUnderMyComment">Notification on New Comment</label>
     </div>
 </div>
@@ -65,8 +69,10 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
             console.log('list.created!');
         },
         mounted() {
-            console.log('list.mounted!');
-            this.$data.currentListCategory = category;
+            console.log('post_notification_prefix.mounted!',config.post_notification_prefix + category,  this.$data.user[config.post_notification_prefix + category]);
+            console.log('post_notification_prefix.mounted!', this.$data.user[config.comment_notification_prefix + category]);
+            console.log('this.$data.user', this.$data.user);
+            console.log('this.$data.profile', this.$data.profile);
             this.$data.alertOnNewPost = this.$data.user[config.post_notification_prefix + category] === 'Y';
             this.$data.alertOnNewComment = this.$data.user[config.comment_notification_prefix + category] === 'Y';
         },
