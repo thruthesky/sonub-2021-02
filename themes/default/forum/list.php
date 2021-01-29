@@ -77,7 +77,9 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
                 const notificationRoute = this.$data.alertOnNewComment === true
                     ? "notification.subscribeTopic"
                     : "notification.unsubscribeTopic";
-                request(notificationRoute, {topic: topic}, null, this.error);
+                request(notificationRoute, {topic: topic}, function (res) {
+                    console.log(res);
+                }, this.error);
             }
         }
     }

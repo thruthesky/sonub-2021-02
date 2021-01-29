@@ -1943,8 +1943,8 @@ function onCommentCreateSendNotification($comment_id, $in) {
     /**
 
      * 1) get post owner id
-     * 2) get notification comment ancestors
-     * 3) make it unique
+     * 2) get comment ancestors users_id
+     * 3) make it unique to eliminate duplicate
      * 4) get topic subscriber
      * 5) remove all subscriber from token users
      * 6) get users token
