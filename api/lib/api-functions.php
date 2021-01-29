@@ -464,13 +464,15 @@ function register($in)
         return $user_ID->get_error_code();
     }
 
-    if ( isset($in['token']) ){
-        $token = $in['token'];
-        unset($in['token']);
-        $in[NOTIFY_POST] = "Y";
-        subscribeTopic(NOTIFY_POST, $token);
-        $in[NOTIFY_COMMENT] = "Y";
-        subscribeTopic(NOTIFY_COMMENT, $token);
+    if ( isset($in['token']) ) {
+        if ( SUBSCRIBE_NEW_COMMENT_ON_REGISTRATION ) {
+            $token = $in['token'];
+            unset($in['token']);
+            $in[NOTIFY_POST] = "Y";
+            subscribeTopic(NOTIFY_POST, $token);
+            $in[NOTIFY_COMMENT] = "Y";
+            subscribeTopic(NOTIFY_COMMENT, $token);
+        }
     }
 
 
@@ -481,6 +483,11 @@ function register($in)
     return profile();
 }
 
+
+/**
+ * @param $user_ID
+ * @param $data
+ */
 function user_update_meta($user_ID, $data) {
     foreach ($data as $k => $v) {
         if (!in_array($k, USER_META_EXCEPTIONS)) {

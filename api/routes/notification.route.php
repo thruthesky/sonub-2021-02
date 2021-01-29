@@ -73,7 +73,9 @@ class NotificationRoute {
             $tokens = get_user_tokens();
         }
         if ( empty($tokens) ) return ERROR_EMPTY_TOKENS;
-        return subscribeTopic($in['topic'], $tokens);
+        $re = subscribeTopic($in['topic'], $tokens);
+        user_update_meta(wp_get_current_user()->ID, [ $in['topic'] => 'Y' ]);
+        return $re;
     }
 
 
@@ -90,7 +92,10 @@ class NotificationRoute {
         else {
             $tokens = get_user_tokens();
         }
-        return unsubscribeTopic($in['topic'], $tokens);
+
+        $re = unsubscribeTopic($in['topic'], $tokens);
+        delete_user_meta(wp_get_current_user()->ID, $in['topic']);
+        return $re;
     }
 
 }
