@@ -24,7 +24,7 @@ if (isset($_REQUEST['category'])) {
     </div>
     <div class="form-group">
         <label for="register_user_pass">Content</label>
-        <textarea class="form-control" id="post_content" name="post_content" rows="10"><?php echo $post != null ? $post->post_content : '' ?></textarea>
+        <textarea class="form-control" id="post_content" name="post_content" rows="10"></textarea>
     </div>
     <file-upload-form></file-upload-form>
     <button type="submit" class="btn btn-primary">Submit</button>
