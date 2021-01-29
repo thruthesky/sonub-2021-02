@@ -90,7 +90,10 @@ const forumMixin = {
         refresh();
       }, this.error);
     },
-  },
+    is_mine(author) {
+      return this.user && parseInt(this.user.ID) === author;
+    },
+  }, // eo methods:
 };
 
 
@@ -179,7 +182,7 @@ const commentForm = {
         $this.$data.uploaded_files.push(res);
       });
     },
-  },
+  }, // eo methods:
 };
 addComponent('comment-form', commentForm);
 

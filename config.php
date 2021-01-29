@@ -114,3 +114,4 @@ define('SUBSCRIBE_NEW_COMMENT_ON_REGISTRATION', true);
 
 
 
+define('POSTS_PER_PAGE', 3);

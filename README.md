@@ -261,6 +261,10 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
 
 * Route cannot return null or empty string to client. It will response error instead.
 
+* PHP script does not have user information. That means, the user is not logged in PHP. User information (including session_id) is only saved on javascript's localStorage.
+  So, you cannot code anything that is related with login.
+  
+
 ## Booting
 
 ### Theme booting
@@ -388,6 +392,7 @@ You can write css style like below.
   * we only use `ID`, `user_email`, `user_login` and `user_pass` from `wp_users` table.
   * All other properties like nickname(display name), full name, gender, birthday goes into `wp_usermeta` table.
   * You may also maintain your own table for keeping user information by fixing routes.
+
 
 
 ## Protocols
@@ -577,7 +582,12 @@ addComponent('comment-form', commentForm);
   
   * This wouldn't be a big problem, since a user might only subscribe few chat rooms for push notification even if he/she has more than 2,000 chat rooms.
 
-
+* Sending push notification is a bit slow.
+  * When a user creates a comment, backend will send push notifications to users who are subscribed for that forum and to the post owner.
+  * To improve this, the backend must not send push notification separately after the comment is created.\
+  This means, there will be two backend calls.\
+  One for creating comments, the other is for sending push notifications.
+  
 
 # Debugging Tips
 

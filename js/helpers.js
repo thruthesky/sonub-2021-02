@@ -7,6 +7,7 @@ function build_query(params) {
     .join("&");
 }
 
+
 /**
  * Add login user's session id into 'data'
  * @param data
@@ -24,7 +25,9 @@ function requestResult(res, successCallback, errorCallback) {
             errorCallback(res.data.code);
         }
     } else {
-        successCallback(res.data.data);
+        if ( typeof successCallback === 'function') {
+            successCallback(res.data.data);
+        }
     }
 }
 function request(route, data, successCallback, errorCallback) {

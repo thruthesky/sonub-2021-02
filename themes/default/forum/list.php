@@ -1,5 +1,6 @@
 <?php
-$category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
+$category = get_category_by_slug(in('category'));
+
 ?>
 <hr>
 <div class="p-2 d-flex justify-content-between">
@@ -20,10 +21,10 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
 
 <section class="post-list p-2">
     <?php
-    $page_no = $_REQUEST['page_no'] ?? 1;
-    $posts_per_page = 2;
+    $page_no = in('page_no', 1);
+    $posts_per_page = category_meta($category->ID, 'posts_per_page', POSTS_PER_PAGE);
     $offset = ($page_no - 1) * $posts_per_page;
-    $q = ['category_name' => $category, 'posts_per_page' => $posts_per_page, 'offset' => $offset];
+    $q = ['category_name' => $category->slug, 'posts_per_page' => $posts_per_page, 'offset' => $offset];
     $posts = forum_search($q);
 
     foreach ($posts as $post) {
@@ -66,8 +67,10 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
         },
         mounted() {
             console.log('list.mounted!');
-            this.$data.alertOnNewPost = this.$data.user[config.post_notification_prefix + category] === 'Y';
-            this.$data.alertOnNewComment = this.$data.user[config.comment_notification_prefix + category] === 'Y';
+            if ( this.loggedIn() ) {
+                this.$data.alertOnNewPost = this.$data.user[config.post_notification_prefix + category] === 'Y';
+                this.$data.alertOnNewComment = this.$data.user[config.comment_notification_prefix + category] === 'Y';
+            }
         },
         data() {
             return {
@@ -77,7 +80,6 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
         },
         methods: {
             onChangeAlertOnNewPost() {
-
                 const topic = config.post_notification_prefix + category;
                 const notificationRoute = this.$data.alertOnNewPost === true
                     ? "notification.subscribeTopic"

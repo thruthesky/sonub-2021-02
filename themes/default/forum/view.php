@@ -38,10 +38,15 @@ $comments = $post['comments'];
     <!-- TODO: MINE BUTTONS -->
     <div class="d-flex justify-content-between">
         <div>
-            <a class="btn btn-success mr-3" href="/?page=forum/edit&ID=<?php echo $post_ID ?>">Edit</a>
-            <button class="btn btn-danger" @click="onPostDelete('<?php echo $post_ID ?>', '<?php echo get_the_category($post_ID)[0]->slug ?>')">
+            <a class="btn btn-success mr-3" href="/?page=forum/edit&ID=<?php echo $post_ID ?>"
+               v-if="is_mine(<?=$post['post_author']?>)">Edit</a>
+
+
+
+            <button class="btn btn-danger" @click="onPostDelete('<?=$post_ID ?>')" v-if="is_mine(<?=$post['post_author']?>)">
                 Delete
             </button>
+
         </div>
         <div v-if="isAdmin()">
             <a class="btn btn-secondary" href="/?page=admin/send-push-notification&ID=<?php echo $post_ID ?>" target="_blank">
@@ -73,6 +78,7 @@ $comments = $post['comments'];
                 $short_date_time = $comment['short_date_time'];
                 $depth = $comment['depth'];
                 $files = $comment['files'];
+                $user_id = $comment['user_id'];
             ?>
                 <!-- TODO: comment sorting between brothers. -->
                 <div class="card p-2 mt-2 border border-dark" id="comment_<?php echo $comment_ID ?>" depth="<?=$depth?>">
@@ -91,8 +97,17 @@ $comments = $post['comments'];
                             <!-- TODO: MINE BUTTON -->
                             <div class="mt-2">
                                 <button class="btn btn-secondary mr-2" @click="replyNo=<?=$comment_ID?>">Reply</button>
-                                <button class="btn btn-success mr-2" @click="editNo=<?=$comment_ID?>">Edit</button>
-                                <button class="btn btn-danger" @click="onCommentDelete('<?php echo $comment_ID ?>')">DELETE</button>
+                                <button class="btn btn-success mr-2" @click="editNo=<?=$comment_ID?>"
+                                        v-if="is_mine(<?=$user_id?>)"
+                                >Edit</button>
+
+                                <button class="btn btn-danger"
+                                        @click="onCommentDelete('<?php echo $comment_ID ?>')"
+                                        v-if="is_mine(<?=$user_id?>)"
+                                >
+                                    DELETE
+                                </button>
+
                             </div>
                             <hr>
                             <comment-form :comment_post_id="<?=$post_ID?>" :comment_parent="<?=$comment_ID?>" v-if="replyNo == <?=$comment_ID?>"></comment-form>

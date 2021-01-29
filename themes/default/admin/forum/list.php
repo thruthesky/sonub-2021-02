@@ -26,7 +26,7 @@ $categories = get_categories();
             ?>
                 <tr>
                     <td><?php echo $category->cat_ID ?></td>
-                    <td><a href="?page=admin/forum-category&slug=<?php echo $category->slug ?>"><?php echo $category->slug ?></a></td>
+                    <td><a href="?page=admin/forum/setting&slug=<?php echo $category->slug ?>"><?php echo $category->slug ?></a></td>
                     <td><?php echo $category->name ?></td>
                     <td><?php echo $category->description ?></td>
                     <td class="text-center"> <i class="fa fa-<?=$category->list_on_view ? 'check green' : 'times red'?>"></i></td>

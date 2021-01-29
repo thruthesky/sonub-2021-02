@@ -1588,8 +1588,10 @@ function between($val, $min, $max) {
 }
 
 
-
-
+/**
+ * @param $in
+ * @return array|string
+ */
 function forum_search($in) {
     if (!$in['category_name']) return ERROR_EMPTY_CATEGORY;
     $posts = get_posts($in);
@@ -2172,4 +2174,17 @@ function get_first_slug($categories) {
     } else {
         return '';
     }
+}
+
+/**
+ * Helper function of `get_term_meta`.
+ * @param $cat_ID
+ * @param $name
+ * @param string $default_value
+ * @return mixed|string
+ */
+function category_meta($cat_ID, $name, $default_value = '') {
+    $v = get_term_meta($cat_ID, $name, true);
+    if ( $v ) return $v;
+    else return $default_value;
 }

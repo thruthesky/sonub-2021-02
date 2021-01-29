@@ -58,7 +58,9 @@ const AttributeBinding = {
     debounce(fn, delay, id) {
       if (typeof id === "undefined") id = "default";
       clearTimeout(_inDebounce[id]);
-      _inDebounce[id] = setTimeout(fn, delay);
+      _inDebounce[id] = setTimeout(function() {
+        fn(id);
+      }, delay);
     },
     isAdmin() {
       return this.$data.user && this.$data.user.admin;
