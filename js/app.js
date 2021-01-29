@@ -17,9 +17,17 @@ const AttributeBinding = {
       pushNotification: {
         sendTo: "topic",
       },
-      token: null,
-      // progress bar of file uploads. it is shared for all kinds of file(photo) upload including profile photo, forum photo.
+
+
+      // progress bar of file uploads.
+      //
+      // Globally shared var.
+      // it is shared for all kinds of file(photo) upload including profile photo, forum photo.
+
       uploadPercentage: 0,
+
+
+      token: null,
     };
   },
   created() {
@@ -145,6 +153,7 @@ const AttributeBinding = {
         options,
         function (res) {
           console.log("success: res.url: ", res.url);
+          app.uploadPercentage = 0;
           successCallback(res);
         },
         this.error
@@ -165,28 +174,12 @@ const AttributeBinding = {
             app.profile.profile_photo_url = profile.profile_photo_url;
             app.user.profile_photo_url = profile.profile_photo_url;
             app.setUser(profile);
-            app.uploadPercentage = 0;
           },
           this.error
         );
       });
     },
-    /**
-     * Forum file upload.
-     * @param event
-     */
-    onForumFileUpload(event) {
-      this.onFileUpload(event, function (res) {
-        // Update user profile photo url
-        // request('user.profileUpdate', {'profile_photo_url': res.url}, function(profile) {
-        //     console.log('new profile: ', profile);
-        //     app.profile.profile_photo_url = profile.profile_photo_url;
-        //     app.user.profile_photo_url = profile.profile_photo_url;
-        //     app.setUser(profile);
-        //     app.uploadPercentage = 0;
-        // }, this.error);
-      });
-    },
+
     /**
      * Delete file.
      * 
