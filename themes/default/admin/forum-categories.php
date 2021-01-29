@@ -29,7 +29,7 @@ $categories = get_categories();
                     <td><a href="?page=admin/forum-category&slug=<?php echo $category->slug ?>"><?php echo $category->slug ?></a></td>
                     <td><?php echo $category->name ?></td>
                     <td><?php echo $category->description ?></td>
-                    <td><input type="checkbox" <?php if ($category->list_on_view) echo 'checked'?>></td>
+                    <td><?=$category->list_on_view ? '/' : 'X'?></td>
                 </tr>
             <?php } ?>
         </tbody>
