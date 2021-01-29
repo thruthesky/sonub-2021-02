@@ -55,7 +55,7 @@ if (isset($_REQUEST['category'])) {
 <script>
 
 
-    <? if ( in('ID') ) { /** Load post data if it's editing */?>
+    <?php if ( in('ID') ) { /** Load post data if it's editing */?>
     later(function() {
         const textarea = document.getElementById('post_content');
         request('forum.getPost', {id: <?=in('ID')?>}, function (res) {
@@ -63,7 +63,7 @@ if (isset($_REQUEST['category'])) {
             app.files = res.files;
         }, app.error);
     })
-    <? } ?>
+    <?php } ?>
 
 
 </script>
