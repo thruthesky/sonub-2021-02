@@ -1,5 +1,6 @@
 var _inDebounce = {};
 
+
 const AttributeBinding = {
   components: getComponents(),
   data() {
@@ -22,7 +23,11 @@ const AttributeBinding = {
       //
       // Globally shared var.
       // it is shared for all kinds of file(photo) upload including profile photo, forum photo.
+
       uploadPercentage: 0,
+
+
+      token: null,
     };
   },
   created() {
@@ -69,10 +74,14 @@ const AttributeBinding = {
     },
     onRegisterFormSubmit() {
       console.log("register form submitted");
-      console.log(this.$data.register);
+      const data = Object.assign({}, this.$data.register);
+      if ( this.$data.token ) {
+          data['token'] = this.$data.token;
+      }
+      console.log(data);
       request(
         "user.register",
-        this.$data.register,
+        data,
         function (profile) {
           app.setUser(profile);
           // todo: let the form controll to move to which page like 'home' or 'user/profile'.
@@ -116,7 +125,9 @@ const AttributeBinding = {
         this.error
       );
     },
-
+    onProfileMetaUpdateSubmit(data) {
+      request('user.profileUpdate', data, this.setUser, this.error);
+    },
     /**
      * It's a wrapper of calling global fileUpload function.
      * @param event
@@ -136,7 +147,6 @@ const AttributeBinding = {
           );
         },
       };
-
       // Upload photo
       fileUpload(
         file,
@@ -209,35 +219,6 @@ const AttributeBinding = {
         { token: token, topic: topic },
         function (re) {
           // console.log(re);
-        },
-        this.error
-      );
-    },
-    sendPushNotification() {
-      // console.log(this.$data.pushNotification.title);
-      // if (this.$data.pushNotification.title === void 0 && this.$data.pushNotification.title === void 0) return alert('Title or Body is missing');
-      console.log("sendPushNotification::", this.$data.pushNotification);
-
-      let route = "";
-      const data = {
-        title: this.$data.pushNotification.title,
-        body: this.$data.pushNotification.body,
-      };
-      if (this.$data.pushNotification.sendTo === "topic") {
-        route = "notification.sendMessageToTopic";
-        data["topic"] = this.$data.pushNotification.receiverInfo;
-      } else if (this.$data.pushNotification.sendTo === "tokens") {
-        route = "notification.sendMessageToTokens";
-        data["tokens"] = this.$data.pushNotification.receiverInfo;
-      } else if (this.$data.pushNotification.sendTo === "users") {
-        route = "notification.sendMessageToUsers";
-        data["users"] = this.$data.pushNotification.receiverInfo;
-      }
-      request(
-        route,
-        data,
-        function (res) {
-          // console.log(res);
         },
         this.error
       );

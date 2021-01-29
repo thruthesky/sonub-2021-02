@@ -569,6 +569,15 @@ addComponent('comment-form', commentForm);
     Meaning, the user may not get push notification.
   * You may need to go for a heavy surgery of your code to make it perfectly.
 
+  
+## Limitations of push notification
+
+* One device is limited to have no more than 2,000 topics. That means, a user cannot have more than 2,000 topics.
+  If the user subscribed more than 2,000 forums or chat rooms, then there might an error.
+  
+  * This wouldn't be a big problem, since a user might only subscribe few chat rooms for push notification even if he/she has more than 2,000 chat rooms.
+
+
 
 # Debugging Tips
 

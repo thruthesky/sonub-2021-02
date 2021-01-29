@@ -6,7 +6,8 @@
 use Kreait\Firebase\Database;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
-
+use Kreait\Firebase\Messaging\Notification;
+use Kreait\Firebase\Messaging\AndroidConfig;
 
 /**
  * This returns the firebase factory (instance)
@@ -47,52 +48,41 @@ function getDatabase() {
  * @param $tokens
  * @param $title
  * @param $body
+ * @param $click_action
  * @param array $data
  * @param string $imageUrl
  * @return \Kreait\Firebase\Messaging\MulticastSendReport
- * @throws \Kreait\Firebase\Exception\FirebaseException
- * @throws \Kreait\Firebase\Exception\MessagingException
  */
-function sendMessageToTokens($tokens, $title, $body, $data = [], $imageUrl="https://philgo.com/theme/philgo/img/logo-small.png") {
-
+function sendMessageToTokens($tokens, $title, $body, $click_action, $data = [], $imageUrl="") {
     $message = CloudMessage::fromArray([
-        'notification' => [
-            'title' => $title,
-            'body' => $body,
-            'image' => $imageUrl,
-        ],
+        'notification' => getNotificationData($title, $body, $click_action, $data, $imageUrl),
+        'webpush' => getWebPushData($title, $body, $click_action, $data, $imageUrl),
+        'android' => getAndroidPushData(),
         'data' => $data,
     ]);
-
     return getMessaging()->sendMulticast($message, $tokens);
-
 }
 
 /**
  * @param $topic
  * @param $title
  * @param $body
+ * @param $click_action
  * @param array $data
  * @param string $imageUrl
  * @return array
- * @throws \Kreait\Firebase\Exception\FirebaseException
- * @throws \Kreait\Firebase\Exception\MessagingException
  */
-function sendMessageToTopic($topic, $title, $body, $data = [], $imageUrl="https://philgo.com/theme/philgo/img/logo-small.png") {
-
+function sendMessageToTopic($topic, $title, $body, $click_action, $data = [], $imageUrl="") {
     $message = CloudMessage::fromArray([
         'topic' => $topic,
-        'notification' => [
-            'title' => $title,
-            'body' => $body,
-            'image' => $imageUrl,
-        ], // optional
-        'data' => $data, // optional
+        'notification' => getNotificationData($title, $body, $click_action, $data, $imageUrl),
+        'webpush' => getWebPushData($title, $body, $click_action, $data, $imageUrl),
+        'android' => getAndroidPushData(),
+        'data' => $data,
     ]);
 
     return getMessaging()->send($message);
 }
-
 
 /**
  * @param $topic
@@ -105,7 +95,6 @@ function subscribeTopic($topic, $tokens) {
     return getMessaging()->subscribeToTopic($topic, $tokens);
 }
 
-
 /**
  * @param $topic
  * @param $tokens - a token or an array of tokens
@@ -116,5 +105,66 @@ function subscribeTopic($topic, $tokens) {
 function unsubscribeTopic($topic, $tokens) {
     return getMessaging()->unsubscribeFromTopic($topic, $tokens);
 }
+
+/**
+ * it look like data and notification is redundant but this is needed here specially for onResume and onLaunch
+ * because onResume and onLaunch notification became empty. so we can rely on data to display on ui
+ *
+ * @param $title
+ * @param $body
+ * @param $imageUrl
+ * @param $clickUrl
+ * @param $data
+ * @return array
+ */
+function getData($title, $body, $clickUrl, $data, $imageUrl) {
+    $notification = [
+        'title' => $title,
+        'body' => $body,
+        'image' => $imageUrl,
+        'click_action' => $clickUrl,
+        'data' => $data
+    ];
+    return $notification;
+}
+
+function getNotificationData($title, $body, $clickUrl, $data, $imageUrl) {
+    $notification = Notification::fromArray([
+        'title' => $title,
+        'body' => $body,
+        'image' => $imageUrl,
+        'click_action' => $clickUrl,
+        'data' => $data
+    ]);
+    return $notification;
+}
+
+function getWebPushData($title, $body, $clickUrl, $data, $imageUrl) {
+    $title = mb_strcut($title, 0, 64);
+    $body = mb_strcut($body, 0, 128);
+    return [
+        'notification' => [
+            'title' => $title,
+            'body' => $body,
+            'icon' => $imageUrl,
+            'click_action' => $clickUrl ?? "/",
+            'data' => $data
+        ],
+        'fcm_options' => [
+            'link' => $clickUrl ?? "/",
+        ],
+    ];
+}
+
+
+function getAndroidPushData() {
+    return AndroidConfig::fromArray([
+        'notification' => [
+            'click_action' => 'FLUTTER_NOTIFICATION_CLICK',
+        ],
+    ]);
+}
+
+
 
 

@@ -26,11 +26,20 @@ $comments = $post['comments'];
     } ?>
 
     <!-- TODO: MINE BUTTONS -->
-    <div>
-        <a class="btn btn-success mr-3" href="/?page=forum/edit&ID=<?php echo $post_ID ?>">Edit</a>
-        <button class="btn btn-danger" @click="onPostDelete('<?php echo $post_ID ?>', '<?php echo get_the_category($post_ID)[0]->slug ?>')">
-            Delete
-        </button>
+    <div class="d-flex justify-content-between">
+        <div>
+            <a class="btn btn-success mr-3" href="/?page=forum/edit&ID=<?php echo $post_ID ?>">Edit</a>
+            <button class="btn btn-danger" @click="onPostDelete('<?php echo $post_ID ?>', '<?php echo get_the_category($post_ID)[0]->slug ?>')">
+                Delete
+            </button>
+        </div>
+        <div v-if="isAdmin()">
+            <a class="btn btn-secondary" href="/?page=admin/send-push-notification&ID=<?php echo $post_ID ?>" target="_blank">
+                Send Push
+            </a>
+        </div>
+
+
     </div>
 
     <hr>

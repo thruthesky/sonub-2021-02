@@ -39,9 +39,9 @@ $script = get_theme_page_script_path();
         </div>
         <div>
             <a href="/?page=admin/index" v-if="isAdmin()">Admin</a>
+            <a class="ms-2" href="/?page=user/settings" v-if="loggedIn()"><i class="fa fa-cog"></i></a>
             <a href="/?page=user/profile"><img class="size-40 circle" :src="user.profile_photo_url" v-if="user && user.profile_photo_url"></a>
         </div>
-
 
     </div>
 
@@ -58,8 +58,15 @@ $script = get_theme_page_script_path();
 
 
 <script>
+
+    addEventListener('pushNotification', function(){
+        console.log('hi');
+    });
+
+
     const config = {
         apiUrl: "<?=API_URL?>",
+        themeFolderName: "<?=THEME_FOLDER_NAME?>",
         firebaseConfig: {
             apiKey: "AIzaSyBqOcOhdonMMimHAt7Iq4aodp2KwQBc61M",
             authDomain: "nalia-app.firebaseapp.com",
@@ -68,7 +75,9 @@ $script = get_theme_page_script_path();
             messagingSenderId: "973770265003",
             appId: "1:973770265003:web:dd304f98a421a733d8c2ee"
         },
-        allTopic: "allTopic"
+        defaultTopic: "<?=DEFAULT_TOPIC?>",
+        post_notification_prefix: '<?=NOTIFY_POST?>',
+        comment_notification_prefix: '<?=NOTIFY_COMMENT?>'
     };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
@@ -87,8 +96,9 @@ $script = get_theme_page_script_path();
     }, function(e) {
         console.log('error: ', e);
     });
-</script>
 
+
+</script>
 
 </body>
 </html>
