@@ -958,7 +958,7 @@ function post_response($ID_or_post, $options = [])
     $comments = get_nested_comments($post['ID']);
     $updated_comments = [];
     foreach ($comments as $comment) {
-        $cmt = comment_response($comment['comment_ID']);
+        $cmt = comment_response($comment['comment_ID'], $options);
         $cmt['depth'] = $comment['depth'];
         $updated_comments[] = $cmt;
     }
@@ -1177,7 +1177,7 @@ function image_path_from_url($url) {
 
 
 
-function comment_response($comment_id)
+function comment_response($comment_id, $options=[])
 {
     $comment = get_comment($comment_id, ARRAY_A);
     $ret['comment_ID'] = $comment['comment_ID'];
@@ -1187,8 +1187,9 @@ function comment_response($comment_id)
     $ret['comment_author'] = $comment['comment_author'];
     $ret['comment_content'] = $comment['comment_content'];
 
-    /// TODO: for mobile app, comement_content_autop should be removed.
-    $ret['comment_content_autop'] = wpautop(($comment['comment_content']));
+    if ( isset($options['with_autop']) && $options['with_autop'] ) {
+        $ret['comment_content'] = wpautop(($comment['comment_content']));
+    }
     $ret['comment_date'] = $comment['comment_date'];
     $ret['files'] = get_uploaded_files($comment_id, COMMENT_ATTACHMENT);
     /// post author user profile
