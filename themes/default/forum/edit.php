@@ -11,7 +11,6 @@ if (isset($_REQUEST['category'])) {
     $category = get_the_category($post->ID)[0]->slug;
 }
 
-echo ($post->post_content);
 ?>
 
 <h1> POST EDIT : <?php echo $category ?></h1>

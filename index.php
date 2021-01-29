@@ -72,7 +72,7 @@ $script = get_theme_page_script_path();
     };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/vue@3.0.5/dist/vue.global.prod.js"></script>
+<script src="https://unpkg.com/vue@3.0.5/dist/vue.global.js"></script>
 <script src="<?=THEME_URL?>/js/axios.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-messaging.js"></script>
