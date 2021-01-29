@@ -187,18 +187,12 @@ server {
 * Fix urls in wp_options to 'https://local.sonub.com'
 
 
-## Reference
-
-* The very first version on this module is on [`0.1` branch](https://github.com/thruthesky/v3/tree/0.1). It has user, forum, push notification functionality.
-  * This [`0.1` branch](https://github.com/thruthesky/v3/tree/0.1) works with [nalia_app flutter-v3 branch](https://github.com/thruthesky/nalia_app/tree/flutter-v3) which works with the v3 0.1 branch. These two would be a good example.
-
-
 
 ## Multi Themes
 
-* it can be set by wigo/config.php
+* Multi theme configuration can be set in config.php
 
-* if theme script does not exist, then default theme script file will be used.
+* if theme script does not exist in that theme, then the same name of script file in default theme folder will be used.
 
 
 ## SEO Friendly URL
@@ -215,11 +209,11 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
 
 # API
 
-* Api folder has all the api related codes and its `index.php` serves as the endpoint.
-  * Since `api/index.php` is served directly by client end, `api` folder must contain all the necessary code likes defines, configurations, etc.
-* `api/lib/` is shared by the theme.
+* `sonub/api` folder has all the api codes and `sonub/api/index.php` serves as the endpoint.
+* One thing to note that, `sonub` theme loads `api/lib/*.php` files and use a lot.
 
 ## API methods & Protocols
+
 
 
 ### Login
@@ -301,8 +295,11 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
   
 ## Javascript for each script page
 
+It's upto you whether you use Vue.js or not. You may do what you want without Vue.js. If you like jQuery, you can do with jQuery. That's fine.
+
+
 * It is recommend to write Javascript code inside the PHP script like below.
-  * Use `mixin` const name for applying it as Vue.js Mixin into the `app.js`.
+  * Use `mixin` const variable name to apply a mixin to Vue.js app in `app.js`. It is just works as what mixin is.
 
 ```html
 <h1>Profile</h1>
@@ -329,13 +326,13 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
         }
     }
 </script>
+You can write css style like below.
 <style>
     body {
         background-color: #333B38;
         color: white;
     }
 </style>
-NOTE: style 태그를 여기서 뺀 다음, template 다음으로 밀어 넣는다.
 <style>
     button {
         background-color: #4CAF50; /* Green */
@@ -571,8 +568,6 @@ addComponent('comment-form', commentForm);
   * When there is a new message, the message will only delivered to 'P1', not to 'P2'.
     Meaning, the user may not get push notification.
   * You may need to go for a heavy surgery of your code to make it perfectly.
-  
-
 
 
 # Debugging Tips

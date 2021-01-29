@@ -19,7 +19,7 @@ $script = get_theme_page_script_path();
 </head>
 <body class="<?=get_theme_page_class_name()?>">
 <section id="app" class="container">
-    <h1>WiGo Theme</h1>
+    <h1>Sonub</h1>
     <div class="d-flex justify-content-between">
         <div>
 
