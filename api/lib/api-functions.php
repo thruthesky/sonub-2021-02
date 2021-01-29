@@ -468,8 +468,6 @@ function register($in)
         if ( SUBSCRIBE_NEW_COMMENT_ON_REGISTRATION ) {
             $token = $in['token'];
             unset($in['token']);
-            $in[NOTIFY_POST] = "Y";
-            subscribeTopic(NOTIFY_POST, $token);
             $in[NOTIFY_COMMENT] = "Y";
             subscribeTopic(NOTIFY_COMMENT, $token);
         }
@@ -1944,65 +1942,80 @@ function is_localhost() {
 function onCommentCreateSendNotification($comment_id, $in) {
     /**
 
-     * 1) get notification comment ancestors
-     * 2) make it unique
-     * 3) get topic subscriber
-     * 4) remove all subscriber from token users
-     * 5) get users token
-     * 6) check if post owner want to receive message from his post
+     * 1) get post owner id
+     * 2) get notification comment ancestors
+     * 3) make it unique
+     * 4) get topic subscriber
+     * 5) remove all subscriber from token users
+     * 6) get users token
      * 7) send batch 500 is maximum
      */
 
     /**
+     *
      *  get all the user id of comment ancestors. - name as '$users_id'
      *  get all the user id of topic subscribers. - named as 'topic subscribers'.
      *  remove users of 'topic subscribers' from 'token users'. - with array_diff($array1, $array2) return the array1 that has no match from array2
      *  get the tokens of the users_id and filtering those who want to get comment notification
-     *  check if the sender is not the owner of the post,
-     *  check if the post author want to get push notification and he didn't subscribe to forum topic
      *  
      */
 
     $post = get_post( $in['comment_post_ID'], ARRAY_A );
     $users_id = [];
 
-    //1 ancestors
+    /**
+     * add post owner id
+     */
+    if ( !is_my_post($post['post_author']) ) {
+        $users_id[] = $post['post_author'];
+    }
+
+    /**
+     * get comment ancestors id
+     */
     $comment = get_comment( $comment_id );
     if ( $comment && $comment->comment_parent ) {
         $users_id = array_merge($users_id, getAncestors($comment->comment_ID));
     }
 
-    //2 unique
+    /**
+     * get unique user ids
+     */
     $users_id = array_unique( $users_id );
 
-    //3 get topic subscriber
+    /**
+     * get user who subscribe to comment forum topic
+     */
     $slug = get_first_slug($post['post_category']);
-    $topic_subscribers = getForumSubscribers( $slug, NOTIFY_COMMENT);
+    $topic_subscribers = getForumSubscribers( NOTIFY_COMMENT . $slug);
 
-    //4 remove all subscriber to token users
+    /**
+     * remove users_id that are registered to comment topic
+     */
     $users_id = array_diff($users_id, $topic_subscribers);
 
-    //5 get tokens of user who will receive comment notification
+    /**
+     * get token of user that are not registered to forum comment topic and want to get notification on user settings
+     */
     $tokens = getTokensFromUserIDs($users_id, NOTIFY_COMMENT);
 
-    //6 post owner if he want to receive notification if it is direct descendant
-    $owner_token = [];
-    if ( !is_my_post($post['post_author']) ) {
-        $notifyPostOwner = get_user_meta( $post['post_author'], NOTIFY_POST, true );
-        if ( $notifyPostOwner === 'Y' && !in_array($post['post_author'], $topic_subscribers) ) {
-            $owner_token = getUserTokens($post['post_author']);
-        }
-    }
-    
-    $tokens = array_merge($tokens, $owner_token);
-    $tokens = array_unique( $tokens );
 
-    //7 send notification to tokens and topic
+    /**
+     * set the title and body, etc.
+     */
     $title              = $post['post_title'];
     $body               = $in['comment_content'];
+    $click_url          = $post['guid'];
 
-    sendMessageToTopic(NOTIFY_COMMENT . $slug, $title, $body, $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
-    if ($tokens) sendMessageToTokens( $tokens, $title, $body, $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
+    /**
+     * send notification to users who subscribe to comment topic
+     */
+    sendMessageToTopic(NOTIFY_COMMENT . $slug, $title, $body, $click_url, $data = ['sender' => wp_get_current_user()->ID]);
+
+    /**
+     * send notification to comment ancestors who enable reaction notification
+     */
+    if (!empty($tokens)) sendMessageToTokens( $tokens, $title, $body, $click_url, $data = ['sender' => wp_get_current_user()->ID]);
 }
 
 
@@ -2087,14 +2100,12 @@ function getUserTokens($user_ID) {
 
 
 /**
- * @param string $slug
- * @param null $mode 'post' | 'comment'
- * @return array
+ * @param $topic - topic as string
+ * @return array - array of user ids
  */
-function getForumSubscribers($slug = '', $mode = null ) {
-    $topic = $mode ? "meta_key='{$mode}{$slug}'" : "meta_key LIKE 'notify%{$slug}'";
+function getForumSubscribers($topic = '') {
     global $wpdb;
-    $rows = $wpdb->get_results("SELECT user_id FROM wp_usermeta WHERE $topic AND meta_value='Y' ", ARRAY_A);
+    $rows = $wpdb->get_results("SELECT user_id FROM wp_usermeta WHERE meta_key='$topic' AND meta_value='Y' ", ARRAY_A);
     $ids = [];
     foreach( $rows as $user ) {
         $ids[] = $user['user_id'];
@@ -2104,7 +2115,7 @@ function getForumSubscribers($slug = '', $mode = null ) {
 
 function getUserForumTopics($user_ID) {
     global $wpdb;
-    $rows = $wpdb->get_results("SELECT meta_key FROM wp_usermeta WHERE meta_key LIKE 'notify%' AND meta_value='Y' AND user_id=$user_ID ", ARRAY_A);
+    $rows = $wpdb->get_results("SELECT meta_key FROM wp_usermeta WHERE meta_key LIKE '". DEFAULT_TOPIC_PREFIX ."%' AND meta_value='Y' AND user_id=$user_ID ", ARRAY_A);
     $topics = [];
     foreach( $rows as $user ) {
         $topics[] = $user['meta_key'];

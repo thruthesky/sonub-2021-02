@@ -209,5 +209,6 @@ define('LANGUAGES', 'languages');
 
 /// For push notification topics and prefixes
 define('DEFAULT_TOPIC', 'DefaultTopic');
-define('NOTIFY_POST', 'notifyPost_');
-define('NOTIFY_COMMENT', 'notifyComment_');
+define('DEFAULT_NOTIFY_PREFIX', 'notify');
+define('NOTIFY_POST', DEFAULT_NOTIFY_PREFIX . 'Post_');
+define('NOTIFY_COMMENT', DEFAULT_NOTIFY_PREFIX . 'Comment_');

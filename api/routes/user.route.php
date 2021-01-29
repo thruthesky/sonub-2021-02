@@ -11,8 +11,6 @@ class UserRoute {
         return profile();
     }
 
-
-
     public function loginOrRegister($in) {
         return loginOrRegister($in);
     }
