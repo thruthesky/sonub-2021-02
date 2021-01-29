@@ -44,11 +44,8 @@ $comments = $post['comments'];
 
     <hr>
 
-<!--    <comment-form :comment_post_id="--><?//= $post_ID ?><!--"></comment-form>-->
 
     <? include 'comment-form.php' ?>
-
-    Upload Progress : {{ uploadProgress }}
 
     <!-- TODO: Comment order -->
     <?php if (count($comments)) { ?>
@@ -58,23 +55,21 @@ $comments = $post['comments'];
             $comments = $post['comments'];
             foreach ($comments as $comment) {
                 // print_r($comment)
-                $comment_ID = $comment['comment_ID'];
-                $comment_content = $comment['comment_content'];
                 $comment_content_autop = $comment['comment_content_autop'];
                 $comment_author = $comment['comment_author'];
-                $comment_parent = $comment['comment_parent'];
                 $comment_date = $comment['comment_date'];
                 $short_date_time = $comment['short_date_time'];
                 $depth = $comment['depth'];
                 $files = $comment['files'];
             ?>
                 <!-- TODO: comment sorting between brothers. -->
-                <div class="card p-2 mt-2 border border-dark" id="comment_<?php echo $comment_ID ?>" depth="<?= $depth ?>">
-                    <article :class="{ 'd-none': editNo == <?= $comment_ID ?>, }">
-                        ID: <?php echo $comment_ID ?> |
+                <div class="card p-2 mt-2 border border-dark" depth="<?= $depth ?>">
+                    <article :class="{ 'd-none': editNo == <?= $comment['comment_ID'] ?>, }">
+                        ID: <?= $comment['comment_ID'] ?> |
                         Author: <?php echo $comment_author ?>
-                        <div style="display: block;" id="comment_content_<?php echo $comment_ID ?>">
-                            Content: <?php echo $comment_content ?>
+                        <div>
+                            Content: <?= $comment['comment_content'] ?> <br>
+                            Comment Parent: <?= $comment_parent ?? 0 ?>
                             <? if ( count($files) ) { ?>
                             <div class="bg-light">
                                 <? foreach($files as $file) {?>
@@ -84,27 +79,40 @@ $comments = $post['comments'];
                             <? } ?>
                             <!-- TODO: MINE BUTTON -->
                             <div class="mt-2">
-                                <button class="btn btn-secondary mr-2" @click="replyNo=<?= $comment_ID ?>">Reply</button>
-                                <button class="btn btn-success mr-2" @click="editNo=<?= $comment_ID ?>">Edit</button>
-                                <button class="btn btn-danger" @click="onCommentDelete('<?php echo $comment_ID ?>')">DELETE</button>
+                                <button class="btn btn-secondary mr-2" @click="replyNo=<?= $comment['comment_ID'] ?>">Reply</button>
+                                <button class="btn btn-success mr-2" @click="editNo=<?= $comment['comment_ID'] ?>">Edit</button>
+                                <button class="btn btn-danger" @click="onCommentDelete('<?= $comment['comment_ID'] ?>')">DELETE</button>
                             </div>
                             <hr>
 
-                            <? include 'comment-form.php' ?>
-<!--                            <comment-form :comment_post_id="--><?//= $post_ID ?><!--" :comment_parent="--><?//= $comment_ID ?><!--" v-if="replyNo == --><?//= $comment_ID ?><!--"></comment-form>-->
+                            <!-- Comment Reply Form -->
+                            <div v-if="replyNo ==<?= $comment['comment_ID'] ?>">
+                                <?
+                                $comment_parent = $comment['comment_ID'];
+                                $comment_content = '';
+                                include 'comment-form.php' 
+                                ?>
+                            </div>
                         </div>
                     </article>
 
-                    <? include 'comment-form.php' ?>
-<!--                    <comment-form v-if="editNo == --><?//= $comment_ID ?><!--"></comment-form>-->
+                    <!-- Comment Edit Form -->
+                    <div v-if="editNo ==<?= $comment['comment_ID'] ?>">
+                        <? 
+                        $comment_ID = $comment['comment_ID'];
+                        $comment_parent = $comment['comment_parent'];
+                        $comment_content = $comment['comment_content'];
+                        include 'comment-form.php'
+                        ?>
+                    </div>
                 </div>
             <?php } ?>
         </section>
     <?php } ?>
 </article>
 
-<script>
+<!-- <script>
     later(function() {
         app.editNo = 45;
     })
-</script>
+</script> -->

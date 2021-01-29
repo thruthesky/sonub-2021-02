@@ -7,7 +7,6 @@
 const forumMixin = {
   data() {
     return {
-      commentEditForm: {},
       replyNo: 0,
       editNo: 0,
     };
@@ -50,18 +49,7 @@ const forumMixin = {
      * @param {event} event
      */
     onCommentEditFormSubmit(event) {
-      this.$data.commentEditForm.comment_post_ID = event.target.elements.comment_post_ID.value;
-
-      /// will have value if creating comment
-      if ( event.target.elements.comment_parent ) {
-        this.$data.commentEditForm.comment_parent = event.target.elements.comment_parent.value;
-      }
-      /// will have value if updating comment
-      if (event.target.elements.comment_ID ) {
-        this.$data.commentEditForm.comment_ID = event.target.elements.comment_ID.value;
-        this.$data.commentEditForm.comment_content = event.target.elements.comment_content.value;
-      }
-      const data = this.$data.commentEditForm;
+      const data = serializeFormEvent(event);
       console.log('Comment Edit Form Data', data);
       request('forum.editComment', data, function(comment) {
         console.log('comment edit', comment);
@@ -78,34 +66,11 @@ const forumMixin = {
       if (conf === false) return;
       request('forum.deleteComment', { comment_ID: ID }, function(post) {
         console.log('comment delete', post);
-        var el = document.getElementById("comment_" + ID);
-        el.remove();
+        refresh();
       }, this.error);
     },
     onFileUpload() {
 
-    },
-    /**
-     * toggle visibility of comment update form
-     *
-     * @param {string} elementID
-     * @param {string} display - 'none' | 'block
-     */
-    toggleCommentEditDisplay(elementID, display) {
-      var el = document.getElementById('comment_content_' + elementID);
-      var el2 = document.getElementById('comment_content_edit_' + elementID)
-      el.style.display = display;
-      el2.style.display = display == 'block' ? 'none' : 'block';
-    },
-    /**
-     * toggle visibility of comment reply form
-     *
-     * @param {string} elementID
-     * @param {string} display - 'none' | 'block
-     */
-    toggleCommentReplyDisplay(elementID, display) {
-      var el = document.getElementById('comment_reply_' + elementID);
-      el.style.display = display;
     },
   },
 };
