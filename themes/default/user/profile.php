@@ -1,8 +1,6 @@
 <h1>Profile page</h1>
 
 
-
-
 <div class="d-flex justify-content-center">
     <div>
         <div class="position-relative size-100 of-hidden">
@@ -29,8 +27,6 @@
         <label for="first_name">First name</label>
         <input type="text" class="form-control" id="first_name" name="first_name" v-model="profile.first_name">
     </div>
-
-
 
     <div class="form-group">
         <label for="last_name">Last name</label>

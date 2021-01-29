@@ -6,6 +6,16 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
     <h2>Forum List</h2>
     <a class="btn btn-success" href="/?page=forum/edit&category=<?php echo $category ?>">Create</a>
 </div>
+<div>
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="notificationUnderMyPost"  v-model="alertOnNewPost" @change="onChangeAlertOnNewPost">
+        <label class="form-check-label" for="notificationUnderMyPost">Notification on New Post</label>
+    </div>
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="notificationUnderMyComment" v-model="alertOnNewComment" @change="onChangeAlertOnNewComment">
+        <label class="form-check-label" for="notificationUnderMyComment">Notification on New Comment</label>
+    </div>
+</div>
 <hr>
 
 <section class="post-list p-2">
@@ -32,3 +42,50 @@ $category = isset($_REQUEST['category']) ? $_REQUEST['category'] : 'qna';
 
     <?php } ?>
 </section>
+
+
+<script>
+    const category = "<?php echo $category ?>";
+    const mixin = {
+        created() {
+            console.log('list.created!');
+        },
+        mounted() {
+            console.log('list.mounted!');
+            this.$data.alertOnNewPost = this.$data.user[config.post_notification_prefix + category] === 'Y';
+            this.$data.alertOnNewComment = this.$data.user[config.comment_notification_prefix + category] === 'Y';
+        },
+        data() {
+            return {
+                alertOnNewPost: false,
+                alertOnNewComment:  false,
+            }
+        },
+        methods: {
+            onChangeAlertOnNewPost() {
+                const topic = config.post_notification_prefix + category;
+                const notificationRoute = this.$data.alertOnNewPost === true
+                    ? "notification.subscribeTopic"
+                    : "notification.unsubscribeTopic";
+                request(notificationRoute, {topic: topic}, function () {
+                    const data = {
+                        [topic]:app.alertOnNewPost ? "Y" : "N"
+                    };
+                    app.onProfileMetaUpdateSubmit(data);
+                }, this.error);
+            },
+            onChangeAlertOnNewComment() {
+                const topic = config.comment_notification_prefix + category;
+                const notificationRoute = this.$data.alertOnNewComment === true
+                    ? "notification.subscribeTopic"
+                    : "notification.unsubscribeTopic";
+                request(notificationRoute, {topic: topic}, function () {
+                    const data = {
+                        [topic]: app.alertOnNewComment ? "Y" : "N"
+                    };
+                    app.onProfileMetaUpdateSubmit(data);
+                }, this.error);
+            }
+        }
+    }
+</script>

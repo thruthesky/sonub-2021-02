@@ -2,6 +2,7 @@
 /**
  * @file config.php
  */
+
 /**
  * Below are not recommended to be edited.
  */
@@ -15,30 +16,7 @@ if (WP_DEBUG) {
     define('REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST', true);
 }
 
-/**
- * PUBLIC Routes can be accessed without login.
- */
-define('PUBLIC_ROUTES', [
-    'app.version',
-    'user.register',
-    'user.login',
-    'user.loginOrRegister',
-    'user.testLoginOrRegister',
-    'notification.updateToken',
-    'forum.search',
-    'forum.getPost',
-    'app.query',
-    'translation.list',
-    'bio.search',
-]);
 
-
-/**
- * Public tables can be directly SQL-queried.
- */
-define('PUBLIC_TABLES', [
-    'bio',
-]);
 
 
 /**
@@ -97,3 +75,34 @@ $domain_themes = [
 ];
 
 define('API_URL_ON_CLI', 'https://local.sonub.com/wp-content/themes/wigo/api/index.php');
+
+
+
+/**
+ * PUBLIC Routes can be accessed without login.
+ */
+define('PUBLIC_ROUTES', [
+    'app.version',
+    'user.register',
+    'user.login',
+    'user.loginOrRegister',
+    'user.testLoginOrRegister',
+    'notification.updateToken',
+    'forum.search',
+    'forum.getPost',
+    'app.query',
+    'translation.list',
+    'bio.search',
+]);
+
+
+
+/**
+ * Public tables can be directly SQL-queried.
+ */
+define('PUBLIC_TABLES', [
+    'bio',
+]);
+
+
+

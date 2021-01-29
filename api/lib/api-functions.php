@@ -443,7 +443,6 @@ function profile_update($in) {
 function register($in)
 {
 
-
     if (!isset($in['user_email'])) return ERROR_EMPTY_EMAIL;
     if (!isset($in['user_pass'])) return ERROR_EMPTY_PASSWORD;
     if (get_user_by('email', $in['user_email'])) return ERROR_EMAIL_EXISTS;
@@ -464,6 +463,16 @@ function register($in)
     if (is_wp_error($user_ID)) {
         return $user_ID->get_error_code();
     }
+
+    if ( isset($in['token']) ){
+        $token = $in['token'];
+        unset($in['token']);
+        $in[NOTIFY_POST] = "Y";
+        subscribeTopic(NOTIFY_POST, $token);
+        $in[NOTIFY_COMMENT] = "Y";
+        subscribeTopic(NOTIFY_COMMENT, $token);
+    }
+
 
     user_update_meta($user_ID, $in);
 
@@ -775,11 +784,11 @@ function update_token($in) {
 
 
 /**
- * @param $in - Array of user id.
- *  $in['subscription'] is the subscription name. If it is set to 'Y', then message will be delivered to the user.
- *    if $in['subscription'] is missing, then it will send message to the user.
- *  For instance, if a user already have 'chat_room_123' with value 'Y' in this meta data,
- *   and $in['subscribe'] is set to 'chat_room_123', then the user will get message.
+ * Send messages to all users in $in['users']
+ *
+ * @param $in
+ *  - $in['users'] is an array of user id.
+ *
  *
  * @return mixed \Kreait\Firebase\Messaging\MulticastSendReport
  * @throws \Kreait\Firebase\Exception\FirebaseException
@@ -793,11 +802,6 @@ function send_message_to_users($in) {
 
     $users = explode(',', $in['users']);
     foreach($users as $ID) {
-        if ( isset($in['subscription']) ) {
-            $re = get_user_meta($ID, $in['subscription'], true);
-            debug_log("ID: $ID, subscription ID: $in[subscription] re: $re");
-            if ( $re != 'Y' ) continue;
-        }
         $tokens = get_user_tokens($ID);
         $all_tokens = array_merge($all_tokens, $tokens);
     }
@@ -805,7 +809,7 @@ function send_message_to_users($in) {
     if ( empty($all_tokens) ) return ERROR_EMPTY_TOKENS;
     if ( !isset($in['data'])) $in['data'] = [];
     if ( !isset($in['imageUrl'])) $in['imageUrl'] = '';
-    return sendMessageToTokens($all_tokens, $in['title'], $in['body'], $in['data'], $in['imageUrl']);
+    return sendMessageToTokens($all_tokens, $in['title'], $in['body'], $in['click_action'], $in['data'], $in['imageUrl']);
 }
 
 
@@ -1721,6 +1725,15 @@ function api_edit_post($in) {
 
     update_post_properties($ID, $in);
 
+    // NEW POST IS CREATED => Send notification to forum subscriber
+    if (!isset($in['ID'])) {
+        $title = $in['post_title'];
+        $body = $in['post_content'];
+        $post = get_post($ID, ARRAY_A);
+        $slug = get_first_slug($post['post_category']);
+        sendMessageToTopic(NOTIFY_POST . $slug, $title, $body, $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
+    }
+
     return post_response($ID);
 }
 
@@ -1920,6 +1933,179 @@ function is_localhost() {
 }
 
 
+function onCommentCreateSendNotification($comment_id, $in) {
+    /**
+
+     * 1) get notification comment ancestors
+     * 2) make it unique
+     * 3) get topic subscriber
+     * 4) remove all subscriber from token users
+     * 5) get users token
+     * 6) check if post owner want to receive message from his post
+     * 7) send batch 500 is maximum
+     */
+
+    /**
+     *  get all the user id of post and comment ancestors. - name as 'token users'
+     *  get all the user id of topic subscribers. - named as 'topic subscribers'.
+     *  remove users of 'topic subscribers' from 'token users'. - with array_diff($array1, $array2) return the array1 that has no match from array2
+     *
+     */
+
+    $post = get_post( $in['comment_post_ID'], ARRAY_A );
+    $users_id = [];
+
+    //1 ancestors
+    $comment = get_comment( $comment_id );
+    if ( $comment && $comment->comment_parent ) {
+        $users_id = array_merge($users_id, getAncestors($comment->comment_ID));
+    }
+
+    //2 unique
+    $users_id = array_unique( $users_id );
+
+    //3 get topic subscriber
+    $slug = get_first_slug($post['post_category']);
+    $topic_subscribers = getForumSubscribers( $slug, NOTIFY_COMMENT);
+
+    //4 remove all subscriber to token users
+    $users_id = array_diff($users_id, $topic_subscribers);
+
+
+
+    //5 get tokens of user who will receive notification
+    $tokens = getTokensFromUserIDs($users_id, NOTIFY_COMMENT);
+
+
+    //6 post owner if he want to receive notification if it is direct descendant
+    $owner_token = [];
+    if ( !is_my_post($post['post_author']) ) {
+        $notifyPostOwner = get_user_meta( $post['post_author'], NOTIFY_POST, true );
+        if ( $notifyPostOwner === 'Y' && !in_array($post['post_author'], $topic_subscribers) ) {
+            $owner_token = getUserTokens($post['post_author']);
+        }
+    }
+    
+    $tokens = array_merge($tokens, $owner_token);
+    $tokens = array_unique( $tokens );
+
+
+    //7 send notification to tokens and topic
+    $title              = $post['post_title'];
+    $body               = $in['comment_content'];
+
+
+    sendMessageToTopic(NOTIFY_COMMENT . $slug, $title, $body, $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
+    if ($tokens) sendMessageToTokens( $tokens, $title, $body, $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
+}
+
+
+/**
+ * @param $comment_ID
+ * @return mixed
+ */
+function get_ancestor_tokens_for_push_notifications($comment_ID) {
+    $asc = getAncestors($comment_ID);
+    return getTokensFromUserIDs($asc);
+}
+
+
+/**
+ * @param array $ids
+ * @param null $filter 'notifyComment' || 'notifyPost'
+ * @return array
+ */
+function getTokensFromUserIDs($ids = [], $filter = null) {
+    $tokens = [];
+    foreach( $ids as $user_id ) {
+        $rows = getUserTokens($user_id);
+        if ($filter) {
+            if ( get_user_meta($user_id, $filter, true) == 'Y' ) {
+                foreach( $rows as $token ) {
+                    $tokens[] = $token;
+                }
+            }
+        } else {
+            foreach( $rows as $token ) {
+                $tokens[] = $token;
+            }
+        }
+    }
+    return $tokens;
+}
+
+/**
+ * Returns an array of user ids that are in the path(tree) of comment hierarchy.
+ *
+ * @note it does not include the login user and it does not have duplicated user id.
+ *
+ * @param $comment_ID
+ *
+ * @return array
+ *
+ *
+ */
+function getAncestors( $comment_ID ) {
+
+    $comment = get_comment( $comment_ID );
+    $asc     = [];
+
+
+    while ( true ) {
+        $comment = get_comment( $comment->comment_parent );
+        if ( $comment ) {
+            if ( $comment->user_id == wp_get_current_user()->ID ) {
+                continue;
+            }
+            $asc[] = $comment->user_id;
+        } else {
+            break;
+        }
+    }
+
+    $asc = array_unique( $asc );
+
+    return $asc;
+
+}
+
+function getUserTokens($user_ID) {
+    global $wpdb;
+    $rows =  $wpdb->get_results("SELECT token FROM " . PUSH_TOKEN_TABLE ." WHERE user_ID=$user_ID", ARRAY_A);
+    $tokens = [];
+    foreach( $rows as $user ) {
+        $tokens[] = $user['token'];
+    }
+    return $tokens;
+}
+
+
+/**
+ * @param string $slug
+ * @param null $mode 'post' | 'comment'
+ * @return array
+ */
+function getForumSubscribers($slug = '', $mode = null ) {
+    $topic = $mode ? "meta_key='{$mode}{$slug}'" : "meta_key LIKE 'notify%{$slug}'";
+    global $wpdb;
+    $rows = $wpdb->get_results("SELECT user_id FROM wp_usermeta WHERE $topic AND meta_value='Y' ", ARRAY_A);
+    $ids = [];
+    foreach( $rows as $user ) {
+        $ids[] = $user['user_id'];
+    }
+    return $ids;
+}
+
+function getUserForumTopics($user_ID) {
+    global $wpdb;
+    $rows = $wpdb->get_results("SELECT meta_key FROM wp_usermeta WHERE meta_key LIKE 'notify%' AND meta_value='Y' AND user_id=$user_ID ", ARRAY_A);
+    $topics = [];
+    foreach( $rows as $user ) {
+        $topics[] = $user['meta_key'];
+    }
+    return $topics;
+}
+
 /**
  *
  * @param $in
@@ -1963,4 +2149,21 @@ function update_category($in) {
     }
 
     return $ret;
+}
+
+
+/**
+ * Returns the slug of first category of the post categories
+ * @param $categories
+ *
+ * @return string
+ */
+function get_first_slug($categories) {
+    // get post slug as category name and pass
+    if (count($categories)) {
+        $cat = get_category($categories[0]);
+        return $cat->slug;
+    } else {
+        return '';
+    }
 }

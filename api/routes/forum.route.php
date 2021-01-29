@@ -63,7 +63,7 @@ class ForumRoute
 
         if ( in('comment_post_ID') == null ) return ERROR_EMPTY_COMMENT_POST_ID;
 
-        if (in('comment_ID') == null) {
+        if (in('comment_ID') == null || in('comment_ID') == 'undefined') {
             $commentdata = [
                 'comment_post_ID' => in('comment_post_ID'),
                 'comment_content' => in('comment_content'),
@@ -84,6 +84,10 @@ class ForumRoute
                 }
                 return ERROR_COMMENT_EDIT . ':' . $msg;
             }
+            /**
+             * NEW COMMENT IS CREATED ==>  Send notification to forum comment subscriber
+             */
+            onCommentCreateSendNotification($comment_id, in());
         } else {
             if (!is_my_comment(in('comment_ID'))) return ERROR_NOT_YOUR_COMMENT;
             /**
@@ -108,6 +112,7 @@ class ForumRoute
 
         return comment_response($comment_id);
     }
+
 
     public function deleteComment()
     {

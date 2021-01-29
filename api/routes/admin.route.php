@@ -8,7 +8,6 @@ class AdminRoute
 
     private function admin_sql_query($in) {
 
-
         if ( !is_user_logged_in()) return ERROR_LOGIN_FIRST;
         if ( !admin()) return ERROR_NOT_AN_ADMIN;
         if ( !isset($in['table']) || empty($in['table'])) return ERROR_EMPTY_TABLE;

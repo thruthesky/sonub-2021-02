@@ -16,7 +16,7 @@ var messaging = firebase.messaging();
 /** Register your service worker here
  *  It starts listening to incoming push notifications from here
  */
-navigator.serviceWorker.register('/wp-content/themes/wigo/firebase-messaging-sw.js')
+navigator.serviceWorker.register('/wp-content/themes/' + config.themeFolderName + '/firebase-messaging-sw.js')
     .then(function (registration) {
         /** Since we are using our own service worker ie firebase-messaging-sw.js file */
         messaging.useServiceWorker(registration);
@@ -29,7 +29,7 @@ navigator.serviceWorker.register('/wp-content/themes/wigo/firebase-messaging-sw.
                     .then(function(token) {
                         /** Here I am logging to my console. This token I will use for testing with PHP Notification */
                         // console.log(token);
-                        app.saveToken(token, config.allTopic);
+                        app.saveToken(token, config.defaultTopic);
                         /** SAVE TOKEN::From here you need to store the TOKEN by AJAX request to your server */
                     })
                     .catch(function(error) {
@@ -51,7 +51,7 @@ navigator.serviceWorker.register('/wp-content/themes/wigo/firebase-messaging-sw.
 messaging.onTokenRefresh(function() {
     messaging.getToken()
         .then(function(renewedToken) {
-            app.saveToken(renewedToken, config.allTopic);
+            app.saveToken(renewedToken, config.defaultTopic);
             /** UPDATE TOKEN::From here you need to store the TOKEN by AJAX request to your server */
         })
         .catch(function(error) {
@@ -69,6 +69,9 @@ messaging.onMessage(function(payload) {
     //     image: 'https://c.disquscdn.com/uploads/users/34896/2802/avatar92.jpg'
     // };
     console.log('onMessage::',payload);
+    console.log('app.$data.user::',app.$data.user);
     const notification = payload.notification;
+    const data = payload.data ? payload.data : {};
+    if (app.loggedIn() && app.$data.user.ID === data['sender']) return;
     app.alert(notification.title,notification.body);
 });
