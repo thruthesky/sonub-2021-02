@@ -1,59 +1,78 @@
-# Wigo
+# Sonub Theme API
 
-Withcenter Multisite & API Theme
+* Sonub(Sonub Network Hub) is an open source, complete CMS with modern functionalities like realtime update, push notification, and more.
+* It is build on Apache(or Nginx) + MySQL(or MariaDB) + PHP stack based Wordpress. It works as a theme but has very much fixed.
 
-* This project is a Wordpress theme that supports
-  * its own multisite functionality,
-  * and Restful API for clientend.
+# Overview
 
+* Build with PHP.
+  * Main reason is to support SEO naturally.\
+    When you build web as SPA, there might be several ways for supporting SEO like SSR or half PHP and haf SPA.\
+    But none of them are natural and takes extra effort.
+  * Vanilla Vue.js 3.x
+    * It uses Vue.js over jQuery and it does not use CLI bundling tools, simply to avoid extra compiling and publishing.
+  * It may be a good choice to do SPA for sites(like admin site) that does not need SEO.
 
-# Development Concept
+* Firebase
+  * There are lots of benefits with Firebase.
+    * With firebase, you can do Social login, push notification, realtime updates.
+  * And yes, you may use the free version only.
 
-* Build PWA with PHP. Not based on SPA.
-  * To support natural SEO.\
-    There might be some workarounds for SEO supporting like SSR or half PHP and haf SPA. But none of them are natural.
-  * Use Vue.js 3.x
-    * Don't use CLI bundling tool because it needs to be compiled and published. It may be a good choice for admin site to be SPA, but to remove CLI bundling tool, it was built with PHP.
+* Supporting Full Restful API.
+  * Sonub is built with Restful API in mind and all functionalities are supported as Restful API.
+  * So, any client like Vue, Angular, React, Flutter, 
+
 
 # TODO
 
-* See git issues.
-
-# Server Environment
-
-* Server passwords. See Withcenter work information doc.
+* See [sonub git issues](https://github.com/thruthesky/sonub/issues).
 
 # Installation
 
 
 ## Requirement
 
-* Wordpress 5.6
+* Wordpress 5.6 and above.
 * PHP 7.4.x and above
 * Nginx
 * MariaDB
 
 ## Wordpress Installation
 
-* Install wordpress on HTTPS domain
-* And make it working.
+* Install wordpress on HTTPS domain. It should work as normal.
 
 ## Git repo source
 
+* Clone the source into wordpress themes folder.
+
 ```sh
-git clone https://github.com/thruthesky/wigo wp-content/themes/withcenter-backend-v3
+cd wp-content/theme/sonub
+git clone https://github.com/thruthesky/sonub
 ```
+
+* And enable it on admin page.
+
+
+## Database Setup
+
+It has some database tables to install.
+
+* `api_push_token` for push notifications
+* `api_translations` for supporting multi languages.
+
 
 
 ## Firebase
 
-* Many of features are depending on Firebase. So it is a must to set Firebase project in Firebase console
-  and put the admin sdk key file in `keys` folder
-  and set it to `SERVICE_ACCOUNT_FIREBASE_JSON_FILE_PATH` constant the path in config.php
+Many of features are depending on firebase. So it is mandatory to setup firebase.
+
+* First, create a firebase project in firebase console
+* Then, put the `firebase admin sdk account key` file in `keys` folder. If `wp-content/themes/sonub/keys` folder does not exist, then create the folder.
+* Lastly, set the path to `FIREBASE_ADMIN_SDK_SERVICE_ACCOUNT_KEY_PATH` constant in config.php
 
 * Setup Realtime Database.
   * Create realtime database on firebase console
-  * Set the database uri to `FIREBASE_DATABASE_URI`.
+  * And set the database uri to `FIREBASE_DATABASE_URI`.
 
 
 
@@ -62,20 +81,74 @@ git clone https://github.com/thruthesky/wigo wp-content/themes/withcenter-backen
 * If you are using in_app_purchase, then put a proper key file.
 
 
-## Setup on Local Development Computer
+## Installing SASS Reloader
 
+* Install node modules.
+
+```
+cd wp-content/themes/sonub
+npm i
+```
+
+* and watch folder and complile `scss/*.scss` to `css/*.css` like below.
+
+```
+ ./node_modules/.bin/sass --watch scss:css
+```
+
+* You may do below to watch specific file.
+
+```
+ ./node_modules/.bin/sass --watch scss/index.scss css/index.css
+```
+
+
+
+# Development Guideline
+
+## Modules & Components
+
+* It uses
+
+  * Vue.js in PHP page scripts.
+  * Bootstrap v5
+  * Font awesome
+  * Firebase Javascript SDK
+  * Axios Javascript
+
+
+## Folder structures
+
+* `sonub` is the theme folder.
+* `sonub/api` is the api folder and most of codes goes in this folder.
+  * `composer` is installed in this folder.
+  * `sonub/api/lib/api-functions.php` is the PHP script that holds most of the core functions.
+  * `sonub/api/phpunit` is the unit testing folder.
+  * `sonub/api/ext` folder is where you can put your own custom routes.
+  * `sonub/api/var` folder is where you can put any data there.
+* `sonub/api/routes/*.route.php` is the routes(or interfaces) that client can connect using Restful API protocols.
+* `sonub/themes` is the theme folder to support different themes based on different domains or options.
+* `sonub/js` folder has common javascrit files.
+* `sonub/css` folder has common css files.
+
+
+## PHP Live Reload
+
+* If you want the browser reload whenever you edit php, css, javascript files, run the command below.
+
+```
+cd wp-content/themes/sonub
+node live-reload.js
+```
+
+## Setup on Local Development Computer
 
 * Setting on local development computer may be slightly different on each developer depending on their environment.
 
-* Enable 'wigo' theme.
-
 * First, set test domains in hosts.
-
   * local.sonub.com as the main root site
-  * api-local.sonub.com as the api site
   * apple.sonub.com as multisite
   * banana.sonub.com as multisite
-  * cherry.sonub.com as multisite.
  
  
 * Nginx configuration. Careful on updating root, SSL certs paths. SSL certs is on wigo/tmp/ssl folder.
@@ -115,105 +188,11 @@ server {
 
 
 
-
-## Nginx Configuration on Live Server
-
-* Skip if you are not installing on live server.
-* This is the sample configuration on live Nginx server.
-
-```text
-server {
-  server_name  .sonub.com;
-  listen       80;
-  rewrite ^ https://$host$request_uri? permanent;
-}
-server {
-  server_name .sonub.com;
-  listen 443 ssl http2;
-  root /home/sonub/www;
-  index index.php;
-
-  location / {
-    add_header Access-Control-Allow-Origin *;
-    try_files $uri $uri/ /index.php?$args;
-  }
-  location ~ \.php$ {
-    fastcgi_param REQUEST_METHOD $request_method;
-    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-    include fastcgi_params;
-    fastcgi_pass 127.0.0.1:9000;
-  }
-
-  ssl_certificate /etc/letsencrypt/live/sonub.com/fullchain.pem; # managed by Certbot
-  ssl_certificate_key /etc/letsencrypt/live/sonub.com/privkey.pem; # managed by Certbot
-  include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-}
-```
-
-## Installing SASS Reloader
-
-Installation if npm not set
-```
-    npm init -y
-    npm i -D sass
-```
-Or Simply run `npm install` to install node packages
-```
-    npm i
-```
-
-node watch folder
-```
- ./node_modules/.bin/sass --watch scss:css
-```
-node watch specific file
-```
- ./node_modules/.bin/sass --watch scss/index.scss css/index.css
-```
-
-
-
-
-
-# Development Guideline
-
-## Modules & Components
-
-
-* It uses full build of `lodash.js`.
-  * Be sure where it is loaded, so you will know where to write lodash codes. You may see undefiend error if you use `_` before loading lodash.
-
-## Theme
-
-* Theme folder is only for themes. Theme folder does not have any information or meta data(files) that are related in API.
-* All api things are inside 'api' folder.
-
-### Hot reload
-
-* Run the command below.
-
-```
- % node wp-content/themes/wigo/live-reload.js
-```
-
-
-
-
-
-
-## Reference
-
-* The very first version on this module is on [`0.1` branch](https://github.com/thruthesky/v3/tree/0.1). It has user, forum, push notification functionality.
-  * This [`0.1` branch](https://github.com/thruthesky/v3/tree/0.1) works with [nalia_app flutter-v3 branch](https://github.com/thruthesky/nalia_app/tree/flutter-v3) which works with the v3 0.1 branch. These two would be a good example.
-
-
-
 ## Multi Themes
 
-* it can be set by wigo/config.php
+* Multi theme configuration can be set in config.php
 
-* if theme script does not exist, then default theme script file will be used.
+* if theme script does not exist in that theme, then the same name of script file in default theme folder will be used.
 
 
 ## SEO Friendly URL
@@ -230,11 +209,11 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
 
 # API
 
-* Api folder has all the api related codes and its `index.php` serves as the endpoint.
-  * Since `api/index.php` is served directly by client end, `api` folder must contain all the necessary code likes defines, configurations, etc.
-* `api/lib/` is shared by the theme.
+* `sonub/api` folder has all the api codes and `sonub/api/index.php` serves as the endpoint.
+* One thing to note that, `sonub` theme loads `api/lib/*.php` files and use a lot.
 
 ## API methods & Protocols
+
 
 
 ### Login
@@ -316,8 +295,11 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
   
 ## Javascript for each script page
 
+It's upto you whether you use Vue.js or not. You may do what you want without Vue.js. If you like jQuery, you can do with jQuery. That's fine.
+
+
 * It is recommend to write Javascript code inside the PHP script like below.
-  * Use `mixin` const name for applying it as Vue.js Mixin into the `app.js`.
+  * Use `mixin` const variable name to apply a mixin to Vue.js app in `app.js`. It is just works as what mixin is.
 
 ```html
 <h1>Profile</h1>
@@ -344,13 +326,13 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
         }
     }
 </script>
+You can write css style like below.
 <style>
     body {
         background-color: #333B38;
         color: white;
     }
 </style>
-NOTE: style 태그를 여기서 뺀 다음, template 다음으로 밀어 넣는다.
 <style>
     button {
         background-color: #4CAF50; /* Green */
@@ -586,6 +568,7 @@ addComponent('comment-form', commentForm);
   * When there is a new message, the message will only delivered to 'P1', not to 'P2'.
     Meaning, the user may not get push notification.
   * You may need to go for a heavy surgery of your code to make it perfectly.
+
   
 ## Limitations of push notification
 
@@ -593,6 +576,7 @@ addComponent('comment-form', commentForm);
   If the user subscribed more than 2,000 forums or chat rooms, then there might an error.
   
   * This wouldn't be a big problem, since a user might only subscribe few chat rooms for push notification even if he/she has more than 2,000 chat rooms.
+
 
 
 # Debugging Tips

@@ -1,8 +1,10 @@
 function build_query(params) {
-    const esc = encodeURIComponent;
-    return Object.keys(params)
-        .map(function(k) {return esc(k) + '=' + esc(params[k]);})
-        .join('&');
+  const esc = encodeURIComponent;
+  return Object.keys(params)
+    .map(function (k) {
+      return esc(k) + "=" + esc(params[k]);
+    })
+    .join("&");
 }
 
 /**
@@ -50,10 +52,10 @@ function fileUpload(file, options, successCallback, errorCallback) {
 
 
 function move(uri) {
-    location.href = uri;
+  location.href = uri;
 }
 function refresh() {
-    location.reload();
+  location.reload();
 }
 
 
@@ -76,3 +78,27 @@ function getLocalStorage(name) {
 }
 
 
+/**
+ * Serialize an class object. So, the class object can be used as an array object.
+ *
+ * @usage Use this to serialize FormData object.
+ * @param data
+ * @returns {{}}
+ */
+function serialize (data) {
+    let obj = {};
+    for (let [key, value] of data) {
+        obj[key] = value;
+    }
+    return obj;
+}
+
+/**
+ * Get data from form event.
+ *
+ * @param event
+ * @returns {{}}
+ */
+function serializeFormEvent(event) {
+    return serialize(new FormData(event.target));
+}

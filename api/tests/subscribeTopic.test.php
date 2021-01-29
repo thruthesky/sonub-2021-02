@@ -7,7 +7,7 @@ require_once(API_DIR . '/api-load.php');
 $factory = getFirebase();
 
 
-$rows = $wpdb->get_results("SELECT * FROM " . PUSH_TOKEN_TABLE, ARRAY_A);
+$rows = $wpdb->get_results("SELECT * FROM " . PUSH_TOKENS_TABLE, ARRAY_A);
 
 $tokens = [];
 foreach($rows as $row) {

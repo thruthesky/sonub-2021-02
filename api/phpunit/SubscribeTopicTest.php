@@ -17,7 +17,7 @@ class SubscribeTopicTest extends TestCase{
         /// clear existing tokens
 
         global $wpdb;
-        $wpdb->delete(PUSH_TOKEN_TABLE, ['user_ID' => 2]);
+        $wpdb->delete(PUSH_TOKENS_TABLE, ['user_ID' => 2]);
 
         wp_set_current_user(2);
         $re = $noti->updateToken(['token' => 'A']);

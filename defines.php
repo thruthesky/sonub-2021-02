@@ -199,12 +199,9 @@ define('POST_FIELDS', [
 ]);
 
 
-
-
 /// Tables
 define('TABLE_PREFIX', 'api_');
-define('PUSH_TOKEN_TABLE', TABLE_PREFIX . 'push_token');
-define('LOCATION_TABLE', TABLE_PREFIX . 'location');
+define('PUSH_TOKENS_TABLE', TABLE_PREFIX . 'push_tokens');
 define('TRANSLATIONS_TABLE', TABLE_PREFIX . 'translations');
 define('LANGUAGES', 'languages');
 
