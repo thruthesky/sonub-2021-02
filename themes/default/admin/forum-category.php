@@ -5,7 +5,7 @@
 $cat = get_category_by_slug(in('slug'));
 $catMetas = get_term_meta($cat->term_id);
 
-// d($cat);
+d($cat);
 ?>
 <h1><?= in('slug') ?> Settings</h1>
 
@@ -21,7 +21,19 @@ $catMetas = get_term_meta($cat->term_id);
         <tr>
             <td>Title</td>
             <td>
-                <input name="name" value="<?= $cat->name ?>" @keyup="debounce(updateTitle($event), 500, 'name')">
+                <input 
+                    name="name" 
+                    value="<?= $cat->name ?>"
+                    @keyup="debounce(updateCategorySettings('cat_name', $event), 500, 'name')">
+            </td>
+        </tr>
+        <tr>
+            <td>Title</td>
+            <td>
+                <input 
+                    name="name" 
+                    value="<?= $cat->description ?>" 
+                    @keyup="debounce(updateCategorySettings('category_description', $event), 500, 'description')">
             </td>
         </tr>
         <tr>
@@ -31,7 +43,7 @@ $catMetas = get_term_meta($cat->term_id);
                     type="checkbox" 
                     name="list_on_view" 
                     @change="debounce(updateListOnView($event), 500, 'list')" 
-                    <?php if ($catMetas['list_on_view'][0]) echo 'checked' ?>>
+                    <?php if ($catMetas['list_on_view'] && $catMetas['list_on_view'][0]) echo 'checked' ?>>
             </td>
         </tr>
         <tr>
@@ -39,8 +51,8 @@ $catMetas = get_term_meta($cat->term_id);
             <td>
                 <input 
                     type="number" 
-                    value="<?= $catMetas['posts_per_page'][0] ?? 20 ?>" 
-                    @keyup="debounce(updatePostsPerPage($event), 500, 'no')">
+                    value="<?= $catMetas['posts_per_page'] ? $catMetas['posts_per_page'][0] : 20 ?>" 
+                    @keyup="debounce(updateCategorySettings('posts_per_page', $event), 500, 'no')">
             </td>
         </tr>
         <tr>
@@ -48,8 +60,8 @@ $catMetas = get_term_meta($cat->term_id);
             <td>
                 <input 
                     type="number" 
-                    value="<?= $catMetas['no_of_pages_on_nav'][0] ?? 5 ?>" 
-                    @keyup="debounce(updateNoOfPagesOnNav($event), 500, 'pages')">
+                    value="<?= $catMetas['no_of_pages_on_nav'] ? $catMetas['no_of_pages_on_nav'][0] : 5 ?>" 
+                    @keyup="debounce(updateCategorySettings('no_of_pages_on_nav', $event), 500, 'pages')">
             </td>
         </tr>
     </tbody>
@@ -68,24 +80,14 @@ $catMetas = get_term_meta($cat->term_id);
 
         },
         methods: {
-            updateTitle(event) {
-                this.updateCategory('cat_name', event.target.value, function(data) {
+            updateCategorySettings(name, event) {
+                this.updateCategory(name, event.target.value, function(data) {
                     alert('Title updated to : ' + event.target.value)
                 });
             },
             updateListOnView(event) {
                 this.updateCategory('list_on_view', event.target.checked, function(data) {
                     alert('Listing on view page updated to : ' + event.target.checked)
-                });
-            },
-            updatePostsPerPage(event) {
-                this.updateCategory('posts_per_page', event.target.value, function(data) {
-                    alert('Post per page updated to : ' + event.target.value)
-                });
-            },
-            updateNoOfPagesOnNav(event) {
-                this.updateCategory('no_of_pages_on_nav', event.target.value, function(data) {
-                    alert('Number of pagers on navigation updated to : ' + event.target.value)
                 });
             },
             updateCategory(key, value, successCallback) {
