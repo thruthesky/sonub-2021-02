@@ -369,6 +369,11 @@ class Credit {
      *  보낸 사람을 기준으로 유료 보석과 무료 보석을 정보를 배열로 리턴한다.
      */
     public function giveJewelry($in) {
+
+        if ( is_logged_in() === false ) {
+            return ERROR_LOGIN_FIRST;
+        }
+
         if ( empty($in['jewelry']) ) return ERROR_EMPTY_JEWELRY;
         $jewelry_name = $in['jewelry'];
         if ( !in_array($jewelry_name, JEWELRIES) ) return ERROR_WRONG_JEWELRY;

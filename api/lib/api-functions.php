@@ -253,6 +253,8 @@ function authenticate()
 }
 
 
+
+
 /**
  *
  * session_id 값을 입력 받아
@@ -297,7 +299,13 @@ function session_login($session_id)
     }
 }
 
-
+/**
+ * Return true if the user logged in and not anonymous user.
+ * @return bool
+ */
+function is_logged_in() {
+    return is_user_logged_in() && wp_get_current_user()->ID > 0;
+}
 
 /**
  * @param $email
@@ -683,8 +691,11 @@ function end_if_error($code) {
  *
  *  - ['mode' => 'login'] will be returned if the user logged in
  *  - ['mode' => 'register'] will be returned if the user registered.
+ *
+ * @example
+ *  login_or_register(['user_email' => "ju-$i@test.com", 'user_pass' => "12345a", "other" => "data", ... ]);
  */
-function loginOrRegister($in) {
+function login_or_register($in) {
     $re = login($in);
     debug_log("login:", $re);
     if ( api_error($re) ) {
@@ -765,7 +776,7 @@ function update_token($in) {
         debug_log(" ['user_ID' => $user_ID, 'token' => $token, 'stamp' => time()] ");
         $re = $wpdb->insert(PUSH_TOKENS_TABLE, ['user_ID' => $user_ID, 'token' => $token, 'stamp' => time()]);
         if ( $re === false ) {
-            return ERROR_INSERT;
+            return sql_error(ERROR_INSERT);
         }
     } else {
         // update

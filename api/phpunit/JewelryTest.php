@@ -35,7 +35,9 @@ class JewelryTest extends TestCase {
         $this->credit = new Credit();
         $this->clearTestTables();
 
-
+        for( $i = 2; $i <= 10; $i ++) {
+            login_or_register(['user_email' => "ju-$i@test.com", 'user_pass' => "12345a", ]);
+        }
         update_user_meta($this->male, 'gender', 'M');
         update_user_meta($this->female, 'gender', 'F');
         update_user_meta($this->male2, 'gender', 'M');
@@ -50,7 +52,10 @@ class JewelryTest extends TestCase {
     }
 
 
-    public function testParams(): void {
+    public function testJewelryInput(): void {
+        wp_set_current_user(1);
+
+
         $re = $this->credit->giveJewelry([]);
         self::assertEquals($re, ERROR_EMPTY_JEWELRY);
 
@@ -66,20 +71,30 @@ class JewelryTest extends TestCase {
         $re = $this->credit->giveJewelry(['jewelry'=>'diamond', 'count' => 'abc']);
         self::assertEquals($re, ERROR_WRONG_COUNT);
 
+
+        $re = $this->credit->updateBonusJewelry(1, 'ruby', 1);
+        self::assertEquals($re, ERROR_WRONG_JEWELRY);
+    }
+
+    public function testUserNotLoggedIn() {
+
+        wp_set_current_user(0);
+        $re = $this->credit->giveJewelry(['jewelry'=>'diamond', 'count' => 12, 'user_ID' => 1]);
+        self::assertEquals($re, ERROR_LOGIN_FIRST);
+    }
+
+    public function testUser() {
+
+        wp_set_current_user(1);
+
         $re = $this->credit->giveJewelry(['jewelry'=>'diamond', 'count' => '123']);
         self::assertEquals($re, ERROR_EMPTY_USER_ID);
 
         $re = $this->credit->giveJewelry(['jewelry'=>'diamond', 'count' => 12, 'user_ID' => 99912345]);
         self::assertEquals($re, ERROR_USER_NOT_FOUND);
 
-        $re = $this->credit->giveJewelry(['jewelry'=>'diamond', 'count' => 12, 'user_ID' => 1]);
-        self::assertEquals($re, ERROR_LOGIN_FIRST);
-
         $re = $this->credit->updateBonusJewelry(0, 'gold', 1);
         self::assertEquals($re, ERROR_EMPTY_USER_ID);
-
-        $re = $this->credit->updateBonusJewelry(1, 'ruby', 1);
-        self::assertEquals($re, ERROR_WRONG_JEWELRY);
     }
 
     public function testUpdateBonusJewelry() {
@@ -92,8 +107,6 @@ class JewelryTest extends TestCase {
         $bonus = $this->credit->getMyBonusJewelry();
         self::assertTrue($bonus === null);
     }
-
-
 
     public function testUpdateBonusJewelryAfterGenerate() {
         wp_set_current_user($this->user_ID);
@@ -139,8 +152,6 @@ class JewelryTest extends TestCase {
             }
         }
     }
-
-
 
 
 /// Update bonus jewelry test
