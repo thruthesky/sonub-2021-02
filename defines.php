@@ -57,6 +57,7 @@ define('ERROR_EMPTY_CATEGORY', 'ERROR_EMPTY_CATEGORY');
 define('ERROR_WRONG_CATEGORY', 'ERROR_WRONG_CATEGORY');
 define('ERROR_EMPTY_CATEGORY_OR_ID', 'ERROR_EMPTY_CATEGORY_OR_ID');
 define('ERROR_EMPTY_ID_OR_POST', 'ERROR_EMPTY_ID_OR_POST');
+define('ERROR_POST_NOT_FOUND', 'ERROR_POST_NOT_FOUND');
 define('ERROR_EMPTY_ID', 'ERROR_EMPTY_ID');
 define('ERROR_EMPTY_TABLE', 'ERROR_EMPTY_TABLE');
 define('ERROR_APP_GET_NO_RECORD', 'ERROR_APP_GET_NO_RECORD');
@@ -170,6 +171,12 @@ define('USER_META_EXCEPTIONS_FOR_CLIENT', [
     'use_ssl',
     'admin_color',
     'rich_editing',
+    'session_tokens',
+    'community-events-location',
+    'wp_dashboard_quick_press_last_post_id',
+    'dismissed_wp_pointers',
+    'show_welcome_panel',
+
 ]);
 
 define('POST_FIELDS', [

@@ -93,32 +93,30 @@ const forumMixin = {
         refresh();
       }, this.error);
     },
-<<<<<<< HEAD
     is_mine(author) {
       return this.user && parseInt(this.user.ID) === author;
     },
-  }, // eo methods:
-=======
+
     onChangeAlertOnNewPost(category) {
-        const topic = config.post_notification_prefix + category;
-        const notificationRoute = this.$data.alertOnNewPost === true
-            ? "notification.subscribeTopic"
-            : "notification.unsubscribeTopic";
-        request(notificationRoute, {topic: topic}, function (res) {
-            console.log(res);
-        }, this.error);
+      const topic = config.post_notification_prefix + category;
+      const notificationRoute = this.$data.alertOnNewPost === true
+          ? "notification.subscribeTopic"
+          : "notification.unsubscribeTopic";
+      request(notificationRoute, {topic: topic}, function (res) {
+        console.log(res);
+      }, this.error);
     },
     onChangeAlertOnNewComment(category) {
-        const topic = config.comment_notification_prefix + category;
-        const notificationRoute = this.$data.alertOnNewComment === true
-            ? "notification.subscribeTopic"
-            : "notification.unsubscribeTopic";
-        request(notificationRoute, {topic: topic}, function (res) {
-            console.log(res);
-        }, this.error);
-    }
-  },
->>>>>>> 02457e7bff34f17cf82fcc6613c96415ef71ad1d
+      const topic = config.comment_notification_prefix + category;
+      const notificationRoute = this.$data.alertOnNewComment === true
+          ? "notification.subscribeTopic"
+          : "notification.unsubscribeTopic";
+      request(notificationRoute, {topic: topic}, function (res) {
+        console.log(res);
+      }, this.error);
+    },
+  }, // eo methods:
+
 };
 
 

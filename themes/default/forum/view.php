@@ -4,6 +4,9 @@
  * @desc view page
  */
 
+
+debug_log("-----------> 1: here?", $_SERVER);
+
 /**
  * Get the post ID
  */

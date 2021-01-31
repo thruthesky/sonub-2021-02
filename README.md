@@ -219,9 +219,16 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
 
 
 
-### Login
+## Login
+
+* For a user to log in on web browser, create a form and use `app.js::onLoginFormSubmit()` method.
+  * See the HTML form example on `sonub/themes/default/user/login.php`
+* When user logs in on web, `session_id`, `nickname`, `profile_photo_url` are saved through Javascript cookies.
+* PHP can use the `session_id` in cookie and detect who is the user.
+* To make the cookie available all sub domains, set root domain to `BROWSER_COOKIE_DOMAIN` in config.php.
 
 ### Register
+
 
 ### Getting Profile
 

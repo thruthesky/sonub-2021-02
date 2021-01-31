@@ -63,13 +63,13 @@ const AttributeBinding = {
       }, delay);
     },
     isAdmin() {
-      return this.$data.user && this.$data.user.admin;
+      return this.user && this.user.admin;
     },
     loggedIn() {
-      return this.$data.user !== null && this.$data.user.session_id;
+      return this.user !== null && this.user.session_id;
     },
     sessionId() {
-      return this.$data.user && this.$data.user.session_id;
+      return this.user && this.user.session_id;
     },
     notLoggedIn() {
       return !this.loggedIn();
@@ -103,13 +103,16 @@ const AttributeBinding = {
         this.error
       );
     },
+    /**
+     * Loads user profile data and set it on `app.profile` in vue.
+     */
     loadProfileUpdateForm() {
       request(
         "user.profile",
         {},
         function (profile) {
           console.log("loadProfileUpdateForm: ", profile);
-          app.$data.profile = profile;
+          app.profile = profile;
         },
         this.error
       );
@@ -219,8 +222,10 @@ const AttributeBinding = {
     },
 
     logout() {
-      localStorage.removeItem("user");
-      this.$data.user = null;
+      Cookies.remove('session_id', {domain: config.cookie_domain});
+      Cookies.remove('nickname', {domain: config.cookie_domain});
+      Cookies.remove('profile_photo_url', {domain: config.cookie_domain});
+      this.user = null;
     },
     error(e) {
       console.log("error(e)", e);
@@ -232,26 +237,29 @@ const AttributeBinding = {
      * @param profile
      */
     setUser(profile) {
-      Cookies.set('session_id', profile.session_id);
-      Cookies.set('nickname', profile.nickname);
-      Cookies.set('profile_photo_url', profile.profile_photo_url);
+      Cookies.set('session_id', profile.session_id, {domain: config.cookie_domain});
+      Cookies.set('nickname', profile.nickname, {domain: config.cookie_domain});
+      Cookies.set('profile_photo_url', profile.profile_photo_url, {domain: config.cookie_domain});
 
-      this.$data.user = profile;
+      this.user = {
+        'session_id': profile.session_id,
+        'nickname': profile.nickname,
+        'profile_photo_url': profile.profile_photo_url,
+      };
     },
 
     /**
      * Get user information.
-     * @returns {*}
      */
     getUser() {
-      console.log('getUser():', Cookies.get());
-      const user = {
-        'session_id': Cookies.get('session_id'),
-        'nickname': Cookies.get('nickname'),
-        'profile_photo_url': Cookies.get('profile_photo_url'),
-      };
-      this.user = user;
-      return this.user;
+      const id = Cookies.get('session_id');
+      if ( id ) {
+        this.user = {
+          'session_id': id,
+          'nickname': Cookies.get('nickname'),
+          'profile_photo_url': Cookies.get('profile_photo_url'),
+        };
+      }
     },
     /**
      * alert

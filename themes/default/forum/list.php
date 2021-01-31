@@ -1,11 +1,18 @@
 <?php
 $category = get_category_by_slug(in('category'));
 
+if ( loggedIn() ) {
+    d( NOTIFY_POST . $category->slug );
+    d( NOTIFY_COMMENT . $category->slug );
+} else {
+    d('login?');
+}
+
 ?>
 <hr>
 <div class="p-2 d-flex justify-content-between">
     <h2>Forum List</h2>
-    <a class="btn btn-success" href="/?page=forum/edit&category=<?= $category ?>">Create</a>
+    <a class="btn btn-success" href="/?page=forum/edit&category=<?= $category->slug ?>">Create</a>
 </div>
 <div>
     <div class="form-check form-switch">
@@ -29,12 +36,12 @@ $category = get_category_by_slug(in('category'));
 
     foreach ($posts as $post) {
         // print_r($post);
-    ?>
+        ?>
         <a class="d-flex justify-content-between mb-2" href="<?php echo $post['url'] ?>">
 
             <div class="d-flex">
                 <? if ( $post['profile_photo_url'] ) { ?>
-                <img class="me-3 size-40 circle" src="<?= $post['profile_photo_url'] ?>">
+                    <img class="me-3 size-40 circle" src="<?= $post['profile_photo_url'] ?>">
                 <? } ?>
                 <h1><?php echo $post['post_title'] ?></h1>
             </div>
@@ -51,8 +58,8 @@ $category = get_category_by_slug(in('category'));
         <li class="page-item"><a class="page-link" href="">Previous</a></li>
         <?php for ($i = 0; $i <= 10; $i++) {
             $paged = $i + 1;
-            $href = '/?page=forum/list&category=' . $category . '&page_no=' . $paged;
-        ?>
+            $href = '/?page=forum/list&category=' . $category->slug . '&page_no=' . $paged;
+            ?>
             <li class="page-item"><a class="page-link" href="<?= $href ?>"><?= $paged ?></a></li>
         <?php } ?>
         <li class="page-item"><a class="page-link" href="<?= $href ?>">Next</a></li>
@@ -60,7 +67,7 @@ $category = get_category_by_slug(in('category'));
 </nav>
 
 <script>
-    const category = "<?php echo $category ?>";
+    const category = "<?php echo $category->slug ?>";
     const mixin = {
         created() {
             console.log('list.created!');

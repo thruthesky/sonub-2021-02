@@ -112,6 +112,15 @@ define('PUBLIC_TABLES', [
  */
 define('SUBSCRIBE_NEW_COMMENT_ON_REGISTRATION', true);
 
-
-
 define('POSTS_PER_PAGE', 3);
+
+/**
+ * Cookie domain
+ *
+ * If you set the cookie domain, it will apply the cookies on that domain.
+ * This is useful to apply login cookie to all subdomains.
+ *
+ * To apply login cookie(and all other cookies) to all sub domains, set the root domain(like `domain.com`) name here
+ */
+ define('BROWSER_COOKIE_DOMAIN', 'sonub.com');
+

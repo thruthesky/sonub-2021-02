@@ -2,7 +2,9 @@
 
 ?>
 <script>
-    window.addEventListener('load', function() {
+    later( function() {
         app.logout();
     });
 </script>
+
+

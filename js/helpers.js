@@ -13,9 +13,9 @@ function build_query(params) {
  * @param data
  */
 function addSessionId(data) {
-    const _user = getLocalStorage('user');
-    if ( _user && typeof _user['session_id'] !== 'undefined' ) {
-        data['session_id'] = _user['session_id'];
+    const _sid = app.sessionId();
+    if ( _sid ) {
+        data['session_id'] = _sid;
     }
 }
 

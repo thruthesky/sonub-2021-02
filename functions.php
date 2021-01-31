@@ -33,40 +33,25 @@ define( 'THEME_URL', REQUESTED_HOME_URL . '/wp-content/themes/' . THEME_FOLDER_N
 
 define('API_CALL', in('route') != null );
 
-
-/**
- * Preflight for Client
- *
- * CORS
- */
-if ( API_CALL ) {
-    header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
-    header('Access-Control-Allow-Headers: Origin, Content-Type, Authorization');
-    if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-        echo ''; // No return data for preflight.
-        return;
-    }
-
-    /// Force to hide error message on API CALL
-    $wpdb->show_errors = false;
-}
-
+require_once(THEME_DIR . '/kill-wrong-routes.php');
+require_once(THEME_DIR . '/pre-flight.php');
 
 /**
  * Load definitions and configurations
  */
 require_once(THEME_DIR .'/defines.php');
+require_once(THEME_DIR .'/config.php');
+
 
 /**
  * Login with session_id.
+ *
  */
 if ( isset($_COOKIE['session_id']) && $_COOKIE['session_id'] ) {
     authenticate($_COOKIE['session_id']);
 }
 
 
-require_once(THEME_DIR .'/config.php');
 
 
 /**
@@ -174,6 +159,7 @@ EOJ;
  */
 function get_theme_page_path($theme, $page) {
 	$script = THEME_DIR . "/themes/$theme/$page.php";
+
 	if ( !file_exists($script) ) {
 		$script = THEME_DIR . "/themes/default/$page.php";
 	}
@@ -390,4 +376,10 @@ function widget( $name, $options = null ) {
     $__included_files[] = $widget_path;
 
     return $widget_path;
+}
+
+
+function get_cookie_domain() {
+    if ( defined('BROWSER_COOKIE_DOMAIN') && BROWSER_COOKIE_DOMAIN ) return BROWSER_COOKIE_DOMAIN;
+    else return get_domain();
 }

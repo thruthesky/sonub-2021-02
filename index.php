@@ -77,7 +77,8 @@ $script = get_theme_page_script_path();
         },
         defaultTopic: "<?=DEFAULT_TOPIC?>",
         post_notification_prefix: '<?=NOTIFY_POST?>',
-        comment_notification_prefix: '<?=NOTIFY_COMMENT?>'
+        comment_notification_prefix: '<?=NOTIFY_COMMENT?>',
+        cookie_domain: '<?=get_cookie_domain()?>',
     };
 </script>
 <script src="<?=THEME_URL?>/js/bootstrap-5.0.0-b1-min.js"></script>

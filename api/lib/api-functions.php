@@ -251,6 +251,7 @@ function json_error()
 /**
  * This method let the user log-in with $session_id
  *
+ * @note this function requires `defines.php` and `config.php` to be loaded first.
  *
  * @return WP_User or Error object.
  *
@@ -281,12 +282,14 @@ function authenticate($session_id)
  */
 function session_login($session_id)
 {
+
     if (empty($session_id)) return ERROR_EMPTY_SESSION_ID;
 
     $arr = explode('_', $session_id);
     if (count($arr) != 2) return ERROR_MALFORMED_SESSION_ID;
     list($ID, $trash) = $arr;
-//    debug_log("ID: $ID");
+    debug_log("user session ID: $ID", $session_id);
+    debug_log('server', $_SERVER);
     $user = get_userdata($ID);
 //    debug_log(print_r($user, true));
     if ($user) {
@@ -315,6 +318,14 @@ function session_login($session_id)
  */
 function is_logged_in() {
     return is_user_logged_in() && wp_get_current_user()->ID > 0;
+}
+
+/**
+ * Alias of is_logged_in()
+ * @return bool
+ */
+function loggedIn() {
+    return is_logged_in();
 }
 
 /**
@@ -939,9 +950,12 @@ function post_response($ID_or_post, $options = [])
     if (empty($ID_or_post)) return ERROR_EMPTY_ID_OR_POST;
     $post = get_post($ID_or_post, ARRAY_A);
 
+    if ( ! $post ) return ERROR_POST_NOT_FOUND;
+
     if (isset($options['with_autop']) && $options['with_autop']) {
         $post['post_content_autop'] = wpautop(($post['post_content']));
     }
+
     /// Featured Image Url.
     ///
     $post_thumbnail_id = get_post_thumbnail_id($post['ID']);
@@ -970,6 +984,7 @@ function post_response($ID_or_post, $options = [])
     $profile = profile($post['post_author']);
     $post['profile_photo_url'] = $profile['profile_photo_url'] ?? '';
 
+
     /// post author profile photo
     ///
     // $u = $this->userResponse($post['post_author']);
@@ -994,8 +1009,10 @@ function post_response($ID_or_post, $options = [])
     // Add meta datas.
     $metas = get_post_meta($post['ID'], '', true);
     $singles = [];
-    foreach ($metas as $k => $v) {
-        $singles[$k] = $v[0];
+    if ( $metas ) {
+        foreach ($metas as $k => $v) {
+            $singles[$k] = $v[0];
+        }
     }
     $post = array_merge($singles, $post);
 
@@ -1485,6 +1502,21 @@ function table_get($in) {
 function get_host_name() {
     if ( isset($_SERVER['HTTP_HOST']) ) return $_SERVER['HTTP_HOST'];
     else return null;
+}
+
+/**
+ * Alias of get_host_name()
+ * @return mixed|null
+ */
+function get_domain() {
+    return get_host_name();
+}
+/**
+ * Alias of get_host_name()
+ * @return mixed|null
+ */
+function get_domain_name() {
+    return get_host_name();
 }
 
 function isCli() {
