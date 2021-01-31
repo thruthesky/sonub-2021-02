@@ -226,13 +226,35 @@ const AttributeBinding = {
       console.log("error(e)", e);
       alert(e);
     },
+    /**
+     * Set user profile into localStorage
+     * @param profile
+     */
     setUser(profile) {
+      console.log('setUser: profile: ', profile);
       setLocalStorage("user", profile);
-      this.$data.user = profile;
+      this.user = profile;
     },
+    /**
+     * Get user profile data
+     *
+     * @logic
+     *  - Get user profile data from localStorage, first.
+     *  - If the user profile data exists, then, sync from backend.
+     * @returns {*}
+     */
     getUser() {
-      this.$data.user = getLocalStorage("user");
-      return this.$data.user;
+      const _user = getLocalStorage("user");
+      if ( _user ) {
+        this.user = _user;
+        /**
+         * Get new user profile data from backend and update it.
+         *
+         * @todo this request on every page for user profile sync. Make it every 5 minutes or 10 minutes.
+         */
+        request('user.profile', null, this.setUser);
+      }
+      return this.user;
     },
     alert(title, body) {
       alert(title + "\n" + body);
