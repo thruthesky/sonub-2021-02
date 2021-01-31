@@ -54,6 +54,11 @@ if ( API_CALL ) {
 
 
 /**
+ * Load definitions and configurations
+ */
+require_once(THEME_DIR .'/defines.php');
+
+/**
  * Login with session_id.
  */
 if ( isset($_COOKIE['session_id']) && $_COOKIE['session_id'] ) {
@@ -61,10 +66,6 @@ if ( isset($_COOKIE['session_id']) && $_COOKIE['session_id'] ) {
 }
 
 
-/**
- * Load definitions and configurations
- */
-require_once(THEME_DIR .'/defines.php');
 require_once(THEME_DIR .'/config.php');
 
 

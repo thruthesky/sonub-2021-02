@@ -279,8 +279,8 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
     * `functions.php` loads
       * `api/lib/api-functions.php`,
       * Preflight
-      * User login with `$_COOKIE['session_id']`. PHP can detect if user logged in or not, and can use all the user information.
       * `defines.php`
+      * User login with `$_COOKIE['session_id']`. PHP can detect if user logged in or not, and can use all the user information.
       * `config.php`
       * Composer vendor auto load.
       * `api/lib/firebase.php`
