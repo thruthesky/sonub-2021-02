@@ -12,7 +12,7 @@ class UserRoute {
     }
 
     public function loginOrRegister($in) {
-        return loginOrRegister($in);
+        return login_or_register($in);
     }
 
     public function profileUpdate($in) {

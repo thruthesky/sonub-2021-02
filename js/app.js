@@ -227,35 +227,37 @@ const AttributeBinding = {
       alert(e);
     },
     /**
-     * Set user profile into localStorage
+     * Set user profile on browser cookie which can be used by PHP.
+     * @note when user upload photo, the url is saved in cookie but it will be available in php on next page load.
      * @param profile
      */
     setUser(profile) {
-      console.log('setUser: profile: ', profile);
-      setLocalStorage("user", profile);
-      this.user = profile;
+      Cookies.set('session_id', profile.session_id);
+      Cookies.set('nickname', profile.nickname);
+      Cookies.set('profile_photo_url', profile.profile_photo_url);
+
+      this.$data.user = profile;
     },
+
     /**
-     * Get user profile data
-     *
-     * @logic
-     *  - Get user profile data from localStorage, first.
-     *  - If the user profile data exists, then, sync from backend.
+     * Get user information.
      * @returns {*}
      */
     getUser() {
-      const _user = getLocalStorage("user");
-      if ( _user ) {
-        this.user = _user;
-        /**
-         * Get new user profile data from backend and update it.
-         *
-         * @todo this request on every page for user profile sync. Make it every 5 minutes or 10 minutes.
-         */
-        request('user.profile', null, this.setUser);
-      }
+      console.log('getUser():', Cookies.get());
+      const user = {
+        'session_id': Cookies.get('session_id'),
+        'nickname': Cookies.get('nickname'),
+        'profile_photo_url': Cookies.get('profile_photo_url'),
+      };
+      this.user = user;
       return this.user;
     },
+    /**
+     * alert
+     * @param title
+     * @param body
+     */
     alert(title, body) {
       alert(title + "\n" + body);
     },

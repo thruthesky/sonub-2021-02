@@ -1,6 +1,14 @@
 <?php
-
 require_once(ABSPATH . 'wp-admin/includes/taxonomy.php');
+
+
+/**
+ * Returns api version in string.
+ * @return string
+ */
+function api_version() {
+    return "0.1.3";
+}
 
 /**
  * JSON input from Client
@@ -241,16 +249,18 @@ function json_error()
 
 
 /**
- * This method let the user log-in with $_REQUEST['session_id'].
+ * This method let the user log-in with $session_id
  *
  *
  * @return WP_User or Error object.
  *
  */
-function authenticate()
+function authenticate($session_id)
 {
-    return session_login(in('session_id'));
+    return session_login($session_id);
 }
+
+
 
 
 /**
@@ -297,7 +307,15 @@ function session_login($session_id)
     }
 }
 
-
+/**
+ * Return true if the user logged in and not anonymous user.
+ *
+ * @note Try to use this function instead of wp_is_logged_in()
+ * @return bool
+ */
+function is_logged_in() {
+    return is_user_logged_in() && wp_get_current_user()->ID > 0;
+}
 
 /**
  * @param $email
@@ -683,8 +701,11 @@ function end_if_error($code) {
  *
  *  - ['mode' => 'login'] will be returned if the user logged in
  *  - ['mode' => 'register'] will be returned if the user registered.
+ *
+ * @example
+ *  login_or_register(['user_email' => "ju-$i@test.com", 'user_pass' => "12345a", "other" => "data", ... ]);
  */
-function loginOrRegister($in) {
+function login_or_register($in) {
     $re = login($in);
     debug_log("login:", $re);
     if ( api_error($re) ) {
@@ -765,7 +786,7 @@ function update_token($in) {
         debug_log(" ['user_ID' => $user_ID, 'token' => $token, 'stamp' => time()] ");
         $re = $wpdb->insert(PUSH_TOKENS_TABLE, ['user_ID' => $user_ID, 'token' => $token, 'stamp' => time()]);
         if ( $re === false ) {
-            return ERROR_INSERT;
+            return sql_error(ERROR_INSERT);
         }
     } else {
         // update
@@ -1427,6 +1448,11 @@ function table_updates($in) {
 
 
     $row = $wpdb->get_row("SELECT * FROM $in[table] WHERE user_ID=$user_ID", ARRAY_A);
+
+
+
+
+
     return array_merge($action, $row);
 }
 
@@ -1557,7 +1583,7 @@ function sql_error($default_error = null) {
             return ERROR_UNKNOWN_COLUMN;
         }
     }
-    return $default_error;
+    return $default_error . ":$last_error";
 }
 
 
@@ -1916,7 +1942,21 @@ function getRoute($params) {
     $url = API_URL . "?" . http_build_query($params);
 //    echo "url: $url\n";
     $re = file_get_contents($url);
-    $json = json_decode($re, true);
+    if ( !$re ) {
+        echo "\n";
+        echo "\n* -------------------------------- WARNING -------------------------------- *";
+        echo "\n*";
+        echo "\n* There is no return data from backend api.";
+        echo "\n*";
+        echo "\n* Is backend api url correct?";
+        echo "\n* API URL: " . API_URL;
+        echo "\n*";
+        echo "\n* If it's wrong, update API_URL_ON_CLI in config.php to backend api url for test.";
+        echo "\n*";
+        echo "\n* -------------------------------- WARNING -------------------------------- *";
+
+    }
+$json = json_decode($re, true);
     if ( !$json ) {
         print_r($re);
     }

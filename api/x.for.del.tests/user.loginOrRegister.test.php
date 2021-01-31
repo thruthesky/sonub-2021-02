@@ -10,7 +10,7 @@ $susan = 'susan' . $user_login . '@test.com';
 $password = 'PW'.$susan;
 
 /// Step 1.
-$registeredUser = loginOrRegister(['user_email' => $susan, 'user_pass' => $password]);
+$registeredUser = login_or_register(['user_email' => $susan, 'user_pass' => $password]);
 testSuccess($registeredUser, "User registered: {$registeredUser['ID']}");
 isTrue($registeredUser['mode'] == 'register', 'registered');
 

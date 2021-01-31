@@ -31,10 +31,11 @@ final class AppUpdatesTest extends TestCase
         $re = getRoute(['route' => 'app.updates', 'session_id' => $this->session_id, 'table' => 'api_bio', 'a' => 'b']);
         self::assertTrue($re['code'] == ERROR_UNKNOWN_COLUMN, $re['code']);
     }
+
     public function testUpdateOneField(): void
     {
         $re = getRoute(['route' => 'app.updates', 'session_id' => $this->session_id, 'table' => 'api_bio', 'name' => 'Apple']);
-        self::assertTrue($re['code'] === 0, "$re[code]");
+        self::assertTrue($re['code'] === 0, "Error code: $re[code]");
         $bio = table_get(['table' => 'api_bio']);
         self::assertTrue($re['data']['name'] === 'Apple');
         self::assertTrue($re['data']['name'] === $bio['name']);

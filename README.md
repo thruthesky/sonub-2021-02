@@ -3,6 +3,10 @@
 * Sonub(Sonub Network Hub) is an open source, complete CMS with modern functionalities like realtime update, push notification, and more.
 * It is build on Apache(or Nginx) + MySQL(or MariaDB) + PHP stack based Wordpress. It works as a theme but has very much fixed.
 
+
+
+
+
 # Overview
 
 * Build with PHP.
@@ -273,21 +277,28 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
   * wordpress index.php and its initialization files.
   * functions.php ( will be loaded by Wordpress before index.php. Don't put anything here except the hooks and filters. )
     * `functions.php` loads
-      * `api/lib/functions.php`,
+      * `api/lib/api-functions.php`,
+      * Preflight
+      * User login with `$_COOKIE['session_id']`. PHP can detect if user logged in or not, and can use all the user information.
       * `defines.php`
       * `config.php`
-  * index.php ( this is the theme/index.php that is the layout )
+      * Composer vendor auto load.
+      * `api/lib/firebase.php`
+  * theme index.php ( this is the theme/index.php that is the layout )
     * `index.php` loads
       * Bootstrap 4.6 css
       * css/index.css ( compiled from scss/index.scss sass code )
       * `theme/[DOMAIN_THEME]/[MODULE]/[SCRIPT_NAME].css` if exists.
       * Page script file `wp-content/themes/wigo/themes/[DOMAIN_THEM]/[MODULE]/[SCRIPT_NAME].php` will be loaded.
+      * Javascript `config` settings.
+      * bootstrap v5 javascript
       * vue.prod.js
       * axios.min.js
       * firebase-app.js, firebase-messaging.js and other firebase-****.js files.
       * `theme/[DOMAIN_THEME]/[MODULE]/[SCRIPT_NAME].js` if exists.
-      * js/app.js
-
+      * `js/app.js`
+        * User login in Vue.js client end. Vue.js can detect if user is logged in or not. But let PHP handle user login related code as much as possible.
+      
 ### API booting
 
 * When client-end connects to backend Restful API, the following scripts will be loaded in order
@@ -405,9 +416,7 @@ You can write css style like below.
 
 # Unit Test
 
-* There are two methods to do unit test.
-  * `V3 unit test` is developed by the core team. And is not recommended simply because it is not a standard.
-  * The other one is `PHPUnit` which is more likely a standard unit testing tool for PHP. And `PHPUnit` is recommended simply because it is a de-facto standard.
+We use `phpunit` as its primary unit testing tool. (Previous custom made unit testing tool named 'v3 test tool' has been removed by Jan 30).
 
 * To run phpunit, just do it as phpunit way.
 
@@ -427,25 +436,12 @@ php phpunit.phar api/phpunit/AppVersionTest.php
 phpunit api/phpunit/VerifyIOSPurchaseTest.php 
 ```
 
-## V3 Unit Testing
+## Watching PHP script changes.
 
-* Install `phprun` node module globally.
-```text
-$ npm i -g phprun
-```
+* Use chokidar-cli to re-run the test whenever php script file changes.
 
-* You can test like below
-
-```text
-$ phprun tests/xxxx.test.php
-```
-
-Examples)
-```text
-% phprun tests/app.version.test.php
-% phprun tests/loginOrRegister.test.php
-% phprun tests/loginOrRegister_with_metadata.php
-% phprun tests/loginOrRegister.function_call.test.php
+```shell script
+chokidar 
 ```
 
 
