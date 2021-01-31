@@ -54,15 +54,12 @@ cd wp-content/theme/sonub
 git clone https://github.com/thruthesky/sonub
 ```
 
-* And enable it on admin page.
+* Enable `sonub theme` on admin page.
 
 
 ## Database Setup
 
-It has some database tables to install.
-
-* `api_push_token` for push notifications
-* `api_translations` for supporting multi languages.
+* Add `tmp/sql/sonub.sql` tables into Database.
 
 
 
