@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 21-01-31 08:39
+-- 생성 시간: 21-01-31 08:53
 -- 서버 버전: 10.5.5-MariaDB
 -- PHP 버전: 7.3.11
 
@@ -20,36 +20,6 @@ SET time_zone = "+00:00";
 --
 -- 데이터베이스: `sonub`
 --
-
--- --------------------------------------------------------
-
---
--- 테이블 구조 `api_bio`
---
-
-CREATE TABLE `api_bio` (
-  `user_ID` int(10) UNSIGNED NOT NULL,
-  `name` varchar(32) NOT NULL DEFAULT '',
-  `birthdate` mediumint(9) NOT NULL DEFAULT 0,
-  `gender` char(1) NOT NULL DEFAULT '',
-  `height` tinyint(3) UNSIGNED NOT NULL DEFAULT 0,
-  `weight` tinyint(3) UNSIGNED NOT NULL DEFAULT 0,
-  `city` varchar(32) NOT NULL DEFAULT '',
-  `drinking` char(1) NOT NULL DEFAULT '',
-  `smoking` char(1) NOT NULL DEFAULT '',
-  `hobby` varchar(32) NOT NULL DEFAULT '',
-  `dateMethod` varchar(255) NOT NULL DEFAULT '',
-  `profile_photo_url` varchar(255) NOT NULL DEFAULT '',
-  `createdAt` int(10) UNSIGNED NOT NULL,
-  `updatedAt` int(10) UNSIGNED NOT NULL,
-  `latitude` double NOT NULL DEFAULT 0,
-  `longitude` double NOT NULL DEFAULT 0,
-  `accuracy` double NOT NULL DEFAULT 0,
-  `altitude` double NOT NULL DEFAULT 0,
-  `speed` double NOT NULL DEFAULT 0,
-  `heading` double NOT NULL DEFAULT 0,
-  `time` double NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -107,21 +77,6 @@ CREATE TABLE `api_translations` (
 --
 -- 덤프된 테이블의 인덱스
 --
-
---
--- 테이블의 인덱스 `api_bio`
---
-ALTER TABLE `api_bio`
-  ADD PRIMARY KEY (`user_ID`),
-  ADD KEY `birthdate` (`birthdate`),
-  ADD KEY `height` (`height`),
-  ADD KEY `weight` (`weight`),
-  ADD KEY `city` (`city`),
-  ADD KEY `hobby` (`hobby`),
-  ADD KEY `profile_photo_url` (`profile_photo_url`(8)),
-  ADD KEY `name` (`name`),
-  ADD KEY `latitude` (`latitude`),
-  ADD KEY `longitude` (`longitude`);
 
 --
 -- 테이블의 인덱스 `api_purchase_history`

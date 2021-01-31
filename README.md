@@ -62,7 +62,6 @@ git clone https://github.com/thruthesky/sonub
 * Add `tmp/sql/sonub.sql` tables into Database.
 
 
-
 ## Firebase
 
 Many of features are depending on firebase. So it is mandatory to setup firebase.
@@ -76,13 +75,16 @@ Many of features are depending on firebase. So it is mandatory to setup firebase
   * And set the database uri to `FIREBASE_DATABASE_URI`.
 
 
-
 ## In app purchase key
+
+This is optional. Only if you are going to use in-app-purchase, set the purchase verification keys.
 
 * If you are using in_app_purchase, then put a proper key file.
 
 
-## Installing SASS Reloader
+## Installing Node Modules
+
+It uses node modules to compile sass into css, and watch file changes to live reload the browser.
 
 * Install node modules.
 
@@ -102,6 +104,14 @@ npm i
 ```
  ./node_modules/.bin/sass --watch scss/index.scss css/index.css
 ```
+
+* If you want the browser reload whenever you edit php, css, javascript files, run the command below.
+
+```
+cd wp-content/themes/sonub
+node live-reload.js
+```
+
 
 
 
@@ -133,14 +143,6 @@ npm i
 * `sonub/css` folder has common css files.
 
 
-## PHP Live Reload
-
-* If you want the browser reload whenever you edit php, css, javascript files, run the command below.
-
-```
-cd wp-content/themes/sonub
-node live-reload.js
-```
 
 ## Setup on Local Development Computer
 
