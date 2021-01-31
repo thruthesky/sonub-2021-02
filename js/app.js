@@ -224,14 +224,36 @@ const AttributeBinding = {
       console.log("error(e)", e);
       alert(e);
     },
+    /**
+     * Set user profile on browser cookie which can be used by PHP.
+     * @note when user upload photo, the url is saved in cookie but it will be available in php on next page load.
+     * @param profile
+     */
     setUser(profile) {
-      setLocalStorage("user", profile);
+      Cookies.set('session_id', profile.session_id);
+      Cookies.set('nickname', profile.nickname);
+      Cookies.set('profile_photo_url', profile.profile_photo_url);
+
       this.$data.user = profile;
     },
+
+    /**
+     * Get user information.
+     * @returns {*}
+     */
     getUser() {
-      this.$data.user = getLocalStorage("user");
-      return this.$data.user;
+      console.log('getUser():', Cookies.get());
+      const user = {
+        'session_id': Cookies.get('session_id'),
+      };
+      this.user = user;
+      return this.user;
     },
+    /**
+     * alert
+     * @param title
+     * @param body
+     */
     alert(title, body) {
       alert(title + "\n" + body);
     },

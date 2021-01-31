@@ -10,7 +10,7 @@ $script = get_theme_page_script_path();
 <html>
 <head>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link href="<?=THEME_URL?>/css/bootstrap-5.0.0-b1-min.css" rel="stylesheet">
     <link href="<?=THEME_URL?>/css/fontawesome-free-5.15.2-web/css/all.css" rel="stylesheet">
     <link rel="stylesheet" href="<?=THEME_URL?>/css/index.css?v=<?=build_version()?>">
     <?php load_theme_css($script); ?>
@@ -80,8 +80,8 @@ $script = get_theme_page_script_path();
         comment_notification_prefix: '<?=NOTIFY_COMMENT?>'
     };
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/vue@3.0.5/dist/vue.global.prod.js"></script>
+<script src="<?=THEME_URL?>/js/bootstrap-5.0.0-b1-min.js"></script>
+<script src="<?=THEME_URL?>/js/vue.3.0.5-min.js"></script>
 <script src="<?=THEME_URL?>/js/axios.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-messaging.js"></script>
@@ -90,15 +90,7 @@ $script = get_theme_page_script_path();
 <script src="<?php echo THEME_URL . '/js/helpers.js'?>?v=<?=build_version()?>"></script>
 <? if ( is_forum_page() ) { ?><script src="<?php echo THEME_URL . '/js/app.forum.js'?>?v=<?=build_version()?>"></script><? } ?>
 <script src="<?php echo THEME_URL . '/js/app.js'?>?v=<?=build_version()?>"></script>
-<script>
-    request('app.version', {}, function (x) {
-        console.log('version: ', x);
-    }, function(e) {
-        console.log('error: ', e);
-    });
 
-
-</script>
 
 </body>
 </html>

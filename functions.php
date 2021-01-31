@@ -52,6 +52,15 @@ if ( API_CALL ) {
     $wpdb->show_errors = false;
 }
 
+
+/**
+ * Login with session_id.
+ */
+if ( isset($_COOKIE['session_id']) && $_COOKIE['session_id'] ) {
+    authenticate($_COOKIE['session_id']);
+}
+
+
 /**
  * Load definitions and configurations
  */

@@ -16,6 +16,9 @@
         </div>
     </div>
 </div>
+
+<div>session_ID: <?=$_COOKIE['session_id']?></div>
+<?php d($_COOKIE)?>
 <div>Email address</div>
 <div>{{ profile.user_email }}</div>
 

@@ -249,15 +249,15 @@ function json_error()
 
 
 /**
- * This method let the user log-in with $_REQUEST['session_id'].
+ * This method let the user log-in with $session_id
  *
  *
  * @return WP_User or Error object.
  *
  */
-function authenticate()
+function authenticate($session_id)
 {
-    return session_login(in('session_id'));
+    return session_login($session_id);
 }
 
 
