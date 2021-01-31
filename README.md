@@ -400,9 +400,7 @@ You can write css style like below.
 
 # Unit Test
 
-* There are two methods to do unit test.
-  * `V3 unit test` is developed by the core team. And is not recommended simply because it is not a standard.
-  * The other one is `PHPUnit` which is more likely a standard unit testing tool for PHP. And `PHPUnit` is recommended simply because it is a de-facto standard.
+We use `phpunit` as its primary unit testing tool. (Previous custom made unit testing tool named 'v3 test tool' has been removed by Jan 30).
 
 * To run phpunit, just do it as phpunit way.
 
@@ -422,25 +420,12 @@ php phpunit.phar api/phpunit/AppVersionTest.php
 phpunit api/phpunit/VerifyIOSPurchaseTest.php 
 ```
 
-## V3 Unit Testing
+## Watching PHP script changes.
 
-* Install `phprun` node module globally.
-```text
-$ npm i -g phprun
-```
+* Use chokidar-cli to re-run the test whenever php script file changes.
 
-* You can test like below
-
-```text
-$ phprun tests/xxxx.test.php
-```
-
-Examples)
-```text
-% phprun tests/app.version.test.php
-% phprun tests/loginOrRegister.test.php
-% phprun tests/loginOrRegister_with_metadata.php
-% phprun tests/loginOrRegister.function_call.test.php
+```shell script
+chokidar 
 ```
 
 

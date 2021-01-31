@@ -276,7 +276,7 @@ function end_capture_script_style() {
  */
 function build_version() {
     if (is_localhost()) return time();
-    else return '1';
+    else return api_version();
 }
 
 /**

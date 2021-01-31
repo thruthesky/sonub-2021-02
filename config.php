@@ -74,7 +74,7 @@ $domain_themes = [
     'banana' => 'banana',
 ];
 
-define('API_URL_ON_CLI', 'https://local.sonub.com/wp-content/themes/wigo/api/index.php');
+define('API_URL_ON_CLI', 'https://local.sonub.com/wp-content/themes/sonub/api/index.php');
 
 
 

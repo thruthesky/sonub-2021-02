@@ -1,6 +1,14 @@
 <?php
-
 require_once(ABSPATH . 'wp-admin/includes/taxonomy.php');
+
+
+/**
+ * Returns api version in string.
+ * @return string
+ */
+function api_version() {
+    return "0.1.3";
+}
 
 /**
  * JSON input from Client
@@ -301,6 +309,8 @@ function session_login($session_id)
 
 /**
  * Return true if the user logged in and not anonymous user.
+ *
+ * @note Try to use this function instead of wp_is_logged_in()
  * @return bool
  */
 function is_logged_in() {
@@ -1438,6 +1448,11 @@ function table_updates($in) {
 
 
     $row = $wpdb->get_row("SELECT * FROM $in[table] WHERE user_ID=$user_ID", ARRAY_A);
+
+
+
+
+
     return array_merge($action, $row);
 }
 
@@ -1568,7 +1583,7 @@ function sql_error($default_error = null) {
             return ERROR_UNKNOWN_COLUMN;
         }
     }
-    return $default_error;
+    return $default_error . ":$last_error";
 }
 
 
@@ -1925,7 +1940,21 @@ function getRoute($params) {
     $url = API_URL . "?" . http_build_query($params);
 //    echo "url: $url\n";
     $re = file_get_contents($url);
-    $json = json_decode($re, true);
+    if ( !$re ) {
+        echo "\n";
+        echo "\n* -------------------------------- WARNING -------------------------------- *";
+        echo "\n*";
+        echo "\n* There is no return data from backend api.";
+        echo "\n*";
+        echo "\n* Is backend api url correct?";
+        echo "\n* API URL: " . API_URL;
+        echo "\n*";
+        echo "\n* If it's wrong, update API_URL_ON_CLI in config.php to backend api url for test.";
+        echo "\n*";
+        echo "\n* -------------------------------- WARNING -------------------------------- *";
+
+    }
+$json = json_decode($re, true);
     if ( !$json ) {
         print_r($re);
     }
