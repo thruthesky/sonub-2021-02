@@ -108,6 +108,7 @@ define('BROWSER_COOKIE_DOMAIN', 'sonub.com');
 
 /**
  * Pass login
+ * @see README
  */
 define('PASS_LOGIN_CLIENT_ID', 'b90hirE4UYwVf2GkHIiK');
 define('PASS_LOGIN_CLIENT_SECRET_KEY', '366c0f3775bfa48f2239226506659f5981afd3eb2b08189f9f9d22cdc4ca63c9');

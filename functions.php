@@ -379,7 +379,20 @@ function widget( $name, $options = null ) {
 }
 
 
+/**
+ * Returns cookie domain
+ * @return mixed|string|null
+ */
 function get_cookie_domain() {
     if ( defined('BROWSER_COOKIE_DOMAIN') && BROWSER_COOKIE_DOMAIN ) return BROWSER_COOKIE_DOMAIN;
     else return get_domain();
+}
+
+
+function jsAlert($msg) {
+    echo "
+    <script>
+        alert('$msg');
+    </script>
+    ";
 }

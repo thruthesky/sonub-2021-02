@@ -2,16 +2,6 @@
 $category = get_category_by_slug(in('category'));
 $post_topic = NOTIFY_POST . $category->slug;
 $comment_topic = NOTIFY_COMMENT . $category->slug;
-if (loggedIn()) {
-    d(NOTIFY_POST . $category->slug);
-    d(NOTIFY_COMMENT . $category->slug);
-} else {
-    d('login?');
-}
-
-d(profile());
-
-d('#################');
 
 
 
@@ -63,43 +53,17 @@ d('#################');
     <?php } ?>
 </section>
 
-<nav aria-label="Page navigation example">
+<?php
 
-    <?php
-    $no_of_pages_on_nav = category_meta($category->ID, 'no_of_pages_on_nav', NO_OF_PAGES_ON_NAV);
-    $href = '/?page=forum/list&category=' . $category->slug . '&page_no=';
+$options = [
+        'page_no' => $page_no,
+    'blocks' => 3,
+    'arrow' => true,
+    'total_no_of_posts' => $category->category_count,
+    'no_of_posts_per_page' => $posts_per_page,
+    'url' => '/?page=forum/list&category=reminder&page_no={page_no}'
+];
 
-    $nextPage = $page_no + 1;
-    $prevPage = $page_no - 1;
+include_once THEME_DIR . '/widgets/pagination/pagination.php';
 
-    ?>
 
-    <ul class="pagination">
-        <?php if ($prevPage != 0) { ?>
-            <!-- prev button -->
-            <li class="page-item"><a class="page-link" href="<?= $href . $prevPage ?>">Previous</a></li>
-        <?php }
-        for ($i = 1; $i <= $no_of_pages_on_nav; $i++) {
-            $paged = $i; ?>
-            <li class="page-item"><a class="page-link" href="<?= $href . $paged ?>"><?= $paged ?></a></li>
-        <?php }
-        if ($nextPage <= $no_of_pages_on_nav) {
-        ?>
-            <!-- next button -->
-            <li class="page-item"><a class="page-link" href="<?= $href . $nextPage ?>">Next</a></li>
-        <?php } ?>
-    </ul>
-</nav>
-
-<script>
-    const mixin = {
-        created() {
-            console.log('list.created!');
-        },
-        mounted() {},
-        data() {
-            return {}
-        },
-        methods: {}
-    }
-</script>
