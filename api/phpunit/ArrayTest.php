@@ -16,3 +16,5 @@ final class ArrayTest extends TestCase
         $this->assertSame(0, count($stack));
     }
 }
+
+

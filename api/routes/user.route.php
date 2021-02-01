@@ -19,5 +19,4 @@ class UserRoute {
         return profile_update($in);
     }
 
-
 }

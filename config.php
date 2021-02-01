@@ -9,7 +9,7 @@
 /**
  * @todo Definition name change to PASS_LOGIN_MOBILE_PREFIX
  */
-define('MOBILE_PREFIX', 'phoneNo_');
+define('MOBILE_PREFIX', 'm');
 
 
 if (WP_DEBUG) {
@@ -60,12 +60,11 @@ define('DIAMONDBOX_RATE', [
  * Once set, do not change it. Or, all users must login again.
  */
 define('SESSION_ID_SALT', "__SID__This_is_secret__<.o*o.>_salt__~,7__");
-define('PASS_LOGIN_PASSWORD', 'S_oO0Oo_S.0.48.PM');
 
 /**
  * Firebase Admin Service Account Key, for firebase connection
  */
-define("FIREBASE_ADMIN_SDK_SERVICE_ACCOUNT_KEY_PATH", THEME_DIR . "/keys/nalia-app-firebase-admin-sdk-service-account-key.json");
+define("FIREBASE_ADMIN_SDK_SERVICE_ACCOUNT_KEY_PATH", THEME_DIR . "/keys/firebase-adminsdk.json");
 define("FIREBASE_DATABASE_URI", "https://nalia-app-default-rtdb.firebaseio.com");
 
 
@@ -75,25 +74,6 @@ $domain_themes = [
 ];
 
 define('API_URL_ON_CLI', 'https://local.sonub.com/wp-content/themes/sonub/api/index.php');
-
-
-
-/**
- * PUBLIC Routes can be accessed without login.
- */
-define('PUBLIC_ROUTES', [
-    'app.version',
-    'user.register',
-    'user.login',
-    'user.loginOrRegister',
-    'user.testLoginOrRegister',
-    'notification.updateToken',
-    'forum.search',
-    'forum.getPost',
-    'app.query',
-    'translation.list',
-    'bio.search',
-]);
 
 
 
@@ -122,5 +102,14 @@ define('POSTS_PER_PAGE', 3);
  *
  * To apply login cookie(and all other cookies) to all sub domains, set the root domain(like `domain.com`) name here
  */
- define('BROWSER_COOKIE_DOMAIN', 'sonub.com');
+define('BROWSER_COOKIE_DOMAIN', 'sonub.com');
+
+
+/**
+ * Pass login
+ */
+define('PASS_LOGIN_CLIENT_ID', 'b90hirE4UYwVf2GkHIiK');
+define('PASS_LOGIN_CLIENT_SECRET_KEY', '366c0f3775bfa48f2239226506659f5981afd3eb2b08189f9f9d22cdc4ca63c9');
+define('PASS_LOGIN_CALLBACK_URL', "https://local.sonub.com/wp-content/themes/sonub/pass-login-callback.php");
+define('PASS_LOGIN_SALT', 'S_oO0Oo_S.0.48.PM'); // This is any random (secret) string.
 
