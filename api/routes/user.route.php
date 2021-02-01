@@ -20,7 +20,7 @@ class UserRoute {
     }
 
     public function passCallback() {
-        
+
     }
 
 }
