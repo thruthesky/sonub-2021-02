@@ -1,12 +1,16 @@
 <?php
 $category = get_category_by_slug(in('category'));
-
+$post_topic = NOTIFY_POST . $category->slug;
 if ( loggedIn() ) {
     d( NOTIFY_POST . $category->slug );
     d( NOTIFY_COMMENT . $category->slug );
 } else {
     d('login?');
 }
+
+
+d( profile() );
+
 
 ?>
 <hr>
@@ -16,11 +20,11 @@ if ( loggedIn() ) {
 </div>
 <div>
     <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" id="notificationUnderMyPost" v-model="alertOnNewPost" @change="onChangeAlertOnNewPost(currentListCategory)">
+        <input class="form-check-input" type="checkbox" id="notificationUnderMyPost" checked @change="onChangeAlertOnNewPost('<?=$post_topic?>', $event)">
         <label class="form-check-label" for="notificationUnderMyPost">Notification on New Post</label>
     </div>
     <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" id="notificationUnderMyComment" v-model="alertOnNewComment" @change="onChangeAlertOnNewComment(currentListCategory)">
+        <input class="form-check-input" type="checkbox" id="notificationUnderMyComment" checked @change="onChangeAlertOnNewComment(currentListCategory)">
         <label class="form-check-label" for="notificationUnderMyComment">Notification on New Comment</label>
     </div>
 </div>

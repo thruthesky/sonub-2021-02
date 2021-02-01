@@ -97,12 +97,8 @@ const forumMixin = {
       return this.user && parseInt(this.user.ID) === author;
     },
 
-    onChangeAlertOnNewPost(category) {
-      const topic = config.post_notification_prefix + category;
-      const notificationRoute = this.$data.alertOnNewPost === true
-          ? "notification.subscribeTopic"
-          : "notification.unsubscribeTopic";
-      request(notificationRoute, {topic: topic}, function (res) {
+    onChangeAlertOnNewPost(topic, re) {
+      request(notificationRoute, {topic: topic, re: re ? 'Y' : 'N'}, function (res) {
         console.log(res);
       }, this.error);
     },
