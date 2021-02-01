@@ -69,7 +69,7 @@ $comment_topic = NOTIFY_COMMENT . $category;
             console.log('list.created!');
         },
         mounted() {
-            console.log('post_notification_prefix.mounted!',config.post_notification_prefix + category,  this.$data.user[config.post_notification_prefix + category]);
+            console.log('post_notification_prefix.mounted!',config.post_notification_prefix + category, this.$data.user[config.post_notification_prefix + category]);
             console.log('post_notification_prefix.mounted!', this.$data.user[config.comment_notification_prefix + category]);
             console.log('this.$data.user', this.$data.user);
             console.log('this.$data.profile', this.$data.profile);
