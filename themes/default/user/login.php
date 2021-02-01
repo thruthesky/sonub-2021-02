@@ -11,3 +11,6 @@
     </div>
     <button type="submit" class="btn btn-primary">Login</button>
 </form>
+
+<a class="btn btn-primary mt-5" href="<?=pass_login_url()?>">PASS LOGIN</a>
+
