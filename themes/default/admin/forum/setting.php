@@ -55,7 +55,7 @@ $cat = get_category_by_slug(in('slug'));
                 <input
                         name="posts_per_page"
                     type="text"
-                    value="<?=category_meta($cat->ID, 'posts_per_page', 0)?>"
+                    value="<?=category_meta($cat->ID, 'posts_per_page', POSTS_PER_PAGE)?>"
                     @keyup="debounce(updateCategorySettings, 500, 'posts_per_page')">
             </td>
         </tr>
@@ -65,7 +65,7 @@ $cat = get_category_by_slug(in('slug'));
                 <input
                         name="no_of_pages_on_nav"
                     type="text"
-                    value="<?=category_meta($cat->ID, 'no_of_pages_on_nav', 0)?>"
+                    value="<?=category_meta($cat->ID, 'no_of_pages_on_nav', NO_OF_PAGES_ON_NAV)?>"
                     @keyup="debounce(updateCategorySettings, 500, 'no_of_pages_on_nav')">
             </td>
         </tr>
