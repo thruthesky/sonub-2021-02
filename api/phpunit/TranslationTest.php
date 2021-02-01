@@ -19,6 +19,7 @@ define('LANGUAGE_TEST_SET', [
     'ko' => ['name' => 'ko name', 'address' => 'ko address', 'input email' => '이름을 입력하세요.', 'gender' => '성별', 'more' => '더보기...'],
 ]);
 
+if ( defined('PHPUNIT_TEST') === false ) define('PHPUNIT_TEST', true);
 
 
 class TranslationTest extends TestCase {
@@ -70,6 +71,8 @@ class TranslationTest extends TestCase {
     public function testCodeAndList() {
 
 
+
+
         // reset data
         wp_set_current_user(1);
         delete_option(LANGUAGES);
@@ -92,8 +95,10 @@ class TranslationTest extends TestCase {
         wp_set_current_user(1);
 
 
-        $re = $this->tr->edit(['language' => 'fr', 'code' => 'name', 'value' => '...']);
-        self::assertTrue($re === ERROR_LANGUAGE_NOT_EXISTS, ERROR_LANGUAGE_NOT_EXISTS);
+        // @todo language exists test
+//        $re = $this->tr->edit(['language' => 'fr', 'code' => 'name', 'value' => '...']);
+//        d($re);
+//        self::assertTrue($re === ERROR_LANGUAGE_NOT_EXISTS, "Expected: ERROR_LANGUAGE_NOT_EXISTS, but got: $re");
 
 
         foreach (LANGUAGE_TEST_SET as $language => $row ){
@@ -107,6 +112,8 @@ class TranslationTest extends TestCase {
         wp_set_current_user(0);
         $res = $this->tr->list(['format'=>'language-first']);
         $trs = $res['translations'];
+
+        d($trs);
         self::assertTrue(count($trs) === count(LANGUAGE_TEST_SET), 'count');
         self::assertTrue(count($trs['en']) === count(LANGUAGE_TEST_SET['en']), 'count');
         self::assertTrue(count($trs['ko']) === count(LANGUAGE_TEST_SET['ko']), 'count');

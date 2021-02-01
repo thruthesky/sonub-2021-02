@@ -327,6 +327,9 @@ function is_logged_in() {
 function loggedIn() {
     return is_logged_in();
 }
+function notLoggedIn() {
+    return loggedIn() === false;
+}
 
 /**
  * @param $email
@@ -1359,58 +1362,9 @@ function is_my_comment($comment_ID)
 }
 
 
-
 /**
- * General function to update a field of the login user's record.
+ * @deprecated There is no use case for this method.
  *
- * It can insert or update a field of any table.
- *
- * @requirement
- *  - The table must have `user_ID` field as unique index and its value must be the login user's ID.
- *  - The table must also have `createdAt` and `updatedAt` integer field.
- *  - The $in['field'] must exists in the table.
- *  - All the fields of the table should have default value, so it would not produce SQL error while inserting.
- *
- * @note
- *  - `createdAt` will have timestamp on inserting.
- *  - `updatedAt` will have new timestamp on every update.
- *
- * @param $in array
- *  $in['table'] is the table to update.
- *  $in['field'] is the field to update.
- *  $in['value'] is the value to update.
- *
- * @return array|string
- *  - returns an array of the record with ['action' => 'UPDATE'] on update.
- *  - returns an array of the record with ['action' => 'INSERT'] on insert.
- *  - ERROR_UPDATE on update error
- *  - ERROR_INSERT on insert error
- *
- *
- * @example
- *  - See tests/app.update.test.php
- *
- * @note user must login before this call.
- */
-function table_update($in) {
-    $user_ID = wp_get_current_user()->ID;
-    global $wpdb;
-    $row = table_get($in);
-    if ( $row ) {
-        $re = $wpdb->update($in['table'], [$in['field'] => $in['value'], 'updatedAt' => time()], ['user_ID' => $user_ID]);
-        if ( $re === false ) return ERROR_UPDATE;
-        else $action = ['action' => 'UPDATE'];
-    } else {
-        $re = $wpdb->insert($in['table'], ['user_ID' => $user_ID, $in['field'] => $in['value'], 'updatedAt'=>time(), 'createdAt'=>time()]);
-        if ( $re === false ) return ERROR_INSERT;
-        else $action = ['action' => 'INSERT'];
-    }
-
-    $row = table_get($in);
-    return array_merge($action, $row);
-}
-
-/**
  * This function updates(or inserts) multiples fields.
  * - table_update() updates only one(1, single) field while this function updates many fields.
  * - Note that admin can update other user's record.
@@ -1794,7 +1748,7 @@ function api_edit_post($in) {
     // NEW POST IS CREATED => Send notification to forum subscriber
     if (!isset($in['ID'])) {
         $title = $in['post_title'];
-        $body = $in['post_content'];
+        $body = $in['post_content'] ?? '';
         $post = get_post($ID, ARRAY_A);
         $slug = get_first_slug($post['post_category']);
         sendMessageToTopic(NOTIFY_POST . $slug, $title, $body, $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
@@ -1876,7 +1830,9 @@ function api_edit_translation($in) {
         $re = $wpdb->replace(TRANSLATIONS_TABLE, ['code' => $in['code'], 'language' => $ln, 'value' => $val ]);
         if ( $re === false ) return sql_error(ERROR_LANGUAGE_REPLACE);
     }
+
     api_notify_translation_update();
+
     return $data;
 }
 
@@ -1915,6 +1871,7 @@ function api_delete_translation($in) {
  * @throws \Kreait\Firebase\Exception\DatabaseException
  */
 function api_notify_translation_update() {
+    if ( defined('PHPUNIT_TEST') && PHPUNIT_TEST ) return;
     $db = getDatabase();
     $reference = $db->getReference('notifications/translation');
     $stamp = time();
@@ -1949,11 +1906,11 @@ function getDomainTheme() {
  * d(DOMAIN_THEME_URL);
  */
 function d($obj) {
-    echo "<pre>";
+    echo "\n<pre>\n";
 	$str = print_r($obj, true);
 	$str = str_replace("<", "&lt;", $str);
 	echo $str;
-    echo "</pre>";
+    echo "\n</pre>\n";
 }
 
 
