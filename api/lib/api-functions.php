@@ -448,9 +448,11 @@ function profile_update($in) {
     return profile();
 }
 
-function admin_profile_update($in) {
-//    user_update_meta(get_user, $in);
-    return profile($in['user_id']);
+function admin_user_profile_update($in) {
+    session_login($in['user_session_id']);
+    unset($in['user_session_id']);
+    user_update_meta(wp_get_current_user()->ID, $in);
+    return profile($in['user_session_id']);
 }
 
 /**
