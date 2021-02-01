@@ -448,6 +448,11 @@ function profile_update($in) {
     return profile();
 }
 
+function admin_profile_update($in) {
+//    user_update_meta(get_user, $in);
+    return profile($in['user_id']);
+}
+
 /**
  * Register
  *

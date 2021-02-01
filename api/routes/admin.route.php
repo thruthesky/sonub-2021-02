@@ -92,4 +92,9 @@ class AdminRoute
     }
 
 
+    public function profileUpdate($in) {
+       return admin_profile_update($in);
+    }
+
+
 }

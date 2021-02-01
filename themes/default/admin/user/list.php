@@ -3,9 +3,9 @@
 ?>
 <hr>
 Admin Menu:
-<a href="/?page=admin/user-list">User list</a> |
-<a href="/?page=admin/forum-categories">Forum Categories</a> |
-<a href="/?page=admin/send-push-notification">Send Push Notifications</a> |
+<a href="/?page=admin/user/list">User list</a> |
+<a href="/?page=admin/forum/list">Forum Categories</a> |
+<a href="/?page=admin/push-notification/send">Send Push Notifications</a> |
 Files |
 <a href="/?page=admin/translations">Translations</a>
 
@@ -28,7 +28,7 @@ $users = get_users( [ 'fields' => 'all_with_meta', 'number' => $no_of_records_pe
 </div>
 <?php
 foreach($users as $user){
-    $ln = "?page=admin/user-edit&ID=" . $user->ID;
+    $ln = "?page=admin/user/edit&ID=" . $user->ID;
     echo <<<EOH
 <div class="row">
     <div class="col-1">{$user->ID}</div>
@@ -44,29 +44,7 @@ EOH;
 include widget('pagination', [
 'total_rows' => count_users()['total_users'],
 'no_of_records_per_page' => $no_of_records_per_page,
-'url' => '/?page=admin/user-list&page_no={page_no}',
+'url' => '/?page=admin/user/list&page_no={page_no}',
 'page_no' => $page_no,
 ]);
 ?>
-
-
-
-
-<script>
-
-    const mixin = {
-        created() {
-            console.log('created!');
-        },
-        mounted() {
-            console.log('mounted!');
-        },
-        data() {
-            return {
-            }
-        },
-        methods: {
-        }
-    }
-</script>
-
