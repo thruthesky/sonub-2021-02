@@ -113,6 +113,7 @@ define('PUBLIC_TABLES', [
 define('SUBSCRIBE_NEW_COMMENT_ON_REGISTRATION', true);
 
 define('POSTS_PER_PAGE', 3);
+define('NO_OF_PAGES_ON_NAV', 3);
 
 /**
  * Cookie domain

@@ -1,16 +1,15 @@
 <?php
 $category = get_category_by_slug(in('category'));
 $post_topic = NOTIFY_POST . $category->slug;
-if ( loggedIn() ) {
-    d( NOTIFY_POST . $category->slug );
-    d( NOTIFY_COMMENT . $category->slug );
+if (loggedIn()) {
+    d(NOTIFY_POST . $category->slug);
+    d(NOTIFY_COMMENT . $category->slug);
 } else {
     d('login?');
 }
 
 
-d( profile() );
-
+d(profile());
 
 ?>
 <hr>
@@ -20,7 +19,7 @@ d( profile() );
 </div>
 <div>
     <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" id="notificationUnderMyPost" checked @change="onChangeAlertOnNewPost('<?=$post_topic?>', $event)">
+        <input class="form-check-input" type="checkbox" id="notificationUnderMyPost" checked @change="onChangeAlertOnNewPost('<?= $post_topic ?>', $event)">
         <label class="form-check-label" for="notificationUnderMyPost">Notification on New Post</label>
     </div>
     <div class="form-check form-switch">
@@ -40,12 +39,12 @@ d( profile() );
 
     foreach ($posts as $post) {
         // print_r($post);
-        ?>
+    ?>
         <a class="d-flex justify-content-between mb-2" href="<?php echo $post['url'] ?>">
 
             <div class="d-flex">
                 <? if ( $post['profile_photo_url'] ) { ?>
-                    <img class="me-3 size-40 circle" src="<?= $post['profile_photo_url'] ?>">
+                <img class="me-3 size-40 circle" src="<?= $post['profile_photo_url'] ?>">
                 <? } ?>
                 <h1><?php echo $post['post_title'] ?></h1>
             </div>
@@ -58,15 +57,30 @@ d( profile() );
 </section>
 
 <nav aria-label="Page navigation example">
+
+    <?php
+    $no_of_pages_on_nav = category_meta($category->ID, 'no_of_pages_on_nav', NO_OF_PAGES_ON_NAV);
+    $href = '/?page=forum/list&category=' . $category->slug . '&page_no=';
+
+    $nextPage = $page_no + 1;
+    $prevPage = $page_no - 1;
+
+    ?>
+
     <ul class="pagination">
-        <li class="page-item"><a class="page-link" href="">Previous</a></li>
-        <?php for ($i = 0; $i <= 10; $i++) {
-            $paged = $i + 1;
-            $href = '/?page=forum/list&category=' . $category->slug . '&page_no=' . $paged;
-            ?>
-            <li class="page-item"><a class="page-link" href="<?= $href ?>"><?= $paged ?></a></li>
+        <?php if ($prevPage != 0) { ?>
+            <!-- prev button -->
+            <li class="page-item"><a class="page-link" href="<?= $href . $prevPage ?>">Previous</a></li>
+        <?php }
+        for ($i = 1; $i <= $no_of_pages_on_nav; $i++) {
+            $paged = $i; ?>
+            <li class="page-item"><a class="page-link" href="<?= $href . $paged ?>"><?= $paged ?></a></li>
+        <?php }
+        if ($nextPage <= $no_of_pages_on_nav) {
+        ?>
+            <!-- next button -->
+            <li class="page-item"><a class="page-link" href="<?= $href . $nextPage ?>">Next</a></li>
         <?php } ?>
-        <li class="page-item"><a class="page-link" href="<?= $href ?>">Next</a></li>
     </ul>
 </nav>
 
@@ -76,7 +90,6 @@ d( profile() );
         created() {
             console.log('list.created!');
         },
-        mounted() {
-        }
+        mounted() {}
     }
 </script>

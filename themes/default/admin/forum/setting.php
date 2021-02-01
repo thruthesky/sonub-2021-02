@@ -5,7 +5,7 @@
 $cat = get_category_by_slug(in('slug'));
 //$metas = get_termcategory_meta($cat->ID, $cat->term_id, '', true);
 
-d($cat);
+// d($cat);
 //d($metas);
 
 
