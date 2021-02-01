@@ -27,10 +27,27 @@ $categories = get_categories();
         <?php foreach ($posts as $post) { ?>
             <?php foreach ($post['files'] as $file) { ?>
                 <div class="col-3 position-relative border">
-                    <a class="position-absolute" href="<?= $post['url'] ?>"><i class="fa fa-external-link-alt red fs-sm"></i></a>
+                    <i class="fa fa-trash red fs-sm me-3 pointer" @click="deleteFile(<?= $file['ID'] ?>)"></i>
+                    <a href="<?= $post['url'] ?>">
+                        <i class="fa fa-external-link-alt green fs-sm"></i>
+                    </a>
                     <img class="w-100" src="<?= $file['url'] ?>" />
                 </div>
             <?php } ?>
         <?php } ?>
     </div>
 </div>
+
+
+<script>
+    const mixin = {
+        data() {
+            return {}
+        },
+        methods: {
+            deleteFile(ID) {
+                app.onFileDelete(ID, refresh);
+            },
+        }
+    }
+</script>
