@@ -1,15 +1,15 @@
 <?php
 $category = get_category_by_slug(in('category'));
 $post_topic = NOTIFY_POST . $category->slug;
-if (loggedIn()) {
-    d(NOTIFY_POST . $category->slug);
-    d(NOTIFY_COMMENT . $category->slug);
-} else {
-    d('login?');
-}
+// if (loggedIn()) {
+//     d(NOTIFY_POST . $category->slug);
+//     d(NOTIFY_COMMENT . $category->slug);
+// } else {
+//     d('login?');
+// }
 
 
-d(profile());
+// d(profile());
 
 ?>
 <hr>
