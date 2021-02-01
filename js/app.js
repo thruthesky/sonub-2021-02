@@ -141,20 +141,7 @@ const AttributeBinding = {
     onProfileUpdateFormSubmit() {
       console.log(this.$data.profile);
       this.userProfileUpdate(this.$data.profile);
-      // request(
-      //   "user.profileUpdate",
-      //   this.$data.profile,
-      //   function (profile) {
-      //     console.log("profile saved: ", profile);
-      //     app.setUser(profile);
-      //     app.alert("saved");
-      //   },
-      //   this.error
-      // );
     },
-    // onProfileMetaUpdateSubmit(data) {
-    //   request('user.profileUpdate', data, this.setUser, this.error);
-    // },
     /**
      * It's a wrapper of calling global fileUpload function.
      * @param event
@@ -222,6 +209,7 @@ const AttributeBinding = {
     },
 
     logout() {
+      Cookies.remove('ID', {domain: config.cookie_domain});
       Cookies.remove('session_id', {domain: config.cookie_domain});
       Cookies.remove('nickname', {domain: config.cookie_domain});
       Cookies.remove('profile_photo_url', {domain: config.cookie_domain});
@@ -237,11 +225,13 @@ const AttributeBinding = {
      * @param profile
      */
     setUser(profile) {
+      Cookies.set('ID', profile.ID, {domain: config.cookie_domain});
       Cookies.set('session_id', profile.session_id, {domain: config.cookie_domain});
       Cookies.set('nickname', profile.nickname, {domain: config.cookie_domain});
       Cookies.set('profile_photo_url', profile.profile_photo_url, {domain: config.cookie_domain});
 
       this.user = {
+        'ID': profile.ID,
         'session_id': profile.session_id,
         'nickname': profile.nickname,
         'profile_photo_url': profile.profile_photo_url,
@@ -255,6 +245,7 @@ const AttributeBinding = {
       const id = Cookies.get('session_id');
       if ( id ) {
         this.user = {
+          'ID': Cookies.get('ID'),
           'session_id': id,
           'nickname': Cookies.get('nickname'),
           'profile_photo_url': Cookies.get('profile_photo_url'),
