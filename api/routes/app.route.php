@@ -17,18 +17,12 @@ class AppRoute {
 
 
     /**
-     * @see table_update()
-     */
-    public function update(array $in) {
-        if ( !isset($in['table']) ) return ERROR_EMPTY_TABLE;
-        if ( !isset($in['field'] ) ) return ERROR_EMPTY_FIELD;
-        if ( ! is_user_logged_in() ) return ERROR_LOGIN_FIRST;
-        return table_update($in);
-    }
-    /**
+     * @deprecated No use case for this method.
      * @see table_updates()
      */
     public function updates(array $in) {
+        if ( !isset($in['session_id']) ) return ERROR_EMPTY_SESSION_ID;
+        if ( notLoggedIn() ) return ERROR_LOGIN_FIRST;
         if ( !isset($in['table']) ) return ERROR_EMPTY_TABLE;
         if ( ! is_user_logged_in() ) return ERROR_LOGIN_FIRST;
         return table_updates($in);
