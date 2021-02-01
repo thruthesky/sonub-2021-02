@@ -1,15 +1,19 @@
 <?php
 $category = get_category_by_slug(in('category'));
 $post_topic = NOTIFY_POST . $category->slug;
-// if (loggedIn()) {
-//     d(NOTIFY_POST . $category->slug);
-//     d(NOTIFY_COMMENT . $category->slug);
-// } else {
-//     d('login?');
-// }
+$comment_topic = NOTIFY_COMMENT . $category->slug;
+if (loggedIn()) {
+    d(NOTIFY_POST . $category->slug);
+    d(NOTIFY_COMMENT . $category->slug);
+} else {
+    d('login?');
+}
+
+d(profile());
+
+d('#################');
 
 
-// d(profile());
 
 ?>
 <hr>
@@ -19,12 +23,15 @@ $post_topic = NOTIFY_POST . $category->slug;
 </div>
 <div>
     <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" id="notificationUnderMyPost" checked @change="onChangeAlertOnNewPost('<?= $post_topic ?>', $event)">
+        <input class="form-check-input" type="checkbox" id="notificationUnderMyPost" @change="onChangeSubscribeOrUnsubscribeTopic('<?= $post_topic ?>',$event)" <? echo ( isSubscribedToTopic($post_topic) ? 'checked' : '' );?>
+        >
+
         <label class="form-check-label" for="notificationUnderMyPost">Notification on New Post</label>
     </div>
     <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" id="notificationUnderMyComment" checked @change="onChangeAlertOnNewComment(currentListCategory)">
-        <label class="form-check-label" for="notificationUnderMyComment">Notification on New Comment</label>
+        <input class="form-check-input" type="checkbox" id="notificationUnderMyComment" @change="onChangeSubscribeOrUnsubscribeTopic('<?= $comment_topic ?>', $event)" <? echo ( isSubscribedToTopic($comment_topic) ? 'checked' : '' );?>
+        >
+        <label class="form-check-label" for="notificationUnderMyPost">Notification on New Comment</label>
     </div>
 </div>
 <hr>
@@ -85,11 +92,14 @@ $post_topic = NOTIFY_POST . $category->slug;
 </nav>
 
 <script>
-    const category = "<?php echo $category->slug ?>";
     const mixin = {
         created() {
             console.log('list.created!');
         },
-        mounted() {}
+        mounted() {},
+        data() {
+            return {}
+        },
+        methods: {}
     }
 </script>

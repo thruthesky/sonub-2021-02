@@ -16,9 +16,6 @@ const forumMixin = {
        * To save files to post, get the ID(s) from app.files and pass it over route.
        */
       files: [],
-      currentListCategory: '',
-      alertOnNewPost: false,
-      alertOnNewComment: false,
     };
   },
   methods: {
@@ -96,23 +93,7 @@ const forumMixin = {
     is_mine(author) {
       return this.user && parseInt(this.user.ID) === author;
     },
-
-    onChangeAlertOnNewPost(topic, re) {
-      request(notificationRoute, {topic: topic, re: re ? 'Y' : 'N'}, function (res) {
-        console.log(res);
-      }, this.error);
-    },
-    onChangeAlertOnNewComment(category) {
-      const topic = config.comment_notification_prefix + category;
-      const notificationRoute = this.$data.alertOnNewComment === true
-          ? "notification.subscribeTopic"
-          : "notification.unsubscribeTopic";
-      request(notificationRoute, {topic: topic}, function (res) {
-        console.log(res);
-      }, this.error);
-    },
   }, // eo methods:
-
 };
 
 

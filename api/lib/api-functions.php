@@ -2230,6 +2230,11 @@ function category_meta($cat_ID, $name, $default_value = '') {
 }
 
 
+function isSubscribedToTopic($topic)
+{
+    return my($topic) === "Y";
+}
+
 function pass_login_url() {
     return "https://id.passlogin.com/oauth2/authorize?client_id=".PASS_LOGIN_CLIENT_ID."&redirect_uri=".urlencode(PASS_LOGIN_CALLBACK_URL)."&response_type=code&state=apple_banana_cherry&prompt=select_account";
 }

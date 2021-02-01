@@ -225,19 +225,21 @@ const AttributeBinding = {
      * @param profile
      */
     setUser(profile) {
+      console.log(profile);
       Cookies.set('ID', profile.ID, {domain: config.cookie_domain});
-      Cookies.set('admin', profile.admin, {domain: config.cookie_domain});
       Cookies.set('session_id', profile.session_id, {domain: config.cookie_domain});
       Cookies.set('nickname', profile.nickname, {domain: config.cookie_domain});
       Cookies.set('profile_photo_url', profile.profile_photo_url, {domain: config.cookie_domain});
+      Cookies.set('admin', profile.admin, {domain: config.cookie_domain});
 
       this.user = {
         'ID': profile.ID,
-        'admin': profile.admin,
         'session_id': profile.session_id,
         'nickname': profile.nickname,
         'profile_photo_url': profile.profile_photo_url,
+        'admin':profile.admin
       };
+      this.user = profile;
     },
 
     /**
@@ -249,9 +251,9 @@ const AttributeBinding = {
         this.user = {
           'ID': Cookies.get('ID'),
           'session_id': id,
-          'admin': Cookies.get('admin'),
           'nickname': Cookies.get('nickname'),
           'profile_photo_url': Cookies.get('profile_photo_url'),
+          'admin': Cookies.get('admin'),
         };
       }
     },
@@ -272,6 +274,13 @@ const AttributeBinding = {
         },
         this.error
       );
+    },
+      onChangeSubscribeOrUnsubscribeTopic(topic, subscription) {
+        request('notification.topicSubscription',
+            {topic: topic, subscription: subscription.target.checked ? 'Y' : 'N' },
+            function (res) {
+                // this.$data.user[topic] = mode ? "Y" : "N";
+            }, this.error);
     },
   },
 };
