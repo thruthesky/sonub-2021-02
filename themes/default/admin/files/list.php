@@ -1,10 +1,10 @@
 <?php
 
 $category = in('category', 'qna');
-$q = ['category_name' => $category, 'post_type' => 'attachment'];
+$q = ['category_name' => $category, 'post_type' => 'post'];
 
 print_r($q);
-$files = forum_search($q);
+$posts = forum_search($q);
 
 $categories = get_categories();
 
@@ -12,12 +12,25 @@ $categories = get_categories();
 
 ?>
 
-<h1>Files: <?=$category?></h1>
 
+<h1>Files: <?= $category ?></h1>
+
+
+<hr>
 <div>
-<?php foreach ($categories as $category) { ?>
-    <a href="/?page=admin/files/list&category=<?= $category->slug ?>"><?=$category->name?></a> |
-<?php } ?>
+    <?php foreach ($categories as $category) { ?>
+        <a href="/?page=admin/files/list&category=<?= $category->slug ?>"><?= $category->name ?></a> |
+    <?php } ?>
 </div>
-
-<?php d($files) ?>
+<div class="container mt-3">
+    <div class="row">
+        <?php foreach ($posts as $post) { ?>
+            <?php foreach ($post['files'] as $file) { ?>
+                <div class="col-3 position-relative border">
+                    <a class="position-absolute" href="<?= $post['url'] ?>"><i class="fa fa-external-link-alt red fs-sm"></i></a>
+                    <img class="w-100" src="<?= $file['url'] ?>" />
+                </div>
+            <?php } ?>
+        <?php } ?>
+    </div>
+</div>

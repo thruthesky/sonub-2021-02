@@ -226,12 +226,14 @@ const AttributeBinding = {
      */
     setUser(profile) {
       Cookies.set('ID', profile.ID, {domain: config.cookie_domain});
+      Cookies.set('admin', profile.admin, {domain: config.cookie_domain});
       Cookies.set('session_id', profile.session_id, {domain: config.cookie_domain});
       Cookies.set('nickname', profile.nickname, {domain: config.cookie_domain});
       Cookies.set('profile_photo_url', profile.profile_photo_url, {domain: config.cookie_domain});
 
       this.user = {
         'ID': profile.ID,
+        'admin': profile.admin,
         'session_id': profile.session_id,
         'nickname': profile.nickname,
         'profile_photo_url': profile.profile_photo_url,
@@ -247,6 +249,7 @@ const AttributeBinding = {
         this.user = {
           'ID': Cookies.get('ID'),
           'session_id': id,
+          'admin': Cookies.get('admin'),
           'nickname': Cookies.get('nickname'),
           'profile_photo_url': Cookies.get('profile_photo_url'),
         };
