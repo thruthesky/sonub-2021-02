@@ -271,7 +271,7 @@ const AttributeBinding = {
      * @param title
      * @param body
      */
-    alert(title, body) {
+    alert(title, body = '') {
       alert(title + "\n" + body);
     },
     saveToken(token, topic = "") {
@@ -284,12 +284,17 @@ const AttributeBinding = {
         this.error
       );
     },
-      onChangeSubscribeOrUnsubscribeTopic(topic, subscription) {
-        request('notification.topicSubscription',
-            {topic: topic, subscription: subscription.target.checked ? 'Y' : 'N' },
-            function (res) {
-                // this.$data.user[topic] = mode ? "Y" : "N";
-            }, this.error);
+    onChangeSubscribeOrUnsubscribeTopic(topic, subscribe) {
+      if (this.notLoggedIn()) {
+        subscribe.target.checked = false;
+        return this.alert('Must Login first');
+      }
+
+      request('notification.topicSubscription',
+          {topic: topic, subscribe: subscribe.target.checked ? 'Y' : 'N' },
+          function (res) {
+            // this.$data.user[topic] = mode ? "Y" : "N";
+          }, this.error);
     },
   },
 };

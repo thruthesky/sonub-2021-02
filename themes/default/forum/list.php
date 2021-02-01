@@ -9,10 +9,6 @@ if ( loggedIn() ) {
     d('login?');
 }
 
-d( profile() );
-
-d('#################');
-
 
 
 ?>
@@ -28,7 +24,6 @@ d('#################');
                @change="onChangeSubscribeOrUnsubscribeTopic('<?=$post_topic?>',$event)"
                <? echo ( isSubscribedToTopic($post_topic) ? 'checked' : '');?>
         >
-
         <label class="form-check-label" for="notificationUnderMyPost">Notification on New Post</label>
     </div>
     <div class="form-check form-switch">

@@ -63,11 +63,12 @@ class NotificationRoute {
      * @param $in
      *  $in['tokens'] can be a string of tokens or an array of tokens.
      *  If $in['tokens'] is not provided, then it will subscribe all the tokens of login user to the topic.
-     * @return array|string
+     * @return mixed
      * @throws \Kreait\Firebase\Exception\FirebaseException
      * @throws \Kreait\Firebase\Exception\MessagingException
      */
     public function subscribeTopic($in) {
+        if ( ! is_user_logged_in() ) return ERROR_LOGIN_FIRST;
         if ( isset($in['tokens'] ) ) $tokens = $in['tokens'];
         else {
             $tokens = get_user_tokens();
@@ -83,23 +84,23 @@ class NotificationRoute {
      * @param $in
      *  $in['tokens'] can be a string of tokens or an array of tokens.
      *  If $in['tokens'] is not provided, then it will unsubscribe all the tokens of login user from the topic.
-     * @return array
+     * @return mixed
      * @throws \Kreait\Firebase\Exception\FirebaseException
      * @throws \Kreait\Firebase\Exception\MessagingException
      */
     public function unsubscribeTopic($in) {
+        if ( ! is_user_logged_in() ) return ERROR_LOGIN_FIRST;
         if ( isset($in['tokens'] ) ) $tokens = $in['tokens'];
         else {
             $tokens = get_user_tokens();
         }
-
         $re = unsubscribeTopic($in['topic'], $tokens);
         delete_user_meta(wp_get_current_user()->ID, $in['topic']);
         return $re;
     }
 
     public function topicSubscription($in) {
-        if ( isset($in['subscription']) && $in['subscription'] === "Y" ) {
+        if ( isset($in['subscribe']) && $in['subscribe'] === "Y" ) {
             return $this->subscribeTopic($in);
         } else {
             return $this->unsubscribeTopic($in);
