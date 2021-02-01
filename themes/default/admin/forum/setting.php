@@ -3,10 +3,10 @@
 // $cat = get_category_settings(['slug' => in('slug')]);
 
 $cat = get_category_by_slug(in('slug'));
-//$metas = get_termcategory_meta($cat->ID, $cat->term_id, '', true);
+// $metas = category_meta($cat->ID, 'list_on_view', true);
 
 // d($cat);
-//d($metas);
+// d($metas);
 
 
 ?>
@@ -46,7 +46,7 @@ $cat = get_category_by_slug(in('slug'));
                     type="checkbox" 
                     name="list_on_view"
                     @change="debounce(updateCategorySettings, 500, 'list_on_view')"
-                    <?php if (category_meta($cat->ID, 'list_on_view') == 'Y' ) echo 'checked' ?>>
+                    <?php if (category_meta($cat->cat_ID, 'list_on_view', 'N') == 'Y' ) echo 'checked' ?>>
             </td>
         </tr>
         <tr>
@@ -55,7 +55,7 @@ $cat = get_category_by_slug(in('slug'));
                 <input
                         name="posts_per_page"
                     type="text"
-                    value="<?=category_meta($cat->ID, 'posts_per_page', POSTS_PER_PAGE)?>"
+                    value="<?=category_meta($cat->cat_ID, 'posts_per_page', POSTS_PER_PAGE)?>"
                     @keyup="debounce(updateCategorySettings, 500, 'posts_per_page')">
             </td>
         </tr>
@@ -65,7 +65,7 @@ $cat = get_category_by_slug(in('slug'));
                 <input
                         name="no_of_pages_on_nav"
                     type="text"
-                    value="<?=category_meta($cat->ID, 'no_of_pages_on_nav', NO_OF_PAGES_ON_NAV)?>"
+                    value="<?=category_meta($cat->cat_ID, 'no_of_pages_on_nav', NO_OF_PAGES_ON_NAV)?>"
                     @keyup="debounce(updateCategorySettings, 500, 'no_of_pages_on_nav')">
             </td>
         </tr>
@@ -88,17 +88,19 @@ $cat = get_category_by_slug(in('slug'));
             updateCategorySettings(name) {
                 const dom = document.querySelector("[name='"+name+"']");
                 let value = dom.value;
-                console.log('v: ', value);
                 if ( name === 'list_on_view' ) {
                     if ( dom.checked ) value = 'Y';
                     else value = 'N';
                 }
+                console.log('v: ', value);
                 const data = {
                     'cat_ID': <?= $cat->term_id ?>,
                     'name': name,
                     'value': value
                 };
-                request('forum.updateCategory', data, undefined, app.error);
+                request('forum.updateCategory', data, function(setting) {
+                    console.log("settings updated: ", setting);
+                }, app.error);
             },
         }
     }
