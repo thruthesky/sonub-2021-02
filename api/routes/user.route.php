@@ -19,8 +19,4 @@ class UserRoute {
         return profile_update($in);
     }
 
-    public function passCallback() {
-
-    }
-
 }

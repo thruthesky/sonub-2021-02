@@ -602,3 +602,19 @@ addComponent('comment-form', commentForm);
         app.editNo = 45;
     })
 ```
+
+
+# Pass Login
+
+* PASS LOGIN 을 통해서 사용자 인증
+
+## 절차
+
+* 먼저 PASS LOGIN 에 앱을 생성하고,
+* callback url 을 `themes/sonub/pass-login-callback.php` 로 지정한다.
+  * `pass-login-callback.php` 에서 사용자 인증을 하고, 성공하면 화면으로 적절한 HTML 내용을 뿌려주면 된다.
+* 그리고 config.php 에 client ID, client key, callback url, 그리고 pass login salt(임의의 문자열 값)를 등록한다.
+* Web 에서 로그인을 하기 위해서는 아래와 같이 링크를 걸면 된다.
+```html
+<a class="btn btn-primary mt-5" href="<?=pass_login_url()?>">PASS LOGIN</a>
+```
