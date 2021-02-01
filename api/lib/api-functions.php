@@ -1608,7 +1608,7 @@ function between($val, $min, $max) {
  * @return array|string
  */
 function forum_search($in) {
-    if (!$in['category_name']) return ERROR_EMPTY_CATEGORY;
+    if (!isset($in['category_name'])) return ERROR_EMPTY_CATEGORY;
     $posts = get_posts($in);
     $rets = [];
     foreach ($posts as $p) {
