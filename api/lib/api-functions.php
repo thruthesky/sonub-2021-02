@@ -1,6 +1,14 @@
 <?php
-
 require_once(ABSPATH . 'wp-admin/includes/taxonomy.php');
+
+
+/**
+ * Returns api version in string.
+ * @return string
+ */
+function api_version() {
+    return "0.1.3";
+}
 
 /**
  * JSON input from Client
@@ -241,16 +249,19 @@ function json_error()
 
 
 /**
- * This method let the user log-in with $_REQUEST['session_id'].
+ * This method let the user log-in with $session_id
  *
+ * @note this function requires `defines.php` and `config.php` to be loaded first.
  *
  * @return WP_User or Error object.
  *
  */
-function authenticate()
+function authenticate($session_id)
 {
-    return session_login(in('session_id'));
+    return session_login($session_id);
 }
+
+
 
 
 /**
@@ -271,12 +282,14 @@ function authenticate()
  */
 function session_login($session_id)
 {
+
     if (empty($session_id)) return ERROR_EMPTY_SESSION_ID;
 
     $arr = explode('_', $session_id);
     if (count($arr) != 2) return ERROR_MALFORMED_SESSION_ID;
     list($ID, $trash) = $arr;
-//    debug_log("ID: $ID");
+    debug_log("user session ID: $ID", $session_id);
+    debug_log('server', $_SERVER);
     $user = get_userdata($ID);
 //    debug_log(print_r($user, true));
     if ($user) {
@@ -297,7 +310,23 @@ function session_login($session_id)
     }
 }
 
+/**
+ * Return true if the user logged in and not anonymous user.
+ *
+ * @note Try to use this function instead of wp_is_logged_in()
+ * @return bool
+ */
+function is_logged_in() {
+    return is_user_logged_in() && wp_get_current_user()->ID > 0;
+}
 
+/**
+ * Alias of is_logged_in()
+ * @return bool
+ */
+function loggedIn() {
+    return is_logged_in();
+}
 
 /**
  * @param $email
@@ -683,8 +712,11 @@ function end_if_error($code) {
  *
  *  - ['mode' => 'login'] will be returned if the user logged in
  *  - ['mode' => 'register'] will be returned if the user registered.
+ *
+ * @example
+ *  login_or_register(['user_email' => "ju-$i@test.com", 'user_pass' => "12345a", "other" => "data", ... ]);
  */
-function loginOrRegister($in) {
+function login_or_register($in) {
     $re = login($in);
     debug_log("login:", $re);
     if ( api_error($re) ) {
@@ -765,7 +797,7 @@ function update_token($in) {
         debug_log(" ['user_ID' => $user_ID, 'token' => $token, 'stamp' => time()] ");
         $re = $wpdb->insert(PUSH_TOKENS_TABLE, ['user_ID' => $user_ID, 'token' => $token, 'stamp' => time()]);
         if ( $re === false ) {
-            return ERROR_INSERT;
+            return sql_error(ERROR_INSERT);
         }
     } else {
         // update
@@ -918,9 +950,12 @@ function post_response($ID_or_post, $options = [])
     if (empty($ID_or_post)) return ERROR_EMPTY_ID_OR_POST;
     $post = get_post($ID_or_post, ARRAY_A);
 
+    if ( ! $post ) return ERROR_POST_NOT_FOUND;
+
     if (isset($options['with_autop']) && $options['with_autop']) {
         $post['post_content_autop'] = wpautop(($post['post_content']));
     }
+
     /// Featured Image Url.
     ///
     $post_thumbnail_id = get_post_thumbnail_id($post['ID']);
@@ -949,6 +984,7 @@ function post_response($ID_or_post, $options = [])
     $profile = profile($post['post_author']);
     $post['profile_photo_url'] = $profile['profile_photo_url'] ?? '';
 
+
     /// post author profile photo
     ///
     // $u = $this->userResponse($post['post_author']);
@@ -973,8 +1009,10 @@ function post_response($ID_or_post, $options = [])
     // Add meta datas.
     $metas = get_post_meta($post['ID'], '', true);
     $singles = [];
-    foreach ($metas as $k => $v) {
-        $singles[$k] = $v[0];
+    if ( $metas ) {
+        foreach ($metas as $k => $v) {
+            $singles[$k] = $v[0];
+        }
     }
     $post = array_merge($singles, $post);
 
@@ -1427,6 +1465,11 @@ function table_updates($in) {
 
 
     $row = $wpdb->get_row("SELECT * FROM $in[table] WHERE user_ID=$user_ID", ARRAY_A);
+
+
+
+
+
     return array_merge($action, $row);
 }
 
@@ -1459,6 +1502,21 @@ function table_get($in) {
 function get_host_name() {
     if ( isset($_SERVER['HTTP_HOST']) ) return $_SERVER['HTTP_HOST'];
     else return null;
+}
+
+/**
+ * Alias of get_host_name()
+ * @return mixed|null
+ */
+function get_domain() {
+    return get_host_name();
+}
+/**
+ * Alias of get_host_name()
+ * @return mixed|null
+ */
+function get_domain_name() {
+    return get_host_name();
 }
 
 function isCli() {
@@ -1557,7 +1615,7 @@ function sql_error($default_error = null) {
             return ERROR_UNKNOWN_COLUMN;
         }
     }
-    return $default_error;
+    return $default_error . ":$last_error";
 }
 
 
@@ -1586,8 +1644,10 @@ function between($val, $min, $max) {
 }
 
 
-
-
+/**
+ * @param $in
+ * @return array|string
+ */
 function forum_search($in) {
     if (!$in['category_name']) return ERROR_EMPTY_CATEGORY;
     $posts = get_posts($in);
@@ -1914,7 +1974,21 @@ function getRoute($params) {
     $url = API_URL . "?" . http_build_query($params);
 //    echo "url: $url\n";
     $re = file_get_contents($url);
-    $json = json_decode($re, true);
+    if ( !$re ) {
+        echo "\n";
+        echo "\n* -------------------------------- WARNING -------------------------------- *";
+        echo "\n*";
+        echo "\n* There is no return data from backend api.";
+        echo "\n*";
+        echo "\n* Is backend api url correct?";
+        echo "\n* API URL: " . API_URL;
+        echo "\n*";
+        echo "\n* If it's wrong, update API_URL_ON_CLI in config.php to backend api url for test.";
+        echo "\n*";
+        echo "\n* -------------------------------- WARNING -------------------------------- *";
+
+    }
+$json = json_decode($re, true);
     if ( !$json ) {
         print_r($re);
     }
@@ -2183,4 +2257,17 @@ function get_first_slug($categories) {
     } else {
         return '';
     }
+}
+
+/**
+ * Helper function of `get_term_meta`.
+ * @param $cat_ID
+ * @param $name
+ * @param string $default_value
+ * @return mixed|string
+ */
+function category_meta($cat_ID, $name, $default_value = '') {
+    $v = get_term_meta($cat_ID, $name, true);
+    if ( $v ) return $v;
+    else return $default_value;
 }

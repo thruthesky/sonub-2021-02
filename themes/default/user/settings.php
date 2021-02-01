@@ -3,7 +3,7 @@
 
 <div class="form-check form-switch">
     <input class="form-check-input" type="checkbox" id="notificationUnderMyPostAndComment"
-           v-model="alertOnNewPostAndComment" @change="onChangeSubscribeOrUnsubscribe('<?=NOTIFY_COMMENT?>',alertOnNewPostAndComment)">
+           v-model="alertOnNewPostAndComment" @change="onChangeSubscribeOrUnsubscribeTopic('<?=NOTIFY_COMMENT?>',alertOnNewPostAndComment)">
     <label class="form-check-label" for="notificationUnderMyPostAndComment">Receive notification under my Post and Comment.</label>
 </div>
 <script>

@@ -16,9 +16,6 @@ const forumMixin = {
        * To save files to post, get the ID(s) from app.files and pass it over route.
        */
       files: [],
-      currentListCategory: '',
-      alertOnNewPost: false,
-      alertOnNewComment: false,
     };
   },
   methods: {
@@ -93,25 +90,10 @@ const forumMixin = {
         refresh();
       }, this.error);
     },
-    onChangeAlertOnNewPost(category) {
-        const topic = config.post_notification_prefix + category;
-        const notificationRoute = this.$data.alertOnNewPost === true
-            ? "notification.subscribeTopic"
-            : "notification.unsubscribeTopic";
-        request(notificationRoute, {topic: topic}, function (res) {
-            // this.$data.user[topic] = alertOnNewPost ? "Y" : "N";
-        }, this.error);
+    is_mine(author) {
+      return this.user && parseInt(this.user.ID) === author;
     },
-    onChangeAlertOnNewComment(category) {
-        const topic = config.comment_notification_prefix + category;
-        const notificationRoute = this.$data.alertOnNewComment === true
-            ? "notification.subscribeTopic"
-            : "notification.unsubscribeTopic";
-        request(notificationRoute, {topic: topic}, function (res) {
-            // this.$data.user[topic] = alertOnNewComment ? "Y" : "N";
-        }, this.error);
-    },
-  },
+  }, // eo methods:
 };
 
 
@@ -200,7 +182,7 @@ const commentForm = {
         $this.$data.uploaded_files.push(res);
       });
     },
-  },
+  }, // eo methods:
 };
 addComponent('comment-form', commentForm);
 

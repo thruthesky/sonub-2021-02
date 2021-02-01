@@ -58,16 +58,18 @@ const AttributeBinding = {
     debounce(fn, delay, id) {
       if (typeof id === "undefined") id = "default";
       clearTimeout(_inDebounce[id]);
-      _inDebounce[id] = setTimeout(fn, delay);
+      _inDebounce[id] = setTimeout(function() {
+        fn(id);
+      }, delay);
     },
     isAdmin() {
-      return this.$data.user && this.$data.user.admin;
+      return this.user && this.user.admin;
     },
     loggedIn() {
-      return this.$data.user !== null && this.$data.user.session_id;
+      return this.user !== null && this.user.session_id;
     },
     sessionId() {
-      return this.$data.user && this.$data.user.session_id;
+      return this.user && this.user.session_id;
     },
     notLoggedIn() {
       return !this.loggedIn();
@@ -101,13 +103,16 @@ const AttributeBinding = {
         this.error
       );
     },
+    /**
+     * Loads user profile data and set it on `app.profile` in vue.
+     */
     loadProfileUpdateForm() {
       request(
         "user.profile",
         {},
         function (profile) {
           console.log("loadProfileUpdateForm: ", profile);
-          app.$data.profile = profile;
+          app.profile = profile;
         },
         this.error
       );
@@ -217,21 +222,50 @@ const AttributeBinding = {
     },
 
     logout() {
-      localStorage.removeItem("user");
-      this.$data.user = null;
+      Cookies.remove('session_id', {domain: config.cookie_domain});
+      Cookies.remove('nickname', {domain: config.cookie_domain});
+      Cookies.remove('profile_photo_url', {domain: config.cookie_domain});
+      this.user = null;
     },
     error(e) {
       console.log("error(e)", e);
       alert(e);
     },
+    /**
+     * Set user profile on browser cookie which can be used by PHP.
+     * @note when user upload photo, the url is saved in cookie but it will be available in php on next page load.
+     * @param profile
+     */
     setUser(profile) {
-      setLocalStorage("user", profile);
-      this.$data.user = profile;
+      Cookies.set('session_id', profile.session_id, {domain: config.cookie_domain});
+      Cookies.set('nickname', profile.nickname, {domain: config.cookie_domain});
+      Cookies.set('profile_photo_url', profile.profile_photo_url, {domain: config.cookie_domain});
+
+      this.user = {
+        'session_id': profile.session_id,
+        'nickname': profile.nickname,
+        'profile_photo_url': profile.profile_photo_url,
+      };
     },
+
+    /**
+     * Get user information.
+     */
     getUser() {
-      this.$data.user = getLocalStorage("user");
-      return this.$data.user;
+      const id = Cookies.get('session_id');
+      if ( id ) {
+        this.user = {
+          'session_id': id,
+          'nickname': Cookies.get('nickname'),
+          'profile_photo_url': Cookies.get('profile_photo_url'),
+        };
+      }
     },
+    /**
+     * alert
+     * @param title
+     * @param body
+     */
     alert(title, body) {
       alert(title + "\n" + body);
     },
@@ -245,13 +279,15 @@ const AttributeBinding = {
         this.error
       );
     },
-    onChangeSubscribeOrUnsubscribe(topic, mode = true) {
-        const notificationRoute = mode ? "notification.subscribeTopic"
-            : "notification.unsubscribeTopic";
-        request(notificationRoute, {topic: topic}, function (res) {
-            // this.$data.user[topic] = mode ? "Y" : "N";
-        }, this.error);
-    }
+      onChangeSubscribeOrUnsubscribeTopic(topic, subscription) {
+
+        console.log(subscription);
+        // request('notification.topicSubscription',
+        //     {topic: topic, subscription: subscription ? 'Y' : 'N' },
+        //     function (res) {
+        //         // this.$data.user[topic] = mode ? "Y" : "N";
+        //     }, this.error);
+    },
   },
 };
 

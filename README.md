@@ -3,6 +3,10 @@
 * Sonub(Sonub Network Hub) is an open source, complete CMS with modern functionalities like realtime update, push notification, and more.
 * It is build on Apache(or Nginx) + MySQL(or MariaDB) + PHP stack based Wordpress. It works as a theme but has very much fixed.
 
+
+
+
+
 # Overview
 
 * Build with PHP.
@@ -50,16 +54,12 @@ cd wp-content/theme/sonub
 git clone https://github.com/thruthesky/sonub
 ```
 
-* And enable it on admin page.
+* Enable `sonub theme` on admin page.
 
 
 ## Database Setup
 
-It has some database tables to install.
-
-* `api_push_token` for push notifications
-* `api_translations` for supporting multi languages.
-
+* Add `tmp/sql/sonub.sql` tables into Database.
 
 
 ## Firebase
@@ -75,13 +75,16 @@ Many of features are depending on firebase. So it is mandatory to setup firebase
   * And set the database uri to `FIREBASE_DATABASE_URI`.
 
 
-
 ## In app purchase key
+
+This is optional. Only if you are going to use in-app-purchase, set the purchase verification keys.
 
 * If you are using in_app_purchase, then put a proper key file.
 
 
-## Installing SASS Reloader
+## Installing Node Modules
+
+It uses node modules to compile sass into css, and watch file changes to live reload the browser.
 
 * Install node modules.
 
@@ -101,6 +104,14 @@ npm i
 ```
  ./node_modules/.bin/sass --watch scss/index.scss css/index.css
 ```
+
+* If you want the browser reload whenever you edit php, css, javascript files, run the command below.
+
+```
+cd wp-content/themes/sonub
+node live-reload.js
+```
+
 
 
 
@@ -132,14 +143,6 @@ npm i
 * `sonub/css` folder has common css files.
 
 
-## PHP Live Reload
-
-* If you want the browser reload whenever you edit php, css, javascript files, run the command below.
-
-```
-cd wp-content/themes/sonub
-node live-reload.js
-```
 
 ## Setup on Local Development Computer
 
@@ -216,9 +219,16 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
 
 
 
-### Login
+## Login
+
+* For a user to log in on web browser, create a form and use `app.js::onLoginFormSubmit()` method.
+  * See the HTML form example on `sonub/themes/default/user/login.php`
+* When user logs in on web, `session_id`, `nickname`, `profile_photo_url` are saved through Javascript cookies.
+* PHP can use the `session_id` in cookie and detect who is the user.
+* To make the cookie available all sub domains, set root domain to `BROWSER_COOKIE_DOMAIN` in config.php.
 
 ### Register
+
 
 ### Getting Profile
 
@@ -261,6 +271,10 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
 
 * Route cannot return null or empty string to client. It will response error instead.
 
+* PHP script does not have user information. That means, the user is not logged in PHP. User information (including session_id) is only saved on javascript's localStorage.
+  So, you cannot code anything that is related with login.
+  
+
 ## Booting
 
 ### Theme booting
@@ -269,21 +283,28 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
   * wordpress index.php and its initialization files.
   * functions.php ( will be loaded by Wordpress before index.php. Don't put anything here except the hooks and filters. )
     * `functions.php` loads
-      * `api/lib/functions.php`,
+      * `api/lib/api-functions.php`,
+      * Preflight
       * `defines.php`
+      * User login with `$_COOKIE['session_id']`. PHP can detect if user logged in or not, and can use all the user information.
       * `config.php`
-  * index.php ( this is the theme/index.php that is the layout )
+      * Composer vendor auto load.
+      * `api/lib/firebase.php`
+  * theme index.php ( this is the theme/index.php that is the layout )
     * `index.php` loads
       * Bootstrap 4.6 css
       * css/index.css ( compiled from scss/index.scss sass code )
       * `theme/[DOMAIN_THEME]/[MODULE]/[SCRIPT_NAME].css` if exists.
       * Page script file `wp-content/themes/wigo/themes/[DOMAIN_THEM]/[MODULE]/[SCRIPT_NAME].php` will be loaded.
+      * Javascript `config` settings.
+      * bootstrap v5 javascript
       * vue.prod.js
       * axios.min.js
       * firebase-app.js, firebase-messaging.js and other firebase-****.js files.
       * `theme/[DOMAIN_THEME]/[MODULE]/[SCRIPT_NAME].js` if exists.
-      * js/app.js
-
+      * `js/app.js`
+        * User login in Vue.js client end. Vue.js can detect if user is logged in or not. But let PHP handle user login related code as much as possible.
+      
 ### API booting
 
 * When client-end connects to backend Restful API, the following scripts will be loaded in order
@@ -390,6 +411,7 @@ You can write css style like below.
   * You may also maintain your own table for keeping user information by fixing routes.
 
 
+
 ## Protocols
 
 ### app.query
@@ -400,9 +422,7 @@ You can write css style like below.
 
 # Unit Test
 
-* There are two methods to do unit test.
-  * `V3 unit test` is developed by the core team. And is not recommended simply because it is not a standard.
-  * The other one is `PHPUnit` which is more likely a standard unit testing tool for PHP. And `PHPUnit` is recommended simply because it is a de-facto standard.
+We use `phpunit` as its primary unit testing tool. (Previous custom made unit testing tool named 'v3 test tool' has been removed by Jan 30).
 
 * To run phpunit, just do it as phpunit way.
 
@@ -422,25 +442,12 @@ php phpunit.phar api/phpunit/AppVersionTest.php
 phpunit api/phpunit/VerifyIOSPurchaseTest.php 
 ```
 
-## V3 Unit Testing
+## Watching PHP script changes.
 
-* Install `phprun` node module globally.
-```text
-$ npm i -g phprun
-```
+* Use chokidar-cli to re-run the test whenever php script file changes.
 
-* You can test like below
-
-```text
-$ phprun tests/xxxx.test.php
-```
-
-Examples)
-```text
-% phprun tests/app.version.test.php
-% phprun tests/loginOrRegister.test.php
-% phprun tests/loginOrRegister_with_metadata.php
-% phprun tests/loginOrRegister.function_call.test.php
+```shell script
+chokidar 
 ```
 
 
@@ -577,7 +584,12 @@ addComponent('comment-form', commentForm);
   
   * This wouldn't be a big problem, since a user might only subscribe few chat rooms for push notification even if he/she has more than 2,000 chat rooms.
 
-
+* Sending push notification is a bit slow.
+  * When a user creates a comment, backend will send push notifications to users who are subscribed for that forum and to the post owner.
+  * To improve this, the backend must not send push notification separately after the comment is created.\
+  This means, there will be two backend calls.\
+  One for creating comments, the other is for sending push notifications.
+  
 
 # Debugging Tips
 
