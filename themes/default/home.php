@@ -13,3 +13,5 @@ d($_COOKIE);
 
 <h4>User: {{ sessionId() }}</h4>
 
+{{ user }}
+

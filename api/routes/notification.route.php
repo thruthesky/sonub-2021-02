@@ -98,4 +98,12 @@ class NotificationRoute {
         return $re;
     }
 
+    public function topicSubscription($in) {
+        if ( isset($in['subscription']) && $in['subscription'] === "Y" ) {
+            return $this->subscribeTopic($in);
+        } else {
+            return $this->unsubscribeTopic($in);
+        }
+    }
+
 }

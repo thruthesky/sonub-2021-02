@@ -1,9 +1,13 @@
+<?php
+?>
 <h1>Settings</h1>
 <hr>
 
 <div class="form-check form-switch">
     <input class="form-check-input" type="checkbox" id="notificationUnderMyPostAndComment"
-           v-model="alertOnNewPostAndComment" @change="onChangeSubscribeOrUnsubscribeTopic('<?=NOTIFY_COMMENT?>',alertOnNewPostAndComment)">
+           @change="onChangeSubscribeOrUnsubscribeTopic('<?=NOTIFY_COMMENT?>',$event)"
+           <? echo ( isSubscribedToTopic(NOTIFY_COMMENT) ? 'checked' : '');?>
+    >
     <label class="form-check-label" for="notificationUnderMyPostAndComment">Receive notification under my Post and Comment.</label>
 </div>
 <script>
@@ -13,22 +17,11 @@
         },
         mounted() {
             console.log('settings.mounted!');
-            this.$data.alertOnNewPostAndComment = this.$data.user.notifyComment === 'Y';
         },
         data() {
-            return {
-                alertOnNewPostAndComment:  true,
-            }
+            return {}
         },
         methods: {
-            onChangeAlertOnNewPostAndComment() {
-                const notificationRoute = this.$data.alertOnNewPostAndComment === true
-                    ? "notification.subscribeTopic"
-                    : "notification.unsubscribeTopic";
-                request(notificationRoute, {topic: config.comment_notification_prefix}, function () {
-
-                }, this.error);
-            }
         }
     }
 </script>

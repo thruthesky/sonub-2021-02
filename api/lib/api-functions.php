@@ -2271,3 +2271,8 @@ function category_meta($cat_ID, $name, $default_value = '') {
     if ( $v ) return $v;
     else return $default_value;
 }
+
+
+function isSubscribedToTopic($topic) {
+    return my($topic) === "Y";
+}

@@ -237,15 +237,19 @@ const AttributeBinding = {
      * @param profile
      */
     setUser(profile) {
+      console.log(profile);
       Cookies.set('session_id', profile.session_id, {domain: config.cookie_domain});
       Cookies.set('nickname', profile.nickname, {domain: config.cookie_domain});
       Cookies.set('profile_photo_url', profile.profile_photo_url, {domain: config.cookie_domain});
+      Cookies.set('admin', profile.admin, {domain: config.cookie_domain});
 
       this.user = {
         'session_id': profile.session_id,
         'nickname': profile.nickname,
         'profile_photo_url': profile.profile_photo_url,
+        'admin':profile.admin
       };
+      this.user = profile;
     },
 
     /**
@@ -258,6 +262,7 @@ const AttributeBinding = {
           'session_id': id,
           'nickname': Cookies.get('nickname'),
           'profile_photo_url': Cookies.get('profile_photo_url'),
+          'admin': Cookies.get('admin'),
         };
       }
     },
@@ -280,13 +285,11 @@ const AttributeBinding = {
       );
     },
       onChangeSubscribeOrUnsubscribeTopic(topic, subscription) {
-
-        console.log(subscription);
-        // request('notification.topicSubscription',
-        //     {topic: topic, subscription: subscription ? 'Y' : 'N' },
-        //     function (res) {
-        //         // this.$data.user[topic] = mode ? "Y" : "N";
-        //     }, this.error);
+        request('notification.topicSubscription',
+            {topic: topic, subscription: subscription.target.checked ? 'Y' : 'N' },
+            function (res) {
+                // this.$data.user[topic] = mode ? "Y" : "N";
+            }, this.error);
     },
   },
 };
