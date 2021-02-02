@@ -18,6 +18,8 @@
         <a href="/?page=forum/list&category=qna">QnA</a>
         <a href="/?page=forum/list&category=discussion">Discussion</a>
 
+        <a href="/?page=forum/list&category=community">Community</a>
+
     </div>
     <div>
         <? if ( admin() ) { ?>
