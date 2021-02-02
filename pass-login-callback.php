@@ -16,7 +16,8 @@ if ( api_error($user) ) {
 }
 
 
-d($user);
+debug_log("pass-login-callback.php:: user", $user);
+
 pass_login_or_register($user);
 
 /**
@@ -27,6 +28,9 @@ pass_login_or_register($user);
  * state 가 openHome 이면, 홈페이지로 이동
  */
 if ( $_REQUEST['state'] === 'openHome' ) {
+
+    debug_log("pass-login-callback.php:: profile", profile());
+    set_login_cookies(profile());
     return jsGo('/');
 }
 

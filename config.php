@@ -53,7 +53,8 @@ define('NO_OF_PAGES_ON_NAV', 3);
  * If you set the cookie domain, it will apply the cookies on that domain.
  * This is useful to apply login cookie to all subdomains.
  *
- * To apply login cookie(and all other cookies) to all sub domains, set the root domain(like `domain.com`) name here
+ * To apply login cookie(and all other cookies) to all sub domains, set the root domain(like `.domain.com`) name here
+ *   - note, that dot(.) must be added on root domain.
  */
 if ( !defined('BROWSER_COOKIE_DOMAIN') ) define('BROWSER_COOKIE_DOMAIN', '');
 

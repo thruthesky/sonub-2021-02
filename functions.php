@@ -485,3 +485,10 @@ function select_list_widgets($cat_ID, $folder_name, $config_name) {
 
 
 }
+
+
+function set_login_cookies($profile) {
+    setcookie ( 'session_id' , $profile['session_id'] , time() + 365 * 24 * 60 * 60 , '/' , BROWSER_COOKIE_DOMAIN);
+    if ( isset($profile['nickname']) ) setcookie ( 'nickname' , $profile['nickname'] , time() + 365 * 24 * 60 * 60 , '/' , BROWSER_COOKIE_DOMAIN);
+    if ( isset($profile['profile_photo_url']) ) setcookie ( 'profile_photo_url' , $profile['profile_photo_url'] , time() + 365 * 24 * 60 * 60 , '/' , BROWSER_COOKIE_DOMAIN);
+}
