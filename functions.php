@@ -353,13 +353,7 @@ function is_forum_page()
  */
 /// Global widget option variable
 $__widget_options = null;
-<<<<<<< HEAD
-
-function set_widget_options($options)
-{
-=======
 function set_widget_options( $options ) {
->>>>>>> dac3e907a8fb7e916a3c741e487cbed6e25b2d80
     global $__widget_options;
     $__widget_options = $options;
 }
@@ -381,39 +375,9 @@ function get_widget_options()
  *   include widget('social-login'); // will load 'widgets/social-login/social-login.php'
  * @endcode
  */
-<<<<<<< HEAD
-function widget($name, $options = null)
-{
-
-    set_widget_options($options);
-
-    $domain = 'default';
-
-    if (strpos($name, '/') !== false) {
-        $rel_path = "/widgets/$name.php";
-    } else if (strpos($name, '.') !== false) {
-        $arr      = explode('.', $name);
-        $rel_path = "/widgets/$arr[0]/$arr[1].php";
-    } else {
-        $rel_path = "/widgets/$name/$name.php";
-    }
-    $p = THEME_DIR . "/theme/$domain$rel_path";
-    if (file_exists($p)) {
-        $widget_path = $p;
-    } else {
-        $widget_path = THEME_DIR . $rel_path;
-    }
-
-
-    global $__included_files;
-    $__included_files[] = $widget_path;
-
-    return $widget_path;
-=======
 function widget( string $name, array $options = [] ) {
     set_widget_options( $options );
     return THEME_DIR . "/widgets/$name/$name.php";
->>>>>>> dac3e907a8fb7e916a3c741e487cbed6e25b2d80
 }
 
 /// EO Widget System ---------------------------------------------------------------------------------------------------
