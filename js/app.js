@@ -1,6 +1,5 @@
 var _inDebounce = {};
 
-
 const AttributeBinding = {
   components: getComponents(),
   data() {
@@ -18,14 +17,12 @@ const AttributeBinding = {
         sendTo: "topic",
       },
 
-
       // progress bar of file uploads.
       //
       // Globally shared var.
       // it is shared for all kinds of file(photo) upload including profile photo, forum photo.
 
       uploadPercentage: 0,
-
 
       token: null,
     };
@@ -58,7 +55,7 @@ const AttributeBinding = {
     debounce(fn, delay, id) {
       if (typeof id === "undefined") id = "default";
       clearTimeout(_inDebounce[id]);
-      _inDebounce[id] = setTimeout(function() {
+      _inDebounce[id] = setTimeout(function () {
         fn(id);
       }, delay);
     },
@@ -77,8 +74,8 @@ const AttributeBinding = {
     onRegisterFormSubmit() {
       console.log("register form submitted");
       const data = Object.assign({}, this.$data.register);
-      if ( this.$data.token ) {
-          data['token'] = this.$data.token;
+      if (this.$data.token) {
+        data["token"] = this.$data.token;
       }
       console.log(data);
       request(
@@ -128,14 +125,15 @@ const AttributeBinding = {
      */
     userProfileUpdate(data, onSuccessCallback) {
       request(
-          "user.profileUpdate",
-          data,
-          function (profile) {
-            console.log("userProfileUpdate success. saving: ", profile);
-            app.setUser(profile);
-            if ( typeof onSuccessCallback === 'function' ) onSuccessCallback(profile);
-          },
-          this.error
+        "user.profileUpdate",
+        data,
+        function (profile) {
+          console.log("userProfileUpdate success. saving: ", profile);
+          app.setUser(profile);
+          if (typeof onSuccessCallback === "function")
+            onSuccessCallback(profile);
+        },
+        this.error
       );
     },
     onProfileUpdateFormSubmit() {
@@ -148,6 +146,9 @@ const AttributeBinding = {
      * @param successCallback
      */
     onFileUpload(event, successCallback) {
+      if (app.notLoggedIn()) {
+        return app.error("Login First");
+      }
       if (event.target.files.length === 0) {
         console.log("User cancelled upload");
         return;
@@ -196,7 +197,7 @@ const AttributeBinding = {
 
     /**
      * Delete file.
-     * 
+     *
      * @param {string} ID
      * @param {function} successCallback
      */
@@ -209,7 +210,6 @@ const AttributeBinding = {
     },
 
     logout() {
-      Cookies.remove('ID', {domain: config.cookie_domain});
       Cookies.remove('session_id', {domain: config.cookie_domain});
       Cookies.remove('nickname', {domain: config.cookie_domain});
       Cookies.remove('profile_photo_url', {domain: config.cookie_domain});
@@ -226,18 +226,14 @@ const AttributeBinding = {
      */
     setUser(profile) {
       console.log(profile);
-      Cookies.set('ID', profile.ID, {domain: config.cookie_domain});
       Cookies.set('session_id', profile.session_id, {domain: config.cookie_domain});
       Cookies.set('nickname', profile.nickname, {domain: config.cookie_domain});
       Cookies.set('profile_photo_url', profile.profile_photo_url, {domain: config.cookie_domain});
-      Cookies.set('admin', profile.admin, {domain: config.cookie_domain});
 
       this.user = {
-        'ID': profile.ID,
         'session_id': profile.session_id,
         'nickname': profile.nickname,
         'profile_photo_url': profile.profile_photo_url,
-        'admin':profile.admin
       };
       this.user = profile;
     },
@@ -246,14 +242,12 @@ const AttributeBinding = {
      * Get user information.
      */
     getUser() {
-      const id = Cookies.get('session_id');
-      if ( id ) {
+      const id = Cookies.get("session_id");
+      if (id) {
         this.user = {
-          'ID': Cookies.get('ID'),
           'session_id': id,
           'nickname': Cookies.get('nickname'),
           'profile_photo_url': Cookies.get('profile_photo_url'),
-          'admin': Cookies.get('admin'),
         };
       }
     },
@@ -262,7 +256,7 @@ const AttributeBinding = {
      * @param title
      * @param body
      */
-    alert(title, body = '') {
+    alert(title, body = "") {
       alert(title + "\n" + body);
     },
     saveToken(token, topic = "") {
@@ -278,14 +272,17 @@ const AttributeBinding = {
     onChangeSubscribeOrUnsubscribeTopic(topic, subscribe) {
       if (this.notLoggedIn()) {
         subscribe.target.checked = false;
-        return this.alert('Must Login first');
+        return this.alert("Must Login first");
       }
 
-      request('notification.topicSubscription',
-          {topic: topic, subscribe: subscribe.target.checked ? 'Y' : 'N' },
-          function (res) {
-            // this.$data.user[topic] = mode ? "Y" : "N";
-          }, this.error);
+      request(
+        "notification.topicSubscription",
+        { topic: topic, subscribe: subscribe.target.checked ? "Y" : "N" },
+        function (res) {
+          // this.$data.user[topic] = mode ? "Y" : "N";
+        },
+        this.error
+      );
     },
   },
 };
