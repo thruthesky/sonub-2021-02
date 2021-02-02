@@ -486,7 +486,12 @@ function select_list_widgets($cat_ID, $folder_name, $config_name) {
 
 }
 
-
+/**
+ * Set login cookies
+ *
+ * When user login, the session_id must be saved in cookie. And it is shared with Javascript.
+ * @param $profile
+ */
 function set_login_cookies($profile) {
     setcookie ( 'session_id' , $profile['session_id'] , time() + 365 * 24 * 60 * 60 , '/' , BROWSER_COOKIE_DOMAIN);
     if ( isset($profile['nickname']) ) setcookie ( 'nickname' , $profile['nickname'] , time() + 365 * 24 * 60 * 60 , '/' , BROWSER_COOKIE_DOMAIN);
