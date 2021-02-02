@@ -13,53 +13,57 @@ $translations = $trans['translations'];
 </form>
 
 
-<h3 class="mt-5">Add Translation</h3>
-<form class="d-flex w-100" @submit.prevent='onTranslationEditFormSubmit(null)'>
-    <input class="form-control" type="text" placeholder="Translation Code" v-model="newTranslation.code" />
-    <?php foreach ($languages as $ln) { ?>
-        <input class="form-control" type="text" placeholder="<?php echo $ln ?>" v-model="newTranslation.<?php echo $ln ?>" />
-    <?php } ?>
-    <button type="submit" class="btn btn-success btn-sm">Add</button>
-</form>
+<?php if (count($languages)) { ?>
 
-<h3 class="mt-5">Translation Table</h3>
-<div class="container">
-    <div class="row font-weight-bold">
-        <div class="col-sm border">
-            Code
-        </div>
+    <h3 class="mt-5">Add Translation</h3>
+    <form class="d-flex w-100" @submit.prevent='onTranslationEditFormSubmit(null)'>
+        <input class="form-control" type="text" placeholder="Translation Code" v-model="newTranslation.code" />
         <?php foreach ($languages as $ln) { ?>
-            <div class="col-sm border">
-                <?php echo $ln ?>
-            </div>
+            <input class="form-control" type="text" placeholder="<?php echo $ln ?>" v-model="newTranslation.<?php echo $ln ?>" />
         <?php } ?>
-        <div class="col-sm border">
-            Actions
+        <button type="submit" class="btn btn-success btn-sm">Add</button>
+    </form>
+
+    <h3 class="mt-5">Translation Table</h3>
+    <div class="container">
+        <div class="row font-weight-bold">
+            <div class="col-sm border">
+                Code
+            </div>
+            <?php foreach ($languages as $ln) { ?>
+                <div class="col-sm border">
+                    <?php echo $ln ?>
+                </div>
+            <?php } ?>
+            <div class="col-sm border">
+                Actions
+            </div>
         </div>
+
+        <?php foreach ($translations as $translation) { ?>
+            <form @submit.prevent='onTranslationEditFormSubmit($event)'>
+                <input type="hidden" name="code" value="<?php echo $translation['code'] ?>">
+                <div class="row mt-2">
+                    <div class="col-sm ">
+                        <button type="button" class="text-button w-100" @click="onClickCode('<?php echo $translation['code'] ?>')">
+                            <?php echo $translation['code'] ?>
+                        </button>
+                    </div>
+                    <?php foreach ($languages as $ln) { ?>
+                        <div class="col-sm">
+                            <input type="text" class="form-control w-100" name="<?php echo $ln ?>" value="<?= $translation[$ln] ?? '' ?>">
+                        </div>
+                    <?php } ?>
+                    <div class="col-sm">
+                        <button type="submit" class="btn btn-success"> Save </button>
+                        <button class="btn btn-warning ml-1" type="button" @click='onTranslationDelete("<?php echo $translation["code"] ?>")'> Delete </button>
+                    </div>
+                </div>
+            </form>
+        <?php } ?>
     </div>
 
-    <?php foreach ($translations as $translation) { ?>
-        <form @submit.prevent='onTranslationEditFormSubmit($event)'>
-            <input type="hidden" name="code" value="<?php echo $translation['code'] ?>">
-            <div class="row mt-2">
-                <div class="col-sm ">
-                    <button type="button" class="text-button w-100" @click="onClickCode('<?php echo $translation['code'] ?>')">
-                        <?php echo $translation['code'] ?>
-                    </button>
-                </div>
-                <?php foreach ($languages as $ln) { ?>
-                    <div class="col-sm">
-                        <input type="text" class="form-control w-100" name="<?php echo $ln ?>" value="<?=$translation[$ln] ?? ''?>">
-                    </div>
-                <?php } ?>
-                <div class="col-sm">
-                    <button type="submit" class="btn btn-success"> Save </button>
-                    <button class="btn btn-warning ml-1" type="button" @click='onTranslationDelete("<?php echo $translation["code"] ?>")'> Delete </button>
-                </div>
-            </div>
-        </form>
-    <?php } ?>
-</div>
+<?php } ?>
 
 <script>
     const languages = <?php echo json_encode($languages); ?>;
@@ -135,7 +139,7 @@ $translations = $trans['translations'];
                     'code': translation.code,
                 };
                 languages.forEach(function(ln) {
-                    req[ ln ] = translation[ln];
+                    req[ln] = translation[ln];
                 });
                 request('translation.edit', req, function(data) {
                     refresh();

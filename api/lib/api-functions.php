@@ -1826,7 +1826,7 @@ function api_get_translations($in) {
         }
     }
 
-    return ['languages' => get_option(LANGUAGES), 'translations' => $rets];
+    return ['languages' => get_option(LANGUAGES, []), 'translations' => $rets];
 }
 
 function get_translation_by_code($code)

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file functions.php
  */
@@ -8,7 +9,7 @@
  * Directory(Folder) Constants.
  */
 //define( 'THEME_DIR', __DIR__ );   /// WINDOWS \wp-content\themes\withcenter-backend-v3
-define( 'THEME_DIR', get_template_directory() );  /// /wp-content/themes/withcenter-backend-v3
+define('THEME_DIR', get_template_directory());  /// /wp-content/themes/withcenter-backend-v3
 
 /**
  * THEME_FOLDER_NAME is the folder name of the theme.
@@ -16,22 +17,22 @@ define( 'THEME_DIR', get_template_directory() );  /// /wp-content/themes/withcen
  * @example 'withcenter-backend-v3', 'wigo'
  */
 $_paths = explode('/', THEME_DIR);
-define( 'THEME_FOLDER_NAME', array_pop( $_paths ));
-define( 'API_DIR', THEME_DIR . '/api' );
+define('THEME_FOLDER_NAME', array_pop($_paths));
+define('API_DIR', THEME_DIR . '/api');
 
 /**
  * Load API functions
  */
-require_once(API_DIR .'/lib/api-functions.php');
+require_once(API_DIR . '/lib/api-functions.php');
 
 
 /**
  * Other constants
  */
-define( 'REQUESTED_HOME_URL', get_requested_host_url());
-define( 'THEME_URL', REQUESTED_HOME_URL . '/wp-content/themes/' . THEME_FOLDER_NAME);
+define('REQUESTED_HOME_URL', get_requested_host_url());
+define('THEME_URL', REQUESTED_HOME_URL . '/wp-content/themes/' . THEME_FOLDER_NAME);
 
-define('API_CALL', in('route') != null );
+define('API_CALL', in('route') != null);
 
 require_once(THEME_DIR . '/kill-wrong-routes.php');
 require_once(THEME_DIR . '/pre-flight.php');
@@ -39,15 +40,15 @@ require_once(THEME_DIR . '/pre-flight.php');
 /**
  * Load definitions and configurations
  */
-require_once(THEME_DIR .'/defines.php');
-require_once(THEME_DIR .'/config.php');
+require_once(THEME_DIR . '/defines.php');
+require_once(THEME_DIR . '/config.php');
 
 
 /**
  * Login with session_id.
  *
  */
-if ( isset($_COOKIE['session_id']) && $_COOKIE['session_id'] ) {
+if (isset($_COOKIE['session_id']) && $_COOKIE['session_id']) {
     authenticate($_COOKIE['session_id']);
 }
 
@@ -59,11 +60,10 @@ if ( isset($_COOKIE['session_id']) && $_COOKIE['session_id'] ) {
  *
  * Must be called after config.php
  */
-if ( isCli() ) {
-    define( 'API_URL', API_URL_ON_CLI);
-}
-else {
-    define( 'API_URL', THEME_URL . '/api/index.php');
+if (isCli()) {
+    define('API_URL', API_URL_ON_CLI);
+} else {
+    define('API_URL', THEME_URL . '/api/index.php');
 }
 
 /**
@@ -72,7 +72,7 @@ else {
  * Must be called after configuration.
  */
 define('DOMAIN_THEME', getDomainTheme());
-define('DOMAIN_THEME_URL', THEME_URL . '/themes/' . DOMAIN_THEME );
+define('DOMAIN_THEME_URL', THEME_URL . '/themes/' . DOMAIN_THEME);
 
 
 /**
@@ -95,24 +95,27 @@ require_once(API_DIR . '/lib/firebase.php');
  * Filter 404 response code to 200.
  * @return bool
  */
-function wpd_do_stuff_on_404(){
-    if( is_404() ){
+function wpd_do_stuff_on_404()
+{
+    if (is_404()) {
         global $wp_query;
-        status_header( 200 );
-        $wp_query->is_404=false;
+        status_header(200);
+        $wp_query->is_404 = false;
         return false;
     }
 }
-add_action( 'template_redirect', 'wpd_do_stuff_on_404' );
+add_action('template_redirect', 'wpd_do_stuff_on_404');
 
-function remove_redirect_guess_404_permalink( $redirect_url ) {
-    if ( is_404() )
+function remove_redirect_guess_404_permalink($redirect_url)
+{
+    if (is_404())
         return false;
     return $redirect_url;
 }
-add_filter( 'redirect_canonical', 'remove_redirect_guess_404_permalink' );
+add_filter('redirect_canonical', 'remove_redirect_guess_404_permalink');
 
-function live_reload_js() {
+function live_reload_js()
+{
     /// TODO print this only for localhost(local dev)
     echo <<<EOH
    <script src="https://local.sonub.com:12345/socket.io/socket.io.js"></script>
@@ -128,9 +131,10 @@ EOH;
 }
 
 
-function load_theme_js($script) {
+function load_theme_js($script)
+{
     $path = str_replace(".php", ".js", $script);
-    if ( file_exists($path) ) {
+    if (file_exists($path)) {
         $path = str_replace(THEME_DIR, THEME_URL, $path);
         echo <<<EOJ
 <script src="$path"></script>
@@ -138,9 +142,10 @@ function load_theme_js($script) {
 EOJ;
     }
 }
-function load_theme_css($script) {
+function load_theme_css($script)
+{
     $path = str_replace(".php", ".css", $script);
-    if ( file_exists($path) ) {
+    if (file_exists($path)) {
         $path = str_replace(THEME_DIR, THEME_URL, $path);
         echo <<<EOJ
 <link rel="stylesheet" href="$path">
@@ -157,16 +162,17 @@ EOJ;
  * @return string
  *  - an example of return string: /Users/thruthesky/www/wordpress/wp-content/themes/sonub/themes/forum/view.php
  */
-function get_theme_page_path($theme, $page) {
-	$script = THEME_DIR . "/themes/$theme/$page.php";
+function get_theme_page_path($theme, $page)
+{
+    $script = THEME_DIR . "/themes/$theme/$page.php";
 
-	if ( !file_exists($script) ) {
-		$script = THEME_DIR . "/themes/default/$page.php";
-	}
-	if ( !file_exists($script) ) {
-		$script = get_error_script('File not found', "file: $script<br>" . 'The file you are referring does not exists on server');
-	}
-	return $script;
+    if (!file_exists($script)) {
+        $script = THEME_DIR . "/themes/default/$page.php";
+    }
+    if (!file_exists($script)) {
+        $script = get_error_script('File not found', "file: $script<br>" . 'The file you are referring does not exists on server');
+    }
+    return $script;
 }
 
 /**
@@ -180,12 +186,13 @@ function get_theme_page_path($theme, $page) {
  *  - 'forum/view'
  *  - 'forum/list'
  */
-function get_theme_page_file_name() {
-    if ( isset($_REQUEST['page']) ) {
+function get_theme_page_file_name()
+{
+    if (isset($_REQUEST['page'])) {
         $page = $_REQUEST['page'];
     } else {
         $uri = $_SERVER['REQUEST_URI'];
-        if ( empty($uri) || $uri == '/' ) $page = 'home';
+        if (empty($uri) || $uri == '/') $page = 'home';
         else $page = 'forum/view';
     }
     return $page;
@@ -197,7 +204,8 @@ function get_theme_page_file_name() {
  *
  * @return mixed|string|string[]
  */
-function get_theme_page_class_name() {
+function get_theme_page_class_name()
+{
     return str_replace('/', '-', get_theme_page_file_name());
 }
 
@@ -206,13 +214,16 @@ function get_theme_page_class_name() {
  * @return string
  *  - see get_theme_page_path()
  */
-function get_theme_page_script_path() {
+function get_theme_page_script_path()
+{
     return get_theme_page_path(DOMAIN_THEME, get_theme_page_file_name());
 }
-function get_theme_header_path() {
+function get_theme_header_path()
+{
     return get_theme_page_path(DOMAIN_THEME, 'header');
 }
-function get_theme_footer_path() {
+function get_theme_footer_path()
+{
     return get_theme_page_path(DOMAIN_THEME, 'footer');
 }
 
@@ -225,19 +236,22 @@ function get_theme_footer_path() {
  */
 global $_error_title;
 global $_error_description;
-function get_error_script($title, $description) {
-	global $_error_title, $_error_description;
-	$_error_title = $title;
-	$_error_description = $description;
-	return THEME_DIR . "/themes/default/error.php";
+function get_error_script($title, $description)
+{
+    global $_error_title, $_error_description;
+    $_error_title = $title;
+    $_error_description = $description;
+    return THEME_DIR . "/themes/default/error.php";
 }
-function get_error_title() {
-	global $_error_title;
-	return $_error_title;
+function get_error_title()
+{
+    global $_error_title;
+    return $_error_title;
 }
-function get_error_description() {
-	global $_error_description;
-	return $_error_description;
+function get_error_description()
+{
+    global $_error_description;
+    return $_error_description;
 }
 
 
@@ -248,26 +262,29 @@ function get_error_description() {
  * 추출해서 따로 모은 다음, 필요한 곳에 출력한다.
  */
 global $_extracted_styles_from_script;
-function insert_extracted_styles_from_script() {
-	global $_extracted_styles_from_script;
-	echo $_extracted_styles_from_script;
+function insert_extracted_styles_from_script()
+{
+    global $_extracted_styles_from_script;
+    echo $_extracted_styles_from_script;
 }
-function begin_capture_script_style() {
-	ob_start();
+function begin_capture_script_style()
+{
+    ob_start();
 }
-function end_capture_script_style() {
-	global $_extracted_styles_from_script;
-	$_extracted_styles_from_script = null;
-	$content = ob_get_clean();
-	$re = preg_match_all("/\<style\>[^(\<)]*\<\/style\>/s", $content, $m);
-	if ( $re ) {
-		$styles = $m[0];
-		foreach($styles as $style) {
-			$content = str_replace($style, '', $content);
-		}
-		$_extracted_styles_from_script = implode("\n", $styles);
-	}
-	echo $content;
+function end_capture_script_style()
+{
+    global $_extracted_styles_from_script;
+    $_extracted_styles_from_script = null;
+    $content = ob_get_clean();
+    $re = preg_match_all("/\<style\>[^(\<)]*\<\/style\>/s", $content, $m);
+    if ($re) {
+        $styles = $m[0];
+        foreach ($styles as $style) {
+            $content = str_replace($style, '', $content);
+        }
+        $_extracted_styles_from_script = implode("\n", $styles);
+    }
+    echo $content;
 }
 
 
@@ -276,7 +293,8 @@ function end_capture_script_style() {
  *
  *
  */
-function build_version() {
+function build_version()
+{
     if (is_localhost()) return time();
     else return api_version();
 }
@@ -288,7 +306,8 @@ function build_version() {
  *
  * @todo always minify the javascript code.
  */
-function insert_initial_javascript() {
+function insert_initial_javascript()
+{
     $js = <<<EOJ
 <script>
 const _components = {};
@@ -305,7 +324,7 @@ function later(fn) {
 EOJ;
 
     echo $js;
-//    echo '<script>const _components={};function addComponent(n,o){_components[n]=o}function getComponents(){return _components}</script>';
+    //    echo '<script>const _components={};function addComponent(n,o){_components[n]=o}function getComponents(){return _components}</script>';
 
 }
 
@@ -313,7 +332,8 @@ EOJ;
 /**
  * Returns true if the theme page is in forum related pages like 'forum/list', 'forum/view', or any other pages in forum.
  */
-function is_forum_page() {
+function is_forum_page()
+{
     $page = get_theme_page_file_name();
     return strpos($page, 'forum') !== false;
 }
@@ -338,7 +358,8 @@ function set_widget_options( $options ) {
     $__widget_options = $options;
 }
 
-function get_widget_options() {
+function get_widget_options()
+{
     global $__widget_options;
     return $__widget_options;
 }
@@ -366,13 +387,15 @@ function widget( string $name, array $options = [] ) {
  * Returns cookie domain
  * @return mixed|string|null
  */
-function get_cookie_domain() {
-    if ( defined('BROWSER_COOKIE_DOMAIN') && BROWSER_COOKIE_DOMAIN ) return BROWSER_COOKIE_DOMAIN;
+function get_cookie_domain()
+{
+    if (defined('BROWSER_COOKIE_DOMAIN') && BROWSER_COOKIE_DOMAIN) return BROWSER_COOKIE_DOMAIN;
     else return get_domain();
 }
 
 
-function jsAlert($msg) {
+function jsAlert($msg)
+{
     echo "
     <script>
         alert('$msg');
@@ -381,6 +404,26 @@ function jsAlert($msg) {
     return 0;
 }
 
+
+
+function get_files($in)
+{
+    $q = [
+        'numberposts' => -1,
+        'post_type' => 'attachment',
+    ];
+
+    if (isset($in['category_name'])) {
+        $q['category_name'] = $in['category_name'];
+    }
+
+    $posts = get_posts($q);
+    $rets = [];
+    foreach ($posts as $p) {
+        $rets[] = post_response($p);
+    }
+    return $rets;
+}
 
 /**
  * Returns true if the user is in admin page.

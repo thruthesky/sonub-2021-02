@@ -118,4 +118,8 @@ class FileRoute {
         else return ERROR_DELETE_FILE;
     }
 
+
+    public function list($in) {
+        return get_files($in);
+    }
 }
