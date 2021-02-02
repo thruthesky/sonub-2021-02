@@ -226,9 +226,9 @@ const AttributeBinding = {
      */
     setUser(profile) {
       console.log(profile);
-      Cookies.set('session_id', profile.session_id, {domain: config.cookie_domain});
-      Cookies.set('nickname', profile.nickname, {domain: config.cookie_domain});
-      Cookies.set('profile_photo_url', profile.profile_photo_url, {domain: config.cookie_domain});
+      Cookies.set('session_id', profile.session_id, {domain: config.cookie_domain, expires: 365});
+      Cookies.set('nickname', profile.nickname, {domain: config.cookie_domain, expires: 365});
+      Cookies.set('profile_photo_url', profile.profile_photo_url, {domain: config.cookie_domain, expires: 365});
 
       this.user = {
         'session_id': profile.session_id,
