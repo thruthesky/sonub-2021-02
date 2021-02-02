@@ -449,10 +449,32 @@ function profile_update($in) {
 }
 
 function admin_user_profile_update($in) {
-    session_login($in['user_session_id']);
-    unset($in['user_session_id']);
-    user_update_meta(wp_get_current_user()->ID, $in);
-    return profile($in['user_session_id']);
+    $user = get_user_by('id', $in['ID'] );
+    if (!$user ) return ERROR_USER_NOT_FOUND;
+
+    /// update for wp_user info
+    $up = [];
+    if (isset($in['user_email']) && !empty($in['user_email'])) {
+        $user_by_email = get_user_by('email', $in['user_email'] );
+        if($user_by_email && $user->ID !== $user_by_email->ID) return ERROR_EMAIL_EXISTS;
+        $up['user_email'] = $in['user_email'];
+    }
+    if (isset($in['user_nicename']) && !empty($in['user_nicename'])) $up['user_nicename'] = $in['user_nicename'];
+    if (isset($in['user_url']) && !empty($in['user_url'])) $up['user_url'] = $in['user_url'];
+    if (isset($in['user_activation_key']) && !empty($in['user_activation_key'])) $up['user_activation_key'] = $in['user_activation_key'];
+    if (isset($in['user_status']) && !empty($in['user_status'])) $up['user_status'] = $in['user_status'];
+    if (isset($in['display_name']) && !empty($in['display_name'])) $up['display_name'] = $in['display_name'];
+
+    if (isset($in['user_pass']) && !empty($in['user_pass'])) {
+        $up['user_pass'] = wp_hash_password($in['user_pass']);
+    }
+    global $wpdb;
+    if (!empty($up)) {
+        $wpdb->update('wp_users', $up, ['ID'=>$user->ID]);
+    }
+
+    user_update_meta($user->ID, $in);
+    return profile($user->ID);
 }
 
 /**
