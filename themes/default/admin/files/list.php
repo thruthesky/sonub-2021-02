@@ -1,4 +1,6 @@
 <?php
+$posts = get_files([]);
+
 ?>
 
 
@@ -13,11 +15,11 @@
         ?>
             <div class="col-3 position-relative border">
                 <i class="fa fa-trash red fs-sm me-3 pointer" @click="deleteFile(<?= $post['ID'] ?>)"></i>
-                <i class="fa fa-external-link-alt green fs-sm"></i>
+                    <i class="fa fa-external-link-alt green fs-sm"></i>
                 </a>
                 <img class="w-100" src="<?= REQUESTED_HOME_URL . '/wp-content/uploads/' . $post['_wp_attached_file'] ?>" />
             </div>
-        <?php } ?>
+        <?php } ?>  
     </div>
 </div>
 
