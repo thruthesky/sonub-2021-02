@@ -34,7 +34,7 @@ $offset = ($page_no-1) * $no_of_posts_per_page;
 $total_no_of_pages = ceil($options['total_no_of_posts'] / $no_of_posts_per_page);
 $second_last = $total_no_of_pages - 1;
 $previous_page = $page_no - $blocks;
-
+$counter_begin = 0;
 
 
 function _url($no) {
