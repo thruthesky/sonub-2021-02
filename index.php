@@ -38,7 +38,9 @@ $script = get_theme_page_script_path();
 
         </div>
         <div>
+            <? if ( admin() ) { ?>
             <a href="/?page=admin/index" v-if="isAdmin()">Admin</a>
+            <? } ?>
             <a class="ms-2" href="/?page=user/settings" v-if="loggedIn()"><i class="fa fa-cog"></i></a>
             <a href="/?page=user/profile"><img class="size-40 circle" :src="user.profile_photo_url" v-if="user && user.profile_photo_url !== 'undefined'"></a>
         </div>
