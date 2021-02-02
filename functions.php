@@ -382,11 +382,24 @@ function jsAlert($msg) {
 }
 
 
+/**
+ * Returns true if the user is in admin page.
+ * @return bool
+ */
 function is_admin_page() {
     return strpos(in('page'), 'admin') === 0;
 }
 
 
+/**
+ * Display widget selection box on admin site(form)
+ *
+ * - When a widget is selected, vue.js method will be called.
+ *
+ * @param $cat_ID
+ * @param $folder_name
+ * @param $config_name
+ */
 function select_list_widgets($cat_ID, $folder_name, $config_name) {
 
     $default_selected = category_meta($cat_ID, $config_name, $folder_name . '-default');
