@@ -22,7 +22,7 @@ d($user);
 <div id="register-page" class="container py-3">
             <h1>User Update</h1>
             <form class="register" @submit.prevent="onUserEdiFormSubmit($event)">
-                <input type="hidden" name="session_id" value="<?=$user['session_id']??''?>">
+                <input type="hidden" name="ID" value="<?=$user['ID']??''?>">
                 <div class="mb-3">
                     <label  class="form-label">Email address</label>
                     <input type="email" class="form-control" aria-describedby="emailHelp" name="user_email" value="<?=$user['user_email']??''?>">
