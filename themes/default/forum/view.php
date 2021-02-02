@@ -46,7 +46,7 @@ $comments = $post['comments'];
 
 
 
-            <button class="btn btn-danger" @click="onPostDelete('<?=$post_ID ?>')" v-if="is_mine(<?=$post['post_author']?>)">
+            <button class="btn btn-danger" @click="onPostDelete('<?=$post_ID ?>', '<?=$post['category']?>')" v-if="is_mine(<?=$post['post_author']?>)">
                 Delete
             </button>
 
