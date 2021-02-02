@@ -26,8 +26,7 @@ $cat = get_category_by_slug(in('slug'));
             <td>
                 <input 
                     name="cat_name"
-                    value="<?= $cat->cat_name ?>"
-                    @keyup="debounce(updateCategorySettings, 1000, 'cat_name')">
+                    value="<?= $cat->cat_name ?>">
             </td>
         </tr>
 
@@ -36,8 +35,7 @@ $cat = get_category_by_slug(in('slug'));
             <td>
                 <input
                         name="category_description"
-                        value="<?= $cat->category_description ?>"
-                        @keyup="debounce(updateCategorySettings, 1000, 'category_description')">
+                        value="<?= $cat->category_description ?>">
             </td>
         </tr>
 
@@ -70,7 +68,6 @@ $cat = get_category_by_slug(in('slug'));
                 <input 
                     type="checkbox" 
                     name="list_on_view"
-                    @change="debounce(updateCategorySettings, 500, 'list_on_view')"
                     <?php if (category_meta($cat->cat_ID, 'list_on_view', 'N') == 'Y' ) echo 'checked' ?>>
             </td>
         </tr>
@@ -80,8 +77,7 @@ $cat = get_category_by_slug(in('slug'));
                 <input
                         name="posts_per_page"
                     type="text"
-                    value="<?=category_meta($cat->cat_ID, 'posts_per_page', POSTS_PER_PAGE)?>"
-                    @keyup="debounce(updateCategorySettings, 500, 'posts_per_page')">
+                    value="<?=category_meta($cat->cat_ID, 'posts_per_page', POSTS_PER_PAGE)?>">
             </td>
         </tr>
         <tr>
@@ -90,12 +86,17 @@ $cat = get_category_by_slug(in('slug'));
                 <input
                         name="no_of_pages_on_nav"
                     type="text"
-                    value="<?=category_meta($cat->cat_ID, 'no_of_pages_on_nav', NO_OF_PAGES_ON_NAV)?>"
-                    @keyup="debounce(updateCategorySettings, 500, 'no_of_pages_on_nav')">
+                    value="<?=category_meta($cat->cat_ID, 'no_of_pages_on_nav', NO_OF_PAGES_ON_NAV)?>">
             </td>
         </tr>
 
 
+        <tr>
+            <td></td>
+            <td>
+                <button type="submit">Submit</button>
+            </td>
+        </tr>
     </tbody>
 </table>
 
