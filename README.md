@@ -2,6 +2,8 @@
 
 * Sonub(Sonub Network Hub) is an open source, complete CMS with modern functionalities like realtime update, push notification, and more.
 * It is build on Apache(or Nginx) + MySQL(or MariaDB) + PHP stack based Wordpress. It works as a theme but has very much fixed.
+* The reason why we have chosen as its backend frame is because 1) It's easy. Team members can easily learn it. 2) It's almost a standard CMS and widely used all over the world.
+
 
 
 
@@ -208,14 +210,27 @@ https://xxx.domain.com/post_ID/post-title
 where the `post_ID` is the post ID and `post-title` is the post title(part of guid.).
 
 
+# Web(Theme) Development
+
+* In the section, only web development is discussed.
 
 
-# API
+## Login
+
+* Offical support login methods are
+  * Wordpress email & password login.
+  * Pass login by https://developers.passlogin.com/ which does real user & adult authentication,
+  * Google Firebase phone number login
+  * Kakaotalk login
+  * Naver login
+
+
+
+# API & Protocols
 
 * `sonub/api` folder has all the api codes and `sonub/api/index.php` serves as the endpoint.
 * One thing to note that, `sonub` theme loads `api/lib/*.php` files and use a lot.
 
-## API methods & Protocols
 
 
 

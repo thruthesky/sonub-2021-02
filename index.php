@@ -4,7 +4,10 @@
  */
 
 
-$script = get_theme_page_script_path();
+
+$theme_page = get_theme_page_script_path();
+$theme_header = get_theme_header_path();
+$theme_footer = get_theme_footer_path();
 ?>
 <!doctype html>
 <html>
@@ -13,49 +16,24 @@ $script = get_theme_page_script_path();
     <link href="<?=THEME_URL?>/css/bootstrap-5.0.0-b1-min.css" rel="stylesheet">
     <link href="<?=THEME_URL?>/css/fontawesome-free-5.15.2-web/css/all.css" rel="stylesheet">
     <link rel="stylesheet" href="<?=THEME_URL?>/css/index.css?v=<?=build_version()?>">
-    <?php load_theme_css($script); ?>
+    <?php load_theme_css($theme_page); ?>
     <?php live_reload_js() ?>
     <?php insert_initial_javascript() ?>
 </head>
 <body class="<?=get_theme_page_class_name()?>">
 <section id="app" class="container">
-    <h1>Sonub</h1>
-    <div class="d-flex justify-content-between">
-        <div>
-
-            <a href="/">Home</a>
-            <span v-if="notLoggedIn()">
-            <a href="/?page=user/register">Register page</a>
-            <a href="/?page=user/login">Login page</a>
-            </span>
-                <span v-if="loggedIn()">
-            <a href="/?page=user/profile">Profile page</a>
-            <a href="/?page=user/logout">Logout</a>
-            </span>
-            <a href="/?page=forum/list&category=reminder">Reminder</a>
-            <a href="/?page=forum/list&category=qna">QnA</a>
-            <a href="/?page=forum/list&category=discussion">Discussion</a>
-
-        </div>
-        <div>
-            <a href="/?page=admin/index" v-if="isAdmin()">Admin</a>
-            <a class="ms-2" href="/?page=user/settings" v-if="loggedIn()"><i class="fa fa-cog"></i></a>
-            <a href="/?page=user/profile"><img class="size-40 circle" :src="user.profile_photo_url" v-if="user && user.profile_photo_url !== 'undefined'"></a>
-        </div>
-
-    </div>
-
     <section id="router">
         <?php
         begin_capture_script_style();
-        include $script;
+        include $theme_header;
+        include $theme_page;
+        include $theme_footer;
         end_capture_script_style();
         ?>
     </section>
 </section>
 
 <? insert_extracted_styles_from_script() ?>
-
 
 <script>
 
@@ -87,7 +65,7 @@ $script = get_theme_page_script_path();
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-messaging.js"></script>
 <script src="<?=THEME_URL?>/js/firebase.js"></script>
-<?php load_theme_js($script); ?>
+<?php load_theme_js($theme_page); ?>
 <script src="<?php echo THEME_URL . '/js/helpers.js'?>?v=<?=build_version()?>"></script>
 <? if ( is_forum_page() ) { ?><script src="<?php echo THEME_URL . '/js/app.forum.js'?>?v=<?=build_version()?>"></script><? } ?>
 <script src="<?php echo THEME_URL . '/js/app.js'?>?v=<?=build_version()?>"></script>
