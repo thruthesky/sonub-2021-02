@@ -207,7 +207,13 @@ function get_theme_page_class_name() {
  *  - see get_theme_page_path()
  */
 function get_theme_page_script_path() {
-	return get_theme_page_path(DOMAIN_THEME, get_theme_page_file_name());
+    return get_theme_page_path(DOMAIN_THEME, get_theme_page_file_name());
+}
+function get_theme_header_path() {
+    return get_theme_page_path(DOMAIN_THEME, 'header');
+}
+function get_theme_footer_path() {
+    return get_theme_page_path(DOMAIN_THEME, 'footer');
 }
 
 /**
@@ -395,4 +401,10 @@ function jsAlert($msg) {
         alert('$msg');
     </script>
     ";
+    return 0;
+}
+
+
+function is_admin_page() {
+    return strpos(in('page'), 'admin') === 0;
 }
