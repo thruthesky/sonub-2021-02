@@ -7,6 +7,8 @@
 /// The code of this script detects if wrong routes had accessed.
 /// And if so, it kills.
 ///
+/// 때로는, 알 수 없는 이상한 접속이 있다. 예를 들면, 해킹을 시도하는 접속이나, Javascript 등에서 잘못된 접속이나 이미지 경로 등이 잘못된 경우 등.
+/// 이러한 알 수 없는 접속을 이 위치에서 종료 시킨다.
 ///
 
 
