@@ -34,10 +34,21 @@ EOH;
 
 }
 
-include widget('pagination', [
-'total_rows' => count_users()['total_users'],
-'no_of_records_per_page' => $no_of_records_per_page,
-'url' => '/?page=admin/user/list&page_no={page_no}',
-'page_no' => $page_no,
+//include_once widget('pagination', [
+//'total_rows' => count_users()['total_users'],
+//'no_of_records_per_page' => $no_of_records_per_page,
+//'url' => '/?page=admin/user/list&page_no={page_no}',
+//'page_no' => $page_no,
+//]);
+
+include_once widget('forum-list-pagination-default', [
+    'page_no' => $page_no,
+//    'blocks' => 5,
+    'arrow' => true,
+    'total_no_of_posts' => count_users()['total_users'],
+    'no_of_posts_per_page' => $no_of_records_per_page,
+    'url' => '/?page=admin/user/list&page_no={page_no}'
 ]);
+
+
 ?>
