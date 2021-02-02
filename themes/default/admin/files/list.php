@@ -1,40 +1,40 @@
 <?php
 
-$category = in('category', 'qna');
-$q = ['category_name' => $category, 'post_type' => 'post'];
+// $category = in('category', '');
+// $q = ['category_name' => $category];
 
-print_r($q);
-$posts = forum_search($q);
+// print_r($q);
+$posts = get_files([]);
 
-$categories = get_categories();
+// $categories = get_categories();
 
 // d($categories);
+// d($posts);
 
 ?>
 
 
-<h1>Files: <?= $category ?></h1>
+<h1>Uploaded Files:</h1>
 
 
 <hr>
-<div>
+<!-- <div>
     <?php foreach ($categories as $category) { ?>
         <a href="/?page=admin/files/list&category=<?= $category->slug ?>"><?= $category->name ?></a> |
     <?php } ?>
-</div>
+</div> -->
 <div class="container mt-3">
     <div class="row">
-        <?php foreach ($posts as $post) { ?>
-            <?php foreach ($post['files'] as $file) { ?>
-                <div class="col-3 position-relative border">
-                    <i class="fa fa-trash red fs-sm me-3 pointer" @click="deleteFile(<?= $file['ID'] ?>)"></i>
-                    <a href="<?= $post['url'] ?>">
-                        <i class="fa fa-external-link-alt green fs-sm"></i>
-                    </a>
-                    <img class="w-100" src="<?= $file['url'] ?>" />
-                </div>
-            <?php } ?>
-        <?php } ?>
+        <?php foreach ($posts as $post) {
+            // print_r($post);
+        ?>
+            <div class="col-3 position-relative border">
+                <i class="fa fa-trash red fs-sm me-3 pointer" @click="deleteFile(<?= $post['ID'] ?>)"></i>
+                    <i class="fa fa-external-link-alt green fs-sm"></i>
+                </a>
+                <img class="w-100" src="<?= REQUESTED_HOME_URL . '/wp-content/uploads/' . $post['_wp_attached_file'] ?>" />
+            </div>
+        <?php } ?>  
     </div>
 </div>
 

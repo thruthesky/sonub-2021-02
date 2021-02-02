@@ -396,3 +396,22 @@ function jsAlert($msg) {
     </script>
     ";
 }
+
+
+function get_files($in) {
+    $q = [
+        'numberposts' => -1,
+        'post_type' => 'attachment',
+    ];
+
+    if (isset($in['category_name'])) {
+        $q['category_name'] = $in['category_name'];
+    }
+
+    $posts = get_posts($q);
+    $rets = [];
+    foreach ($posts as $p) {
+        $rets[] = post_response($p);
+    }
+    return $rets;
+}
