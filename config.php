@@ -3,51 +3,7 @@
  * @file config.php
  */
 
-/**
- * Below are not recommended to be edited.
- */
-/**
- * @todo Definition name change to PASS_LOGIN_MOBILE_PREFIX
- */
-define('MOBILE_PREFIX', 'm');
 
-
-if (WP_DEBUG) {
-    define('REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST', true);
-}
-
-
-
-
-/**
- * Play Store App Link Service Account Key, for in-app-purchase
- * @TODO This must go to nalia.class.php
- */
-define("SERVICE_ACCOUNT_LINK_TO_APP_JSON_FILE_PATH", API_DIR . "/keys/android-pub-key-api-6678595955257701195-92794-iam-gserviceaccount.com.json");
-
-
-/**
- * For Jewelry System
- * @TODO This must go to ext/nalia.class.php
- */
-define('MIN_BONUS_DIAMOND', 0);
-define('MAX_BONUS_DIAMOND', 0);
-define('MIN_BONUS_GOLD', 2);
-define('MAX_BONUS_GOLD', 10);
-define('MIN_BONUS_SILVER', 10);
-define('MAX_BONUS_SILVER', 50);
-
-define('GOLDBOX_RATE', [
-    'min_diamond' => 0, 'max_diamond' => 0,
-    'min_gold' => 10, 'max_gold' => 50,
-    'min_silver' => 50, 'max_silver' => 100
-]);
-
-define('DIAMONDBOX_RATE', [
-    'min_diamond' => 1, 'max_diamond' => 20,
-    'min_gold' => 50, 'max_gold' => 100,
-    'min_silver' => 100, 'max_silver' => 200
-]);
 
 
 /**
@@ -75,16 +31,6 @@ $domain_themes = [
 
 define('API_URL_ON_CLI', 'https://local.sonub.com/wp-content/themes/sonub/api/index.php');
 
-
-
-/**
- * Public tables can be directly SQL-queried.
- */
-define('PUBLIC_TABLES', [
-    'bio',
-]);
-
-
 /**
  * If this is set to true, the user who registers will subscribe for 'new comments' under his post or comment.
  * If this is set to false, the registering user will not subscribe to 'new comments'.
@@ -92,7 +38,13 @@ define('PUBLIC_TABLES', [
  */
 define('SUBSCRIBE_NEW_COMMENT_ON_REGISTRATION', true);
 
-define('POSTS_PER_PAGE', 3);
+/**
+ * POSTS_PER_PAGE is to display how many posts for the post list page when the category has no posts_per_page settings.
+ */
+define('POSTS_PER_PAGE', 30);
+/**
+ * NO_OF_PAGES_ON_NAV is to display how many pages on navigation bar when it is not set.
+ */
 define('NO_OF_PAGES_ON_NAV', 3);
 
 /**
@@ -103,15 +55,21 @@ define('NO_OF_PAGES_ON_NAV', 3);
  *
  * To apply login cookie(and all other cookies) to all sub domains, set the root domain(like `domain.com`) name here
  */
-define('BROWSER_COOKIE_DOMAIN', 'sonub.com');
+if ( !defined('BROWSER_COOKIE_DOMAIN') ) define('BROWSER_COOKIE_DOMAIN', '');
 
 
 /**
  * Pass login
  * @see README
  */
+
+/**
+ * PASS_LOGIN_MOBILE_PREFIX is the prefix that will be added on user register through Pass login.
+ * PASS_LOGIN_SALT is the secret password used with Pass login. It should be a random string between 16 to 32 chars.
+ */
+define('PASS_LOGIN_MOBILE_PREFIX', 'm');
 define('PASS_LOGIN_CLIENT_ID', 'b90hirE4UYwVf2GkHIiK');
 define('PASS_LOGIN_CLIENT_SECRET_KEY', '366c0f3775bfa48f2239226506659f5981afd3eb2b08189f9f9d22cdc4ca63c9');
 define('PASS_LOGIN_CALLBACK_URL', "https://local.sonub.com/wp-content/themes/sonub/pass-login-callback.php");
-define('PASS_LOGIN_SALT', 'S_oO0Oo_S.0.48.PM'); // This is any random (secret) string.
+define('PASS_LOGIN_SALT', 'Random_Salt_oO^.^Oo_S.0.48.PM'); // This is any random (secret) string.
 

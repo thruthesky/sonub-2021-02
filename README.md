@@ -217,12 +217,17 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
 
 ## Login
 
-* Offical support login methods are
+* Offical supported login methods are
   * Wordpress email & password login.
   * Pass login by https://developers.passlogin.com/ which does real user & adult authentication,
   * Google Firebase phone number login
   * Kakaotalk login
   * Naver login
+
+### PASS LOGIN
+
+* First create a project in https://developers.passlogin.com/
+* Then add settings on 
 
 ## Widget System
 

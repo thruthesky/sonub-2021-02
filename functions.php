@@ -41,6 +41,12 @@ require_once(THEME_DIR . '/pre-flight.php');
  * Load definitions and configurations
  */
 require_once(THEME_DIR . '/defines.php');
+
+
+$_path = THEME_DIR . "/configs/".get_domain_name().".config.php";
+if ( file_exists($_path) ) {
+    require_once($_path);
+}
 require_once(THEME_DIR . '/config.php');
 
 
@@ -403,6 +409,16 @@ function jsAlert($msg)
     ";
     return 0;
 }
+function jsGo($url)
+{
+    echo "
+    <script>
+        location.href='$url';
+    </script>
+    ";
+    return 0;
+}
+
 
 
 

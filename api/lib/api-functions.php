@@ -2264,8 +2264,8 @@ function isSubscribedToTopic($topic)
     return my($topic) === "Y";
 }
 
-function pass_login_url() {
-    return "https://id.passlogin.com/oauth2/authorize?client_id=".PASS_LOGIN_CLIENT_ID."&redirect_uri=".urlencode(PASS_LOGIN_CALLBACK_URL)."&response_type=code&state=apple_banana_cherry&prompt=select_account";
+function pass_login_url($state='') {
+    return "https://id.passlogin.com/oauth2/authorize?client_id=".PASS_LOGIN_CLIENT_ID."&redirect_uri=".urlencode(PASS_LOGIN_CALLBACK_URL)."&response_type=code&state=$state&prompt=select_account";
 }
 
 
@@ -2402,16 +2402,18 @@ function pass_login_or_register($user) {
 
     if ( isset($user['ci']) && $user['ci'] ) {
         /// 처음 로그인 또는 자동 로그인이 아닌 경우,
-        $user['user_email'] = MOBILE_PREFIX . "$user[phoneNo]@passlogin.com";
-        $user['user_pass'] = md5(PASS_LOGIN_SALT . $user['phoneNo']);
+        $user['user_email'] = PASS_LOGIN_MOBILE_PREFIX . "$user[phoneNo]@passlogin.com";
+        $user['user_pass'] = md5(PASS_LOGIN_SALT . PASS_LOGIN_CLIENT_ID . $user['phoneNo']);
         $profile = login_or_register($user);
-        return $profile;
     } else {
         /// plid 가 들어 온 경우, meta 에서 ci 를 끄집어 낸다.
         $users = get_users([ 'meta_key' => 'plid', 'meta_value' => $user['plid'] ]);
         $found = $users[0];
         $profile = profile($found->ID);
-        return $profile;
     }
+
+
+
+    return $profile;
 
 }
