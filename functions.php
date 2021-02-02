@@ -41,6 +41,12 @@ require_once(THEME_DIR . '/pre-flight.php');
  * Load definitions and configurations
  */
 require_once(THEME_DIR . '/defines.php');
+
+
+$_path = THEME_DIR . "/configs/".get_domain_name().".config.php";
+if ( file_exists($_path) ) {
+    require_once($_path);
+}
 require_once(THEME_DIR . '/config.php');
 
 
@@ -403,6 +409,17 @@ function jsAlert($msg)
     ";
     return 0;
 }
+function jsGo($url)
+{
+    echo "
+    <script>
+        location.href='$url';
+    </script>
+    ";
+    return 0;
+}
+
+
 
 
 function get_files($in)
@@ -424,12 +441,24 @@ function get_files($in)
     return $rets;
 }
 
-function is_admin_page()
-{
+/**
+ * Returns true if the user is in admin page.
+ * @return bool
+ */
+function is_admin_page() {
     return strpos(in('page'), 'admin') === 0;
 }
 
 
+/**
+ * Display widget selection box on admin site(form)
+ *
+ * - When a widget is selected, vue.js method will be called.
+ *
+ * @param $cat_ID
+ * @param $folder_name
+ * @param $config_name
+ */
 function select_list_widgets($cat_ID, $folder_name, $config_name) {
 
     $default_selected = category_meta($cat_ID, $config_name, $folder_name . '-default');
@@ -455,4 +484,16 @@ function select_list_widgets($cat_ID, $folder_name, $config_name) {
     echo "</select>";
 
 
+}
+
+/**
+ * Set login cookies
+ *
+ * When user login, the session_id must be saved in cookie. And it is shared with Javascript.
+ * @param $profile
+ */
+function set_login_cookies($profile) {
+    setcookie ( 'session_id' , $profile['session_id'] , time() + 365 * 24 * 60 * 60 , '/' , BROWSER_COOKIE_DOMAIN);
+    if ( isset($profile['nickname']) ) setcookie ( 'nickname' , $profile['nickname'] , time() + 365 * 24 * 60 * 60 , '/' , BROWSER_COOKIE_DOMAIN);
+    if ( isset($profile['profile_photo_url']) ) setcookie ( 'profile_photo_url' , $profile['profile_photo_url'] , time() + 365 * 24 * 60 * 60 , '/' , BROWSER_COOKIE_DOMAIN);
 }

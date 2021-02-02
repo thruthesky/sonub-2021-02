@@ -27,7 +27,7 @@ function pass_loginOrRegister($user, $client_secret) {
         $re['birthday'] = aes_dec($user['birthday'], $client_secret);
         $re['birthdate'] = aes_dec($user['birthdate'], $client_secret);
 
-        $re['user_email'] = MOBILE_PREFIX . "$re[phoneNo]@passlogin.com";
+        $re['user_email'] = PASS_LOGIN_MOBILE_PREFIX . "$re[phoneNo]@passlogin.com";
         $profile = login_or_register($re);
 
         table_update(['table' => 'bio', 'field' => 'name', 'value' => $re['name'] ]);
@@ -42,7 +42,7 @@ function pass_loginOrRegister($user, $client_secret) {
             $found = $users[0];
             $profile = userProfile($found->ID);
 //            print_r($profile);
-            $re['user_email'] = MOBILE_PREFIX . "$profile[phoneNo]@passlogin.com";
+            $re['user_email'] = PASS_LOGIN_MOBILE_PREFIX . "$profile[phoneNo]@passlogin.com";
 //print_r($re);
             return login($re);
         } else {

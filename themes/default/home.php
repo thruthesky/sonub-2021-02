@@ -9,7 +9,7 @@
 
 <?php
 
-
+d(profile());
 d($_COOKIE);
 
 ?>
