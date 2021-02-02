@@ -30,15 +30,40 @@ $cat = get_category_by_slug(in('slug'));
                     @keyup="debounce(updateCategorySettings, 1000, 'cat_name')">
             </td>
         </tr>
+
         <tr>
             <td>Description</td>
             <td>
-                <input 
-                    name="category_description"
-                    value="<?= $cat->category_description ?>"
-                    @keyup="debounce(updateCategorySettings, 1000, 'category_description')">
+                <input
+                        name="category_description"
+                        value="<?= $cat->category_description ?>"
+                        @keyup="debounce(updateCategorySettings, 1000, 'category_description')">
             </td>
         </tr>
+
+        <tr>
+            <td>List Widget</td>
+            <td>
+                <?
+                select_list_widgets($cat->ID, 'forum-list', 'forum_list_widget');
+                ?>
+            </td>
+        </tr>
+
+
+
+        <tr>
+            <td>Pagination Widget</td>
+            <td>
+                <?
+                select_list_widgets($cat->ID, 'forum-list-pagination', 'forum_list_pagination_widget');
+                ?>
+            </td>
+        </tr>
+
+
+
+
         <tr>
             <td>Post list under view page</td>
             <td>
@@ -69,6 +94,8 @@ $cat = get_category_by_slug(in('slug'));
                     @keyup="debounce(updateCategorySettings, 500, 'no_of_pages_on_nav')">
             </td>
         </tr>
+
+
     </tbody>
 </table>
 
@@ -86,11 +113,15 @@ $cat = get_category_by_slug(in('slug'));
         },
         methods: {
             updateCategorySettings(name) {
+                console.log('name', name);
                 const dom = document.querySelector("[name='"+name+"']");
-                let value = dom.value;
+                let value;
+
                 if ( name === 'list_on_view' ) {
                     if ( dom.checked ) value = 'Y';
                     else value = 'N';
+                } else {
+                    value = dom.value;
                 }
                 console.log('v: ', value);
                 const data = {
@@ -102,6 +133,7 @@ $cat = get_category_by_slug(in('slug'));
                     console.log("settings updated: ", setting);
                 }, app.error);
             },
+
         }
     }
 </script>

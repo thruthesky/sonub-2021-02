@@ -224,6 +224,25 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
   * Kakaotalk login
   * Naver login
 
+## Widget System
+
+* Admin can change widget on admin page.
+  * For instance, admin can change the forum list page look by changing the widget on forum category.
+* Widget scripts are saved under `widget` folder.
+  * `widget/widget-type-[name]/wigdet-type-[name].php` is the main script of the widget.
+  * `widget/widget-type-[name]/widget-type-[name].ini` is the widget configuration file.
+  * If there no configuration file(`.ini`), then the widget folder name will be used to select the theme on setting.
+* To develop a widget,
+  * Create a folder name under `widgets` folder.
+    * A folder name has two parts.
+      * First, widget type like 'forum-list' or 'pagination'
+      * Second, widget name like 'default', 'simple'.
+      * If folder name is `forum-list-simple`, then the widget type is `forum-list` and the widget name is `simple`.
+  * Create a php file with the same name of folder name, and code what ever you want.
+  * Create a `.ini` configuration file. Creating `.ini` file is an optional. You can put `description` key and it will appear on settings.
+  * Lastly, you need to put it on admin page, so admin can choose which widget to display on the browser.
+    * To see how to code on admin page, see `themes/sonub/themes/default/admin/forum/setting.php`.
+
 
 
 # API & Protocols

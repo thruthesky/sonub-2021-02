@@ -12,6 +12,8 @@
  *   - For example, if url is "?page=post.list&category=qna&page_no={page_no}" then, it will be converted into "?page=post.list&category=qna&page_no=5" where '5' is the page_no.
  */
 
+$options = get_widget_options();
+
 
 $page_no = $options['page_no'] ?? 1;
 $blocks = $options['blocks'] ?? 7;

@@ -320,6 +320,7 @@ function is_forum_page() {
 
 
 
+/// Widget System ------------------------------------------------------------------------------------------------------
 /**
  * Includes a widget script
  *
@@ -330,8 +331,8 @@ function is_forum_page() {
  *
  * @return string
  */
+/// Global widget option variable
 $__widget_options = null;
-
 function set_widget_options( $options ) {
     global $__widget_options;
     $__widget_options = $options;
@@ -339,50 +340,26 @@ function set_widget_options( $options ) {
 
 function get_widget_options() {
     global $__widget_options;
-
     return $__widget_options;
 }
 
 
 /**
  * @param $name
- * @param null $options
+ * @param $options array
  *
  * @return string - PHP script path for widget loading
  *
  * @code
- *  <?php include widget('social-login/icons/index') ?>
- *  <?php include widget('social-login.icons') ?>
- *  <?php include widget('social-login') ?>
+ *   include widget('social-login'); // will load 'widgets/social-login/social-login.php'
  * @endcode
  */
-function widget( $name, $options = null ) {
-
+function widget( string $name, array $options = [] ) {
     set_widget_options( $options );
-
-    $domain = 'default';
-
-    if ( strpos( $name, '/' ) !== false ) {
-        $rel_path = "/widgets/$name.php";
-    } else if ( strpos( $name, '.' ) !== false ) {
-        $arr      = explode( '.', $name );
-        $rel_path = "/widgets/$arr[0]/$arr[1].php";
-    } else {
-        $rel_path = "/widgets/$name/$name.php";
-    }
-    $p = THEME_DIR . "/theme/$domain$rel_path";
-    if ( file_exists( $p ) ) {
-        $widget_path = $p;
-    } else {
-        $widget_path = THEME_DIR . $rel_path;
-    }
-
-
-    global $__included_files;
-    $__included_files[] = $widget_path;
-
-    return $widget_path;
+    return THEME_DIR . "/widgets/$name/$name.php";
 }
+
+/// EO Widget System ---------------------------------------------------------------------------------------------------
 
 
 /**
@@ -407,4 +384,32 @@ function jsAlert($msg) {
 
 function is_admin_page() {
     return strpos(in('page'), 'admin') === 0;
+}
+
+
+function select_list_widgets($cat_ID, $folder_name, $config_name) {
+
+    $default_selected = category_meta($cat_ID, $config_name, $folder_name . '-default');
+
+    echo "<select name='$config_name' @change='updateCategorySettings(\"$config_name\")'>";
+    foreach( glob(THEME_DIR . "/widgets/$folder_name*/*.php") as $file ) {
+        $arr = explode('/', $file);
+        $file_name = array_pop($arr);
+        $widget_name = array_pop($arr);
+        $ini_file = str_replace(".php", ".ini", $file);
+        if ( file_exists($ini_file) ) {
+            $re = parse_ini_file($ini_file);
+            $description = $re['description'];
+        } else {
+            $description = $widget_name;
+        }
+
+        if ( $default_selected == $widget_name ) $selected = "selected";
+        else $selected = "";
+
+        echo "<option value='$widget_name' $selected>$description</option>";
+    }
+    echo "</select>";
+
+
 }
