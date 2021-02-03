@@ -20,7 +20,7 @@ define('SESSION_ID_SALT', "__SID__This_is_secret__<.o*o.>_salt__~,7__");
 /**
  * Firebase Admin Service Account Key, for firebase connection
  */
-define("FIREBASE_ADMIN_SDK_SERVICE_ACCOUNT_KEY_PATH", THEME_DIR . "/keys/firebase-adminsdk.json");
+define("FIREBASE_ADMIN_SDK_SERVICE_ACCOUNT_KEY_PATH", THEME_DIR . "/keys/dalgona-firebase-adminsdk.json");
 define("FIREBASE_DATABASE_URI", "https://nalia-app-default-rtdb.firebaseio.com");
 
 

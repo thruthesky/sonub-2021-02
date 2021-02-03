@@ -7,6 +7,9 @@
 
 require_once('../../../../wp-load.php');
 
+//add_filter('comment_flood_filter', '__return_false');
+//add_filter('duplicate_comment_id', '__return_false');
+//add_filter('allow_empty_comment', '__return_true')
 
 
 debug_log('----- api begin', in());
