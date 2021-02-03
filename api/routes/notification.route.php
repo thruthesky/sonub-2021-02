@@ -24,11 +24,15 @@ class NotificationRoute {
      *
      * $in['tokens'] can be a string of a token or an array of tokens
      *
-     * @return \Kreait\Firebase\Messaging\MulticastSendReport
+     * @return array|string
      * @throws \Kreait\Firebase\Exception\FirebaseException
      * @throws \Kreait\Firebase\Exception\MessagingException
      */
     public function sendMessageToTokens($in) {
+        if ( !isset($in['tokens']) ) return ERROR_EMPTY_TOKENS;
+        if ( !isset($in['title'])) $in['title'] = '';
+        if ( !isset($in['body'])) $in['body'] = '';
+        if ( !isset($in['click_action'])) $in['click_action'] = '/';
         if ( !isset($in['data'])) $in['data'] = [];
         if ( !isset($in['imageUrl'])) $in['imageUrl'] = '';
         return sendMessageToTokens($in['tokens'], $in['title'], $in['body'], $in['click_action'], $in['data'], $in['imageUrl']);
@@ -43,6 +47,9 @@ class NotificationRoute {
      */
     public function sendMessageToTopic($in) {
         if ( !isset($in['topic']) ) return ERROR_EMPTY_TOPIC;
+        if ( !isset($in['title'])) $in['title'] = '';
+        if ( !isset($in['body'])) $in['body'] = '';
+        if ( !isset($in['click_action'])) $in['click_action'] = '/';
         if ( !isset($in['data'])) $in['data'] = [];
         if ( !isset($in['imageUrl'])) $in['imageUrl'] = '';
         return sendMessageToTopic($in['topic'], $in['title'], $in['body'], $in['click_action'], $in['data'], $in['imageUrl']);

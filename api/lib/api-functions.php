@@ -853,12 +853,15 @@ function update_token($in) {
     }
 
 
-    if ( isset($in['topic']) ) {
+    if ( isset($in['topic']) && !empty($in['topic']) ) {
         $topic = $in['topic'];
         $re = subscribeTopic($topic, $token);
-        if ( $re && isset($re['results']) && count($re['results']) && isset($re['results'][0]['error']) ) {
-            return ERROR_TOPIC_SUBSCRIPTION;
-        }
+    } else {
+        $re = subscribeTopic(DEFAULT_TOPIC, $token);
+    }
+
+    if ( $re && isset($re['results']) && count($re['results']) && isset($re['results'][0]['error']) ) {
+        return ERROR_TOPIC_SUBSCRIPTION;
     }
 
     return get_token($token);
@@ -2181,7 +2184,7 @@ function getAncestors( $comment_ID ) {
 
 function getUserTokens($user_ID) {
     global $wpdb;
-    $rows =  $wpdb->get_results("SELECT token FROM " . PUSH_TOKEN_TABLE ." WHERE user_ID=$user_ID", ARRAY_A);
+    $rows =  $wpdb->get_results("SELECT token FROM " . PUSH_TOKENS_TABLE ." WHERE user_ID=$user_ID", ARRAY_A);
     $tokens = [];
     foreach( $rows as $user ) {
         $tokens[] = $user['token'];
