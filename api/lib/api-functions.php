@@ -448,6 +448,19 @@ function profile_update($in) {
     return profile();
 }
 
+
+/**
+ * Update user information.
+ *
+ * @note permission check must be done before this method call.
+ *
+ * @note It can change user's email and password only if they are set. If they are not set, then they are not touched at all.
+ * @note It can also change whatever meta data.
+ * @caution All the meta data will be over written. This means, if a meta value is empty value, then the empty value will be saved.
+ *
+ * @param $in
+ * @return array|string
+ */
 function admin_user_profile_update($in) {
     $user = get_user_by('id', $in['ID'] );
     if (!$user ) return ERROR_USER_NOT_FOUND;
@@ -459,15 +472,18 @@ function admin_user_profile_update($in) {
         if($user_by_email && $user->ID !== $user_by_email->ID) return ERROR_EMAIL_EXISTS;
         $up['user_email'] = $in['user_email'];
     }
-    if (isset($in['user_nicename']) && !empty($in['user_nicename'])) $up['user_nicename'] = $in['user_nicename'];
-    if (isset($in['user_url']) && !empty($in['user_url'])) $up['user_url'] = $in['user_url'];
-    if (isset($in['user_activation_key']) && !empty($in['user_activation_key'])) $up['user_activation_key'] = $in['user_activation_key'];
-    if (isset($in['user_status']) && !empty($in['user_status'])) $up['user_status'] = $in['user_status'];
-    if (isset($in['display_name']) && !empty($in['display_name'])) $up['display_name'] = $in['display_name'];
+
+
+//    if (isset($in['user_nicename']) && !empty($in['user_nicename'])) $up['user_nicename'] = $in['user_nicename'];
+//    if (isset($in['user_url']) && !empty($in['user_url'])) $up['user_url'] = $in['user_url'];
+//    if (isset($in['user_activation_key']) && !empty($in['user_activation_key'])) $up['user_activation_key'] = $in['user_activation_key'];
+//    if (isset($in['user_status']) && !empty($in['user_status'])) $up['user_status'] = $in['user_status'];
+//    if (isset($in['display_name']) && !empty($in['display_name'])) $up['display_name'] = $in['display_name'];
 
     if (isset($in['user_pass']) && !empty($in['user_pass'])) {
         $up['user_pass'] = wp_hash_password($in['user_pass']);
     }
+
     global $wpdb;
     if (!empty($up)) {
         $wpdb->update('wp_users', $up, ['ID'=>$user->ID]);
@@ -2153,7 +2169,7 @@ function getAncestors( $comment_ID ) {
 
 function getUserTokens($user_ID) {
     global $wpdb;
-    $rows =  $wpdb->get_results("SELECT token FROM " . PUSH_TOKEN_TABLE ." WHERE user_ID=$user_ID", ARRAY_A);
+    $rows =  $wpdb->get_results("SELECT token FROM " . PUSH_TOKENS_TABLE ." WHERE user_ID=$user_ID", ARRAY_A);
     $tokens = [];
     foreach( $rows as $user ) {
         $tokens[] = $user['token'];
