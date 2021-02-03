@@ -19,8 +19,6 @@ define('LANGUAGE_TEST_SET', [
     'ko' => ['name' => 'ko name', 'address' => 'ko address', 'input email' => '이름을 입력하세요.', 'gender' => '성별', 'more' => '더보기...'],
 ]);
 
-if ( defined('PHPUNIT_TEST') === false ) define('PHPUNIT_TEST', true);
-
 
 class TranslationTest extends TestCase {
     private $tr;
@@ -66,11 +64,28 @@ class TranslationTest extends TestCase {
 
         $re = get_option(LANGUAGES);
         self::assertTrue( in_array('en', $re) && in_array('ko', $re) && in_array('ch', $re) && !in_array('ja', $re), 'Expected success. en,ko,ch');
+
+    }
+
+
+    public function testLanguages() {
+        wp_set_current_user(1);
+        delete_option(LANGUAGES);
+        $this->tr->addLanguage(['language' => 'en']);
+        $lns = get_option(LANGUAGES);
+        self::assertTrue(count($lns) == 1);
+        $this->tr->addLanguage(['language' => 'ko']);
+        $lns = get_option(LANGUAGES);
+        self::assertTrue(count($lns) == 2);
+
+        self::assertTrue(in_array('en', $lns));
+        self::assertTrue(in_array('ko', $lns));
     }
 
     public function testCodeAndList() {
 
 
+        set_phpunit_mode(true);
 
 
         // reset data
@@ -94,7 +109,6 @@ class TranslationTest extends TestCase {
         // login as admin
         wp_set_current_user(1);
 
-
         // @todo language exists test
 //        $re = $this->tr->edit(['language' => 'fr', 'code' => 'name', 'value' => '...']);
 //        d($re);
@@ -103,9 +117,11 @@ class TranslationTest extends TestCase {
 
         foreach (LANGUAGE_TEST_SET as $language => $row ){
             foreach ($row as $code => $value ) {
-                $this->tr->edit(['language'=>$language, 'code' => $code, 'value' => $value ]);
+                $data = ['code' => $code, $language => $value ];
+                $this->tr->edit($data);
             }
         }
+
 
 
 
@@ -113,7 +129,8 @@ class TranslationTest extends TestCase {
         $res = $this->tr->list(['format'=>'language-first']);
         $trs = $res['translations'];
 
-        d($trs);
+
+
         self::assertTrue(count($trs) === count(LANGUAGE_TEST_SET), 'count');
         self::assertTrue(count($trs['en']) === count(LANGUAGE_TEST_SET['en']), 'count');
         self::assertTrue(count($trs['ko']) === count(LANGUAGE_TEST_SET['ko']), 'count');
@@ -122,8 +139,7 @@ class TranslationTest extends TestCase {
 
         self::assertTrue($trs['en']['name'] === LANGUAGE_TEST_SET['en']['name'], 'name');
         self::assertTrue($trs['en']['name'] !== LANGUAGE_TEST_SET['ch']['name'], 'name');
-//
-//
+
         wp_set_current_user(1);
         $re = $this->tr->changeCode(['oldCode' => 'name', 'newCode' => 'nickname']);
 

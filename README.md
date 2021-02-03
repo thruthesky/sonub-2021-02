@@ -654,3 +654,13 @@ addComponent('comment-form', commentForm);
 ```
 
 
+
+# Theme Page Submission
+
+* For any reason, if the theme page script ends with `.submit.php`, then it does not display the theme(layout). Instead,
+  It only runs the script.
+  This is good for submitting a form or running some code without displaying theme.
+  
+  Example) /?page=admin/forum/list.submit&cat_name=abc
+
+

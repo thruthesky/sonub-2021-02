@@ -15,6 +15,7 @@ final class EditPostTest extends TestCase
     }
 
     public function testCreate() {
+        set_phpunit_mode(true);
         $re = api_edit_post(['category' => 'uncategorized', 'post_title' => 'title'] );
         self::assertTrue($re['ID'] > 0, 'Success: create');
     }

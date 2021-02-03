@@ -143,6 +143,11 @@ class ForumRoute
     }
 
 
+    /**
+     * @see update_category() for details.
+     * @param $in
+     * @return mixed
+     */
     public function updateCategory($in)
     {
         return update_category($in);

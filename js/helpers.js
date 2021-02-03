@@ -105,6 +105,9 @@ function serialize (data) {
 function serializeFormEvent(event) {
     return serialize(new FormData(event.target));
 }
+function getFormData(event) {
+    return serializeFormEvent(event);
+}
 
 
 /*! js-cookie v3.0.0-rc.1 | MIT */

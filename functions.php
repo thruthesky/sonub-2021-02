@@ -419,6 +419,15 @@ function jsGo($url)
     return 0;
 }
 
+function jsBack($msg) {
+    echo "
+    <script>
+        alert('$msg');
+        history.go(-1);
+    </script>
+    ";
+    exit;
+}
 
 
 
@@ -453,7 +462,6 @@ function is_admin_page() {
 /**
  * Display widget selection box on admin site(form)
  *
- * - When a widget is selected, vue.js method will be called.
  *
  * @param $cat_ID
  * @param $folder_name
@@ -463,7 +471,7 @@ function select_list_widgets($cat_ID, $folder_name, $config_name) {
 
     $default_selected = category_meta($cat_ID, $config_name, $folder_name . '-default');
 
-    echo "<select name='$config_name' @change='updateCategorySettings(\"$config_name\")'>";
+    echo "<select name='$config_name'>";
     foreach( glob(THEME_DIR . "/widgets/$folder_name*/*.php") as $file ) {
         $arr = explode('/', $file);
         $file_name = array_pop($arr);

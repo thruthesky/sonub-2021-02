@@ -3,9 +3,14 @@
  * @file index.php
  */
 
-
-
 $theme_page = get_theme_page_script_path();
+/**
+ * If the page has ending '.submit.php', then it simple include the script and return without display theme.
+ */
+if ( strpos($theme_page, ".submit.php") ) {
+    include $theme_page;
+    return;
+}
 $theme_header = get_theme_header_path();
 $theme_footer = get_theme_footer_path();
 ?>
