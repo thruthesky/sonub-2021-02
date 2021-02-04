@@ -4,6 +4,7 @@
  */
 
 $theme_page = get_theme_page_script_path();
+
 /**
  * If the page has ending '.submit.php', then it simple include the script and return without display theme.
  */

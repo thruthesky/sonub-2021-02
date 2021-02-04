@@ -27,6 +27,8 @@ define("FIREBASE_DATABASE_URI", "https://nalia-app-default-rtdb.firebaseio.com")
 $domain_themes = [
     'apple' => 'apple',
     'banana' => 'banana',
+    'cherry' => 'default',
+    'sonub' => 'sonub'
 ];
 
 define('API_URL_ON_CLI', 'https://local.sonub.com/wp-content/themes/sonub/api/index.php');
