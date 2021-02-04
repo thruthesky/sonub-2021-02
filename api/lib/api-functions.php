@@ -7,7 +7,7 @@ require_once(ABSPATH . 'wp-admin/includes/taxonomy.php');
  * @return string
  */
 function api_version() {
-    return "0.1.3";
+    return "0.1.4";
 }
 
 /**
