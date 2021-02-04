@@ -21,12 +21,14 @@ define('SESSION_ID_SALT', "__SID__This_is_secret__<.o*o.>_salt__~,7__");
  * Firebase Admin Service Account Key, for firebase connection
  */
 define("FIREBASE_ADMIN_SDK_SERVICE_ACCOUNT_KEY_PATH", THEME_DIR . "/keys/firebase-adminsdk.json");
-define("FIREBASE_DATABASE_URI", "https://nalia-app-default-rtdb.firebaseio.com");
+define("FIREBASE_DATABASE_URI", "https://dalgona-firebase-default-rtdb.firebaseio.com/");
 
 
 $domain_themes = [
     'apple' => 'apple',
     'banana' => 'banana',
+    'cherry' => 'default',
+    'sonub' => 'sonub'
 ];
 
 define('API_URL_ON_CLI', 'https://local.sonub.com/wp-content/themes/sonub/api/index.php');
@@ -73,4 +75,3 @@ define('PASS_LOGIN_CLIENT_ID', 'b90hirE4UYwVf2GkHIiK');
 define('PASS_LOGIN_CLIENT_SECRET_KEY', '366c0f3775bfa48f2239226506659f5981afd3eb2b08189f9f9d22cdc4ca63c9');
 define('PASS_LOGIN_CALLBACK_URL', "https://local.sonub.com/wp-content/themes/sonub/pass-login-callback.php");
 define('PASS_LOGIN_SALT', 'Random_Salt_oO^.^Oo_S.0.48.PM'); // This is any random (secret) string.
-

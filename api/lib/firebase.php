@@ -73,6 +73,8 @@ function sendMessageToTokens($tokens, $title, $body, $click_action, $data = [], 
  * @return array
  */
 function sendMessageToTopic($topic, $title, $body, $click_action, $data = [], $imageUrl="") {
+    /// If it's phpunit test mode, then don't send it.
+    if ( get_phpunit_mode() ) return [];
     $message = CloudMessage::fromArray([
         'topic' => $topic,
         'notification' => getNotificationData($title, $body, $click_action, $data, $imageUrl),
@@ -92,6 +94,7 @@ function sendMessageToTopic($topic, $title, $body, $click_action, $data = [], $i
  * @throws \Kreait\Firebase\Exception\MessagingException
  */
 function subscribeTopic($topic, $tokens) {
+    if ( get_phpunit_mode() ) return [];
     return getMessaging()->subscribeToTopic($topic, $tokens);
 }
 

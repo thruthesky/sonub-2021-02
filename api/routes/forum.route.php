@@ -3,6 +3,12 @@
 class ForumRoute
 {
 
+    /**
+     *
+     * @param $in
+     * @see the params at https://developer.wordpress.org/reference/classes/wp_query/parse_query/
+     * @return array|string
+     */
     public function search($in)
     {
         return forum_search($in);
@@ -143,6 +149,11 @@ class ForumRoute
     }
 
 
+    /**
+     * @see update_category() for details.
+     * @param $in
+     * @return mixed
+     */
     public function updateCategory($in)
     {
         return update_category($in);

@@ -77,7 +77,7 @@ if (isCli()) {
  *
  * Must be called after configuration.
  */
-define('DOMAIN_THEME', getDomainTheme());
+define('DOMAIN_THEME', get_domain_theme());
 define('DOMAIN_THEME_URL', THEME_URL . '/themes/' . DOMAIN_THEME);
 
 
@@ -163,6 +163,9 @@ EOJ;
 
 /**
  * Returns theme script file path from the input $page
+ *
+ * @note if the user is in 'admin' dashboard page, then 'admin' theme is used and there is no default script for admin page script.
+ *
  * @param $theme
  * @param $page
  * @return string
@@ -170,7 +173,14 @@ EOJ;
  */
 function get_theme_page_path($theme, $page)
 {
+
+    if ( is_admin_page() ) {
+        $page = str_replace("admin/", "", $page);
+        return THEME_DIR . "/themes/admin/$page.php";
+    }
+
     $script = THEME_DIR . "/themes/$theme/$page.php";
+
 
     if (!file_exists($script)) {
         $script = THEME_DIR . "/themes/default/$page.php";
@@ -419,6 +429,15 @@ function jsGo($url)
     return 0;
 }
 
+function jsBack($msg) {
+    echo "
+    <script>
+        alert('$msg');
+        history.go(-1);
+    </script>
+    ";
+    exit;
+}
 
 
 
@@ -453,7 +472,6 @@ function is_admin_page() {
 /**
  * Display widget selection box on admin site(form)
  *
- * - When a widget is selected, vue.js method will be called.
  *
  * @param $cat_ID
  * @param $folder_name
@@ -463,7 +481,7 @@ function select_list_widgets($cat_ID, $folder_name, $config_name) {
 
     $default_selected = category_meta($cat_ID, $config_name, $folder_name . '-default');
 
-    echo "<select name='$config_name' @change='updateCategorySettings(\"$config_name\")'>";
+    echo "<select name='$config_name'>";
     foreach( glob(THEME_DIR . "/widgets/$folder_name*/*.php") as $file ) {
         $arr = explode('/', $file);
         $file_name = array_pop($arr);

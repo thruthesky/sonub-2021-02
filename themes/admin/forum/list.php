@@ -1,11 +1,20 @@
 <?php
 
-$categories = get_categories();
-// print_r($categories);
 ?>
 
 <hr>
 <h1>FORUM CATEGORIES</h1>
+
+<form method="get">
+    <input type="hidden" name="page" value="admin/forum/list.submit">
+    <input type="text" name="cat_name" value="">
+    <button type="submit">Create Category</button>
+</form>
+<?php
+
+$categories = get_category_list();
+
+?>
 
 <section class="p-5">
     <table class="table table-striped">
@@ -26,8 +35,13 @@ $categories = get_categories();
             ?>
                 <tr>
                     <td><?php echo $category->cat_ID ?></td>
-                    <td><a href="?page=admin/forum/setting&slug=<?php echo $category->slug ?>"><?php echo $category->slug ?></a></td>
-                    <td><?php echo $category->name ?></td>
+                    <td><a href="?page=admin/forum/setting&slug=<?php echo $category->slug ?>"><?php
+
+                            if ( $category->parent ) echo "&nbsp;&nbsp;&nbsp;-- ";
+                            echo $category->slug ?></a></td>
+                    <td><?php
+                        echo $category->name
+                        ?></td>
                     <td><?php echo $category->description ?></td>
                     <td class="text-center"> <i class="fa fa-<?=$category->list_on_view ? 'check green' : 'times red'?>"></i></td>
                 </tr>

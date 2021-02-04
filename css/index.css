@@ -1,3 +1,13 @@
+/**
+ * Base
+ */
+a {
+  text-decoration: none;
+}
+
+/**
+ * Utilities
+ */
 .fs-md {
   font-size: 16px !important;
 }
@@ -12,6 +22,10 @@
 
 .fs-xxl {
   font-size: 64px !important;
+}
+
+.fs-xxxl {
+  font-size: 128px !important;
 }
 
 [depth="1"] {
@@ -82,6 +96,18 @@
   width: 100px;
 }
 
+.h-100px {
+  height: 100px;
+}
+
+.w-xxxl {
+  width: 128px;
+}
+
+.h-xxxl {
+  height: 128px;
+}
+
 .size-40 {
   width: 40px;
   height: 40px;
@@ -146,6 +172,19 @@ input[type=file]::-webkit-file-upload-button {
   left: 0;
   right: 0;
   bottom: 0;
+}
+
+.list-style-none {
+  list-style: none;
+}
+
+.list-menu {
+  display: flex;
+  list-style: none;
+}
+.list-menu li a {
+  display: block;
+  padding: 0.5em 1em;
 }
 
 /*# sourceMappingURL=index.css.map */

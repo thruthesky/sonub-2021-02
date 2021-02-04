@@ -8,11 +8,14 @@ $cat = get_category_by_slug(in('slug'));
 // d($cat);
 // d($metas);
 
+$root_categories = get_root_categories();
 
 ?>
 <h1><?= in('slug') ?> Settings</h1>
 
 
+<form @submit.prevent="onForumSettingFormSubmit($event)">
+<input type="hidden" name="cat_ID" value="<?=$cat->cat_ID?>">
 <table class="table table-striped">
     <thead>
         <tr>
@@ -21,7 +24,23 @@ $cat = get_category_by_slug(in('slug'));
         </tr>
     </thead>
     <tbody>
-        <tr>
+
+    <tr>
+        <td>Parent Category</td>
+        <td>
+            <select name="category_parent">
+                <option value="0">None</option>
+                <? foreach( $root_categories as $_category ) {
+                    if ( $_category->term_id == $cat->term_id ) continue;
+                    ?>
+                    <option value="<?=$_category->term_id?>" <? if ($_category->term_id == $cat->category_parent) echo "selected"?>><?=$_category->cat_name?></option>
+                <? } ?>
+            </select>
+        </td>
+    </tr>
+
+
+    <tr>
             <td>Title</td>
             <td>
                 <input 
@@ -65,10 +84,21 @@ $cat = get_category_by_slug(in('slug'));
         <tr>
             <td>Post list under view page</td>
             <td>
-                <input 
-                    type="checkbox" 
-                    name="list_on_view"
-                    <?php if (category_meta($cat->cat_ID, 'list_on_view', 'N') == 'Y' ) echo 'checked' ?>>
+                <label>
+                    <input
+                            type="radio"
+                            name="list_on_view"
+                            value="Y"
+                        <?php if (category_meta($cat->cat_ID, 'list_on_view', '') == 'Y' ) echo 'checked' ?>> Yes,
+                </label>
+                &nbsp;
+                <label>
+                    <input
+                            type="radio"
+                            name="list_on_view"
+                            value="N"
+                        <?php if (category_meta($cat->cat_ID, 'list_on_view', '') != 'Y' ) echo 'checked' ?>> No
+                </label>
             </td>
         </tr>
         <tr>
@@ -100,6 +130,9 @@ $cat = get_category_by_slug(in('slug'));
     </tbody>
 </table>
 
+
+</form>
+
 <ul>
     <li>
         Post list under view page - is enabled if the box is checked.
@@ -108,33 +141,13 @@ $cat = get_category_by_slug(in('slug'));
 
 <script>
     const mixin = {
-
-        created() {
-
-        },
         methods: {
-            updateCategorySettings(name) {
-                console.log('name', name);
-                const dom = document.querySelector("[name='"+name+"']");
-                let value;
-
-                if ( name === 'list_on_view' ) {
-                    if ( dom.checked ) value = 'Y';
-                    else value = 'N';
-                } else {
-                    value = dom.value;
-                }
-                console.log('v: ', value);
-                const data = {
-                    'cat_ID': <?= $cat->term_id ?>,
-                    'name': name,
-                    'value': value
-                };
-                request('forum.updateCategory', data, function(setting) {
+            onForumSettingFormSubmit(event) {
+                console.log('form data: ', getFormData(event));
+                request('forum.updateCategory', getFormData(event), function(setting) {
                     console.log("settings updated: ", setting);
                 }, app.error);
-            },
-
+            }
         }
     }
 </script>

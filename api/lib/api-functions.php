@@ -7,7 +7,7 @@ require_once(ABSPATH . 'wp-admin/includes/taxonomy.php');
  * @return string
  */
 function api_version() {
-    return "0.1.3";
+    return "0.1.4";
 }
 
 /**
@@ -1648,6 +1648,7 @@ function between($val, $min, $max) {
 
 /**
  * @param $in
+ * @see the params at https://developer.wordpress.org/reference/classes/wp_query/parse_query/
  * @return array|string
  */
 function forum_search($in) {
@@ -1832,6 +1833,7 @@ function api_get_translations($in) {
     $rets = [];
     // This is 'language-first' format for GetX translation.
     if ( isset($in['format']) && $in['format'] === 'language-first' ) {
+
         foreach($rows as $row) {
             if ( !isset($rets[$row['language']]) ) $rets[$row['language']] = [];
             $rets[$row['language']][$row['code']] = $row['value'];
@@ -1859,11 +1861,25 @@ function api_add_translation_language($in) {
     if (!isset($in['language'])) return ERROR_EMPTY_LANGUAGE;
     $languages = get_option(LANGUAGES, []);
     if (in_array($in['language'], $languages)) return ERROR_LANGUAGE_EXISTS;
+
     $languages[] = $in['language'];
     update_option(LANGUAGES, $languages, false);
+
     return $languages;
 }
 
+/**
+ * @param $in
+ * - Example of input.
+ * [
+ *   'code' => 'name',
+ *   'en' => 'Name',
+ *   'ko' => '이름',
+ *   'ch' => '...',
+ * ]
+ * @return mixed|string|null
+ * @throws \Kreait\Firebase\Exception\DatabaseException
+ */
 function api_edit_translation($in) {
     if ( admin() === false ) return ERROR_PERMISSION_DENIED;
     if (!isset($in['code'])) return ERROR_EMPTY_CODE;
@@ -1919,7 +1935,7 @@ function api_delete_translation($in) {
  * @throws \Kreait\Firebase\Exception\DatabaseException
  */
 function api_notify_translation_update() {
-    if ( defined('PHPUNIT_TEST') && PHPUNIT_TEST ) return;
+    if ( get_phpunit_mode() ) return;
     $db = getDatabase();
     $reference = $db->getReference('notifications/translation');
     $stamp = time();
@@ -1929,10 +1945,13 @@ function api_notify_translation_update() {
 
 /**
  * Get domain theme name
+ *
+ * @note if the page has admin folder, then it goes to admin theme.
  * @return string
  */
-function getDomainTheme() {
+function get_domain_theme() {
     if ( API_CALL ) return null;
+    if ( is_admin_page() ) return 'admin';
     global $domain_themes;
     if ( !isset($domain_themes) ) return null;
     $_host = get_host_name();
@@ -1940,6 +1959,7 @@ function getDomainTheme() {
     foreach ($domain_themes as $_domain => $_theme) {
         if (stripos($_host, $_domain) !== false) {
             $theme = $_theme;
+            break;
         }
     }
     return $theme;
@@ -2203,13 +2223,29 @@ function getUserForumTopics($user_ID) {
 }
 
 /**
+ * Updates category
  *
- * @param $in
+ * It can update only one field and value. Or it can update multiple fields and values.
+ *
+ * @param array $in
+ *   If $in['field'] and $in['value'] exists, then it is only one field and value updated. Or It will update multiple fields.
+ *
+ *
  *  - $in['cat_ID'] is the category term id
- *  - $in['name'] is the category property to update.
- *      - 'cat_name' and 'category_description' are predefined for category name(or title) and description.
- *      - And any name & value can be saved as property and value
+ *  - $in['field'] is the category field(property) to update.
+ *    $in['field'] can be one of
+ *      - 'cat_name' - category name or title.
+ *      - 'category_description' category description.
+ *      - 'category_parent' is the parent category.
+ *      - And any name & value meta data can be saved as property and value
  *  - $in['value'] is the value.
+ *
+ *  - Example of input for one field update.
+ *  [ 'cat_ID' => 1, 'field' => 'cat_name', 'value' => 'This is title' ]
+ *  [ 'cat_ID' => 1,'field' => 'A', 'value' => 'Apple' ]
+ *
+ *  - Example of input for multiple fields update.
+ *  [ 'cat_ID' => 1, 'cat_name' => 'title', 'category_description' => 'This is description', 'A' => 'Apple' ]
  *
  * @return mixed
  *  - error code on error.
@@ -2221,21 +2257,21 @@ function update_category($in) {
     $cat = get_category($in['cat_ID']);
     if ( $cat == null ) return ERROR_CATEGORY_NOT_EXIST_BY_THAT_ID;
 
-    if (!isset($in['name'])) return ERROR_EMPTY_NAME;
-    if (!isset($in['value'])) return ERROR_EMPTY_VALUE;
-
-
-    if ( in_array($in['name'], ['cat_name', 'category_description']) ) {
-        $re = wp_update_category(['cat_ID' => $in['cat_ID'], $in['name'] => $in['value']], true);
-        if ( is_wp_error($re) ) {
-            return $re->get_error_message();
-        }
+    if (isset($in['field']) && isset($in['value'])) {
+        $re = update_category_meta($in);
     } else {
-        $re = update_term_meta($in['cat_ID'], $in['name'], $in['value']);
-        if ( is_wp_error($re) ) {
-            return $re->get_error_message();
+        foreach( $in as $k => $v ) {
+            if ( $k == 'session_id' ) continue;
+            if ( $k == 'route' ) continue;
+            if ( $k == 'cat_ID' ) continue;
+            $re = update_category_meta(['cat_ID' => $in['cat_ID'], 'field' => $k, 'value' => $v]);
+            if ( $re ) break;
         }
     }
+    /**
+     * if error
+     */
+    if ( $re ) return $re;
 
     $ret = get_category($in['cat_ID'])->to_array();
 
@@ -2245,6 +2281,28 @@ function update_category($in) {
     }
 
     return $ret;
+}
+
+/**
+ *
+ * Updates a field(or a meta) of a category.
+ *
+ * @param $in
+ * @return int|string
+ */
+function update_category_meta($in) {
+    if ( in_array($in['field'], ['cat_name', 'category_description', 'category_parent']) ) {
+        $re = wp_update_category([ 'cat_ID' => $in['cat_ID'], $in['field'] => $in['value'] ]);
+        if ( is_wp_error($re) ) {
+            return $re->get_error_message();
+        }
+    } else {
+        $re = update_term_meta($in['cat_ID'], $in['field'], $in['value']);
+        if ( is_wp_error($re) ) {
+            return $re->get_error_message();
+        }
+    }
+    return 0;
 }
 
 
@@ -2435,4 +2493,96 @@ function pass_login_or_register($user) {
 
     return $profile;
 
+}
+
+/// ================================================================================================================
+///
+/// Debug Mode or Test Mode
+///
+/// set_phpunit_mode(bool) set or unset phpunit test mode.
+/// get_phpunit_mode() return true or false. If it is true, then it is phpunit test mode.
+///
+/// ================================================================================================================
+$_phpunit_mode = false;
+/**
+ * To set or unset phpunit test mode.
+ *
+ * Use this when you want to exclude(or include) some codes for php unit test mode.
+ *
+ * @param $b
+ */
+function set_phpunit_mode($b) {
+    global $_phpunit_mode;
+    $_phpunit_mode = $b;
+}
+function get_phpunit_mode(): bool {
+    global $_phpunit_mode;
+    return $_phpunit_mode;
+}
+
+
+
+
+/**
+ *
+ * 카테고리와 서브카테고리 구조를 유지하는 카테고리 목록 리턴.
+ *
+ * 부모 카테고리와 자식 카테고리의 관계를 표시하고자 할 때 사용.
+ * @return array
+ *
+ * @example of return
+Array
+(
+[0] => WP_Term Object
+(
+[term_id] => 1
+[parent] => 0
+)
+
+[1] => WP_Term Object
+(
+[term_id] => 7
+[name] => communities
+[parent] => 0
+)
+[2] => WP_Term Object
+(
+[term_id] => 5
+[name] => Discussion
+[parent] => 7
+)
+ *
+ */
+function get_category_list() {
+    $categories = get_root_categories();
+    $rets = [];
+    foreach( $categories as $cat ) {
+        $rets[] = $cat;
+        $children = get_child_categories($cat->term_id);
+        foreach($children as $child ) {
+            $rets[] = $child;
+        }
+    }
+    return $rets;
+}
+
+/**
+ * Returns an array of WP_Term Objects of categories that are the top categories.
+ * @return array
+ */
+function get_root_categories() {
+    $args = array(
+        'taxonomy' => 'category',
+        'parent' => '0',
+        'hide_empty' => false,
+    );
+    return get_categories($args);
+}
+function get_child_categories( $term_id = 0, $taxonomy = 'category' ) {
+    $children = get_categories( array(
+        'child_of'      => $term_id,
+        'taxonomy'      => $taxonomy,
+        'hide_empty' => false,
+    ) );
+    return $children;
 }
