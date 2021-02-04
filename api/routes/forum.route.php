@@ -3,6 +3,12 @@
 class ForumRoute
 {
 
+    /**
+     *
+     * @param $in
+     * @see the params at https://developer.wordpress.org/reference/classes/wp_query/parse_query/
+     * @return array|string
+     */
     public function search($in)
     {
         return forum_search($in);

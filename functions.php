@@ -77,7 +77,7 @@ if (isCli()) {
  *
  * Must be called after configuration.
  */
-define('DOMAIN_THEME', getDomainTheme());
+define('DOMAIN_THEME', get_domain_theme());
 define('DOMAIN_THEME_URL', THEME_URL . '/themes/' . DOMAIN_THEME);
 
 
@@ -163,6 +163,9 @@ EOJ;
 
 /**
  * Returns theme script file path from the input $page
+ *
+ * @note if the user is in 'admin' dashboard page, then 'admin' theme is used and there is no default script for admin page script.
+ *
  * @param $theme
  * @param $page
  * @return string
@@ -170,7 +173,14 @@ EOJ;
  */
 function get_theme_page_path($theme, $page)
 {
+
+    if ( is_admin_page() ) {
+        $page = str_replace("admin/", "", $page);
+        return THEME_DIR . "/themes/admin/$page.php";
+    }
+
     $script = THEME_DIR . "/themes/$theme/$page.php";
+
 
     if (!file_exists($script)) {
         $script = THEME_DIR . "/themes/default/$page.php";

@@ -7,7 +7,7 @@ require_once(ABSPATH . 'wp-admin/includes/taxonomy.php');
  * @return string
  */
 function api_version() {
-    return "0.1.3";
+    return "0.1.4";
 }
 
 /**
@@ -1648,6 +1648,7 @@ function between($val, $min, $max) {
 
 /**
  * @param $in
+ * @see the params at https://developer.wordpress.org/reference/classes/wp_query/parse_query/
  * @return array|string
  */
 function forum_search($in) {
@@ -1942,10 +1943,13 @@ function api_notify_translation_update() {
 
 /**
  * Get domain theme name
+ *
+ * @note if the page has admin folder, then it goes to admin theme.
  * @return string
  */
-function getDomainTheme() {
+function get_domain_theme() {
     if ( API_CALL ) return null;
+    if ( is_admin_page() ) return 'admin';
     global $domain_themes;
     if ( !isset($domain_themes) ) return null;
     $_host = get_host_name();
@@ -1953,6 +1957,7 @@ function getDomainTheme() {
     foreach ($domain_themes as $_domain => $_theme) {
         if (stripos($_host, $_domain) !== false) {
             $theme = $_theme;
+            break;
         }
     }
     return $theme;

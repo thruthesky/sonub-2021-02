@@ -175,7 +175,7 @@ const AttributeBinding = {
       );
     },
     /**
-     *
+     * Upload user profile photo, then, update user profile_photo_url with the uploaded photo url.
      * @param event
      */
     onProfilePhotoUpload(event) {
@@ -185,7 +185,6 @@ const AttributeBinding = {
           "user.profileUpdate",
           { profile_photo_url: res.url },
           function (profile) {
-            console.log("new profile: ", profile);
             app.profile.profile_photo_url = profile.profile_photo_url;
             app.user.profile_photo_url = profile.profile_photo_url;
             app.setUser(profile);

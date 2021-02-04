@@ -46,6 +46,7 @@
 ## Wordpress Installation
 
 * Install wordpress on HTTPS domain. It should work as normal.
+* Permalink must be set to 'post name'.
 
 ## Git repo source
 
@@ -355,6 +356,17 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
       * `js/app.js`
         * User login in Vue.js client end. Vue.js can detect if user is logged in or not. But let PHP handle user login related code as much as possible.
       
+### Admin Theme Booting
+
+* When a page is access with `page=admin/....`, then it is considered that the user is access admin dashboard.
+* When admin page is accessed,
+  * sonub/index.php will be loaded,
+  * sonub/themes/admin/header.php will be loaded,
+  * sonub/themes/admin/home.php will be loaded,
+  * sonub/themes/admin/footer.php will be loaded,
+        
+
+
 ### API booting
 
 * When client-end connects to backend Restful API, the following scripts will be loaded in order
@@ -664,3 +676,32 @@ addComponent('comment-form', commentForm);
   Example) /?page=admin/forum/list.submit&cat_name=abc
 
 
+
+
+# File upload
+
+* The code below shows how to do file upload.
+* `uploadPercentage` is handled by `app.js`.
+
+```html
+<div class="position-relative">
+    <div>
+        <i class="fa fa-file-image fs-xxxl"></i>
+    </div>
+    <input class="position-absolute cover fs-xxl opacity-0" type="file" @change="onFileChange($event, 'A')">
+    <div class="progress mt-3 w-100px" style="height: 5px;" v-if="uploadPercentage > 0">
+        <div class="progress-bar" role="progressbar" :style="{width: uploadPercentage + '%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+</div>
+<script>
+    const mixin = {
+        methods: {
+            onFileChange(event, AB) {
+                this.onFileUpload(event, function (res) {
+                    console.log('uploaded file: res: ', res);
+                });
+            }
+        }
+    }
+</script>
+```

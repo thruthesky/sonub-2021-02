@@ -23,7 +23,7 @@
     </div>
     <div>
         <? if ( admin() ) { ?>
-            <a href="/?page=admin/index">Admin</a>
+            <a href="/?page=admin/home">Admin</a>
         <? } ?>
         <a class="ms-2" href="/?page=user/settings" v-if="loggedIn()"><i class="fa fa-cog"></i></a>
         <a href="/?page=user/profile"><img class="size-40 circle" :src="user.profile_photo_url" v-if="user && user.profile_photo_url !== 'undefined'"></a>
