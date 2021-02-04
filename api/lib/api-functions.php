@@ -452,10 +452,10 @@ function login($data)
         $tokens = get_user_tokens();
         if (!empty($tokens)) {
 
-            subscribeToTopics($topics,$tokens);
-            foreach ($topics as $topic) {
-                subscribeTopic($topic, $tokens);
-            }
+            subscribeTopics($topics,$tokens);
+//            foreach ($topics as $topic) {
+//                subscribeTopic($topic, $tokens);
+//            }
         }
     }
 
