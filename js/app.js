@@ -209,6 +209,7 @@ const AttributeBinding = {
     },
 
     logout() {
+      console.log(config.cookie_domain);
       Cookies.remove('session_id', {domain: config.cookie_domain});
       Cookies.remove('nickname', {domain: config.cookie_domain});
       Cookies.remove('profile_photo_url', {domain: config.cookie_domain});
