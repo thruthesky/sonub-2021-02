@@ -41,21 +41,18 @@ $comments = $post['comments'];
     <!-- TODO: MINE BUTTONS -->
     <div class="d-flex justify-content-between">
         <div>
-            <a class="btn btn-success mr-3" href="/?page=forum/edit&ID=<?php echo $post_ID ?>"
-               v-if="is_mine(<?=$post['post_author']?>)">Edit</a>
-
-
-
-            <button class="btn btn-danger" @click="onPostDelete('<?=$post_ID ?>', '<?=$post['category']?>')" v-if="is_mine(<?=$post['post_author']?>)">
+            <? if ( is_my_post($post_ID) ) { ?>
+            <a class="btn btn-success mr-3" href="/?page=forum/edit&ID=<?php echo $post_ID ?>">Edit</a>
+            <button class="btn btn-danger" @click="onPostDelete('<?=$post_ID ?>', '<?=$post['category']?>')">
                 Delete
             </button>
-
+            <? } ?>
         </div>
-        <div v-if="isAdmin()">
+        <? if ( admin() ) { ?>
             <a class="btn btn-secondary" href="/?page=admin/send-push-notification&ID=<?php echo $post_ID ?>" target="_blank">
                 Send Push
             </a>
-        </div>
+        <? } ?>
 
 
     </div>

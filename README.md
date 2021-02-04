@@ -46,6 +46,7 @@
 ## Wordpress Installation
 
 * Install wordpress on HTTPS domain. It should work as normal.
+* Permalink must be set to 'post name'.
 
 ## Git repo source
 
