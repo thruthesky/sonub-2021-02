@@ -2,6 +2,8 @@
 
 * Sonub(Sonub Network Hub) is an open source, complete CMS with modern functionalities like realtime update, push notification, and more.
 * It is build on Apache(or Nginx) + MySQL(or MariaDB) + PHP stack based Wordpress. It works as a theme but has very much fixed.
+* The reason why we have chosen as its backend frame is because 1) It's easy. Team members can easily learn it. 2) It's almost a standard CMS and widely used all over the world.
+
 
 
 
@@ -208,14 +210,62 @@ https://xxx.domain.com/post_ID/post-title
 where the `post_ID` is the post ID and `post-title` is the post title(part of guid.).
 
 
+# Web(Theme) Development
+
+* In the section, only web development is discussed.
 
 
-# API
+## Login
+
+* Offical supported login methods are
+  * Wordpress email & password login.
+  * Pass login by https://developers.passlogin.com/ which does real user & adult authentication,
+  * Google Firebase phone number login
+  * Kakaotalk login
+  * Naver login
+
+### PASS LOGIN
+
+* First create a project in https://developers.passlogin.com/
+  * And set the callback redirect url.
+* Then add settings on config.php
+* When user successfully logged in, `pass-login-callback.php` (which is the redirect url) will be opened by web browser.
+  * If the user is using mobile app like Flutter, then it will post message to the app.
+  * If the user is using web browser, then it will redirect to home page after login.
+
+
+* To link or open pass login page, code like below.
+```html
+<a class="btn btn-primary mt-5" href="<?=pass_login_url('openHome')?>">PASS LOGIN</a>
+```
+
+
+## Widget System
+
+* Admin can change widget on admin page.
+  * For instance, admin can change the forum list page look by changing the widget on forum category.
+* Widget scripts are saved under `widget` folder.
+  * `widget/widget-type-[name]/wigdet-type-[name].php` is the main script of the widget.
+  * `widget/widget-type-[name]/widget-type-[name].ini` is the widget configuration file.
+  * If there no configuration file(`.ini`), then the widget folder name will be used to select the theme on setting.
+* To develop a widget,
+  * Create a folder name under `widgets` folder.
+    * A folder name has two parts.
+      * First, widget type like 'forum-list' or 'pagination'
+      * Second, widget name like 'default', 'simple'.
+      * If folder name is `forum-list-simple`, then the widget type is `forum-list` and the widget name is `simple`.
+  * Create a php file with the same name of folder name, and code what ever you want.
+  * Create a `.ini` configuration file. Creating `.ini` file is an optional. You can put `description` key and it will appear on settings.
+  * Lastly, you need to put it on admin page, so admin can choose which widget to display on the browser.
+    * To see how to code on admin page, see `themes/sonub/themes/default/admin/forum/setting.php`.
+
+
+
+# API & Protocols
 
 * `sonub/api` folder has all the api codes and `sonub/api/index.php` serves as the endpoint.
 * One thing to note that, `sonub` theme loads `api/lib/*.php` files and use a lot.
 
-## API methods & Protocols
 
 
 
@@ -305,6 +355,17 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
       * `js/app.js`
         * User login in Vue.js client end. Vue.js can detect if user is logged in or not. But let PHP handle user login related code as much as possible.
       
+### Admin Theme Booting
+
+* When a page is access with `page=admin/....`, then it is considered that the user is access admin dashboard.
+* When admin page is accessed,
+  * sonub/index.php will be loaded,
+  * sonub/themes/admin/header.php will be loaded,
+  * sonub/themes/admin/home.php will be loaded,
+  * sonub/themes/admin/footer.php will be loaded,
+        
+
+
 ### API booting
 
 * When client-end connects to backend Restful API, the following scripts will be loaded in order
@@ -601,4 +662,45 @@ addComponent('comment-form', commentForm);
     later(function() {
         app.editNo = 45;
     })
+```
+
+
+
+# Theme Page Submission
+
+* For any reason, if the theme page script ends with `.submit.php`, then it does not display the theme(layout). Instead,
+  It only runs the script.
+  This is good for submitting a form or running some code without displaying theme.
+  
+  Example) /?page=admin/forum/list.submit&cat_name=abc
+
+
+
+
+# File upload
+
+* The code below shows how to do file upload.
+* `uploadPercentage` is handled by `app.js`.
+
+```html
+<div class="position-relative">
+    <div>
+        <i class="fa fa-file-image fs-xxxl"></i>
+    </div>
+    <input class="position-absolute cover fs-xxl opacity-0" type="file" @change="onFileChange($event, 'A')">
+    <div class="progress mt-3 w-100px" style="height: 5px;" v-if="uploadPercentage > 0">
+        <div class="progress-bar" role="progressbar" :style="{width: uploadPercentage + '%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+</div>
+<script>
+    const mixin = {
+        methods: {
+            onFileChange(event, AB) {
+                this.onFileUpload(event, function (res) {
+                    console.log('uploaded file: res: ', res);
+                });
+            }
+        }
+    }
+</script>
 ```

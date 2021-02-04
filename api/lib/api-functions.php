@@ -327,6 +327,9 @@ function is_logged_in() {
 function loggedIn() {
     return is_logged_in();
 }
+function notLoggedIn() {
+    return loggedIn() === false;
+}
 
 /**
  * @param $email
@@ -443,6 +446,51 @@ function login($data)
 function profile_update($in) {
     user_update_meta(wp_get_current_user()->ID, $in);
     return profile();
+}
+
+
+/**
+ * Update user information.
+ *
+ * @note permission check must be done before this method call.
+ *
+ * @note It can change user's email and password only if they are set. If they are not set, then they are not touched at all.
+ * @note It can also change whatever meta data.
+ * @caution All the meta data will be over written. This means, if a meta value is empty value, then the empty value will be saved.
+ *
+ * @param $in
+ * @return array|string
+ */
+function admin_user_profile_update($in) {
+    $user = get_user_by('id', $in['ID'] );
+    if (!$user ) return ERROR_USER_NOT_FOUND;
+
+    /// update for wp_user info
+    $up = [];
+    if (isset($in['user_email']) && !empty($in['user_email'])) {
+        $user_by_email = get_user_by('email', $in['user_email'] );
+        if($user_by_email && $user->ID !== $user_by_email->ID) return ERROR_EMAIL_EXISTS;
+        $up['user_email'] = $in['user_email'];
+    }
+
+
+//    if (isset($in['user_nicename']) && !empty($in['user_nicename'])) $up['user_nicename'] = $in['user_nicename'];
+//    if (isset($in['user_url']) && !empty($in['user_url'])) $up['user_url'] = $in['user_url'];
+//    if (isset($in['user_activation_key']) && !empty($in['user_activation_key'])) $up['user_activation_key'] = $in['user_activation_key'];
+//    if (isset($in['user_status']) && !empty($in['user_status'])) $up['user_status'] = $in['user_status'];
+//    if (isset($in['display_name']) && !empty($in['display_name'])) $up['display_name'] = $in['display_name'];
+
+    if (isset($in['user_pass']) && !empty($in['user_pass'])) {
+        $up['user_pass'] = wp_hash_password($in['user_pass']);
+    }
+
+    global $wpdb;
+    if (!empty($up)) {
+        $wpdb->update('wp_users', $up, ['ID'=>$user->ID]);
+    }
+
+    user_update_meta($user->ID, $in);
+    return profile($user->ID);
 }
 
 /**
@@ -805,12 +853,15 @@ function update_token($in) {
     }
 
 
-    if ( isset($in['topic']) ) {
+    if ( isset($in['topic']) && !empty($in['topic']) ) {
         $topic = $in['topic'];
         $re = subscribeTopic($topic, $token);
-        if ( $re && isset($re['results']) && count($re['results']) && isset($re['results'][0]['error']) ) {
-            return ERROR_TOPIC_SUBSCRIPTION;
-        }
+    } else {
+        $re = subscribeTopic(DEFAULT_TOPIC, $token);
+    }
+
+    if ( $re && isset($re['results']) && count($re['results']) && isset($re['results'][0]['error']) ) {
+        return ERROR_TOPIC_SUBSCRIPTION;
     }
 
     return get_token($token);
@@ -1359,58 +1410,9 @@ function is_my_comment($comment_ID)
 }
 
 
-
 /**
- * General function to update a field of the login user's record.
+ * @deprecated There is no use case for this method.
  *
- * It can insert or update a field of any table.
- *
- * @requirement
- *  - The table must have `user_ID` field as unique index and its value must be the login user's ID.
- *  - The table must also have `createdAt` and `updatedAt` integer field.
- *  - The $in['field'] must exists in the table.
- *  - All the fields of the table should have default value, so it would not produce SQL error while inserting.
- *
- * @note
- *  - `createdAt` will have timestamp on inserting.
- *  - `updatedAt` will have new timestamp on every update.
- *
- * @param $in array
- *  $in['table'] is the table to update.
- *  $in['field'] is the field to update.
- *  $in['value'] is the value to update.
- *
- * @return array|string
- *  - returns an array of the record with ['action' => 'UPDATE'] on update.
- *  - returns an array of the record with ['action' => 'INSERT'] on insert.
- *  - ERROR_UPDATE on update error
- *  - ERROR_INSERT on insert error
- *
- *
- * @example
- *  - See tests/app.update.test.php
- *
- * @note user must login before this call.
- */
-function table_update($in) {
-    $user_ID = wp_get_current_user()->ID;
-    global $wpdb;
-    $row = table_get($in);
-    if ( $row ) {
-        $re = $wpdb->update($in['table'], [$in['field'] => $in['value'], 'updatedAt' => time()], ['user_ID' => $user_ID]);
-        if ( $re === false ) return ERROR_UPDATE;
-        else $action = ['action' => 'UPDATE'];
-    } else {
-        $re = $wpdb->insert($in['table'], ['user_ID' => $user_ID, $in['field'] => $in['value'], 'updatedAt'=>time(), 'createdAt'=>time()]);
-        if ( $re === false ) return ERROR_INSERT;
-        else $action = ['action' => 'INSERT'];
-    }
-
-    $row = table_get($in);
-    return array_merge($action, $row);
-}
-
-/**
  * This function updates(or inserts) multiples fields.
  * - table_update() updates only one(1, single) field while this function updates many fields.
  * - Note that admin can update other user's record.
@@ -1646,10 +1648,11 @@ function between($val, $min, $max) {
 
 /**
  * @param $in
+ * @see the params at https://developer.wordpress.org/reference/classes/wp_query/parse_query/
  * @return array|string
  */
 function forum_search($in) {
-    if (!$in['category_name']) return ERROR_EMPTY_CATEGORY;
+    if (!isset($in['category_name'])) return ERROR_EMPTY_CATEGORY;
     $posts = get_posts($in);
     $rets = [];
     foreach ($posts as $p) {
@@ -1794,7 +1797,7 @@ function api_edit_post($in) {
     // NEW POST IS CREATED => Send notification to forum subscriber
     if (!isset($in['ID'])) {
         $title = $in['post_title'];
-        $body = $in['post_content'];
+        $body = $in['post_content'] ?? '';
         $post = get_post($ID, ARRAY_A);
         $slug = get_first_slug($post['post_category']);
         sendMessageToTopic(NOTIFY_POST . $slug, $title, $body, $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
@@ -1830,6 +1833,7 @@ function api_get_translations($in) {
     $rets = [];
     // This is 'language-first' format for GetX translation.
     if ( isset($in['format']) && $in['format'] === 'language-first' ) {
+
         foreach($rows as $row) {
             if ( !isset($rets[$row['language']]) ) $rets[$row['language']] = [];
             $rets[$row['language']][$row['code']] = $row['value'];
@@ -1843,7 +1847,7 @@ function api_get_translations($in) {
         }
     }
 
-    return ['languages' => get_option(LANGUAGES), 'translations' => $rets];
+    return ['languages' => get_option(LANGUAGES, []), 'translations' => $rets];
 }
 
 function get_translation_by_code($code)
@@ -1857,11 +1861,25 @@ function api_add_translation_language($in) {
     if (!isset($in['language'])) return ERROR_EMPTY_LANGUAGE;
     $languages = get_option(LANGUAGES, []);
     if (in_array($in['language'], $languages)) return ERROR_LANGUAGE_EXISTS;
+
     $languages[] = $in['language'];
     update_option(LANGUAGES, $languages, false);
+
     return $languages;
 }
 
+/**
+ * @param $in
+ * - Example of input.
+ * [
+ *   'code' => 'name',
+ *   'en' => 'Name',
+ *   'ko' => '이름',
+ *   'ch' => '...',
+ * ]
+ * @return mixed|string|null
+ * @throws \Kreait\Firebase\Exception\DatabaseException
+ */
 function api_edit_translation($in) {
     if ( admin() === false ) return ERROR_PERMISSION_DENIED;
     if (!isset($in['code'])) return ERROR_EMPTY_CODE;
@@ -1876,7 +1894,9 @@ function api_edit_translation($in) {
         $re = $wpdb->replace(TRANSLATIONS_TABLE, ['code' => $in['code'], 'language' => $ln, 'value' => $val ]);
         if ( $re === false ) return sql_error(ERROR_LANGUAGE_REPLACE);
     }
+
     api_notify_translation_update();
+
     return $data;
 }
 
@@ -1915,6 +1935,7 @@ function api_delete_translation($in) {
  * @throws \Kreait\Firebase\Exception\DatabaseException
  */
 function api_notify_translation_update() {
+    if ( get_phpunit_mode() ) return;
     $db = getDatabase();
     $reference = $db->getReference('notifications/translation');
     $stamp = time();
@@ -1924,10 +1945,13 @@ function api_notify_translation_update() {
 
 /**
  * Get domain theme name
+ *
+ * @note if the page has admin folder, then it goes to admin theme.
  * @return string
  */
-function getDomainTheme() {
+function get_domain_theme() {
     if ( API_CALL ) return null;
+    if ( is_admin_page() ) return 'admin';
     global $domain_themes;
     if ( !isset($domain_themes) ) return null;
     $_host = get_host_name();
@@ -1935,6 +1959,7 @@ function getDomainTheme() {
     foreach ($domain_themes as $_domain => $_theme) {
         if (stripos($_host, $_domain) !== false) {
             $theme = $_theme;
+            break;
         }
     }
     return $theme;
@@ -1949,11 +1974,11 @@ function getDomainTheme() {
  * d(DOMAIN_THEME_URL);
  */
 function d($obj) {
-    echo "<pre>";
+    echo "\n<pre>\n";
 	$str = print_r($obj, true);
 	$str = str_replace("<", "&lt;", $str);
 	echo $str;
-    echo "</pre>";
+    echo "\n</pre>\n";
 }
 
 
@@ -2164,7 +2189,7 @@ function getAncestors( $comment_ID ) {
 
 function getUserTokens($user_ID) {
     global $wpdb;
-    $rows =  $wpdb->get_results("SELECT token FROM " . PUSH_TOKEN_TABLE ." WHERE user_ID=$user_ID", ARRAY_A);
+    $rows =  $wpdb->get_results("SELECT token FROM " . PUSH_TOKENS_TABLE ." WHERE user_ID=$user_ID", ARRAY_A);
     $tokens = [];
     foreach( $rows as $user ) {
         $tokens[] = $user['token'];
@@ -2198,13 +2223,29 @@ function getUserForumTopics($user_ID) {
 }
 
 /**
+ * Updates category
  *
- * @param $in
+ * It can update only one field and value. Or it can update multiple fields and values.
+ *
+ * @param array $in
+ *   If $in['field'] and $in['value'] exists, then it is only one field and value updated. Or It will update multiple fields.
+ *
+ *
  *  - $in['cat_ID'] is the category term id
- *  - $in['name'] is the category property to update.
- *      - 'cat_name' and 'category_description' are predefined for category name(or title) and description.
- *      - And any name & value can be saved as property and value
+ *  - $in['field'] is the category field(property) to update.
+ *    $in['field'] can be one of
+ *      - 'cat_name' - category name or title.
+ *      - 'category_description' category description.
+ *      - 'category_parent' is the parent category.
+ *      - And any name & value meta data can be saved as property and value
  *  - $in['value'] is the value.
+ *
+ *  - Example of input for one field update.
+ *  [ 'cat_ID' => 1, 'field' => 'cat_name', 'value' => 'This is title' ]
+ *  [ 'cat_ID' => 1,'field' => 'A', 'value' => 'Apple' ]
+ *
+ *  - Example of input for multiple fields update.
+ *  [ 'cat_ID' => 1, 'cat_name' => 'title', 'category_description' => 'This is description', 'A' => 'Apple' ]
  *
  * @return mixed
  *  - error code on error.
@@ -2216,21 +2257,21 @@ function update_category($in) {
     $cat = get_category($in['cat_ID']);
     if ( $cat == null ) return ERROR_CATEGORY_NOT_EXIST_BY_THAT_ID;
 
-    if (!isset($in['name'])) return ERROR_EMPTY_NAME;
-    if (!isset($in['value'])) return ERROR_EMPTY_VALUE;
-
-
-    if ( in_array($in['name'], ['cat_name', 'category_description']) ) {
-        $re = wp_update_category(['cat_ID' => $in['cat_ID'], $in['name'] => $in['value']], true);
-        if ( is_wp_error($re) ) {
-            return $re->get_error_message();
-        }
+    if (isset($in['field']) && isset($in['value'])) {
+        $re = update_category_meta($in);
     } else {
-        $re = update_term_meta($in['cat_ID'], $in['name'], $in['value']);
-        if ( is_wp_error($re) ) {
-            return $re->get_error_message();
+        foreach( $in as $k => $v ) {
+            if ( $k == 'session_id' ) continue;
+            if ( $k == 'route' ) continue;
+            if ( $k == 'cat_ID' ) continue;
+            $re = update_category_meta(['cat_ID' => $in['cat_ID'], 'field' => $k, 'value' => $v]);
+            if ( $re ) break;
         }
     }
+    /**
+     * if error
+     */
+    if ( $re ) return $re;
 
     $ret = get_category($in['cat_ID'])->to_array();
 
@@ -2240,6 +2281,28 @@ function update_category($in) {
     }
 
     return $ret;
+}
+
+/**
+ *
+ * Updates a field(or a meta) of a category.
+ *
+ * @param $in
+ * @return int|string
+ */
+function update_category_meta($in) {
+    if ( in_array($in['field'], ['cat_name', 'category_description', 'category_parent']) ) {
+        $re = wp_update_category([ 'cat_ID' => $in['cat_ID'], $in['field'] => $in['value'] ]);
+        if ( is_wp_error($re) ) {
+            return $re->get_error_message();
+        }
+    } else {
+        $re = update_term_meta($in['cat_ID'], $in['field'], $in['value']);
+        if ( is_wp_error($re) ) {
+            return $re->get_error_message();
+        }
+    }
+    return 0;
 }
 
 
@@ -2270,4 +2333,256 @@ function category_meta($cat_ID, $name, $default_value = '') {
     $v = get_term_meta($cat_ID, $name, true);
     if ( $v ) return $v;
     else return $default_value;
+}
+
+
+function isSubscribedToTopic($topic)
+{
+    return my($topic) === "Y";
+}
+
+function pass_login_url($state='') {
+    return "https://id.passlogin.com/oauth2/authorize?client_id=".PASS_LOGIN_CLIENT_ID."&redirect_uri=".urlencode(PASS_LOGIN_CALLBACK_URL)."&response_type=code&state=$state&prompt=select_account";
+}
+
+
+function pass_login_aes_dec($str) {
+    $key_128 = substr(PASS_LOGIN_CLIENT_SECRET_KEY, 0, 128 / 8);
+    return openssl_decrypt(base64_decode($str), 'AES-128-CBC', $key_128, true, $key_128);
+}
+
+function pass_login_callback($in) {
+    // @todo PASS 휴대폰번호 로그인을 하면, Callback URL 이 호출된다. 그리고 그 정보를 기록한다.
+    // Callback url 이 처음 호출 되면,
+    //   Array ( [code] => lzRdPT, [state] => apple_banana_cherry )
+    // 와 같은 값이 넘어 온다.
+    // 이, code 로, 사용자 정보를 가져온다.
+    if ( ! isset($in['code']) ) return ERROR_EMPTY_CODE;
+    $code = $in['code'];
+    $state = $in['state'] ?? '';
+
+    // Step 1. 백엔드에서 PASS 서버로 로그인해서, access_token 을 가져온다. 참고로 Refresh 를 하면 Invalid authorization code 에러가 난다.
+    // 로그인 성공하면, ["access_token" => "...", "token_type" => "bearer", "expires_in" => 600, "state" => "..."] 와 같은 정보가 나온다.
+    $url = "https://id.passlogin.com/oauth2/token";
+
+    $headers = array(
+        'Content-Type: application/x-www-form-urlencoded',
+        'Authorization: Basic '. base64_encode(PASS_LOGIN_CLIENT_ID . ":" . PASS_LOGIN_CLIENT_SECRET_KEY ),
+    );
+    $o = [
+        CURLOPT_URL => $url,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => "grant_type=authorization_code&code=$code&state=$state",
+        CURLOPT_HTTPHEADER => $headers,
+        CURLOPT_HEADER => 0, // 결과 값에 HEADER 정보 출력 여부
+        CURLOPT_FRESH_CONNECT => 1, // 캐시 사용 0, 새로 연결 1
+        CURLOPT_RETURNTRANSFER => 1, // 리턴되는 결과 처리 방식. 1을 변수 저장. 2는 출력.
+        CURLOPT_SSL_VERIFYPEER => 0 // HTTPS 사용 여부
+    ];
+    $ch = curl_init();
+    curl_setopt_array( $ch, $o );
+
+    try {
+        $response = curl_exec( $ch );
+        $re = json_decode($response, true);
+        if ( isset($re['error']) ) {
+            echo "<h1>[ ERROR: $re[error], MESSAGE: $re[message]</h1>";
+            return;
+        }
+        // @todo leave log
+//            file_put_contents($log_file, $response ."\r\n\r\n");
+    }
+    catch ( exception $e ) {
+        // @todo leave log
+        d( $e );
+    }
+    curl_close( $ch );
+
+
+
+    /// Step 2. access_token 의 회원 정보를 가져온다. access_token 당 1회만 조회 가능. 주의: 자동 로그인을 할 때에는 전화번호나 기타 정보가 따라오지 않는다. 그래서 가능하면 로그인을 한번하고 로그인을 끊어 줘야 한다.
+
+    $headers = ['Authorization: Bearer ' . $re['access_token']];
+    $o = [
+        CURLOPT_URL => "https://id.passlogin.com/v1/user/me",
+        CURLOPT_HTTPHEADER => $headers,
+        CURLOPT_HEADER => 0, // 결과 값에 HEADER 정보 출력 여부
+        CURLOPT_FRESH_CONNECT => 1, // 캐시 사용 0, 새로 연결 1
+        CURLOPT_RETURNTRANSFER => 1, // 리턴되는 결과 처리 방식. 1을 변수 저장. 2는 출력.
+        CURLOPT_SSL_VERIFYPEER => 0 // HTTPS 사용 여부
+    ];
+    $ch = curl_init();
+    curl_setopt_array( $ch, $o );
+
+    try {
+        $response = curl_exec( $ch );
+        $re = json_decode($response, true);
+        if ( isset($re['error']) && $re['error'] ) echo "[ ERROR: $re[error], MESSAGE: $re[message] ]";
+        // @todo leave log
+//            file_put_contents($log_file, $response ."\r\n\r\n");
+    }
+    catch ( exception $e ) {
+        // @todo leave log
+        d( $e );
+    }
+    curl_close( $ch );
+
+    $user = $re['user'];
+    $ret = [];
+
+    if ( isset($user['ci']) && $user['ci'] ) {
+        $ret['ci'] = pass_login_aes_dec($user['ci']);
+    }
+    if ( isset($user['phoneNo']) && $user['phoneNo'] ){
+        $ret['phoneNo'] = pass_login_aes_dec($user['phoneNo']);
+    }
+    if ( isset($user['name']) && $user['name'] ){
+        $ret['name'] = pass_login_aes_dec($user['name']);
+    }
+    if ( isset($user['birthdate']) && $user['birthdate'] ){
+        $ret['birthdate'] = pass_login_aes_dec($user['birthdate']);
+    }
+
+    if ( isset($user['gender']) && $user['gender'] ){
+        $ret['gender'] = $user['gender'];
+    }
+
+    if ( isset($user['agegroup']) && $user['agegroup'] ){
+        $ret['agegroup'] = $user['agegroup'];
+    }
+
+    if ( isset($user['foreign']) && $user['foreign'] ){
+        $ret['foreign'] = $user['foreign'];
+    }
+
+    if ( isset($user['telcoCd']) && $user['telcoCd'] ){
+        $ret['telcoCd'] = $user['telcoCd'];
+    }
+
+    if ( isset($user['autoLoginYn']) && $user['autoLoginYn'] ){
+        $ret['autoLoginYn'] = $user['autoLoginYn'];
+    }
+
+    if ( isset($user['autoStatusCheck']) && $user['autoStatusCheck'] ){
+        $ret['autoStatusCheck'] = $user['autoStatusCheck'];
+    }
+
+
+//    d($user);
+
+    return $ret;
+
+}
+
+
+function pass_login_or_register($user) {
+
+    if ( isset($user['ci']) && $user['ci'] ) {
+        /// 처음 로그인 또는 자동 로그인이 아닌 경우,
+        $user['user_email'] = PASS_LOGIN_MOBILE_PREFIX . "$user[phoneNo]@passlogin.com";
+        $user['user_pass'] = md5(PASS_LOGIN_SALT . PASS_LOGIN_CLIENT_ID . $user['phoneNo']);
+        $profile = login_or_register($user);
+    } else {
+        /// plid 가 들어 온 경우, meta 에서 ci 를 끄집어 낸다.
+        $users = get_users([ 'meta_key' => 'plid', 'meta_value' => $user['plid'] ]);
+        $found = $users[0];
+        $profile = profile($found->ID);
+    }
+
+
+
+    return $profile;
+
+}
+
+/// ================================================================================================================
+///
+/// Debug Mode or Test Mode
+///
+/// set_phpunit_mode(bool) set or unset phpunit test mode.
+/// get_phpunit_mode() return true or false. If it is true, then it is phpunit test mode.
+///
+/// ================================================================================================================
+$_phpunit_mode = false;
+/**
+ * To set or unset phpunit test mode.
+ *
+ * Use this when you want to exclude(or include) some codes for php unit test mode.
+ *
+ * @param $b
+ */
+function set_phpunit_mode($b) {
+    global $_phpunit_mode;
+    $_phpunit_mode = $b;
+}
+function get_phpunit_mode(): bool {
+    global $_phpunit_mode;
+    return $_phpunit_mode;
+}
+
+
+
+
+/**
+ *
+ * 카테고리와 서브카테고리 구조를 유지하는 카테고리 목록 리턴.
+ *
+ * 부모 카테고리와 자식 카테고리의 관계를 표시하고자 할 때 사용.
+ * @return array
+ *
+ * @example of return
+Array
+(
+[0] => WP_Term Object
+(
+[term_id] => 1
+[parent] => 0
+)
+
+[1] => WP_Term Object
+(
+[term_id] => 7
+[name] => communities
+[parent] => 0
+)
+[2] => WP_Term Object
+(
+[term_id] => 5
+[name] => Discussion
+[parent] => 7
+)
+ *
+ */
+function get_category_list() {
+    $categories = get_root_categories();
+    $rets = [];
+    foreach( $categories as $cat ) {
+        $rets[] = $cat;
+        $children = get_child_categories($cat->term_id);
+        foreach($children as $child ) {
+            $rets[] = $child;
+        }
+    }
+    return $rets;
+}
+
+/**
+ * Returns an array of WP_Term Objects of categories that are the top categories.
+ * @return array
+ */
+function get_root_categories() {
+    $args = array(
+        'taxonomy' => 'category',
+        'parent' => '0',
+        'hide_empty' => false,
+    );
+    return get_categories($args);
+}
+function get_child_categories( $term_id = 0, $taxonomy = 'category' ) {
+    $children = get_categories( array(
+        'child_of'      => $term_id,
+        'taxonomy'      => $taxonomy,
+        'hide_empty' => false,
+    ) );
+    return $children;
 }

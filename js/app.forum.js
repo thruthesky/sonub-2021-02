@@ -16,17 +16,9 @@ const forumMixin = {
        * To save files to post, get the ID(s) from app.files and pass it over route.
        */
       files: [],
-      currentListCategory: '',
-      alertOnNewPost: false,
-      alertOnNewComment: false,
     };
   },
   methods: {
-
-
-    commentEditFormCanSubmit() {
-      return this.$data.commentEditForm.comment_content;
-    },
     /**
      * Create or update post.
      *
@@ -38,6 +30,9 @@ const forumMixin = {
      * @param {event} event
      */
     onPostEditFormSubmit(event) {
+      if (app.notLoggedIn()) {
+        return app.error('Login First');
+      }
       const data = serializeFormEvent(event);
       data.files = [];
       this.files.forEach(function(v) {
@@ -51,8 +46,6 @@ const forumMixin = {
     onPostEditUploadSuccess(res) {
       this.files.push(res);
     },
-
-
     /**
      * Request call for deleting post.
      *
@@ -65,19 +58,6 @@ const forumMixin = {
       request('forum.deletePost', { ID: ID }, function(post) {
         console.log('post delete', post);
         move("/?page=forum/list&category=" + category);
-      }, this.error);
-    },
-    /**
-     * Request call for editting(creating / updating) comment.
-     *
-     * @param {event} event
-     */
-    onCommentEditFormSubmit(event) {
-      const data = serializeFormEvent(event);
-      console.log('Comment Edit Form Data', data);
-      request('forum.editComment', data, function(comment) {
-        console.log('comment edit', comment);
-        refresh();
       }, this.error);
     },
     /**
@@ -96,23 +76,7 @@ const forumMixin = {
     is_mine(author) {
       return this.user && parseInt(this.user.ID) === author;
     },
-
-    onChangeAlertOnNewPost(topic, re) {
-      request(notificationRoute, {topic: topic, re: re ? 'Y' : 'N'}, function (res) {
-        console.log(res);
-      }, this.error);
-    },
-    onChangeAlertOnNewComment(category) {
-      const topic = config.comment_notification_prefix + category;
-      const notificationRoute = this.$data.alertOnNewComment === true
-          ? "notification.subscribeTopic"
-          : "notification.unsubscribeTopic";
-      request(notificationRoute, {topic: topic}, function (res) {
-        console.log(res);
-      }, this.error);
-    },
   }, // eo methods:
-
 };
 
 
@@ -187,6 +151,9 @@ const commentForm = {
       this.$data.uploaded_files = [];
     },
     onSubmit() {
+      if (app.notLoggedIn()) {
+        return app.error('Login First');
+      }
       // Get file ID(s) of the comment.
       const $this = this;
       $this.uploaded_files.forEach(function(f) {
@@ -196,6 +163,9 @@ const commentForm = {
       request('forum.editComment', this.$data.form, refresh, app.error);
     },
     onCommentFileUpload(event) {
+      if (app.notLoggedIn()) {
+        return app.error('Login First');
+      }
       const $this = this;
       this.$root.onFileUpload(event, function(res) {
         $this.$data.uploaded_files.push(res);

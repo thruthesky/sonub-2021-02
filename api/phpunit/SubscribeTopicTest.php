@@ -7,7 +7,15 @@ require_once("../../../wp-load.php");
 require_once(API_DIR . '/routes/notification.route.php');
 
 class SubscribeTopicTest extends TestCase{
+
+    /**
+     * @group firebase
+     * @throws \Kreait\Firebase\Exception\FirebaseException
+     * @throws \Kreait\Firebase\Exception\MessagingException
+     */
     public function testSubscribeTopicTest() {
+
+        set_phpunit_mode(true);
 
         $noti = new NotificationRoute();
 

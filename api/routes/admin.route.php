@@ -92,4 +92,11 @@ class AdminRoute
     }
 
 
+    public function userProfileUpdate($in) {
+        if ( !is_user_logged_in()) return ERROR_LOGIN_FIRST;
+        if ( !admin()) return ERROR_NOT_AN_ADMIN;
+        return admin_user_profile_update($in);
+    }
+
+
 }

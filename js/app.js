@@ -1,6 +1,5 @@
 var _inDebounce = {};
 
-
 const AttributeBinding = {
   components: getComponents(),
   data() {
@@ -18,14 +17,12 @@ const AttributeBinding = {
         sendTo: "topic",
       },
 
-
       // progress bar of file uploads.
       //
       // Globally shared var.
       // it is shared for all kinds of file(photo) upload including profile photo, forum photo.
 
       uploadPercentage: 0,
-
 
       token: null,
     };
@@ -58,7 +55,7 @@ const AttributeBinding = {
     debounce(fn, delay, id) {
       if (typeof id === "undefined") id = "default";
       clearTimeout(_inDebounce[id]);
-      _inDebounce[id] = setTimeout(function() {
+      _inDebounce[id] = setTimeout(function () {
         fn(id);
       }, delay);
     },
@@ -77,8 +74,8 @@ const AttributeBinding = {
     onRegisterFormSubmit() {
       console.log("register form submitted");
       const data = Object.assign({}, this.$data.register);
-      if ( this.$data.token ) {
-          data['token'] = this.$data.token;
+      if (this.$data.token) {
+        data["token"] = this.$data.token;
       }
       console.log(data);
       request(
@@ -128,39 +125,30 @@ const AttributeBinding = {
      */
     userProfileUpdate(data, onSuccessCallback) {
       request(
-          "user.profileUpdate",
-          data,
-          function (profile) {
-            console.log("userProfileUpdate success. saving: ", profile);
-            app.setUser(profile);
-            if ( typeof onSuccessCallback === 'function' ) onSuccessCallback(profile);
-          },
-          this.error
+        "user.profileUpdate",
+        data,
+        function (profile) {
+          console.log("userProfileUpdate success. saving: ", profile);
+          app.setUser(profile);
+          if (typeof onSuccessCallback === "function")
+            onSuccessCallback(profile);
+        },
+        this.error
       );
     },
     onProfileUpdateFormSubmit() {
       console.log(this.$data.profile);
       this.userProfileUpdate(this.$data.profile);
-      // request(
-      //   "user.profileUpdate",
-      //   this.$data.profile,
-      //   function (profile) {
-      //     console.log("profile saved: ", profile);
-      //     app.setUser(profile);
-      //     app.alert("saved");
-      //   },
-      //   this.error
-      // );
     },
-    // onProfileMetaUpdateSubmit(data) {
-    //   request('user.profileUpdate', data, this.setUser, this.error);
-    // },
     /**
      * It's a wrapper of calling global fileUpload function.
      * @param event
      * @param successCallback
      */
     onFileUpload(event, successCallback) {
+      if (app.notLoggedIn()) {
+        return app.error("Login First");
+      }
       if (event.target.files.length === 0) {
         console.log("User cancelled upload");
         return;
@@ -187,7 +175,7 @@ const AttributeBinding = {
       );
     },
     /**
-     *
+     * Upload user profile photo, then, update user profile_photo_url with the uploaded photo url.
      * @param event
      */
     onProfilePhotoUpload(event) {
@@ -197,7 +185,6 @@ const AttributeBinding = {
           "user.profileUpdate",
           { profile_photo_url: res.url },
           function (profile) {
-            console.log("new profile: ", profile);
             app.profile.profile_photo_url = profile.profile_photo_url;
             app.user.profile_photo_url = profile.profile_photo_url;
             app.setUser(profile);
@@ -209,7 +196,7 @@ const AttributeBinding = {
 
     /**
      * Delete file.
-     * 
+     *
      * @param {string} ID
      * @param {function} successCallback
      */
@@ -237,23 +224,25 @@ const AttributeBinding = {
      * @param profile
      */
     setUser(profile) {
-      Cookies.set('session_id', profile.session_id, {domain: config.cookie_domain});
-      Cookies.set('nickname', profile.nickname, {domain: config.cookie_domain});
-      Cookies.set('profile_photo_url', profile.profile_photo_url, {domain: config.cookie_domain});
+      console.log(profile);
+      Cookies.set('session_id', profile.session_id, {domain: config.cookie_domain, expires: 365});
+      Cookies.set('nickname', profile.nickname, {domain: config.cookie_domain, expires: 365});
+      Cookies.set('profile_photo_url', profile.profile_photo_url, {domain: config.cookie_domain, expires: 365});
 
       this.user = {
         'session_id': profile.session_id,
         'nickname': profile.nickname,
         'profile_photo_url': profile.profile_photo_url,
       };
+      this.user = profile;
     },
 
     /**
      * Get user information.
      */
     getUser() {
-      const id = Cookies.get('session_id');
-      if ( id ) {
+      const id = Cookies.get("session_id");
+      if (id) {
         this.user = {
           'session_id': id,
           'nickname': Cookies.get('nickname'),
@@ -266,7 +255,7 @@ const AttributeBinding = {
      * @param title
      * @param body
      */
-    alert(title, body) {
+    alert(title, body = "") {
       alert(title + "\n" + body);
     },
     saveToken(token, topic = "") {
@@ -275,6 +264,21 @@ const AttributeBinding = {
         { token: token, topic: topic },
         function (re) {
           // console.log(re);
+        },
+        this.error
+      );
+    },
+    onChangeSubscribeOrUnsubscribeTopic(topic, subscribe) {
+      if (this.notLoggedIn()) {
+        subscribe.target.checked = false;
+        return this.alert("Must Login first");
+      }
+
+      request(
+        "notification.topicSubscription",
+        { topic: topic, subscribe: subscribe.target.checked ? "Y" : "N" },
+        function (res) {
+          // this.$data.user[topic] = mode ? "Y" : "N";
         },
         this.error
       );
