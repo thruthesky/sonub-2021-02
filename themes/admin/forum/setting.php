@@ -3,12 +3,13 @@
 // $cat = get_category_settings(['slug' => in('slug')]);
 
 $cat = get_category_by_slug(in('slug'));
-// $metas = category_meta($cat->ID, 'list_on_view', true);
-
-// d($cat);
+// $metas = get_term_meta($cat->term_id);
+//
+//// d($cat);
 // d($metas);
 
 $root_categories = get_root_categories();
+
 
 ?>
 <h1><?= in('slug') ?> Settings</h1>
@@ -62,7 +63,7 @@ $root_categories = get_root_categories();
             <td>List Widget</td>
             <td>
                 <?
-                select_list_widgets($cat->ID, 'forum-list', 'forum_list_widget');
+                select_list_widgets($cat->term_id, 'forum-list', 'forum_list_widget');
                 ?>
             </td>
         </tr>
@@ -73,7 +74,7 @@ $root_categories = get_root_categories();
             <td>Pagination Widget</td>
             <td>
                 <?
-                select_list_widgets($cat->ID, 'forum-list-pagination', 'forum_list_pagination_widget');
+                select_list_widgets($cat->term_id, 'pagination', 'pagination_widget');
                 ?>
             </td>
         </tr>

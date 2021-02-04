@@ -49,7 +49,7 @@ $comments = $post['comments'];
             <? } ?>
         </div>
         <? if ( admin() ) { ?>
-            <a class="btn btn-secondary" href="/?page=admin/send-push-notification&ID=<?php echo $post_ID ?>" target="_blank">
+            <a class="btn btn-secondary" href="/?page=admin/push-notification/send&ID=<?php echo $post_ID ?>" target="_blank">
                 Send Push
             </a>
         <? } ?>
@@ -97,16 +97,16 @@ $comments = $post['comments'];
                             <!-- TODO: MINE BUTTON -->
                             <div class="mt-2">
                                 <button class="btn btn-secondary mr-2" @click="replyNo=<?=$comment_ID?>">Reply</button>
-                                <button class="btn btn-success mr-2" @click="editNo=<?=$comment_ID?>"
-                                        v-if="is_mine(<?=$user_id?>)"
-                                >Edit</button>
+
+                                <? if ( is_my_comment($comment_ID) ) { ?>
+                                <button class="btn btn-success mr-2" @click="editNo=<?=$comment_ID?>">Edit</button>
 
                                 <button class="btn btn-danger"
                                         @click="onCommentDelete('<?php echo $comment_ID ?>')"
-                                        v-if="is_mine(<?=$user_id?>)"
                                 >
                                     DELETE
                                 </button>
+                                <? } ?>
 
                             </div>
                             <hr>
