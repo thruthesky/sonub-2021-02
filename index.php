@@ -28,34 +28,6 @@ $theme_footer = get_theme_footer_path();
 </head>
 <body class="<?=get_theme_page_class_name()?>">
 <section id="app" class="container">
-<<<<<<< HEAD
-    <h1>Sonub</h1>
-    <div class="d-flex justify-content-between">
-        <div>
-            <a href="/">Home</a>
-            <span v-if="notLoggedIn()">
-            <a href="/?page=user/register">Register page</a>
-            <a href="/?page=user/login">Login page</a>
-            </span>
-                <span v-if="loggedIn()">
-            <a href="/?page=user/profile">Profile page</a>
-            <a href="/?page=user/logout">Logout</a>
-            </span>
-            <a href="/?page=forum/list&category=reminder">Reminder</a>
-            <a href="/?page=forum/list&category=qna">QnA</a>
-            <a href="/?page=forum/list&category=discussion">Discussion</a>
-
-        </div>
-        <div>
-<? if ( admin() ) { ?><a href="/?page=admin/index">Admin</a><? } ?>
-            <a class="ms-2" href="/?page=user/settings" v-if="loggedIn()"><i class="fa fa-cog"></i></a>
-            <a href="/?page=user/profile"><img class="size-40 circle" :src="user.profile_photo_url" v-if="user && user.profile_photo_url"></a>
-        </div>
-
-    </div>
-
-=======
->>>>>>> c00eaad827fefd191d27f934a3f2222986879de0
     <section id="router">
         <?php
         begin_capture_script_style();
