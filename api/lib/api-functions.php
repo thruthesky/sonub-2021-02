@@ -1648,6 +1648,13 @@ function between($val, $min, $max) {
 
 /**
  * @param $in
+ * 
+ * $in['author'] is the author ID.
+ * 
+ * if both $in['category_name'] and $in['author'] is not provided, it will return an error.
+ * if only $in['category_name'] is provided, it will return all posts from that category.
+ * if only $in['author'] is provided, it will return all posts from that author.
+ * 
  * @see the params at https://developer.wordpress.org/reference/classes/wp_query/parse_query/
  * @return array|string
  */
