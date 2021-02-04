@@ -70,7 +70,6 @@ if ( !defined('BROWSER_COOKIE_DOMAIN') ) define('BROWSER_COOKIE_DOMAIN', '');
  * PASS_LOGIN_MOBILE_PREFIX is the prefix that will be added on user register through Pass login.
  * PASS_LOGIN_SALT is the secret password used with Pass login. It should be a random string between 16 to 32 chars.
  */
- define('BROWSER_COOKIE_DOMAIN', '');
 define('PASS_LOGIN_MOBILE_PREFIX', 'm');
 define('PASS_LOGIN_CLIENT_ID', 'b90hirE4UYwVf2GkHIiK');
 define('PASS_LOGIN_CLIENT_SECRET_KEY', '366c0f3775bfa48f2239226506659f5981afd3eb2b08189f9f9d22cdc4ca63c9');
