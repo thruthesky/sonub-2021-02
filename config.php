@@ -66,7 +66,7 @@ define('PASS_LOGIN_PASSWORD', 'S_oO0Oo_S.0.48.PM');
  * Firebase Admin Service Account Key, for firebase connection
  */
 define("FIREBASE_ADMIN_SDK_SERVICE_ACCOUNT_KEY_PATH", THEME_DIR . "/keys/firebase-adminsdk.json");
-define("FIREBASE_DATABASE_URI", "https://nalia-app-default-rtdb.firebaseio.com");
+define("FIREBASE_DATABASE_URI", "https://dalgona-firebase-default-rtdb.firebaseio.com/");
 
 
 $domain_themes = [
@@ -122,5 +122,5 @@ define('POSTS_PER_PAGE', 3);
  *
  * To apply login cookie(and all other cookies) to all sub domains, set the root domain(like `domain.com`) name here
  */
- define('BROWSER_COOKIE_DOMAIN', 'sonub.com');
+ define('BROWSER_COOKIE_DOMAIN', '');
 
