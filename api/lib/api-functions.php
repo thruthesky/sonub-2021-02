@@ -6,7 +6,8 @@ require_once(ABSPATH . 'wp-admin/includes/taxonomy.php');
  * Returns api version in string.
  * @return string
  */
-function api_version() {
+function api_version()
+{
     return "0.1.4";
 }
 
@@ -48,14 +49,14 @@ function in($name = null, $default = null)
     // Then get the data as JSON input.
     $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
 
-//
-//debug_log("CONTENT_TYPE: $contentType");
-//debug_log($_SERVER);
-//debug_log($_REQUEST);
+    //
+    //debug_log("CONTENT_TYPE: $contentType");
+    //debug_log($_SERVER);
+    //debug_log($_REQUEST);
 
 
 
-    if (stripos($contentType, 'application/json') !== false ) {
+    if (stripos($contentType, 'application/json') !== false) {
         $_REQUEST = get_JSON_input();
     }
 
@@ -121,11 +122,12 @@ function error($code)
 }
 
 
-function success_or_error($data) {
-//    echo "===> data: \n";
-//    print_r($data);
-    if ( $data === null || $data == '' ) error(ERROR_EMPTY_RESPONSE);
-    if ( is_string($data) ) error($data);
+function success_or_error($data)
+{
+    //    echo "===> data: \n";
+    //    print_r($data);
+    if ($data === null || $data == '') error(ERROR_EMPTY_RESPONSE);
+    if (is_string($data)) error($data);
     else success($data);
 }
 
@@ -154,12 +156,13 @@ function success_or_error($data) {
  *
  * @example See phpunit/ReplaceHostOfImageUrlToRequestHostTest.php
  */
-function replace_host_of_image_url_to_request_host($data, $apiUrl = null) {
+function replace_host_of_image_url_to_request_host($data, $apiUrl = null)
+{
 
-    if(!defined('REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST') || REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST == false) return $data;
+    if (!defined('REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST') || REPLACE_HOST_OF_IMAGE_URL_TO_REQUEST_HOST == false) return $data;
 
     // Get current(API) url like "https://abc.com/v3/index.php"
-    if ( $apiUrl ) $current_url = $apiUrl;
+    if ($apiUrl) $current_url = $apiUrl;
     else {
         $current_url = get_current_url();
     }
@@ -171,25 +174,23 @@ function replace_host_of_image_url_to_request_host($data, $apiUrl = null) {
     $arr = explode('/v3', $current_url);
     $current_home_url = $arr[0];
     debug_log("current_home_url: $current_home_url");
-    array_walk_recursive($data, function(&$value, $key) use ($current_home_url) {
+    array_walk_recursive($data, function (&$value, $key) use ($current_home_url) {
 
         // Is the value image URL?
-        if ( is_string($value) && strpos($value, '/wp-content/uploads/') !== false ) {
+        if (is_string($value) && strpos($value, '/wp-content/uploads/') !== false) {
             // Then, get the path like "/wp-content/uploads/2021/01/14/abc.jpg"
             $arr = explode('/wp-content/uploads/', $value);
             $path = "/wp-content/uploads/$arr[1]";
             $new_url = $current_home_url . $path;
             $value = $new_url;
         }
-
-
     });
     return $data;
 
 
-//    $str = preg_replace("/(https?):\/\/([^\/]*)\/wp-content\/uploads\//", "$1://$host/wp-content/uploads/", $str);
-//    $str = str_replace($domain, $host, $str);
-//    return $str;
+    //    $str = preg_replace("/(https?):\/\/([^\/]*)\/wp-content\/uploads\//", "$1://$host/wp-content/uploads/", $str);
+    //    $str = str_replace($domain, $host, $str);
+    //    return $str;
 }
 
 
@@ -199,7 +200,7 @@ function response($data)
 {
     try {
         /// Convert into json string
-//        $data = replace_host_of_image_url_to_request_host($data);
+        //        $data = replace_host_of_image_url_to_request_host($data);
         $re = json_encode($data);
         if ($re) {
             // JSON 으로 출
@@ -210,7 +211,6 @@ function response($data)
 
             // 내용 출력
             echo $re;
-
         }
     } catch (Exception $e) {
         json_error();
@@ -291,7 +291,7 @@ function session_login($session_id)
     debug_log("user session ID: $ID", $session_id);
     debug_log('server', $_SERVER);
     $user = get_userdata($ID);
-//    debug_log(print_r($user, true));
+    //    debug_log(print_r($user, true));
     if ($user) {
         if ($session_id == get_session_id($user)) {
             wp_set_current_user($ID);
@@ -316,7 +316,8 @@ function session_login($session_id)
  * @note Try to use this function instead of wp_is_logged_in()
  * @return bool
  */
-function is_logged_in() {
+function is_logged_in()
+{
     return is_user_logged_in() && wp_get_current_user()->ID > 0;
 }
 
@@ -324,10 +325,12 @@ function is_logged_in() {
  * Alias of is_logged_in()
  * @return bool
  */
-function loggedIn() {
+function loggedIn()
+{
     return is_logged_in();
 }
-function notLoggedIn() {
+function notLoggedIn()
+{
     return loggedIn() === false;
 }
 
@@ -370,7 +373,7 @@ $raw->session_id = $user->get_session_id( $user );
  */
 function get_session_id($user = null)
 {
-    if ( $user === null) {
+    if ($user === null) {
         $user = wp_get_current_user();
     }
     $userdata = $user->to_array();
@@ -386,10 +389,11 @@ function get_session_id($user = null)
     return $uid;
 }
 
-function my($field) {
-    if ( $field == 'ID' ) {
+function my($field)
+{
+    if ($field == 'ID') {
         return wp_get_current_user()->ID;
-    } else if ( $field == 'email' ) {
+    } else if ($field == 'email') {
         return wp_get_current_user()->user_email;
     } else {
         return get_user_meta(wp_get_current_user()->ID, $field, true);
@@ -443,7 +447,8 @@ function login($data)
  * @return array
  *  - returns the user profile after update user meta.
  */
-function profile_update($in) {
+function profile_update($in)
+{
     user_update_meta(wp_get_current_user()->ID, $in);
     return profile();
 }
@@ -461,24 +466,25 @@ function profile_update($in) {
  * @param $in
  * @return array|string
  */
-function admin_user_profile_update($in) {
-    $user = get_user_by('id', $in['ID'] );
-    if (!$user ) return ERROR_USER_NOT_FOUND;
+function admin_user_profile_update($in)
+{
+    $user = get_user_by('id', $in['ID']);
+    if (!$user) return ERROR_USER_NOT_FOUND;
 
     /// update for wp_user info
     $up = [];
     if (isset($in['user_email']) && !empty($in['user_email'])) {
-        $user_by_email = get_user_by('email', $in['user_email'] );
-        if($user_by_email && $user->ID !== $user_by_email->ID) return ERROR_EMAIL_EXISTS;
+        $user_by_email = get_user_by('email', $in['user_email']);
+        if ($user_by_email && $user->ID !== $user_by_email->ID) return ERROR_EMAIL_EXISTS;
         $up['user_email'] = $in['user_email'];
     }
 
 
-//    if (isset($in['user_nicename']) && !empty($in['user_nicename'])) $up['user_nicename'] = $in['user_nicename'];
-//    if (isset($in['user_url']) && !empty($in['user_url'])) $up['user_url'] = $in['user_url'];
-//    if (isset($in['user_activation_key']) && !empty($in['user_activation_key'])) $up['user_activation_key'] = $in['user_activation_key'];
-//    if (isset($in['user_status']) && !empty($in['user_status'])) $up['user_status'] = $in['user_status'];
-//    if (isset($in['display_name']) && !empty($in['display_name'])) $up['display_name'] = $in['display_name'];
+    //    if (isset($in['user_nicename']) && !empty($in['user_nicename'])) $up['user_nicename'] = $in['user_nicename'];
+    //    if (isset($in['user_url']) && !empty($in['user_url'])) $up['user_url'] = $in['user_url'];
+    //    if (isset($in['user_activation_key']) && !empty($in['user_activation_key'])) $up['user_activation_key'] = $in['user_activation_key'];
+    //    if (isset($in['user_status']) && !empty($in['user_status'])) $up['user_status'] = $in['user_status'];
+    //    if (isset($in['display_name']) && !empty($in['display_name'])) $up['display_name'] = $in['display_name'];
 
     if (isset($in['user_pass']) && !empty($in['user_pass'])) {
         $up['user_pass'] = wp_hash_password($in['user_pass']);
@@ -486,7 +492,7 @@ function admin_user_profile_update($in) {
 
     global $wpdb;
     if (!empty($up)) {
-        $wpdb->update('wp_users', $up, ['ID'=>$user->ID]);
+        $wpdb->update('wp_users', $up, ['ID' => $user->ID]);
     }
 
     user_update_meta($user->ID, $in);
@@ -541,8 +547,8 @@ function register($in)
         return $user_ID->get_error_code();
     }
 
-    if ( isset($in['token']) ) {
-        if ( SUBSCRIBE_NEW_COMMENT_ON_REGISTRATION ) {
+    if (isset($in['token'])) {
+        if (SUBSCRIBE_NEW_COMMENT_ON_REGISTRATION) {
             $token = $in['token'];
             unset($in['token']);
             $in[NOTIFY_COMMENT] = "Y";
@@ -563,7 +569,8 @@ function register($in)
  * @param $user_ID
  * @param $data
  */
-function user_update_meta($user_ID, $data) {
+function user_update_meta($user_ID, $data)
+{
     foreach ($data as $k => $v) {
         if (!in_array($k, USER_META_EXCEPTIONS)) {
             update_user_meta($user_ID, $k, $v);
@@ -597,12 +604,12 @@ function user_metas($user_ID)
  * @return array
  *  - if it cannot find user information, it return an empty array.
  */
-function profile($user_ID=null)
+function profile($user_ID = null)
 {
-    if ( $user_ID === null ) {
+    if ($user_ID === null) {
         $user_ID = wp_get_current_user()->ID;
     }
-    if ( is_string($user_ID) && strpos($user_ID, '_') !== false) {
+    if (is_string($user_ID) && strpos($user_ID, '_') !== false) {
         $arr = explode('_', $user_ID);
         $user_ID = $arr[0];
     }
@@ -618,11 +625,11 @@ function profile($user_ID=null)
 
     $data = array_merge(user_metas($user_ID), $data);
 
-    foreach($data as $k => $v ) {
-        if ( in_array($k, USER_META_EXCEPTIONS_FOR_CLIENT) ) unset($data[$k]);
+    foreach ($data as $k => $v) {
+        if (in_array($k, USER_META_EXCEPTIONS_FOR_CLIENT)) unset($data[$k]);
     }
 
-    if ( admin() ) $data['admin'] = true;
+    if (admin()) $data['admin'] = true;
 
     return $data;
 }
@@ -634,8 +641,9 @@ function profile($user_ID=null)
  * @return bool
  * @todo change name to api_error()
  */
-function api_error($obj) {
-    if ( $obj && is_string($obj) && strpos($obj, 'ERROR_') === 0 ) return true;
+function api_error($obj)
+{
+    if ($obj && is_string($obj) && strpos($obj, 'ERROR_') === 0) return true;
     else return false;
 }
 
@@ -645,20 +653,21 @@ function api_error($obj) {
  * @return array|string
  * @todo change kebab case.
  */
-function updateUserLocation($in) {
+function updateUserLocation($in)
+{
     global $wpdb;
     $data = [
         'user_ID' => $in['user_ID'] ??  wp_get_current_user()->ID,
         'latitude' => $in['latitude'],
-        'longitude'=> $in['longitude'],
-        'accuracy'=> $in['accuracy'] ?? 0,
-        'altitude'=> $in['altitude'] ?? 0,
-        'speed'=> $in['speed'] ?? 0,
-        'heading'=> $in['heading'] ?? 0,
-        'time'=> $in['time'] ?? 0,
+        'longitude' => $in['longitude'],
+        'accuracy' => $in['accuracy'] ?? 0,
+        'altitude' => $in['altitude'] ?? 0,
+        'speed' => $in['speed'] ?? 0,
+        'heading' => $in['heading'] ?? 0,
+        'time' => $in['time'] ?? 0,
     ];
     $re = $wpdb->replace(LOCATION_TABLE, $data);
-    if ( $re ) return $data;
+    if ($re) return $data;
     else return ERROR_WRONG_QUERY;
 }
 
@@ -685,7 +694,8 @@ function updateUserLocation($in) {
  *
  * @change name to kebab case
  */
-function userSearchByLocation($in) {
+function userSearchByLocation($in)
+{
 
     $LATITUDE = $in['latitude'];
     $LONGITUDE = $in['longitude'];
@@ -694,7 +704,7 @@ function userSearchByLocation($in) {
     $TABLE = LOCATION_TABLE;
     $FIELDS = isset($in['fields']) ? $in['fields'] : '*';
 
-    $sql=<<<EOS
+    $sql = <<<EOS
     SELECT $FIELDS FROM (
         SELECT *,
         ( 
@@ -710,7 +720,7 @@ EOS;
 
     global $wpdb;
     $results = $wpdb->get_results($sql, ARRAY_A);
-    if ( $results ) return $results;
+    if ($results) return $results;
     else return [];
 }
 
@@ -722,11 +732,12 @@ EOS;
  *      list($instance, $methodName) = get_route(['route' => 'app.version']);
  *      $version = $instance->$methodName();
  */
-function get_route($in) {
+function get_route($in)
+{
     $route = $in['route'] ?? null;
-    if ( empty($route) ) return ERROR_EMPTY_ROUTE;
+    if (empty($route)) return ERROR_EMPTY_ROUTE;
     $arr = explode('.', $route);
-    if ( count($arr) != 2 ) return ERROR_MALFORMED_ROUTE;
+    if (count($arr) != 2) return ERROR_MALFORMED_ROUTE;
 
     $path = API_DIR . "/routes/{$arr[0]}.route.php";
     if (file_exists($path)) {
@@ -748,8 +759,9 @@ function get_route($in) {
     return [$instance, $method, $route];
 }
 
-function end_if_error($code) {
-    if ( api_error($code) ) error($code);
+function end_if_error($code)
+{
+    if (api_error($code)) error($code);
     return $code;
 }
 
@@ -764,14 +776,15 @@ function end_if_error($code) {
  * @example
  *  login_or_register(['user_email' => "ju-$i@test.com", 'user_pass' => "12345a", "other" => "data", ... ]);
  */
-function login_or_register($in) {
+function login_or_register($in)
+{
     $re = login($in);
     debug_log("login:", $re);
-    if ( api_error($re) ) {
-        if ( $re == ERROR_USER_NOT_FOUND_BY_THAT_EMAIL ) {
+    if (api_error($re)) {
+        if ($re == ERROR_USER_NOT_FOUND_BY_THAT_EMAIL) {
             $re = register($in);
             debug_log("register: ", $re);
-            if ( api_error($re) ) return $re;
+            if (api_error($re)) return $re;
             $re['mode'] = 'register';
         } else {
             /// ERROR
@@ -791,7 +804,8 @@ function login_or_register($in) {
  *
  * @return array|object|void|null
  */
-function get_token($token) {
+function get_token($token)
+{
     global $wpdb;
     return $wpdb->get_row("SELECT * FROM " . PUSH_TOKENS_TABLE .  " WHERE token='$token'", ARRAY_A);
 }
@@ -802,9 +816,10 @@ function get_token($token) {
  *
  * @example phpunit/SubscribeTopicTest.php
  */
-function get_user_tokens($ID=null) {
+function get_user_tokens($ID = null)
+{
     global $wpdb;
-    if ( $ID ) $user_ID = $ID;
+    if ($ID) $user_ID = $ID;
     else $user_ID = wp_get_current_user()->ID;
     $rows = $wpdb->get_results("SELECT * FROM " . PUSH_TOKENS_TABLE .  " WHERE user_ID='$user_ID'", ARRAY_A);
     return ids($rows, 'token');
@@ -826,25 +841,26 @@ function get_user_tokens($ID=null) {
  * @throws \Kreait\Firebase\Exception\FirebaseException
  * @throws \Kreait\Firebase\Exception\MessagingException
  */
-function update_token($in) {
+function update_token($in)
+{
 
     global $wpdb;
-    if ( !isset($in['token']) ) return ERROR_EMPTY_TOKEN;
+    if (!isset($in['token'])) return ERROR_EMPTY_TOKEN;
     $token = $in['token'];
     $user_ID = wp_get_current_user()->ID;
     debug_log("user_ID: $user_ID");
 
-    if (empty($user_ID) ) $user_ID = 0;
+    if (empty($user_ID)) $user_ID = 0;
 
     $record = get_token($token);
 
 
 
-    if ( empty($record) ) {
+    if (empty($record)) {
         // insert
         debug_log(" ['user_ID' => $user_ID, 'token' => $token, 'stamp' => time()] ");
         $re = $wpdb->insert(PUSH_TOKENS_TABLE, ['user_ID' => $user_ID, 'token' => $token, 'stamp' => time()]);
-        if ( $re === false ) {
+        if ($re === false) {
             return sql_error(ERROR_INSERT);
         }
     } else {
@@ -853,14 +869,14 @@ function update_token($in) {
     }
 
 
-    if ( isset($in['topic']) && !empty($in['topic']) ) {
+    if (isset($in['topic']) && !empty($in['topic'])) {
         $topic = $in['topic'];
         $re = subscribeTopic($topic, $token);
     } else {
         $re = subscribeTopic(DEFAULT_TOPIC, $token);
     }
 
-    if ( $re && isset($re['results']) && count($re['results']) && isset($re['results'][0]['error']) ) {
+    if ($re && isset($re['results']) && count($re['results']) && isset($re['results'][0]['error'])) {
         return ERROR_TOPIC_SUBSCRIPTION;
     }
 
@@ -882,21 +898,22 @@ function update_token($in) {
  * @throws \Kreait\Firebase\Exception\FirebaseException
  * @throws \Kreait\Firebase\Exception\MessagingException
  */
-function send_message_to_users($in) {
-    if ( !isset($in['users']) ) return ERROR_EMPTY_USERS;
-    if ( !isset($in['title']) ) return ERROR_EMPTY_TITLE;
-    if ( !isset($in['body']) ) return ERROR_EMPTY_BODY;
+function send_message_to_users($in)
+{
+    if (!isset($in['users'])) return ERROR_EMPTY_USERS;
+    if (!isset($in['title'])) return ERROR_EMPTY_TITLE;
+    if (!isset($in['body'])) return ERROR_EMPTY_BODY;
     $all_tokens = [];
 
     $users = explode(',', $in['users']);
-    foreach($users as $ID) {
+    foreach ($users as $ID) {
         $tokens = get_user_tokens($ID);
         $all_tokens = array_merge($all_tokens, $tokens);
     }
     /// If there are no tokens to send, then it will return empty array.
-    if ( empty($all_tokens) ) return ERROR_EMPTY_TOKENS;
-    if ( !isset($in['data'])) $in['data'] = [];
-    if ( !isset($in['imageUrl'])) $in['imageUrl'] = '';
+    if (empty($all_tokens)) return ERROR_EMPTY_TOKENS;
+    if (!isset($in['data'])) $in['data'] = [];
+    if (!isset($in['imageUrl'])) $in['imageUrl'] = '';
     return sendMessageToTokens($all_tokens, $in['title'], $in['body'], $in['click_action'], $in['data'], $in['imageUrl']);
 }
 
@@ -1001,7 +1018,7 @@ function post_response($ID_or_post, $options = [])
     if (empty($ID_or_post)) return ERROR_EMPTY_ID_OR_POST;
     $post = get_post($ID_or_post, ARRAY_A);
 
-    if ( ! $post ) return ERROR_POST_NOT_FOUND;
+    if (!$post) return ERROR_POST_NOT_FOUND;
 
     if (isset($options['with_autop']) && $options['with_autop']) {
         $post['post_content_autop'] = wpautop(($post['post_content']));
@@ -1060,7 +1077,7 @@ function post_response($ID_or_post, $options = [])
     // Add meta datas.
     $metas = get_post_meta($post['ID'], '', true);
     $singles = [];
-    if ( $metas ) {
+    if ($metas) {
         foreach ($metas as $k => $v) {
             $singles[$k] = $v[0];
         }
@@ -1161,7 +1178,7 @@ function get_uploaded_file($post_ID)
         $ret['thumbnail_url'] = $post->guid; // thumbnail url
     }
     /// Add image size, width, height
-//    $ret['exif'] = image_exif_details(image_path_from_url($ret['url']));
+    //    $ret['exif'] = image_exif_details(image_path_from_url($ret['url']));
     return $ret;
 }
 
@@ -1242,9 +1259,10 @@ IsColor: 1
  *
  *
  */
-function image_exif_details($path) {
+function image_exif_details($path)
+{
     $exif = @exif_read_data($path, 'COMPUTED', true);
-    if ( ! $exif ) return [];
+    if (!$exif) return [];
     $rets = [];
     foreach ($exif as $key => $section) {
         foreach ($section as $name => $val) {
@@ -1260,9 +1278,10 @@ function image_exif_details($path) {
  * returns the path of the image.
  * If an Image has wrong url, then it returns null.
  */
-function image_path_from_url($url) {
+function image_path_from_url($url)
+{
     $arr = explode('/wp-content/', $url);
-    if ( count($arr) == 1 ) return null;
+    if (count($arr) == 1) return null;
     $path = ABSPATH . 'wp-content/' . $arr[1];
     return $path;
 }
@@ -1271,7 +1290,7 @@ function image_path_from_url($url) {
 
 
 
-function comment_response($comment_id, $options=[])
+function comment_response($comment_id, $options = [])
 {
     $comment = get_comment($comment_id, ARRAY_A);
     $ret['comment_ID'] = $comment['comment_ID'];
@@ -1281,7 +1300,7 @@ function comment_response($comment_id, $options=[])
     $ret['comment_author'] = $comment['comment_author'];
     $ret['comment_content'] = $comment['comment_content'];
 
-    if ( isset($options['with_autop']) && $options['with_autop'] ) {
+    if (isset($options['with_autop']) && $options['with_autop']) {
         $ret['comment_content'] = wpautop(($comment['comment_content']));
     }
     $ret['comment_date'] = $comment['comment_date'];
@@ -1432,12 +1451,13 @@ function is_my_comment($comment_ID)
  *  - ERROR_UPDATE on update error
  *  - ERROR_INSERT on insert error
  */
-function table_updates($in) {
+function table_updates($in)
+{
     $fields = $in;
     unset($fields['route'], $fields['user_ID'], $fields['session_id'], $fields['table']);
 
-    if ( isset($in['user_ID']) ) {
-        if ( admin() ) {
+    if (isset($in['user_ID'])) {
+        if (admin()) {
             $user_ID = $in['user_ID'];
         } else {
             return ERROR_PERMISSION_DENIED;
@@ -1447,21 +1467,21 @@ function table_updates($in) {
     }
 
     debug_log("fields::", $fields);
-    if ( count($fields) == 0 ) return ERROR_NO_FIELDS;
+    if (count($fields) == 0) return ERROR_NO_FIELDS;
 
     global $wpdb;
     $row = $wpdb->get_row("SELECT user_ID FROM $in[table] WHERE user_ID=$user_ID", ARRAY_A);
 
-    if ( $row ) {
+    if ($row) {
         $fields['updatedAt'] = time();
         $re = $wpdb->update($in['table'], $fields, ['user_ID' => $user_ID]);
-        if ( $re === false ) return sql_error(ERROR_UPDATE);
+        if ($re === false) return sql_error(ERROR_UPDATE);
         else $action = ['action' => 'UPDATE'];
     } else {
         $fields['createdAt'] = time();
         $fields['updatedAt'] = time();
         $re = $wpdb->insert($in['table'], $fields);
-        if ( $re === false ) return sql_error(ERROR_INSERT);
+        if ($re === false) return sql_error(ERROR_INSERT);
         else $action = ['action' => 'INSERT'];
     }
 
@@ -1488,7 +1508,8 @@ function table_updates($in) {
  * @param array $in
  * @return array|object|string|void|null
  */
-function table_get($in) {
+function table_get($in)
+{
     $user_ID = wp_get_current_user()->ID;
     global $wpdb;
     return $wpdb->get_row("SELECT * FROM $in[table] WHERE user_ID=$user_ID", ARRAY_A);
@@ -1501,8 +1522,9 @@ function table_get($in) {
  * Returns requested url domain
  * @return mixed
  */
-function get_host_name() {
-    if ( isset($_SERVER['HTTP_HOST']) ) return $_SERVER['HTTP_HOST'];
+function get_host_name()
+{
+    if (isset($_SERVER['HTTP_HOST'])) return $_SERVER['HTTP_HOST'];
     else return null;
 }
 
@@ -1510,18 +1532,21 @@ function get_host_name() {
  * Alias of get_host_name()
  * @return mixed|null
  */
-function get_domain() {
+function get_domain()
+{
     return get_host_name();
 }
 /**
  * Alias of get_host_name()
  * @return mixed|null
  */
-function get_domain_name() {
+function get_domain_name()
+{
     return get_host_name();
 }
 
-function isCli() {
+function isCli()
+{
     return php_sapi_name() == 'cli';
 }
 
@@ -1537,13 +1562,14 @@ function isCli() {
  *  - http://abc.com
  *  - https://xxx.abc.com
  */
-function get_requested_host_url() {
+function get_requested_host_url()
+{
 
-    if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
+    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
         $url = "https://";
     else
         $url = "http://";
-    $url.= get_host_name();
+    $url .= get_host_name();
 
     return $url;
 }
@@ -1551,25 +1577,27 @@ function get_requested_host_url() {
  * Returns get current URL that appears on web browser URL address bar.
  * @return string
  */
-function get_current_url() {
+function get_current_url()
+{
     // Append the requested resource location to the URL
     return get_requested_host_url() . $_SERVER['REQUEST_URI'];
 }
 
 
-function sql_injection_test($sql) {
-    if ( strpos($sql, ';') !== false ) return ERROR_SQL_INJECTION . ':;';
-    if ( stripos($sql, 'INSERT ') !== false ) return ERROR_SQL_INJECTION . ':INSERT';
-    if ( stripos($sql, 'REPLACE ') !== false ) return ERROR_SQL_INJECTION . ':REPLACE';
-    if ( stripos($sql, 'UPDATE ') !== false ) return ERROR_SQL_INJECTION . ':UPDATE';
-    if ( stripos($sql, 'DELETE ') !== false ) return ERROR_SQL_INJECTION . ':DELETE';
-    if ( stripos($sql, 'SELECT ') !== false ) return ERROR_SQL_INJECTION . ':SELECT';
-    if ( stripos($sql, 'WHERE ') !== false ) return ERROR_SQL_INJECTION . ':WHERE';
-    if ( stripos($sql, 'FROM ') !== false ) return ERROR_SQL_INJECTION . ':FROM';
-    if ( stripos($sql, 'CREATE ') !== false ) return ERROR_SQL_INJECTION . ':CREATE';
-    if ( stripos($sql, 'DROP ') !== false ) return ERROR_SQL_INJECTION . ':DROP';
-    if ( stripos($sql, 'JOIN ') !== false ) return ERROR_SQL_INJECTION . ':JOIN';
-    if ( stripos($sql, ' TABLE ') !== false ) return ERROR_SQL_INJECTION . ':TABLE';
+function sql_injection_test($sql)
+{
+    if (strpos($sql, ';') !== false) return ERROR_SQL_INJECTION . ':;';
+    if (stripos($sql, 'INSERT ') !== false) return ERROR_SQL_INJECTION . ':INSERT';
+    if (stripos($sql, 'REPLACE ') !== false) return ERROR_SQL_INJECTION . ':REPLACE';
+    if (stripos($sql, 'UPDATE ') !== false) return ERROR_SQL_INJECTION . ':UPDATE';
+    if (stripos($sql, 'DELETE ') !== false) return ERROR_SQL_INJECTION . ':DELETE';
+    if (stripos($sql, 'SELECT ') !== false) return ERROR_SQL_INJECTION . ':SELECT';
+    if (stripos($sql, 'WHERE ') !== false) return ERROR_SQL_INJECTION . ':WHERE';
+    if (stripos($sql, 'FROM ') !== false) return ERROR_SQL_INJECTION . ':FROM';
+    if (stripos($sql, 'CREATE ') !== false) return ERROR_SQL_INJECTION . ':CREATE';
+    if (stripos($sql, 'DROP ') !== false) return ERROR_SQL_INJECTION . ':DROP';
+    if (stripos($sql, 'JOIN ') !== false) return ERROR_SQL_INJECTION . ':JOIN';
+    if (stripos($sql, ' TABLE ') !== false) return ERROR_SQL_INJECTION . ':TABLE';
     return null;
 }
 
@@ -1581,18 +1609,19 @@ function sql_injection_test($sql) {
  * @param $in
  * @return array|object|string|null
  */
-function sql_query($in) {
+function sql_query($in)
+{
 
     global $wpdb;
     $table = $in['table'];
     $where = stripslashes($in['where']);
 
-    if ( !in_array($table, PUBLIC_TABLES) ) return ERROR_PUBLIC_TABLES;
+    if (!in_array($table, PUBLIC_TABLES)) return ERROR_PUBLIC_TABLES;
 
     $re = sql_injection_test($table);
-    if ( $re ) return $re;
+    if ($re) return $re;
     $re = sql_injection_test($where);
-    if ( $re ) return $re;
+    if ($re) return $re;
 
     $q =  "SELECT * FROM $table WHERE $where";
     debug_log("sql_query: $q");
@@ -1609,11 +1638,12 @@ function sql_query($in) {
  * @param null $default_error is the default error code when the last error is unknown.
  * @return mixed|null
  */
-function sql_error($default_error = null) {
+function sql_error($default_error = null)
+{
     global $wpdb;
     $last_error = $wpdb->last_error;
-    if ( $last_error ) {
-        if ( strpos($last_error, 'Unknown column') !== false ) {
+    if ($last_error) {
+        if (strpos($last_error, 'Unknown column') !== false) {
             return ERROR_UNKNOWN_COLUMN;
         }
     }
@@ -1631,7 +1661,7 @@ function sql_error($default_error = null) {
  * @example
  *  ids([ ['user_ID'=>1, ...], [], ... ])
  */
-function ids($users, $field='user_ID')
+function ids($users, $field = 'user_ID')
 {
     $ret = [];
     foreach ($users as $u) {
@@ -1641,7 +1671,8 @@ function ids($users, $field='user_ID')
 }
 
 
-function between($val, $min, $max) {
+function between($val, $min, $max)
+{
     return $val >= $min && $val <= $max;
 }
 
@@ -1658,9 +1689,11 @@ function between($val, $min, $max) {
  * @see the params at https://developer.wordpress.org/reference/classes/wp_query/parse_query/
  * @return array|string
  */
-function forum_search($in) {
+function forum_search($in)
+{
     if (!isset($in['category_name']) && !isset($in['author'])) return ERROR_EMPTY_CATEGORY_OR_ID;
     $posts = get_posts($in);
+
     $rets = [];
     foreach ($posts as $p) {
         $rets[] = post_response($p);
@@ -1678,19 +1711,20 @@ function forum_search($in) {
  * @example to get the post of the current page
  *  print_r( get_post_from_guid( home_url() . $_SERVER['REQUEST_URI'] ) );
  */
-function get_post_from_guid( $guid ) {
+function get_post_from_guid($guid)
+{
     global $wpdb;
-    $id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE guid=%s", $guid ) );
-    if ( $id ) return get_post($id);
-    if ( stripos( $guid, 'http://') !== false ) {
+    $id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid=%s", $guid));
+    if ($id) return get_post($id);
+    if (stripos($guid, 'http://') !== false) {
         $guid = str_replace('http://', 'https://', $guid);
-        $id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE guid=%s", $guid ) );
+        $id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid=%s", $guid));
     }
-    if ( stripos( $guid, 'https://') !== false ) {
+    if (stripos($guid, 'https://') !== false) {
         $guid = str_replace('https://', 'http://', $guid);
-        $id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE guid=%s", $guid ) );
+        $id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid=%s", $guid));
     }
-    if ( $id ) return get_post( $id );
+    if ($id) return get_post($id);
     return null;
 }
 
@@ -1699,13 +1733,14 @@ function get_post_from_guid( $guid ) {
  * @param $post_ID
  * @return array
  */
-function get_categories_of_post($post_ID) {
-    $post_categories = wp_get_post_categories( $post_ID, ['fields' => 'all'] );
+function get_categories_of_post($post_ID)
+{
+    $post_categories = wp_get_post_categories($post_ID, ['fields' => 'all']);
     $cats = [];
 
-    foreach($post_categories as $c){
-        $cat = get_category( $c );
-        $cats[] = array( 'name' => $cat->name, 'slug' => $cat->slug );
+    foreach ($post_categories as $c) {
+        $cat = get_category($c);
+        $cats[] = array('name' => $cat->name, 'slug' => $cat->slug);
     }
     return $cats;
 }
@@ -1715,12 +1750,13 @@ function get_categories_of_post($post_ID) {
  * @param $post_ID
  * @return array
  */
-function get_slugs_of_post($post_ID) {
-    $post_categories = wp_get_post_categories( $post_ID, ['fields' => 'all'] );
+function get_slugs_of_post($post_ID)
+{
+    $post_categories = wp_get_post_categories($post_ID, ['fields' => 'all']);
     $cats = [];
 
-    foreach($post_categories as $c){
-        $cat = get_category( $c );
+    foreach ($post_categories as $c) {
+        $cat = get_category($c);
         $cats[] = $cat->slug;
     }
     return $cats;
@@ -1730,8 +1766,9 @@ function get_slugs_of_post($post_ID) {
  * @param $post_ID
  * @return array
  */
-function get_category_IDs_of_post($post_ID) {
-    return wp_get_post_categories( $post_ID );
+function get_category_IDs_of_post($post_ID)
+{
+    return wp_get_post_categories($post_ID);
 }
 
 /**
@@ -1741,7 +1778,8 @@ function get_category_IDs_of_post($post_ID) {
  *
  *
  */
-function api_edit_post($in) {
+function api_edit_post($in)
+{
 
     if (!isset($in['ID']) && !isset($in['category'])) {
         return ERROR_EMPTY_CATEGORY_OR_ID;
@@ -1756,9 +1794,9 @@ function api_edit_post($in) {
     if (isset($in['ID'])) {
         $post = get_post($in['ID']);
         // Preserve old properties.
-//            if (in('category') == null) $data['post_category'] = $post->post_category;
-//            if (in('post_title') == null) $data['post_title'] = $post->post_title;
-//            if (in('post_content') == null) $data['post_content'] = $post->post_content;
+        //            if (in('category') == null) $data['post_category'] = $post->post_category;
+        //            if (in('post_title') == null) $data['post_title'] = $post->post_title;
+        //            if (in('post_content') == null) $data['post_content'] = $post->post_content;
 
         $data['post_title'] = isset($in['post_title']) ? $in['post_title'] : $post->post_title;
         $data['post_content'] = isset($in['post_content']) ? $in['post_content'] : $post->post_content;
@@ -1831,21 +1869,22 @@ function api_edit_post($in) {
  *
  *
  */
-function api_get_translations($in) {
+function api_get_translations($in)
+{
     global $wpdb;
     $rows = $wpdb->get_results("SELECT * FROM " . TRANSLATIONS_TABLE . " ORDER BY code ASC", ARRAY_A);
-    
+
     $rets = [];
     // This is 'language-first' format for GetX translation.
-    if ( isset($in['format']) && $in['format'] === 'language-first' ) {
+    if (isset($in['format']) && $in['format'] === 'language-first') {
 
-        foreach($rows as $row) {
-            if ( !isset($rets[$row['language']]) ) $rets[$row['language']] = [];
+        foreach ($rows as $row) {
+            if (!isset($rets[$row['language']])) $rets[$row['language']] = [];
             $rets[$row['language']][$row['code']] = $row['value'];
         }
     } else {
-        foreach($rows as $row) {
-            if ( !isset($rets[$row['code']]) ) $rets[$row['code']] = [
+        foreach ($rows as $row) {
+            if (!isset($rets[$row['code']])) $rets[$row['code']] = [
                 'code' => $row['code'],
             ];
             $rets[$row['code']][$row['language']] = $row['value'];
@@ -1861,7 +1900,8 @@ function get_translation_by_code($code)
     return $wpdb->get_results("SELECT * FROM " . TRANSLATIONS_TABLE . " WHERE code='$code'", ARRAY_A);
 }
 
-function api_add_translation_language($in) {
+function api_add_translation_language($in)
+{
     if (admin() === false) return ERROR_PERMISSION_DENIED;
     if (!isset($in['language'])) return ERROR_EMPTY_LANGUAGE;
     $languages = get_option(LANGUAGES, []);
@@ -1885,8 +1925,9 @@ function api_add_translation_language($in) {
  * @return mixed|string|null
  * @throws \Kreait\Firebase\Exception\DatabaseException
  */
-function api_edit_translation($in) {
-    if ( admin() === false ) return ERROR_PERMISSION_DENIED;
+function api_edit_translation($in)
+{
+    if (admin() === false) return ERROR_PERMISSION_DENIED;
     if (!isset($in['code'])) return ERROR_EMPTY_CODE;
 
 
@@ -1895,9 +1936,9 @@ function api_edit_translation($in) {
     unset($data['route'], $data['session_id'], $data['code']);
 
     global $wpdb;
-    foreach( $data as $ln => $val ) {
-        $re = $wpdb->replace(TRANSLATIONS_TABLE, ['code' => $in['code'], 'language' => $ln, 'value' => $val ]);
-        if ( $re === false ) return sql_error(ERROR_LANGUAGE_REPLACE);
+    foreach ($data as $ln => $val) {
+        $re = $wpdb->replace(TRANSLATIONS_TABLE, ['code' => $in['code'], 'language' => $ln, 'value' => $val]);
+        if ($re === false) return sql_error(ERROR_LANGUAGE_REPLACE);
     }
 
     api_notify_translation_update();
@@ -1905,18 +1946,20 @@ function api_edit_translation($in) {
     return $data;
 }
 
-function api_change_translation_code ($in) {
-    if ( admin() === false ) return ERROR_PERMISSION_DENIED;
+function api_change_translation_code($in)
+{
+    if (admin() === false) return ERROR_PERMISSION_DENIED;
     if (!isset($in['oldCode'])) return ERROR_EMPTY_OLD_CODE;
     if (!isset($in['newCode'])) return ERROR_EMPTY_NEW_CODE;
     global $wpdb;
-    $re = $wpdb->update(TRANSLATIONS_TABLE, ['code' => $in['newCode'] ], ['code' => $in['oldCode']]);
-    if ( $re === false ) return sql_error(ERROR_CHANGE_CODE);
+    $re = $wpdb->update(TRANSLATIONS_TABLE, ['code' => $in['newCode']], ['code' => $in['oldCode']]);
+    if ($re === false) return sql_error(ERROR_CHANGE_CODE);
     api_notify_translation_update();
     return $in;
 }
 
-function api_delete_translation($in) {
+function api_delete_translation($in)
+{
     if (admin() === false) return ERROR_PERMISSION_DENIED;
     if (!isset($in['code'])) return ERROR_EMPTY_CODE;
 
@@ -1939,8 +1982,9 @@ function api_delete_translation($in) {
  * Clients may listen the document change and update the translations.
  * @throws \Kreait\Firebase\Exception\DatabaseException
  */
-function api_notify_translation_update() {
-    if ( get_phpunit_mode() ) return;
+function api_notify_translation_update()
+{
+    if (get_phpunit_mode()) return;
     $db = getDatabase();
     $reference = $db->getReference('notifications/translation');
     $stamp = time();
@@ -1954,11 +1998,12 @@ function api_notify_translation_update() {
  * @note if the page has admin folder, then it goes to admin theme.
  * @return string
  */
-function get_domain_theme() {
-    if ( API_CALL ) return null;
-    if ( is_admin_page() ) return 'admin';
+function get_domain_theme()
+{
+    if (API_CALL) return null;
+    if (is_admin_page()) return 'admin';
     global $domain_themes;
-    if ( !isset($domain_themes) ) return null;
+    if (!isset($domain_themes)) return null;
     $_host = get_host_name();
     $theme = 'default';
     foreach ($domain_themes as $_domain => $_theme) {
@@ -1978,11 +2023,12 @@ function get_domain_theme() {
  * @example
  * d(DOMAIN_THEME_URL);
  */
-function d($obj) {
+function d($obj)
+{
     echo "\n<pre>\n";
-	$str = print_r($obj, true);
-	$str = str_replace("<", "&lt;", $str);
-	echo $str;
+    $str = print_r($obj, true);
+    $str = str_replace("<", "&lt;", $str);
+    echo $str;
     echo "\n</pre>\n";
 }
 
@@ -2000,11 +2046,12 @@ function d($obj) {
  *  $profile = profile();
  *  $re = getRoute(['route' => 'purchase.createHistory', 'session_id' => $profile['session_id']]);
  */
-function getRoute($params) {
+function getRoute($params)
+{
     $url = API_URL . "?" . http_build_query($params);
-//    echo "url: $url\n";
+    //    echo "url: $url\n";
     $re = file_get_contents($url);
-    if ( !$re ) {
+    if (!$re) {
         echo "\n";
         echo "\n* -------------------------------- WARNING -------------------------------- *";
         echo "\n*";
@@ -2016,10 +2063,9 @@ function getRoute($params) {
         echo "\n* If it's wrong, update API_URL_ON_CLI in config.php to backend api url for test.";
         echo "\n*";
         echo "\n* -------------------------------- WARNING -------------------------------- *";
-
     }
-$json = json_decode($re, true);
-    if ( !$json ) {
+    $json = json_decode($re, true);
+    if (!$json) {
         print_r($re);
     }
     return $json;
@@ -2030,20 +2076,22 @@ $json = json_decode($re, true);
  * Returns true if the web is running on localhost (or developers computer).
  * @return bool
  */
-function is_localhost() {
-    if ( isCli() ) return false;
+function is_localhost()
+{
+    if (isCli()) return false;
     $localhost = false;
     if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' || PHP_OS === 'Darwin') $localhost = true;
     else {
         $ip = $_SERVER['SERVER_ADDR'];
-        if ( strpos($ip, '127.0.') !== false) $localhost = true;
-        else if ( strpos($ip, '192.168.') !== false) $localhost = true;
+        if (strpos($ip, '127.0.') !== false) $localhost = true;
+        else if (strpos($ip, '192.168.') !== false) $localhost = true;
     }
     return $localhost;
 }
 
 
-function onCommentCreateSendNotification($comment_id, $in) {
+function onCommentCreateSendNotification($comment_id, $in)
+{
     /**
 
      * 1) get post owner id
@@ -2064,34 +2112,34 @@ function onCommentCreateSendNotification($comment_id, $in) {
      *  
      */
 
-    $post = get_post( $in['comment_post_ID'], ARRAY_A );
+    $post = get_post($in['comment_post_ID'], ARRAY_A);
     $users_id = [];
 
     /**
      * add post owner id
      */
-    if ( !is_my_post($post['post_author']) ) {
+    if (!is_my_post($post['post_author'])) {
         $users_id[] = $post['post_author'];
     }
 
     /**
      * get comment ancestors id
      */
-    $comment = get_comment( $comment_id );
-    if ( $comment && $comment->comment_parent ) {
+    $comment = get_comment($comment_id);
+    if ($comment && $comment->comment_parent) {
         $users_id = array_merge($users_id, getAncestors($comment->comment_ID));
     }
 
     /**
      * get unique user ids
      */
-    $users_id = array_unique( $users_id );
+    $users_id = array_unique($users_id);
 
     /**
      * get user who subscribe to comment forum topic
      */
     $slug = get_first_slug($post['post_category']);
-    $topic_subscribers = getForumSubscribers( NOTIFY_COMMENT . $slug);
+    $topic_subscribers = getForumSubscribers(NOTIFY_COMMENT . $slug);
 
     /**
      * remove users_id that are registered to comment topic
@@ -2119,7 +2167,7 @@ function onCommentCreateSendNotification($comment_id, $in) {
     /**
      * send notification to comment ancestors who enable reaction notification
      */
-    if (!empty($tokens)) sendMessageToTokens( $tokens, $title, $body, $click_url, $data = ['sender' => wp_get_current_user()->ID]);
+    if (!empty($tokens)) sendMessageToTokens($tokens, $title, $body, $click_url, $data = ['sender' => wp_get_current_user()->ID]);
 }
 
 
@@ -2127,7 +2175,8 @@ function onCommentCreateSendNotification($comment_id, $in) {
  * @param $comment_ID
  * @return mixed
  */
-function get_ancestor_tokens_for_push_notifications($comment_ID) {
+function get_ancestor_tokens_for_push_notifications($comment_ID)
+{
     $asc = getAncestors($comment_ID);
     return getTokensFromUserIDs($asc);
 }
@@ -2138,18 +2187,19 @@ function get_ancestor_tokens_for_push_notifications($comment_ID) {
  * @param null $filter 'notifyComment' || 'notifyPost'
  * @return array
  */
-function getTokensFromUserIDs($ids = [], $filter = null) {
+function getTokensFromUserIDs($ids = [], $filter = null)
+{
     $tokens = [];
-    foreach( $ids as $user_id ) {
+    foreach ($ids as $user_id) {
         $rows = getUserTokens($user_id);
         if ($filter) {
-            if ( get_user_meta($user_id, $filter, true) == 'Y' ) {
-                foreach( $rows as $token ) {
+            if (get_user_meta($user_id, $filter, true) == 'Y') {
+                foreach ($rows as $token) {
                     $tokens[] = $token;
                 }
             }
         } else {
-            foreach( $rows as $token ) {
+            foreach ($rows as $token) {
                 $tokens[] = $token;
             }
         }
@@ -2168,16 +2218,17 @@ function getTokensFromUserIDs($ids = [], $filter = null) {
  *
  *
  */
-function getAncestors( $comment_ID ) {
+function getAncestors($comment_ID)
+{
 
-    $comment = get_comment( $comment_ID );
+    $comment = get_comment($comment_ID);
     $asc     = [];
 
 
-    while ( true ) {
-        $comment = get_comment( $comment->comment_parent );
-        if ( $comment ) {
-            if ( $comment->user_id == wp_get_current_user()->ID ) {
+    while (true) {
+        $comment = get_comment($comment->comment_parent);
+        if ($comment) {
+            if ($comment->user_id == wp_get_current_user()->ID) {
                 continue;
             }
             $asc[] = $comment->user_id;
@@ -2186,17 +2237,17 @@ function getAncestors( $comment_ID ) {
         }
     }
 
-    $asc = array_unique( $asc );
+    $asc = array_unique($asc);
 
     return $asc;
-
 }
 
-function getUserTokens($user_ID) {
+function getUserTokens($user_ID)
+{
     global $wpdb;
-    $rows =  $wpdb->get_results("SELECT token FROM " . PUSH_TOKENS_TABLE ." WHERE user_ID=$user_ID", ARRAY_A);
+    $rows =  $wpdb->get_results("SELECT token FROM " . PUSH_TOKENS_TABLE . " WHERE user_ID=$user_ID", ARRAY_A);
     $tokens = [];
-    foreach( $rows as $user ) {
+    foreach ($rows as $user) {
         $tokens[] = $user['token'];
     }
     return $tokens;
@@ -2207,21 +2258,23 @@ function getUserTokens($user_ID) {
  * @param $topic - topic as string
  * @return array - array of user ids
  */
-function getForumSubscribers($topic = '') {
+function getForumSubscribers($topic = '')
+{
     global $wpdb;
     $rows = $wpdb->get_results("SELECT user_id FROM wp_usermeta WHERE meta_key='$topic' AND meta_value='Y' ", ARRAY_A);
     $ids = [];
-    foreach( $rows as $user ) {
+    foreach ($rows as $user) {
         $ids[] = $user['user_id'];
     }
     return $ids;
 }
 
-function getUserForumTopics($user_ID) {
+function getUserForumTopics($user_ID)
+{
     global $wpdb;
-    $rows = $wpdb->get_results("SELECT meta_key FROM wp_usermeta WHERE meta_key LIKE '". DEFAULT_TOPIC_PREFIX ."%' AND meta_value='Y' AND user_id=$user_ID ", ARRAY_A);
+    $rows = $wpdb->get_results("SELECT meta_key FROM wp_usermeta WHERE meta_key LIKE '" . DEFAULT_TOPIC_PREFIX . "%' AND meta_value='Y' AND user_id=$user_ID ", ARRAY_A);
     $topics = [];
-    foreach( $rows as $user ) {
+    foreach ($rows as $user) {
         $topics[] = $user['meta_key'];
     }
     return $topics;
@@ -2256,32 +2309,33 @@ function getUserForumTopics($user_ID) {
  *  - error code on error.
  *  - Array of WP_Term Object of the category term object. @see https://developer.wordpress.org/reference/classes/wp_term/
  */
-function update_category($in) {
+function update_category($in)
+{
 
     if (!isset($in['cat_ID'])) return ERROR_EMPTY_CATEGORY_ID;
     $cat = get_category($in['cat_ID']);
-    if ( $cat == null ) return ERROR_CATEGORY_NOT_EXIST_BY_THAT_ID;
+    if ($cat == null) return ERROR_CATEGORY_NOT_EXIST_BY_THAT_ID;
 
     if (isset($in['field']) && isset($in['value'])) {
         $re = update_category_meta($in);
     } else {
-        foreach( $in as $k => $v ) {
-            if ( $k == 'session_id' ) continue;
-            if ( $k == 'route' ) continue;
-            if ( $k == 'cat_ID' ) continue;
+        foreach ($in as $k => $v) {
+            if ($k == 'session_id') continue;
+            if ($k == 'route') continue;
+            if ($k == 'cat_ID') continue;
             $re = update_category_meta(['cat_ID' => $in['cat_ID'], 'field' => $k, 'value' => $v]);
-            if ( $re ) break;
+            if ($re) break;
         }
     }
     /**
      * if error
      */
-    if ( $re ) return $re;
+    if ($re) return $re;
 
     $ret = get_category($in['cat_ID'])->to_array();
 
     $metas = get_term_meta($in['cat_ID'], '', true);
-    foreach($metas as $key => $values) {
+    foreach ($metas as $key => $values) {
         $ret[$key] = $values[0];
     }
 
@@ -2295,15 +2349,16 @@ function update_category($in) {
  * @param $in
  * @return int|string
  */
-function update_category_meta($in) {
-    if ( in_array($in['field'], ['cat_name', 'category_description', 'category_parent']) ) {
-        $re = wp_update_category([ 'cat_ID' => $in['cat_ID'], $in['field'] => $in['value'] ]);
-        if ( is_wp_error($re) ) {
+function update_category_meta($in)
+{
+    if (in_array($in['field'], ['cat_name', 'category_description', 'category_parent'])) {
+        $re = wp_update_category(['cat_ID' => $in['cat_ID'], $in['field'] => $in['value']]);
+        if (is_wp_error($re)) {
             return $re->get_error_message();
         }
     } else {
         $re = update_term_meta($in['cat_ID'], $in['field'], $in['value']);
-        if ( is_wp_error($re) ) {
+        if (is_wp_error($re)) {
             return $re->get_error_message();
         }
     }
@@ -2317,7 +2372,8 @@ function update_category_meta($in) {
  *
  * @return string
  */
-function get_first_slug($categories) {
+function get_first_slug($categories)
+{
     // get post slug as category name and pass
     if (count($categories)) {
         $cat = get_category($categories[0]);
@@ -2334,9 +2390,10 @@ function get_first_slug($categories) {
  * @param string $default_value
  * @return mixed|string
  */
-function category_meta($cat_ID, $name, $default_value = '') {
+function category_meta($cat_ID, $name, $default_value = '')
+{
     $v = get_term_meta($cat_ID, $name, true);
-    if ( $v ) return $v;
+    if ($v) return $v;
     else return $default_value;
 }
 
@@ -2346,23 +2403,26 @@ function isSubscribedToTopic($topic)
     return my($topic) === "Y";
 }
 
-function pass_login_url($state='') {
-    return "https://id.passlogin.com/oauth2/authorize?client_id=".PASS_LOGIN_CLIENT_ID."&redirect_uri=".urlencode(PASS_LOGIN_CALLBACK_URL)."&response_type=code&state=$state&prompt=select_account";
+function pass_login_url($state = '')
+{
+    return "https://id.passlogin.com/oauth2/authorize?client_id=" . PASS_LOGIN_CLIENT_ID . "&redirect_uri=" . urlencode(PASS_LOGIN_CALLBACK_URL) . "&response_type=code&state=$state&prompt=select_account";
 }
 
 
-function pass_login_aes_dec($str) {
+function pass_login_aes_dec($str)
+{
     $key_128 = substr(PASS_LOGIN_CLIENT_SECRET_KEY, 0, 128 / 8);
     return openssl_decrypt(base64_decode($str), 'AES-128-CBC', $key_128, true, $key_128);
 }
 
-function pass_login_callback($in) {
+function pass_login_callback($in)
+{
     // @todo PASS 휴대폰번호 로그인을 하면, Callback URL 이 호출된다. 그리고 그 정보를 기록한다.
     // Callback url 이 처음 호출 되면,
     //   Array ( [code] => lzRdPT, [state] => apple_banana_cherry )
     // 와 같은 값이 넘어 온다.
     // 이, code 로, 사용자 정보를 가져온다.
-    if ( ! isset($in['code']) ) return ERROR_EMPTY_CODE;
+    if (!isset($in['code'])) return ERROR_EMPTY_CODE;
     $code = $in['code'];
     $state = $in['state'] ?? '';
 
@@ -2372,7 +2432,7 @@ function pass_login_callback($in) {
 
     $headers = array(
         'Content-Type: application/x-www-form-urlencoded',
-        'Authorization: Basic '. base64_encode(PASS_LOGIN_CLIENT_ID . ":" . PASS_LOGIN_CLIENT_SECRET_KEY ),
+        'Authorization: Basic ' . base64_encode(PASS_LOGIN_CLIENT_ID . ":" . PASS_LOGIN_CLIENT_SECRET_KEY),
     );
     $o = [
         CURLOPT_URL => $url,
@@ -2385,23 +2445,22 @@ function pass_login_callback($in) {
         CURLOPT_SSL_VERIFYPEER => 0 // HTTPS 사용 여부
     ];
     $ch = curl_init();
-    curl_setopt_array( $ch, $o );
+    curl_setopt_array($ch, $o);
 
     try {
-        $response = curl_exec( $ch );
+        $response = curl_exec($ch);
         $re = json_decode($response, true);
-        if ( isset($re['error']) ) {
+        if (isset($re['error'])) {
             echo "<h1>[ ERROR: $re[error], MESSAGE: $re[message]</h1>";
             return;
         }
         // @todo leave log
-//            file_put_contents($log_file, $response ."\r\n\r\n");
-    }
-    catch ( exception $e ) {
+        //            file_put_contents($log_file, $response ."\r\n\r\n");
+    } catch (exception $e) {
         // @todo leave log
-        d( $e );
+        d($e);
     }
-    curl_close( $ch );
+    curl_close($ch);
 
 
 
@@ -2417,79 +2476,78 @@ function pass_login_callback($in) {
         CURLOPT_SSL_VERIFYPEER => 0 // HTTPS 사용 여부
     ];
     $ch = curl_init();
-    curl_setopt_array( $ch, $o );
+    curl_setopt_array($ch, $o);
 
     try {
-        $response = curl_exec( $ch );
+        $response = curl_exec($ch);
         $re = json_decode($response, true);
-        if ( isset($re['error']) && $re['error'] ) echo "[ ERROR: $re[error], MESSAGE: $re[message] ]";
+        if (isset($re['error']) && $re['error']) echo "[ ERROR: $re[error], MESSAGE: $re[message] ]";
         // @todo leave log
-//            file_put_contents($log_file, $response ."\r\n\r\n");
-    }
-    catch ( exception $e ) {
+        //            file_put_contents($log_file, $response ."\r\n\r\n");
+    } catch (exception $e) {
         // @todo leave log
-        d( $e );
+        d($e);
     }
-    curl_close( $ch );
+    curl_close($ch);
 
     $user = $re['user'];
     $ret = [];
 
-    if ( isset($user['ci']) && $user['ci'] ) {
+    if (isset($user['ci']) && $user['ci']) {
         $ret['ci'] = pass_login_aes_dec($user['ci']);
     }
-    if ( isset($user['phoneNo']) && $user['phoneNo'] ){
+    if (isset($user['phoneNo']) && $user['phoneNo']) {
         $ret['phoneNo'] = pass_login_aes_dec($user['phoneNo']);
     }
-    if ( isset($user['name']) && $user['name'] ){
+    if (isset($user['name']) && $user['name']) {
         $ret['name'] = pass_login_aes_dec($user['name']);
     }
-    if ( isset($user['birthdate']) && $user['birthdate'] ){
+    if (isset($user['birthdate']) && $user['birthdate']) {
         $ret['birthdate'] = pass_login_aes_dec($user['birthdate']);
     }
 
-    if ( isset($user['gender']) && $user['gender'] ){
+    if (isset($user['gender']) && $user['gender']) {
         $ret['gender'] = $user['gender'];
     }
 
-    if ( isset($user['agegroup']) && $user['agegroup'] ){
+    if (isset($user['agegroup']) && $user['agegroup']) {
         $ret['agegroup'] = $user['agegroup'];
     }
 
-    if ( isset($user['foreign']) && $user['foreign'] ){
+    if (isset($user['foreign']) && $user['foreign']) {
         $ret['foreign'] = $user['foreign'];
     }
 
-    if ( isset($user['telcoCd']) && $user['telcoCd'] ){
+    if (isset($user['telcoCd']) && $user['telcoCd']) {
         $ret['telcoCd'] = $user['telcoCd'];
     }
 
-    if ( isset($user['autoLoginYn']) && $user['autoLoginYn'] ){
+    if (isset($user['autoLoginYn']) && $user['autoLoginYn']) {
         $ret['autoLoginYn'] = $user['autoLoginYn'];
     }
 
-    if ( isset($user['autoStatusCheck']) && $user['autoStatusCheck'] ){
+    if (isset($user['autoStatusCheck']) && $user['autoStatusCheck']) {
         $ret['autoStatusCheck'] = $user['autoStatusCheck'];
     }
 
 
-//    d($user);
+    //    d($user);
 
     return $ret;
-
 }
 
 
-function pass_login_or_register($user) {
+function pass_login_or_register($user)
+{
 
-    if ( isset($user['ci']) && $user['ci'] ) {
+    if (isset($user['ci']) && $user['ci']) {
         /// 처음 로그인 또는 자동 로그인이 아닌 경우,
         $user['user_email'] = PASS_LOGIN_MOBILE_PREFIX . "$user[phoneNo]@passlogin.com";
         $user['user_pass'] = md5(PASS_LOGIN_SALT . PASS_LOGIN_CLIENT_ID . $user['phoneNo']);
         $profile = login_or_register($user);
     } else {
         /// plid 가 들어 온 경우, meta 에서 ci 를 끄집어 낸다.
-        $users = get_users([ 'meta_key' => 'plid', 'meta_value' => $user['plid'] ]);
+        $users = get_users(['meta_key' => 'plid', 'meta_value' => $user['plid']]);
         $found = $users[0];
         $profile = profile($found->ID);
     }
@@ -2497,7 +2555,6 @@ function pass_login_or_register($user) {
 
 
     return $profile;
-
 }
 
 /// ================================================================================================================
@@ -2516,11 +2573,13 @@ $_phpunit_mode = false;
  *
  * @param $b
  */
-function set_phpunit_mode($b) {
+function set_phpunit_mode($b)
+{
     global $_phpunit_mode;
     $_phpunit_mode = $b;
 }
-function get_phpunit_mode(): bool {
+function get_phpunit_mode(): bool
+{
     global $_phpunit_mode;
     return $_phpunit_mode;
 }
@@ -2558,13 +2617,14 @@ Array
 )
  *
  */
-function get_category_list() {
+function get_category_list()
+{
     $categories = get_root_categories();
     $rets = [];
-    foreach( $categories as $cat ) {
+    foreach ($categories as $cat) {
         $rets[] = $cat;
         $children = get_child_categories($cat->term_id);
-        foreach($children as $child ) {
+        foreach ($children as $child) {
             $rets[] = $child;
         }
     }
@@ -2575,7 +2635,8 @@ function get_category_list() {
  * Returns an array of WP_Term Objects of categories that are the top categories.
  * @return array
  */
-function get_root_categories() {
+function get_root_categories()
+{
     $args = array(
         'taxonomy' => 'category',
         'parent' => '0',
@@ -2583,11 +2644,12 @@ function get_root_categories() {
     );
     return get_categories($args);
 }
-function get_child_categories( $term_id = 0, $taxonomy = 'category' ) {
-    $children = get_categories( array(
+function get_child_categories($term_id = 0, $taxonomy = 'category')
+{
+    $children = get_categories(array(
         'child_of'      => $term_id,
         'taxonomy'      => $taxonomy,
         'hide_empty' => false,
-    ) );
+    ));
     return $children;
 }
