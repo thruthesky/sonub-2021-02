@@ -442,7 +442,15 @@ function login($data)
     wp_set_current_user($user->ID);
 
     /**
-     * Update the user id of the token
+     * Update the token for the login user.
+     *
+     * @logic
+        - (A) has [phone-1].
+        - (B) borrow [phone-1] and Login.
+        - The [phone-1] unsubscribes all topics. The [phone-1] with its token of whoever the user might be had subscribed optics and it will unsubscribe from all(any kinds of ) topics.
+        - (B) subscribes his topics with the [phone-1](with its token).
+        So, the [phone-1] now receives messages of (B), not (A).
+     *
      */
     if ( isset($in['token']) && !empty($in['token']) ) {
            update_token([ 'token' => $in['token']]);
