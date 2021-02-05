@@ -3,6 +3,7 @@
  * @file index.php
  */
 
+
 $theme_page = get_theme_page_script_path();
 
 /**
