@@ -2,15 +2,29 @@
 /**
  * @file config.php
  */
-
-
-
-
 /**
  * ================================================================================
- * Edit below on your needs
+ * Edit configurations on your needs
  * ================================================================================
  */
+
+/**
+ * Theme configuration
+ */
+
+$domain_themes = [
+    'apple' => 'apple',
+    'banana' => 'banana',
+    'sonub' => 'sonub'
+];
+
+/**
+ * Theme configuration exists, load it.
+ */
+$_path = THEME_DIR . "/configs/".get_domain_theme().".config.php";
+if ( file_exists($_path) ) {
+    require_once($_path);
+}
 
 /**
  * Once set, do not change it. Or, all users must login again.
@@ -24,13 +38,11 @@ define("FIREBASE_ADMIN_SDK_SERVICE_ACCOUNT_KEY_PATH", THEME_DIR . "/keys/firebas
 define("FIREBASE_DATABASE_URI", "https://dalgona-firebase-default-rtdb.firebaseio.com/");
 
 
-$domain_themes = [
-    'apple' => 'apple',
-    'banana' => 'banana',
-    'cherry' => 'default',
-    'sonub' => 'sonub'
-];
 
+
+/**
+ *
+ */
 define('API_URL_ON_CLI', 'https://local.sonub.com/wp-content/themes/sonub/api/index.php');
 
 /**

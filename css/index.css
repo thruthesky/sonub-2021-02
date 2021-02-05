@@ -8,6 +8,18 @@ a {
 /**
  * Utilities
  */
+.fs-xxs {
+  font-size: 10px !important;
+}
+
+.fs-xs {
+  font-size: 12px !important;
+}
+
+.fs-sm {
+  font-size: 14px !important;
+}
+
 .fs-md {
   font-size: 16px !important;
 }
@@ -178,9 +190,21 @@ input[type=file]::-webkit-file-upload-button {
   list-style: none;
 }
 
+/**
+ * Colors
+ */
+.black {
+  color: black;
+}
+
+/**
+ * Components
+ */
 .list-menu {
   display: flex;
   list-style: none;
+  margin: 0;
+  padding: 0;
 }
 .list-menu li a {
   display: block;

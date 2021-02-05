@@ -1,15 +1,33 @@
-<nav class="d-flex justify-content-between">
-    <ul class="list-menu">
+<nav class="d-flex d-sm-none justify-content-between bg-light">
+    <div class="d-flex">
+        <a class="p-2" href="/">필럽</a>
+        <a class="p-2" href="/?page=forum/intro">게시판</a>
+        <a class="p-2" href="/?page=cafe/intro">카페</a>
+        <a class="p-2" href="/?page=buyandsell/intro">회원장터</a>
+    </div>
+    <div>
+        <? if ( App::page('menu/all') ) { ?>
+            <a href="/"><i class="fa fa-times-circle p-2 fs-lg black"></i></a>
+        <? } else { ?>
+            <a href="/?page=menu/all"><i class="fa fa-bars p-2 fs-lg"></i></a>
+        <? } ?>
+    </div>
+</nav>
+
+<nav class="d-none d-sm-flex justify-content-between bg-light">
+    <ul class="list-menu fs-sm">
         <li><a href="/">홈</a></li>
         <li><a href="/?page=user/login">로그인</a></li>
+        <li><a href="/?page=user/logout">로그아웃</a></li>
         <li><a href="/?page=user/register">회원가입</a></li>
         <li><a href="/?page=user/profile">회원정보</a></li>
     </ul>
 
 
-    <ul class="d-flex list-style-none">
+    <ul class="list-menu fs-sm">
         <li><a href="#">광고문의</a></li>
         <li><a href="#">운영자문의</a></li>
+        <li><a href="/?page=menu/all">전체메뉴</a></li>
         <? if ( admin() ) { ?>
         <li>
                 <a href="/?page=admin/home">Admin</a>

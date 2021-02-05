@@ -28,7 +28,7 @@ $theme_footer = get_theme_footer_path();
     <?php insert_initial_javascript() ?>
 </head>
 <body class="<?=get_theme_page_class_name()?>">
-<section id="app" class="container">
+<section id="app">
     <section id="router">
         <?php
         begin_capture_script_style();

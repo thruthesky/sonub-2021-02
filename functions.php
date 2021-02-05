@@ -43,10 +43,6 @@ require_once(THEME_DIR . '/pre-flight.php');
 require_once(THEME_DIR . '/defines.php');
 
 
-$_path = THEME_DIR . "/configs/".get_domain_name().".config.php";
-if ( file_exists($_path) ) {
-    require_once($_path);
-}
 require_once(THEME_DIR . '/config.php');
 
 
@@ -382,7 +378,7 @@ function get_widget_options()
 
 
 /**
- * @param $name
+ * @param string $path is the 'widget_type/folder_name' to load the widget.
  * @param $options array
  *
  * @return string - PHP script path for widget loading
@@ -391,9 +387,10 @@ function get_widget_options()
  *   include widget('social-login'); // will load 'widgets/social-login/social-login.php'
  * @endcode
  */
-function widget( string $name, array $options = [] ) {
+function widget( string $path, array $options = [] ) {
     set_widget_options( $options );
-    return THEME_DIR . "/widgets/$name/$name.php";
+    $arr = explode('/', $path);
+    return THEME_DIR . "/widgets/$arr[0]/$arr[1]/$arr[1].php";
 }
 
 /// EO Widget System ---------------------------------------------------------------------------------------------------
@@ -473,31 +470,34 @@ function is_admin_page() {
  * Display widget selection box on admin site(form)
  *
  *
+ *
  * @param $cat_ID
  * @param $folder_name
  * @param $config_name
  */
-function select_list_widgets($cat_ID, $folder_name, $config_name) {
+function select_list_widgets($cat_ID, $type, $config_name) {
 
-    $default_selected = category_meta($cat_ID, $config_name, $folder_name . '-default');
+
+
+    $default_selected = category_meta($cat_ID, $config_name, $type . '-default');
+
 
     echo "<select name='$config_name'>";
-    foreach( glob(THEME_DIR . "/widgets/$folder_name*/*.php") as $file ) {
+    foreach( glob(THEME_DIR . "/widgets/$type/**/*.ini") as $file ) {
         $arr = explode('/', $file);
-        $file_name = array_pop($arr);
+        array_pop($arr);
         $widget_name = array_pop($arr);
         $ini_file = str_replace(".php", ".ini", $file);
-        if ( file_exists($ini_file) ) {
+
             $re = parse_ini_file($ini_file);
             $description = $re['description'];
-        } else {
-            $description = $widget_name;
-        }
 
-        if ( $default_selected == $widget_name ) $selected = "selected";
+
+            $value = "$type/$widget_name";
+        if ( $default_selected == $value ) $selected = "selected";
         else $selected = "";
 
-        echo "<option value='$widget_name' $selected>$description</option>";
+        echo "<option value='$value' $selected>$description</option>";
     }
     echo "</select>";
 
@@ -515,3 +515,12 @@ function set_login_cookies($profile) {
     if ( isset($profile['nickname']) ) setcookie ( 'nickname' , $profile['nickname'] , time() + 365 * 24 * 60 * 60 , '/' , BROWSER_COOKIE_DOMAIN);
     if ( isset($profile['profile_photo_url']) ) setcookie ( 'profile_photo_url' , $profile['profile_photo_url'] , time() + 365 * 24 * 60 * 60 , '/' , BROWSER_COOKIE_DOMAIN);
 }
+
+
+
+class App {
+    static function page(string $folder_and_name): bool {
+        return strpos(in('page'), $folder_and_name) !== false;
+    }
+}
+

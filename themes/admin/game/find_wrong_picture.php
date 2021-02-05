@@ -3,11 +3,8 @@ if ( in('mode') == 'delete' ) {
     wp_delete_post(in('ID'));
 }
 ?>
-
 <section class="wrong-picture">
-
     <h1>틀린 그림 찾기</h1>
-
     <ul>
         <li>이미지 너비: 200px, 높이: 256px</li>
     </ul>
@@ -23,21 +20,21 @@ if ( in('mode') == 'delete' ) {
                         <?=$name?>
                     </div>
                     <input class="position-absolute cover fs-xxl opacity-0" type="file" @change="onFileChange($event, '<?=$ab?>')">
-                    <div class="progress mt-3 w-100px" style="height: 5px;" v-if="uploadPercentage > 0">
-                        <div class="progress-bar" role="progressbar" :style="{width: uploadPercentage + '%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
                 </div>
             <? } ?>
             <? image_pair('A', '올바른 사진(A)') ?>
             <? image_pair('B', '다른 사진(B)') ?>
         </div>
-        <div class="d-flex justify-content-center mt-3">
-            <button type="submit">문제 등록</button>
+        <div class="d-flex justify-content-center">
+            <div class="d-flex flex-column">
+                <div class="progress mt-3 w-100px" style="height: 5px;" v-if="uploadPercentage > 0">
+                    <div class="progress-bar" role="progressbar" :style="{width: uploadPercentage + '%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                    <button class="mt-3" type="submit">문제 등록</button>
+            </div>
         </div>
     </form>
-
     <div class="posts">
-
         <?
         $posts = forum_search(['category_name' => 'wrong_picture']);
         foreach($posts as $post) {
@@ -61,13 +58,8 @@ if ( in('mode') == 'delete' ) {
         <?
         }
         ?>
-
     </div>
-
 </section>
-
-
-
 
 <script>
     const mixin = {
@@ -101,7 +93,6 @@ if ( in('mode') == 'delete' ) {
         }
     }
 </script>
-
 <style>
     .wrong-picture form .B {
         margin-left: 1em;
