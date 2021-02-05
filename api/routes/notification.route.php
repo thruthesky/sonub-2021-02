@@ -33,11 +33,12 @@ class NotificationRoute {
         if ( !isset($in['title'])) $in['title'] = '';
         if ( !isset($in['body'])) $in['body'] = '';
         if ( !isset($in['click_action'])) $in['click_action'] = '/';
-        if ( !isset($in['data'])) $in['data'] = [];
         if ( !isset($in['imageUrl'])) $in['imageUrl'] = '';
+
+        if ( !isset($in['data'])) $in['data'] = [];
+        $in['data']['senderId'] = wp_get_current_user()->ID;
         return sendMessageToTokens($in['tokens'], $in['title'], $in['body'], $in['click_action'], $in['data'], $in['imageUrl']);
     }
-
 
     /**
      * @param $in
@@ -50,8 +51,10 @@ class NotificationRoute {
         if ( !isset($in['title'])) $in['title'] = '';
         if ( !isset($in['body'])) $in['body'] = '';
         if ( !isset($in['click_action'])) $in['click_action'] = '/';
-        if ( !isset($in['data'])) $in['data'] = [];
         if ( !isset($in['imageUrl'])) $in['imageUrl'] = '';
+
+        if ( !isset($in['data'])) $in['data'] = [];
+        $in['data']['senderId'] = wp_get_current_user()->ID;
         return sendMessageToTopic($in['topic'], $in['title'], $in['body'], $in['click_action'], $in['data'], $in['imageUrl']);
     }
 

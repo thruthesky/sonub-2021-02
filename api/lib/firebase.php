@@ -110,6 +110,17 @@ function subscribeTopics($topics, $tokens) {
 }
 
 /**
+ * @param $tokens - a token or an array of tokens
+ * @return array
+ * @throws \Kreait\Firebase\Exception\FirebaseException
+ * @throws \Kreait\Firebase\Exception\MessagingException
+ */
+function unsubscribeFromAllTopics($tokens) {
+    if ( get_phpunit_mode() ) return [];
+    return getMessaging()->unsubscribeFromAllTopics($tokens);
+}
+
+/**
  * @param $topic
  * @param $tokens - a token or an array of tokens
  * @return array

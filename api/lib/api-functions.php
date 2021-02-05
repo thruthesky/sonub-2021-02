@@ -442,6 +442,7 @@ function login($data)
      */
     if ( isset($in['token']) && !empty($in['token']) ) {
            update_token([ 'token' => $in['token']]);
+           unsubscribeFromAllTopics($in['token']);
     }
 
     /**
@@ -451,11 +452,7 @@ function login($data)
     if (!empty($topics)) {
         $tokens = get_user_tokens();
         if (!empty($tokens)) {
-
             subscribeTopics($topics,$tokens);
-//            foreach ($topics as $topic) {
-//                subscribeTopic($topic, $tokens);
-//            }
         }
     }
 
@@ -921,8 +918,10 @@ function send_message_to_users($in) {
     }
     /// If there are no tokens to send, then it will return empty array.
     if ( empty($all_tokens) ) return ERROR_EMPTY_TOKENS;
-    if ( !isset($in['data'])) $in['data'] = [];
     if ( !isset($in['imageUrl'])) $in['imageUrl'] = '';
+
+    if ( !isset($in['data'])) $in['data'] = [];
+    $in['data']['senderId'] = wp_get_current_user()->ID;
     return sendMessageToTokens($all_tokens, $in['title'], $in['body'], $in['click_action'], $in['data'], $in['imageUrl']);
 }
 
@@ -1831,7 +1830,12 @@ function api_edit_post($in) {
         $body = $in['post_content'] ?? '';
         $post = get_post($ID, ARRAY_A);
         $slug = get_first_slug($post['post_category']);
-        sendMessageToTopic(NOTIFY_POST . $slug, $title, $body, $post['guid'], $data = ['sender' => wp_get_current_user()->ID]);
+        $data = [
+            'senderId' => wp_get_current_user()->ID,
+            'id' => $ID,
+            'type' => 'post'
+        ];
+        sendMessageToTopic(NOTIFY_POST . $slug, $title, $body, $post['guid'], $data);
     }
 
     return post_response($ID);
@@ -2136,16 +2140,21 @@ function onCommentCreateSendNotification($comment_id, $in) {
     $title              = $post['post_title'];
     $body               = $in['comment_content'];
     $click_url          = $post['guid'];
+    $data               = [
+        'senderId' => wp_get_current_user()->ID,
+        'type' => 'post',
+        'id'=> $comment->comment_post_ID
+    ];
 
     /**
      * send notification to users who subscribe to comment topic
      */
-    sendMessageToTopic(NOTIFY_COMMENT . $slug, $title, $body, $click_url, $data = ['sender' => wp_get_current_user()->ID]);
+    sendMessageToTopic(NOTIFY_COMMENT . $slug, $title, $body, $click_url, $data);
 
     /**
      * send notification to comment ancestors who enable reaction notification
      */
-    if (!empty($tokens)) sendMessageToTokens( $tokens, $title, $body, $click_url, $data = ['sender' => wp_get_current_user()->ID]);
+    if (!empty($tokens)) sendMessageToTokens( $tokens, $title, $body, $click_url, $data);
 }
 
 
