@@ -97,6 +97,17 @@ function subscribeTopic($topic, $tokens) {
     if ( get_phpunit_mode() ) return [];
     return getMessaging()->subscribeToTopic($topic, $tokens);
 }
+/**
+ * @param $topics - array of topics
+ * @param $tokens - a token or an array of tokens
+ * @return array
+ * @throws \Kreait\Firebase\Exception\FirebaseException
+ * @throws \Kreait\Firebase\Exception\MessagingException
+ */
+function subscribeTopics($topics, $tokens) {
+    if ( get_phpunit_mode() ) return [];
+    return getMessaging()->subscribeToTopics($topics, $tokens);
+}
 
 /**
  * @param $topic

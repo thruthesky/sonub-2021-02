@@ -417,6 +417,10 @@ function my($field)
  *  - Do user login
  *  - Set the user logged in
  *  - Return user profile
+ *
+ * @Push Notification Logic
+ *  - if token was passed, it will call the update_token so it will update the token user_id
+ *  - get all user tokens and subscribe to all existing topics
  */
 function login($data)
 {
@@ -436,6 +440,28 @@ function login($data)
     user_update_meta($user->ID, $data);
 
     wp_set_current_user($user->ID);
+
+    /**
+     * Update the user id of the token
+     */
+    if ( isset($in['token']) && !empty($in['token']) ) {
+           update_token([ 'token' => $in['token']]);
+    }
+
+    /**
+     * If topic exist get all user tokens and subscribe to all existing topics
+     */
+    $topics = getUserForumTopics($user->ID);
+    if (!empty($topics)) {
+        $tokens = get_user_tokens();
+        if (!empty($tokens)) {
+
+            subscribeTopics($topics,$tokens);
+//            foreach ($topics as $topic) {
+//                subscribeTopic($topic, $tokens);
+//            }
+        }
+    }
 
     return profile();
 }
@@ -2269,10 +2295,13 @@ function getForumSubscribers($topic = '')
     return $ids;
 }
 
-function getUserForumTopics($user_ID)
-{
+/**
+ * @param $user_ID
+ * @return array -  array of topics that starts with the default topic prefix
+ */
+function getUserForumTopics($user_ID) {
     global $wpdb;
-    $rows = $wpdb->get_results("SELECT meta_key FROM wp_usermeta WHERE meta_key LIKE '" . DEFAULT_TOPIC_PREFIX . "%' AND meta_value='Y' AND user_id=$user_ID ", ARRAY_A);
+    $rows = $wpdb->get_results("SELECT meta_key FROM wp_usermeta WHERE meta_key LIKE '". DEFAULT_NOTIFY_PREFIX ."%' AND meta_value='Y' AND user_id=$user_ID ", ARRAY_A);
     $topics = [];
     foreach ($rows as $user) {
         $topics[] = $user['meta_key'];
