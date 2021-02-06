@@ -197,22 +197,31 @@ const AttributeBinding = {
     /**
      * Delete file.
      *
+     * @note this is a global method that delete file. As long as file ID is given, it will work.
+     * @note if 'files' is given, then after delete the file, it will remove from the 'files' container.
+     *
      * @param {string} ID
      * @param {function} successCallback
+     * @param files is the container that holds the file to be deleted.
      */
-    onFileDelete(ID, successCallback) {
-      const conf = confirm("Delete File?");
+    onFileDelete(ID, successCallback, files) {
+      const conf = confirm("@t Delete File?");
       if (conf === false) {
         return;
       }
-      request("file.delete", { ID: ID }, successCallback, this.error);
+      request("file.delete", { ID: ID }, function (res) {
+        if ( typeof files === 'object' ) {
+          files.splice(_.findIndex(files, {ID: ID}), 1);
+        }
+        if( typeof successCallback === 'function' ) successCallback(res);
+      }, this.error);
     },
 
     logout() {
       console.log(config.cookie_domain);
-      Cookies.remove('session_id', {domain: config.cookie_domain});
-      Cookies.remove('nickname', {domain: config.cookie_domain});
-      Cookies.remove('profile_photo_url', {domain: config.cookie_domain});
+      Cookies.remove('session_id', {domain: config.cookie_domain, path: '/'});
+      Cookies.remove('nickname', {domain: config.cookie_domain, path: '/'});
+      Cookies.remove('profile_photo_url', {domain: config.cookie_domain, path: '/'});
       this.user = null;
     },
     error(e) {
@@ -226,9 +235,9 @@ const AttributeBinding = {
      */
     setUser(profile) {
       console.log(profile);
-      Cookies.set('session_id', profile.session_id, {domain: config.cookie_domain, expires: 365});
-      Cookies.set('nickname', profile.nickname, {domain: config.cookie_domain, expires: 365});
-      Cookies.set('profile_photo_url', profile.profile_photo_url, {domain: config.cookie_domain, expires: 365});
+      Cookies.set('session_id', profile.session_id, {domain: config.cookie_domain, path: '/', expires: 365});
+      Cookies.set('nickname', profile.nickname, {domain: config.cookie_domain, path: '/', expires: 365});
+      Cookies.set('profile_photo_url', profile.profile_photo_url, {domain: config.cookie_domain, path: '/', expires: 365});
 
       this.user = {
         'session_id': profile.session_id,
