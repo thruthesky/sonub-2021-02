@@ -29,15 +29,13 @@ $theme_footer = get_theme_footer_path();
 </head>
 <body class="<?=get_theme_page_class_name()?>">
 <section id="app">
-    <section id="router">
-        <?php
+    <?php
         begin_capture_script_style();
         include $theme_header;
         include $theme_page;
         include $theme_footer;
         end_capture_script_style();
-        ?>
-    </section>
+    ?>
 </section>
 
 <? insert_extracted_styles_from_script() ?>
@@ -68,12 +66,11 @@ $theme_footer = get_theme_footer_path();
 </script>
 <script src="<?=THEME_URL?>/js/bootstrap-5.0.0-b1-min.js"></script>
 <script src="<?=THEME_URL?>/js/vue.3.0.5-min.js"></script>
-<script src="<?=THEME_URL?>/js/axios.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-messaging.js"></script>
 <script src="<?=THEME_URL?>/js/firebase.js"></script>
-<?php load_theme_js($theme_page); ?>
 <script src="<?php echo THEME_URL . '/js/helpers.js'?>?v=<?=build_version()?>"></script>
+<?php load_theme_js($theme_page); ?>
 <? if ( is_forum_page() ) { ?><script src="<?php echo THEME_URL . '/js/app.forum.js'?>?v=<?=build_version()?>"></script><? } ?>
 <script src="<?php echo THEME_URL . '/js/app.js'?>?v=<?=build_version()?>"></script>
 

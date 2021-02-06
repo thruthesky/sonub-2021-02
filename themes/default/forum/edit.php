@@ -45,11 +45,13 @@ if (isset($_REQUEST['category'])) {
     <div class="progress-bar" role="progressbar" :style="{width: uploadPercentage + '%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
 </div>
 
-<section class="files row">
-    <div class="col-2 p-1 bg-light border" v-for="file of files">
-        <img class="w-100" :src="file.url">
+<section class="files">
+    <div class="d-inline-block position-relative size-100 p-1 bg-light border" v-for="file of files">
+        <img class="size-100" :src="file.url">
+        <i class="fa fa-trash fs-lg position-absolute top left" @click="onFileDelete(file.ID, null, files)"></i>
     </div>
 </section>
+
 
 
 <script>

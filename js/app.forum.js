@@ -102,13 +102,13 @@ const commentForm = {
       ' <div class="progress mt-3" style="height: 5px;" v-if="$root.uploadPercentage > 0">' +
       '   <div class="progress-bar" role="progressbar" :style="{width: $root.uploadPercentage + \'%\'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>' +
       ' </div>' +
-      ' <div class="uploaded-files d-flex">' +
-      '   <div class="position-relative p-1" v-for="file in uploaded_files">' +
+      ' <div class="uploaded-files">' +
+      '   <div class="d-inline-block position-relative p-1" v-for="file in uploaded_files">' +
       '     <img class="size-100" :src="file.url">' +
-      '     <i class="fa fa-trash fs-lg position-absolute top left"></i>' +
+      '     <i class="fa fa-trash fs-lg position-absolute top left" @click="$root.onFileDelete(file.ID, null, uploaded_files)"></i>' +
       '   </div>' +
       ' </div>' +
-      ' {{ uploaded_files }}' +
+      ' ' +
       '</div>',
   data() {
     return {

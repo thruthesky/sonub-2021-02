@@ -1,11 +1,44 @@
 /**
  * Base
  */
-
+body {
+  font-family: -apple-system,BlinkMacSystemFont,"Malgun Gothic","맑은 고딕",helvetica,"Apple SD Gothic Neo",sans-serif;
+}
 a {
+  color: black;
   text-decoration: none;
 }
 
+
+/**
+ * Layout
+ *
+ * 모든 테마의 Layout 을 이것으로 통일한다.
+ * 필요한 곳에 그냥 `.l-center` 를 사용하면 된다.
+ * 특히, header, footer 에 사용하면 되고, 본문에도 이것을 사용한다.
+ * 본문에 .l-center 를 하고, 본문에 들어가는 left, right 사이드 바는 .l-sidebar 로 한다.
+ */
+.l-center {
+  margin-left: auto !important;
+  margin-right: auto !important;
+  max-width: 1100px; // 이 너비는 적절하게 수정 가능.
+}
+.l-content {
+  display: flex;
+  .l-sidebar {
+    width: 300px; // 최대 너비를 300px 로 한다.
+    &:after { // flex-basis: 만으로 sidebar 의 너비가 고정되지 않는다. 그래서 :after { width: } 와 함께 고정한다.
+      content: '';
+      display: block;
+      width: 300px; // sidebar 너비를 무조건 300px 으로 고정.
+    }
+  }
+  .l-body {
+    margin-left: 16px; // 본문에서 왼쪽에 16px 여백을 둠
+    flex-grow: 1; // flexbox 에서 남은 여백 차지하기
+    overflow: hidden;
+  }
+}
 
 /**
  * Utilities
@@ -35,7 +68,16 @@ a {
   font-size: 128px !important;
 }
 
+.fs-normal {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+  font-size: 1em;
+}
 
+.bold {
+  font-weight: bold;
+}
 
 
 [depth="1"] {
@@ -159,17 +201,44 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
   bottom: 0;
 }
 
-.list-style-none {
-  list-style: none;
+
+.border-radius {
+  border-radius: 3px;
 }
 
 /**
  * Colors
  */
+.white {
+  color: white;
+}
 .black {
   color: black;
 }
-
+.bg-lighter {
+  background-color: #fafafa;
+}
+.bg-blue {
+  background-color: blue;
+}
+.bg-green {
+  background-color: green;
+}
+.bg-red {
+  background-color: red;
+}
+.bg-kakao-yellow {
+  background-color: #FEE500;
+}
+.border-kakao-yellow {
+  border: 1px solid #F6DD00;
+}
+.bg-naver-green {
+  background-color: #19ce60;
+}
+.border-naver-green {
+  border: 1px solid #15c654;
+}
 
 
 /**
@@ -187,4 +256,11 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
       padding: .5em 1em;
     }
   }
+}
+
+
+.box {
+  padding: 1em;
+  background-color: #f7f9fa;
+  border: 1px solid #dae1e6;
 }

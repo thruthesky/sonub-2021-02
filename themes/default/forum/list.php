@@ -35,10 +35,10 @@ if (!$category) { ?>
     <hr>
 
 <?php
-    include_once widget(category_meta($category->term_id, 'forum_list_widget'));
+    include_once widget(category_meta($category->term_id, 'forum_list_widget', 'forum-list/forum-list-default'));
 
 
-    include_once widget(category_meta($category->term_id, 'pagination_widget'), [
+    include_once widget(category_meta($category->term_id, 'pagination_widget', 'pagination/pagination-default'), [
         'page_no' => $page_no,
         'blocks' => 3,
         'arrow' => true,

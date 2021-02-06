@@ -128,7 +128,11 @@ node live-reload.js
   * Bootstrap v5
   * Font awesome
   * Firebase Javascript SDK
-  * Axios Javascript
+  * helper.js includes the following
+    * helper methods.
+    * Axios js -
+    * Cookie js - https://github.com/js-cookie/js-cookie
+    * Lodash Full Build (24Kb gzipped) - https://github.com/lodash/lodash/wiki/Build-Differences
 
 
 ## Folder structures
@@ -260,6 +264,7 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
   * Lastly, you need to put it on admin page, so admin can choose which widget to display on the browser.
     * To see how to code on admin page, see `themes/sonub/themes/default/admin/forum/setting.php`.
 
+* Widgets that are not used in admin page may not need `.init` file.
 
 
 # API & Protocols
@@ -669,14 +674,35 @@ addComponent('comment-form', commentForm);
 
 # Theme Page Submission
 
-* For any reason, if the theme page script ends with `.submit.php`, then it does not display the theme(layout). Instead,
-  It only runs the script.
+* For any reason, if the theme page script ends with `.submit.php`, then it does not display the theme(layout).
+  Instead, It only runs the script.
   This is good for submitting a form or running some code without displaying theme.
   
+  Example) /?page=user/logout.submit
   Example) /?page=admin/forum/list.submit&cat_name=abc
 
 
+# Theme development
 
+## Theme layout
+
+* Theme layout class is defined in `index.scss` that is default theme layout and can be overwritten by `!important` in each theme header.
+  * To overwrite, simply define style like below
+```css
+    .l-center {
+        max-width: 800px;
+    }
+```
+
+* Theme layout can be applied like below.
+```html
+<header class="l-center">...</header>
+<section class="l-center l-content">
+  <section class="l-sidebar">...</section>
+  <section class="l-body">... body ...</section>
+</section>
+<footer class="l-center">...</footer>
+```
 
 # File upload
 

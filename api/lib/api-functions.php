@@ -977,6 +977,7 @@ function get_category_ID($slug)
  *          - For comment, it is COMMENT_ATTACHMENT.
  * @return string String of file IDs
  *  - the input '$files' might be array. Then, it returns a string of File IDs separated by comma.
+ *  - Returns empty string('') if there is no files.
  * @attention
  *  The reason why we use COMMENT_ATTACHMENT as post_type is because
  *  the same number of comment_ID may exists as wp_posts.ID
@@ -989,11 +990,12 @@ function get_category_ID($slug)
  */
 function attach_files($post_ID, $files, $post_type = '')
 {
-    if (!$files) return;
+    if (!$files) return '';
     if (!is_array($files)) {
         $files = explode(',', $files);
     }
     foreach ($files as $file_ID) {
+        /// Attach the file to parent.
         $up = ['ID' => $file_ID, 'post_parent' => $post_ID];
         if ($post_type) {
             $up['post_type'] = $post_type;
@@ -1718,6 +1720,9 @@ function between($val, $min, $max)
  * if both $in['category_name'] and $in['author'] is not provided, it will return an error.
  * if only $in['category_name'] is provided, it will return all posts from that category.
  * if only $in['author'] is provided, it will return all posts from that author.
+ *
+ * $in['posts_per_page'] is the number of posts to get.
+ * $in['paged'] is the page to get.
  * 
  * @see the params at https://developer.wordpress.org/reference/classes/wp_query/parse_query/
  * @return array|string
@@ -1734,6 +1739,26 @@ function forum_search($in)
     return $rets;
 }
 
+/**
+ * Returns posts that has photos.
+ * @param $in
+ * @return array|string
+ *
+ * @example
+ *  $posts = latest_photos(['category_name'=>'qna']);
+ */
+function latest_photos($in) {
+    $in['meta_query'] = [
+        'relation' => 'AND',
+        [
+            'key' => 'files',
+            'value' => '',
+            'compare' => '!='
+        ]
+    ];
+    return forum_search($in);
+
+}
 
 /**
  * Returns post from its guid.
@@ -1858,6 +1883,7 @@ function api_edit_post($in)
     /**
      * Attach files to the post
      * And save the file IDs as 'files' meta property of the post.
+     * If no file is uploaded, then it will save empty string.
      */
     if (isset($in['files'])) {
         $fileIDs = attach_files($ID, $in['files']);
@@ -2699,3 +2725,5 @@ function get_child_categories($term_id = 0, $taxonomy = 'category')
     ));
     return $children;
 }
+
+
