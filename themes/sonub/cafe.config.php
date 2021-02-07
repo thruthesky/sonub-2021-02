@@ -1,4 +1,11 @@
 <?php
+/**
+ * @file cafe.config.php
+ */
+
+/// 카페 루트 도메인
+define('CAFE_ROOT_DOMAINS', ['sonub.com', 'philov.com', 'anyvie.com']);
+
 define('CAFE_DEFAULT_FORUM_LIST_WIDGET', 'forum-list/forum-list-default');
 define('CAFE_COMPANY_BOOK_WIDGET', 'forum-list/forum-list-company-book');
 define('CAFE_CATEGORIES', [

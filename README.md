@@ -468,6 +468,11 @@ You can write css style like below.
 * And if you need to write extra files, then write it under `var` folder.
 
 
+## Files and Folders
+
+* `lib/app.class.php` is used for holding state of app's life cycle.
+* `lib/utility.php` holds all utility functions that are directly related with the system core functionalities.
+
 
 ## User management
 

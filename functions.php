@@ -25,6 +25,7 @@ define('API_DIR', THEME_DIR . '/api');
  */
 require_once(API_DIR . '/lib/api-functions.php');
 require_once(THEME_DIR . '/lib/app.class.php');
+require_once(THEME_DIR . '/lib/utility.php');
 
 
 

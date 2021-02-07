@@ -67,6 +67,9 @@ function in($name = null, $default = null)
         $v = $_REQUEST[$name];
         if ( $name == 'page' ) {
             $v = str_replace('.', '/', $v);
+            if ( endsWith($v, '/submit') ) {
+                $v = str_replace('/submit', '.submit', $v);
+            }
         }
         return $v;
     } else {
@@ -2761,7 +2764,9 @@ function get_child_categories($term_id = 0, $taxonomy = 'category')
 function country_code($sortby='CountryNameKR') {
     $countries = json_decode(file_get_contents(THEME_DIR . '/etc/data/country-code.json'), true);
     usort($countries, function($a, $b) use ($sortby) {
-        return $a[$sortby] == $b[$sortby] ? 0 : $a[$sortby] > $b[$sortby] ? 1: -1;
+        if ($a[$sortby] == $b[$sortby]) return 0;
+        else if ( $a[$sortby] > $b[$sortby] ) return 1;
+        else return -1;
     });
 
     return $countries;

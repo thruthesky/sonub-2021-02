@@ -2,7 +2,7 @@
 <form>
     <input type="hidden" name="page" value="cafe/create.submit">
     <div>
-        카페명 아이디: <input class="w-100px" name="id">.sonub.com 변경불가<br>
+        카페명 아이디: <input class="w-100px" name="id">.<?=CAFE_ROOT_DOMAIN?> 변경불가<br>
         @TODO: https://cafe-id.sonub.com 와 같이 2차 도메인 사용 가능. 하지만 실제 각 페이지나 글 읽기 페이지 주소는 https://sonub.com/cafe-id 와 같이 됨.
     </div>
     <div>

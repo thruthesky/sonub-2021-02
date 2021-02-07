@@ -22,7 +22,7 @@ if ( empty($country) ) {
     $country = get_category_by_slug($code);
 }
 
-$id = cafe_id(in('id'));
+$id = cafe_id_key(in('id'));
 $co = get_option( $id );
 if ( $co ) {
     jsBack("카페 아이디가 존재합니다. 다른 카페 아이디를 입력하세요.");
