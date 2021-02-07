@@ -348,6 +348,7 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
       * `api/lib/firebase.php`
   * theme index.php ( this is the theme/index.php that is the layout )
     * `index.php` loads
+      * `/theme/[DOMAIN_THEME]/[DOMAIN_THEME]-funtions.php` is loaded if exists.
       * Bootstrap 4.6 css
       * css/index.css ( compiled from scss/index.scss sass code )
       * `theme/[DOMAIN_THEME]/[MODULE]/[SCRIPT_NAME].css` if exists.
@@ -670,7 +671,10 @@ addComponent('comment-form', commentForm);
     })
 ```
 
+# Theme page script
 
+* Dot(.) in `page` http var like `/?page=abc.def` will be translated to slash(/).
+  * So, `page=abc.def` is same as `page=abc/def`.
 
 # Theme Page Submission
 
@@ -703,6 +707,8 @@ addComponent('comment-form', commentForm);
 </section>
 <footer class="l-center">...</footer>
 ```
+
+* If there are two sidebars on left and right, then use `.l-body-middle` over `.l-body`.
 
 # File upload
 
@@ -842,3 +848,67 @@ if ( in('mode') == 'delete' ) {
 
 * `config.php` is the configuration and the theme may have its own configuration.
 * If the theme is `abc`, then `sonub/configs/abc.config.php` will be loaded if exists.
+
+# Generating test data - posts and comments
+
+* Use `https://wordpress.org/plugins/fakerpress/`
+
+# Lab
+
+* `lab` folder has experimental scripts or functions that are not required by running the system.
+
+
+
+
+# Cafe (or Group)
+
+카페 기능이 따로 있는 것이 아니라, 각 테마(theme) 에서 적절히 구현을 해야 한다. 여기서는 어떻게 하면 되는지 간략하게 설명을 한다.
+
+* 기본적으로 2차 도메인을 사용하는 것이 원칙이다. 예) https://my-cafe.sonub.com
+* 카페 관리자 정보는 update_option(key: cafe-[ID]) 을 통해서 한다. 예) cafe-my-cafe.
+  * 카페 아이디가 get_option("cafe-[id]") 설정에 존재하면 카페가 존재하는 것이다.
+* 각 글마다 카페 아이디를 기록한다.
+* 가능하면 메인 사이트에서 각 카페 홍보를 할 때, URL 링크를 카페 도메인으로 해서 절대 경로로 연결해준다.
+
+## Sonub Cafe 기능
+
+* 카페 생성은 `/sonub/thems/sonub/cafe/create.submit.php` 에서 한다. 즉, 카페 생성 자체가 코어에 포함되어져 있지 않다.
+
+
+
+# Hook System
+
+* Hook 함수를 먼저 선언 해야한다. 예) functions.php 에서 선언
+* 그리고 원하는 곳(함수 등)에서 훅을 호출하도록 하면 된다.
+* 동일한 hook 이름에 여러개 훅을 지정 할 수 있다.
+* 훅 함수에는 변수를 얼마든지 마음데로 지정 할 수 있으며 모두 reference 로 전달된다.
+
+훅 함수 호출 예제)
+```
+function category_meta($cat_ID, $name, $default_value = '')
+{
+    $v = get_term_meta($cat_ID, $name, true);
+    run_hook(__FUNCTION__, $v);
+    if ($v) return $v;
+    else return $default_value;
+}
+```
+
+실제 예제)
+```
+add_hook('myFunc', function($name, &$v) {
+    $v ++;
+});
+add_hook('myFunc', function($name, &$v) {
+    $v ++;
+});
+add_hook('myFunc', function(&$name, &$v) {
+    $v ++;
+    $name = 'abc';
+});
+$n = 'User name';
+$v = 1;
+run_hook('myFunc', $n, $v);
+d($n);
+d($v);
+```

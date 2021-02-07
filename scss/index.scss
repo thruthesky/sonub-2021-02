@@ -26,15 +26,21 @@ a {
 .l-content {
   display: flex;
   .l-sidebar {
-    width: 300px; // 최대 너비를 300px 로 한다.
+    width: 260px; // 최대 너비를 260px 로 한다.
     &:after { // flex-basis: 만으로 sidebar 의 너비가 고정되지 않는다. 그래서 :after { width: } 와 함께 고정한다.
       content: '';
       display: block;
-      width: 300px; // sidebar 너비를 무조건 300px 으로 고정.
+      width: 260px; // sidebar 너비를 무조건 260px 으로 고정.
     }
   }
   .l-body {
     margin-left: 16px; // 본문에서 왼쪽에 16px 여백을 둠
+    flex-grow: 1; // flexbox 에서 남은 여백 차지하기
+    overflow: hidden;
+  }
+  .l-body-middle {
+    margin-left: 16px; // 본문에서 왼쪽에 16px 여백을 둠
+    margin-right: 16px; // 본문에서 왼쪽에 16px 여백을 둠
     flex-grow: 1; // flexbox 에서 남은 여백 차지하기
     overflow: hidden;
   }
@@ -127,14 +133,68 @@ a {
 .d-center {
   display: flex; justify-content: center; align-items: center;
 }
+
+/// Pixel 사이즈는 size-** 로 한다.
+.size-40 {
+  width: 40px; height: 40px;
+}
+.size-64 {
+  width: 64px;
+  height: 64px;
+  min-width: 64px;
+  max-width: 64px;
+  min-height: 64px;
+  max-height: 64px;
+}
 .size-100 {
   width: 100px; height: 100px;
+}
+/// 퍼센티지 사이즈는 s-** 로 한다.
+// .s-49 는 부모를 'd-flex justify-content-between' 와 같이 하는 경우, 중간에 여백을 줄 수 있다.
+.s-49 {
+  width: 49%;
+  height: 49%;
+  min-width: 49%;
+  max-width: 49%;
+  min-height: 49%;
+  max-height: 49%;
+}
+.s-50 {
+   width: 50%;
+   height: 50%;
+   min-width: 50%;
+   max-width: 50%;
+   min-height: 50%;
+   max-height: 50%;
+}
+/**
+ * Widths and Heights
+ */
+.w-64px {
+  width: 64px;
+  min-width: 64px;
+  max-width: 64px;
 }
 .w-100px {
   width: 100px;
 }
+.w-200px {
+  width: 200px;
+}
+.w-300px {
+  width: 300px;
+}
+.w-400px {
+  width: 400px;
+}
 .h-100px {
   height: 100px;
+}
+.h-48px {
+  height: 48px;
+}
+.h-64px {
+  height: 64px;
 }
 .w-xxxl {
   width: 128px;
@@ -143,9 +203,19 @@ a {
   height: 128px;
 }
 
-.size-40 {
-  width: 40px; height: 40px;
+/// 글자 행의 높이는 글자 크기, 행 높이로 나누어진다.
+/// 글자가 1em 인 경우, height: 1em 이면, 너무 딱 맞는 높이가 된다. 그래서 약간 여백을 주려면 height: 1.5em 정도로 한다.
+/// .h-1em, .h-2em 이 꽤 유용하다.
+.h-1em {
+  height: 1.5em;
+  overflow: hidden;
 }
+.h-2em {
+  height: 3em;
+  overflow: hidden;
+}
+
+
 
 .photo-background {
   background-color: #e8e8e8;
@@ -172,6 +242,12 @@ a {
 
 .grey {
   color: grey;
+}
+.greys {
+  color: grey;
+  * {
+    color: #626262 !important;
+  }
 }
 .red {
   color: red;
@@ -212,6 +288,10 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
 .white {
   color: white;
 }
+.grey {
+  color: grey;
+}
+
 .black {
   color: black;
 }
@@ -244,7 +324,6 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
 /**
  * Components
  */
-
 .list-menu {
   display: flex;
   list-style: none;
@@ -253,7 +332,7 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
   li {
     a {
       display: block;
-      padding: .5em 1em;
+      padding: .25em .5em;
     }
   }
 }

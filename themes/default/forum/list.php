@@ -1,10 +1,19 @@
 <?php
 $category = get_category_by_slug(in('category'));
-
+if ( ! $category ) run_hook('category_not_exists', $category);
 
 if (!$category) { ?>
 
-    <h1>WRONG CATEGORY</h1>
+    <div class="alert alert-warning" role="alert">
+        <h4 class="alert-heading">잘못된 카테고리</h4>
+        <p>
+            앗, 잘못된 카테고리로 접속을 하였습니다.
+        </p>
+        <hr>
+        <p class="mb-0">운영자에게 문의해주세요.</p>
+    </div>
+
+
 
 <?php } else {
     $post_topic = NOTIFY_POST . $category->slug;
@@ -35,8 +44,8 @@ if (!$category) { ?>
     <hr>
 
 <?php
-    include_once widget(category_meta($category->term_id, 'forum_list_widget', 'forum-list/forum-list-default'));
 
+    include_once widget(category_meta($category->term_id, 'forum_list_widget', 'forum-list/forum-list-default'));
 
     include_once widget(category_meta($category->term_id, 'pagination_widget', 'pagination/pagination-default'), [
         'page_no' => $page_no,

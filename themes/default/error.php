@@ -1,8 +1,11 @@
 <?php
 
 ?>
-<h1>ERROR</h1>
-<h2><?php echo get_error_title() ?></h2>
-<h3><?php echo get_error_description() ?></h3>
+<section class="alert alert-danger">
 
+    <h2>ERROR</h2>
+    <hr>
+    <h4><?php echo get_error_title() ?></h4>
+    <h5><?php echo get_error_description() ?></h5>
 
+</section>

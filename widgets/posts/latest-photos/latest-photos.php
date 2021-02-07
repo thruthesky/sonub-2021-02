@@ -28,12 +28,13 @@ $posts = latest_photos($o);
         <? foreach( $posts as $post ) { ?>
             <div class="post w-100px of-hidden">
                 <a href="<?=$post['url']?>" class="post-title fs-normal">
-                    <img class="size-100" src="<?=$post['files'][0]['url']?>">
+                    <img class="size-100" src="<?=$post['files'][0]['thumbnail_url']?>">
                     <div class="fs-xs"><?=$post['post_title']?></div>
                 </a>
             </div>
         <? } ?>
     </div>
 </section>
+
 
 

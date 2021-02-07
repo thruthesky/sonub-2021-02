@@ -64,7 +64,11 @@ function in($name = null, $default = null)
         return $_REQUEST;
     }
     if (isset($_REQUEST[$name])) {
-        return $_REQUEST[$name];
+        $v = $_REQUEST[$name];
+        if ( $name == 'page' ) {
+            $v = str_replace('.', '/', $v);
+        }
+        return $v;
     } else {
         return $default;
     }
@@ -1740,6 +1744,22 @@ function forum_search($in)
 }
 
 /**
+ * Sanitize for display posts as latest.
+ * @param $in
+ */
+function latest_search($in) {
+    $posts = forum_search($in);
+    $rets = [];
+    foreach($posts as $post) {
+        $post['post_title'] = mb_strcut($post['post_title'], 0, 60);
+        $post['post_content'] = mb_strcut($post['post_content'], 0, 60);
+        $rets[] = $post;
+    }
+    return $rets;
+}
+
+
+/**
  * Returns posts that has photos.
  * @param $in
  * @return array|string
@@ -1756,8 +1776,7 @@ function latest_photos($in) {
             'compare' => '!='
         ]
     ];
-    return forum_search($in);
-
+    return latest_search($in);
 }
 
 /**
@@ -2465,6 +2484,7 @@ function get_first_slug($categories)
 function category_meta($cat_ID, $name, $default_value = '')
 {
     $v = get_term_meta($cat_ID, $name, true);
+    run_hook(__FUNCTION__, $name, $v);
     if ($v) return $v;
     else return $default_value;
 }
@@ -2716,6 +2736,13 @@ function get_root_categories()
     );
     return get_categories($args);
 }
+
+/**
+ * 현재 카테고리($term_id) 의 자식 카테고리를 리턴한다.
+ * @param int $term_id
+ * @param string $taxonomy
+ * @return array
+ */
 function get_child_categories($term_id = 0, $taxonomy = 'category')
 {
     $children = get_categories(array(
@@ -2727,3 +2754,32 @@ function get_child_categories($term_id = 0, $taxonomy = 'category')
 }
 
 
+/**
+ * @param string $sortby - 이 값이 CountryNameEn 이면, 국가 이름ㅇ르 영어 이름 정렬한다. 기본적으로 한글 정렬.
+ * @return mixed
+ */
+function country_code($sortby='CountryNameKR') {
+    $countries = json_decode(file_get_contents(THEME_DIR . '/etc/data/country-code.json'), true);
+    usort($countries, function($a, $b) use ($sortby) {
+        return $a[$sortby] == $b[$sortby] ? 0 : $a[$sortby] > $b[$sortby] ? 1: -1;
+    });
+
+    return $countries;
+}
+
+
+/**
+ * Hook system
+ */
+$_hook_functions = [];
+function add_hook($name, $function) {
+    global $_hook_functions;
+    if ( ! isset($_hook_functions[$name]) ) $_hook_functions[$name] = [];
+    $_hook_functions[$name][] = $function;
+}
+function run_hook($name, &...$vars) {
+    global $_hook_functions;
+    if ( isset($_hook_functions[$name]) ) {
+        foreach( $_hook_functions[$name] as $func ) $func(...$vars);
+    }
+}

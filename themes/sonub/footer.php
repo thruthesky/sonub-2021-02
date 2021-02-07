@@ -1,4 +1,7 @@
 </section><!--/.l-body-->
+<?php
+include 'sidebar-right.php';
+?>
 </section><!--/.l-content-->
 
 <footer>

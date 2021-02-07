@@ -189,8 +189,15 @@ function get_theme_page_path($theme, $page)
     return $script;
 }
 
+
+
+
 /**
  * Returns the theme script filename from the http request.
+ *
+ * @note HTTP 입력 값에 in('page') 가 있으면, 해당 페이지 스크립트를 연다.
+ *   만약, in('page') 가 없다면,
+ *     - cafe 카테고리 하위의 카테고리라면
  *
  * Example of returns would be
  *  - 'home' for home page or if there is no information from http request.
@@ -202,8 +209,8 @@ function get_theme_page_path($theme, $page)
  */
 function get_theme_page_file_name()
 {
-    if (isset($_REQUEST['page'])) {
-        $page = $_REQUEST['page'];
+    if (in('page')) {
+        $page = in('page');
     } else {
         $uri = $_SERVER['REQUEST_URI'];
         if (empty($uri) || $uri == '/') $page = 'home';
@@ -242,7 +249,20 @@ function get_theme_footer_path()
 }
 
 /**
- * Error script with title and description
+ * @refer README.md for details.
+ * @return string
+ */
+function get_theme_function_path()
+{
+    return THEME_DIR . "/themes/".DOMAIN_THEME."/".DOMAIN_THEME."-functions.php";
+}
+
+/**
+ * Displaying error message by '/themes/default/error.php' script with title and description.
+ *
+ * @usage Use this function to show error.
+ *   - especially when it fails loading(importing) a php script.
+ *
  * @param $title
  * @param $description
  *
@@ -392,7 +412,25 @@ function get_widget_options()
 function widget( string $path, array $options = [] ) {
     set_widget_options( $options );
     $arr = explode('/', $path);
-    return THEME_DIR . "/widgets/$arr[0]/$arr[1]/$arr[1].php";
+    if ( count($arr) != 2 ) {
+        $_path = get_error_script('Malformed widget path', "[$path] is a malformed path for widget. There must be only one slash in the middle.");
+    } else {
+        $_path = THEME_DIR . "/widgets/$arr[0]/$arr[1]/$arr[1].php";
+        if ( ! file_exists($_path) ) {
+            $_path = get_error_script('File not found', "file: $_path Widget script does not exist!");
+        }
+    }
+    return $_path;
+}
+
+/**
+ * @param $id - widget id.
+ *  - 카페의 경우, cafe-id-[id] 와 같이 기록되면 된다.
+ * @return string
+ */
+function dynamic_widget($id) {
+    set_widget_options(['id' => $id]);
+    return THEME_DIR . '/etc/widget/load.php';
 }
 
 /// EO Widget System ---------------------------------------------------------------------------------------------------

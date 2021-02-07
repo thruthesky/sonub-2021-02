@@ -16,7 +16,7 @@ $posts = forum_search($o);
 
 
 ?>
-<section class="posts-latest box <?=$o['class'] ?? ''?>">
+<section class="posts-latest box mb-2 <?=$o['class'] ?? ''?>">
     <a class="d-flex justify-content-between" href="/?page=forum/list&category=<?=$o['category_name']?>">
         <h2 class="fs-normal"><?=$o['widget_title'] ?? ''?></h2>
         <i class="fa fa-angle-double-right"></i>

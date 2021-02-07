@@ -5,6 +5,8 @@
 
 
 $theme_page = get_theme_page_script_path();
+$theme_functions = get_theme_function_path();
+if ( file_exists($theme_functions) ) include $theme_functions;
 
 /**
  * If the page has ending '.submit.php', then it simple include the script and return without display theme.

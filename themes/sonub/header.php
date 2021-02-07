@@ -1,7 +1,13 @@
+<?php
+
+$co = cafe_option();
+
+?>
+
 <style>
-    .l-center {
-        max-width: 800px;
-    }
+    /*.l-center {*/
+    /*    max-width: 800px;*/
+    /*}*/
     .desktop-mainmenu {
         border-top: 1px solid #efefef; border-bottom: 1px solid #d0d0d0; box-shadow: 1px 1px 1px 1px #f8f8f8;
     }
@@ -10,7 +16,7 @@
     <nav class="d-flex justify-content-between bg-light">
         <div class="d-flex">
             <a class="p-2" href="/">필럽</a>
-            <a class="p-2" href="/?page=forum/intro">게시판</a>
+            <a class="p-2" href="/?page=forum.list&cafe">게시판</a>
             <a class="p-2" href="/?page=cafe/intro">카페</a>
             <a class="p-2" href="/?page=buyandsell/intro">회원장터</a>
         </div>
@@ -28,9 +34,13 @@
         </div>
     </nav>
 </header>
+
+
+
+
 <header class="d-none d-sm-block">
-    <nav class="d-flex justify-content-between l-center bg-light">
-        <ul class="list-menu fs-sm">
+    <nav class="d-flex justify-content-between l-center bg-light fs-xs greys">
+        <ul class="list-menu p-menu">
             <li><a href="/">홈</a></li>
             <? if ( loggedIn() ) { ?>
                 <li><a href="/?page=user/profile">회원정보</a></li>
@@ -39,10 +49,15 @@
                 <li><a href="/?page=user/login">로그인</a></li>
                 <li><a href="/?page=user/register">회원가입</a></li>
             <? } ?>
+
+            <li><a class="" href="<?=cafe_url('discussion')?>">자유토론</a></li>
+            <li><a class="" href="<?=cafe_url('qna')?>">질문답변</a></li>
         </ul>
 
-        <ul class="list-menu fs-sm">
-            <li><a href="#">광고문의</a></li>
+
+
+        <ul class="list-menu">
+            <li><a class="" href="#">광고문의</a></li>
             <li><a href="#">운영자문의</a></li>
             <li><a href="/?page=menu/all">전체메뉴</a></li>
             <? if ( admin() ) { ?>
@@ -59,12 +74,30 @@
         </ul>
     </nav>
 
+    <section class="logo-search">
+        <div class="l-center d-flex justify-content-center align-items-center">
+            <a href="/" class="fs-xxl" style="font-family: Georgia">SONUB</a>
+            <form class="ms-3">
+                <input class="w-300px h-48px">
+            </form>
+        </div>
+    </section>
+
     <nav class="desktop-mainmenu mt-3 mb-1">
-        <ul class="list-menu l-center bold">
-            <li><a class="ps-0" href="/?page=forum/intro">게시판</a></li>
-            <li><a class="" href="/?page=cafe/intro">카페</a></li>
-            <li><a class="" href="/?page=buyandsell/intro">회원 장터</a></li>
-        </ul>
+        <div class="l-center d-flex justify-content-between">
+            <ul class="list-menu bold">
+                <li><a class="px-3 py-2 ps-0" href="/?page=cafe/intro">카페</a></li>
+                <li><a class="px-3 py-2" href="<?=cafe_url('travel')?>">여행</a></li>
+                <li><a class="px-3 py-2" href="<?=cafe_url('company_book')?>">업소록</a></li>
+                <li><a class="px-3 py-2" href="<?=cafe_url('buyandsell')?>">회원장터</a></li>
+                <li><a class="px-3 py-2" href="<?=cafe_url('business')?>">비즈니스</a></li>
+                <li><a class="px-3 py-2" href="<?=cafe_url('p_c_o_r_s')?>">나라별 교민사이트</a></li>
+            </ul>
+            <ul class="list-menu">
+                <li><a class="px-3 py-2 ps-0" href="/?page=cafe/intro"><i class="fa fa-question-circle fs-lg"></i></a></li>
+                <li><a class="px-3 py-2 ps-0" href="/?page=cafe/intro"><i class="fa fa-bars fs-lg"></i></a></li>
+            </ul>
+        </div>
     </nav>
 
 
@@ -72,6 +105,6 @@
 
 <section class="l-center l-content bg-white">
 <?php
-  include 'sidebar.php';
+  include 'sidebar-left.php';
 ?>
-    <section class="l-body mt-3">
+    <section class="l-body-middle mt-3">
