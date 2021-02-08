@@ -49,3 +49,5 @@ echo <<<EOJ
     messageHandler.postMessage('$json');
 </script>
 EOJ;
+?>
+<h1>로그인 성공</h1>
