@@ -1742,6 +1742,7 @@ function between($val, $min, $max)
 function forum_search($in)
 {
     if (!isset($in['category_name']) && !isset($in['author'])) return ERROR_EMPTY_CATEGORY_OR_ID;
+    if ($in['category_name'] == 'all_posts') $in['category_name'] = '';
     $posts = get_posts($in);
 
     $rets = [];
