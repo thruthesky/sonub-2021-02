@@ -14,6 +14,17 @@ class ForumRoute
         return forum_search($in);
     }
 
+    public function categories()
+    {
+        $rets = [];
+        $cats = get_category_list();
+        foreach ($cats as $cat) {
+            if (!in_array($cat->slug, EXCLUDED_CATEGORIES)) {
+                $rets[] = $cat->slug;
+            }
+        }
+        return $rets;
+    }
 
     /**
      * @note if in('ID') is set, then it will update the post. And category can be changed.
@@ -108,10 +119,10 @@ class ForumRoute
             if (is_wp_error($re)) {
                 return ERROR_COMMENT_EDIT . ':' . $re->get_error_message();
             }
-//            if ($re == 0) {
-                // This is fine. comment_content may not be updated. files or anything else may be updated, instead.
-//                return ERROR_COMMENT_NOT_UPDATED;
-//            }
+            //            if ($re == 0) {
+            // This is fine. comment_content may not be updated. files or anything else may be updated, instead.
+            //                return ERROR_COMMENT_NOT_UPDATED;
+            //            }
             $comment_id = in('comment_ID');
         }
 

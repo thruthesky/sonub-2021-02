@@ -205,6 +205,8 @@ define('POST_FIELDS', [
     'comment_count',
 ]);
 
+define('EXCLUDED_CATEGORIES', ['uncategorized', 'gallery']);
+
 
 /// Tables
 define('TABLE_PREFIX', 'api_');
