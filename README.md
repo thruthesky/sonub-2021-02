@@ -249,11 +249,14 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
 
 * Admin can change widget on admin page.
   * For instance, admin can change the forum list page look by changing the widget on forum category.
+
+* Widget type is the folder name right under `widgets` folder.
+  * For instance, the widget type of all widgets under `widgets/posts/` is `posts`.
+
 * Widget scripts are saved under `widgets/[type]` folder.
   * `widgets/[type]/[widget-name]/[widget-name].php` is the main script of the widget.
   * `widgets/[type]/[widget-name]/[widget-name].ini` is the widget configuration file.
   * Each widget must have its `.ini` configuration file.
-    * `type` in the configuration is the widget type.
     * `description` is the description and it will be displayed in admin page.
 * To develop a widget,
   * Create a folder name under `widgets/[type]` folder.
