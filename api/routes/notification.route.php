@@ -79,6 +79,7 @@ class NotificationRoute {
      */
     public function subscribeTopic($in) {
         if ( ! is_user_logged_in() ) return ERROR_LOGIN_FIRST;
+        if ( ! isset($in['topic']) && empty($in['topic']) ) return ERROR_EMPTY_TOPIC;
         if ( isset($in['tokens'] ) ) $tokens = $in['tokens'];
         else {
             $tokens = get_user_tokens();
@@ -100,6 +101,7 @@ class NotificationRoute {
      */
     public function unsubscribeTopic($in) {
         if ( ! is_user_logged_in() ) return ERROR_LOGIN_FIRST;
+        if ( ! isset($in['topic']) && empty($in['topic']) ) return ERROR_EMPTY_TOPIC;
         if ( isset($in['tokens'] ) ) $tokens = $in['tokens'];
         else {
             $tokens = get_user_tokens();
@@ -110,7 +112,10 @@ class NotificationRoute {
     }
 
     public function topicSubscription($in) {
-        if ( isset($in['subscribe']) && $in['subscribe'] === "Y" ) {
+        if ( ! is_user_logged_in() ) return ERROR_LOGIN_FIRST;
+        if ( ! isset($in['topic']) && empty($in['topic']) ) return ERROR_EMPTY_TOPIC;
+        $sub = get_user_meta(wp_get_current_user()->ID, $in['topic'], true) == "Y";
+        if ( !$sub ) {
             return $this->subscribeTopic($in);
         } else {
             return $this->unsubscribeTopic($in);
