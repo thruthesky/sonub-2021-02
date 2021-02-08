@@ -270,10 +270,19 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
 * Widgets that are not used in admin page may not need `.init` file.
 
 
-### Widget Config
+### Dynamic Widget Config
 
 * It can display widget config by accessing `/?page=home&update_widget=widget_id#widget_id`.
-  * `widgets/[widget-type]/[widget-name]/[widget-naem].config.php` will be shown below the widget.
+  * `widgets/[widget-type]/[widget-name]/[widget-naem].config.php` will be shown below the widget for configuration the widget.
+  * If widget is not selected, `widgets/dynamic/default` widget will be used.
+
+* On the widget config, all form data is saved by `etc/widget/config.head.php`.
+
+* 설정에 `dyanmic=yes` 로 된 위젯은 dynamic 으로도 사용 될 수 있고, 또 그냥 사용 될 수 있다.
+* 그냥 사용 할 때에는 위젯 옵션으로 일일히 값을 넘기면 된다.
+* dynamic 으로 사용 할 때에는 위젯 id 만 넘기면, option 에 저장된 설정을 읽어, 자동 적용을 한다.
+* config 에서 원하는 값을 저장 할 수 있다.
+
 
 # API & Protocols
 

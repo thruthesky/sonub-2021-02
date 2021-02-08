@@ -178,7 +178,15 @@ function update_widget_icon($widget_id) {
 }
 
 
-
+/**
+ * @param $id - widget id
+ * @return false|mixed|void
+ */
 function get_dynamic_widget_options($id) {
     return get_option(get_current_cafe_id_key() . '-' .$id);
 }
+function set_dynamic_widget_options($id, $data) {
+    return update_option(get_current_cafe_id_key() . '-' .$id, $data, false);
+}
+
+

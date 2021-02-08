@@ -468,7 +468,12 @@ function get_cookie_domain()
     else return get_domain();
 }
 
-
+function jsReload() {
+    echo "
+    <script>
+    location.reload();
+    </script>";
+}
 function jsAlert($msg)
 {
     echo "

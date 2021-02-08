@@ -14,6 +14,12 @@ $posts = latest_photos([
     'category_name' => $o['left']['category_name'],
     'posts_per_page' => 1,
 ]);
+if ( empty($posts) ) {
+
+        echo "글 수가 충분하지 않아 위젯을 표시 할 수 없습니다.";
+        return;
+
+}
 $big = $posts[0];
 
 $left_posts = latest_search([
@@ -22,10 +28,15 @@ $left_posts = latest_search([
     'post__not_in' => [$big['ID']],
 ]);
 
+
+
+
 $right_photos = latest_photos([
     'category_name' => $o['middle']['category_name'],
     'posts_per_page' => 4,
 ]);
+
+
 
 
 
@@ -34,6 +45,11 @@ $right_posts = latest_search([
     'posts_per_page' => 4,
     'post__not_in' => App::getIDs($right_photos),
 ]);
+
+if ( count($right_photos) != 4 ) {
+    echo "글 수가 충분하지 않아 위젯을 표시 할 수 없습니다.";
+    return;
+}
 
 ?>
 <section class="posts-multi-column box row <?=$o['class'] ?? ''?>">

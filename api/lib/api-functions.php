@@ -1741,8 +1741,10 @@ function between($val, $min, $max)
  */
 function forum_search($in)
 {
-    if (!isset($in['category_name']) && !isset($in['author'])) return ERROR_EMPTY_CATEGORY_OR_ID;
-    if ($in['category_name'] == 'all_posts') $in['category_name'] = '';
+
+//    if (!isset($in['category_name']) && !isset($in['author'])) return ERROR_EMPTY_CATEGORY_OR_ID;
+    // @deprecated @todo if 'category_name' is empty, then it will search all posts.
+//    if ($in['category_name'] == 'all_posts') $in['category_name'] = '';
     $posts = get_posts($in);
 
     $rets = [];
@@ -1758,6 +1760,8 @@ function forum_search($in)
  */
 function latest_search($in) {
     $posts = forum_search($in);
+    if ( api_error($posts) ) return $posts;
+    if ( empty($posts) ) return [];
     $rets = [];
     foreach($posts as $post) {
         $post['post_title'] = mb_strcut($post['post_title'], 0, 60);
