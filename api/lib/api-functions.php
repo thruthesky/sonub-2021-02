@@ -674,7 +674,10 @@ function profile($user_ID = null)
 
 
 /**
- * Returns true if the input is error.
+ * Returns true if the input is an error(or api or what ever error it is).
+ *
+ * @note 입력 값 $obj 가 문자열이고, ERROR_ 로 시작하면 에러이다.
+ *
  * @param $obj
  * @return bool
  * @todo change name to api_error()
@@ -687,9 +690,11 @@ function api_error($obj)
 
 
 /**
+ *
  * @param $in
  * @return array|string
  * @todo change kebab case.
+ * @todo 2021. 02. 현재 Location 이 사용되지 않는데, 다시 코드를 명확히 작성 할 것.
  */
 function updateUserLocation($in)
 {
