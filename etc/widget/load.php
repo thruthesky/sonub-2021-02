@@ -1,21 +1,16 @@
 <?php
 
-$wo = get_widget_options();
-
-
-
-$o = get_option($wo['id']);
-
-if ( !$o ) {
-    $o = [
-        'widget_title' => $wo['id'],
-        'path' => 'dynamic/default',
-    ];
+$o = get_widget_options();
+$dwo = get_dynamic_widget_options($o['id']);
+if ( ! $dwo ) {
+    $dwo['path'] = 'dynamic/default';
 }
-$o['id'] = $wo['id'];
 
-include widget($o['path'], $o);
+$dwo['id'] = $o['id'];
+
+
+include widget($dwo['path'], $dwo);
 
 if ( in('update_widget') == $o['id'] ) {
-    include widget_config($o['path'], $o);
+    include widget_config($dwo['path'], $dwo);
 }

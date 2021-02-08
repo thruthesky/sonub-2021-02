@@ -9,16 +9,16 @@
     </div>
 
     <?php
-    include dynamic_widget("cafe-right-sidebar-widget-1", "latest-posts");
-    include dynamic_widget("cafe-right-sidebar-widget-2", "latest-posts");
-    include dynamic_widget("cafe-right-sidebar-widget-3", "latest-posts");
-    include dynamic_widget("cafe-right-sidebar-widget-4", "latest-posts");
-    include dynamic_widget("cafe-right-sidebar-widget-5", "latest-posts");
-    include dynamic_widget("cafe-right-sidebar-widget-6", "latest-posts");
-    include dynamic_widget("cafe-right-sidebar-widget-7", "latest-posts");
-    include dynamic_widget("cafe-right-sidebar-widget-8", "latest-posts");
-    include dynamic_widget("cafe-right-sidebar-widget-9", "latest-posts");
-    include dynamic_widget("cafe-right-sidebar-widget-10", "latest-posts");
+    include dynamic_widget("cafe-right-sidebar-widget-1");
+    include dynamic_widget("cafe-right-sidebar-widget-2");
+    include dynamic_widget("cafe-right-sidebar-widget-3");
+    include dynamic_widget("cafe-right-sidebar-widget-4");
+    include dynamic_widget("cafe-right-sidebar-widget-5");
+    include dynamic_widget("cafe-right-sidebar-widget-6");
+    include dynamic_widget("cafe-right-sidebar-widget-7");
+    include dynamic_widget("cafe-right-sidebar-widget-8");
+    include dynamic_widget("cafe-right-sidebar-widget-9");
+    include dynamic_widget("cafe-right-sidebar-widget-10");
     ?>
 
         <?php

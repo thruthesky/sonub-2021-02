@@ -18,16 +18,16 @@
 
     <?php
 
-    include dynamic_widget("cafe-left-sidebar-widget-1", "latest-posts");
-    include dynamic_widget("cafe-left-sidebar-widget-2", "latest-posts");
-    include dynamic_widget("cafe-left-sidebar-widget-3", "latest-posts");
-    include dynamic_widget("cafe-left-sidebar-widget-4", "latest-posts");
-    include dynamic_widget("cafe-left-sidebar-widget-5", "latest-posts");
-    include dynamic_widget("cafe-left-sidebar-widget-6", "latest-posts");
-    include dynamic_widget("cafe-left-sidebar-widget-7", "latest-posts");
-    include dynamic_widget("cafe-left-sidebar-widget-8", "latest-posts");
-    include dynamic_widget("cafe-left-sidebar-widget-9", "latest-posts");
-    include dynamic_widget("cafe-left-sidebar-widget-10", "latest-posts");
+    include dynamic_widget("cafe-left-sidebar-widget-1");
+    include dynamic_widget("cafe-left-sidebar-widget-2");
+    include dynamic_widget("cafe-left-sidebar-widget-3");
+    include dynamic_widget("cafe-left-sidebar-widget-4");
+    include dynamic_widget("cafe-left-sidebar-widget-5");
+    include dynamic_widget("cafe-left-sidebar-widget-6");
+    include dynamic_widget("cafe-left-sidebar-widget-7");
+    include dynamic_widget("cafe-left-sidebar-widget-8");
+    include dynamic_widget("cafe-left-sidebar-widget-9");
+    include dynamic_widget("cafe-left-sidebar-widget-10");
 
     include widget('posts/latest', ['category_name' => 'reminder', 'widget_title' => '공지사항']);
     ?>

@@ -177,3 +177,8 @@ function update_widget_icon($widget_id) {
     return "<a href='/?page=home&update_widget=$widget_id#$widget_id'><i class='fa fa-cog'></a></i>";
 }
 
+
+
+function get_dynamic_widget_options($id) {
+    return get_option(get_current_cafe_id_key() . '-' .$id);
+}

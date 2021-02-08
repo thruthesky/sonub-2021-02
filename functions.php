@@ -448,11 +448,10 @@ function widget_config( string $path, array $default_options = [] ) {
 /**
  * @param $id - widget id.
  *  - 카페의 경우, cafe-id-[id] 와 같이 기록되면 된다.
- * @param $widget_type
  * @return string
  */
-function dynamic_widget($id, $widget_type) {
-    set_widget_options(['id' => $id, 'widget_type' => $widget_type]);
+function dynamic_widget($id) {
+    set_widget_options(['id' => $id]);
     return THEME_DIR . '/etc/widget/load.php';
 }
 
@@ -546,25 +545,30 @@ function select_list_widgets($cat_ID, $type, $config_name) {
 
 
     echo "<select name='$config_name'>";
+    select_list_widgets_option($type, $default_selected);
+    echo "</select>";
+
+
+}
+
+function select_list_widgets_option($type, $default_selected) {
     foreach( glob(THEME_DIR . "/widgets/$type/**/*.ini") as $file ) {
+        d($file);
         $arr = explode('/', $file);
         array_pop($arr);
         $widget_name = array_pop($arr);
         $ini_file = str_replace(".php", ".ini", $file);
 
-            $re = parse_ini_file($ini_file);
-            $description = $re['description'];
+        $re = parse_ini_file($ini_file);
+        $description = $re['description'];
 
 
-            $value = "$type/$widget_name";
+        $value = "$type/$widget_name";
         if ( $default_selected == $value ) $selected = "selected";
         else $selected = "";
 
         echo "<option value='$value' $selected>$description</option>";
     }
-    echo "</select>";
-
-
 }
 
 /**
