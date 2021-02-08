@@ -77,6 +77,9 @@ function cafe_home_url($id) {
  */
 function cafe_url($category) : string {
     $co = cafe_option();
+    if ( !isset($co['countryCode']) ) {
+        return "/?page=cafe.wrong_setting";
+    }
     return "/?page=forum.list&category={$category}_$co[countryCode]";
 }
 

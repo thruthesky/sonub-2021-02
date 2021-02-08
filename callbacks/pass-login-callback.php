@@ -18,7 +18,13 @@ if ( api_error($user) ) {
 
 debug_log("pass-login-callback.php:: user", $user);
 
-pass_login_or_register($user);
+$profile = pass_login_or_register($user);
+
+if ( api_error($profile) ) {
+    debug_log("pass-login-callback-php:: error code: $profile");
+    echo "<h1>ERROR: $profile</h1>";
+    exit;
+}
 
 /**
  * 여기까지 오면 로그인 성공
