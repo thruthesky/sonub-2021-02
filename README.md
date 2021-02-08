@@ -267,6 +267,11 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
 * Widgets that are not used in admin page may not need `.init` file.
 
 
+### Widget Config
+
+* It can display widget config by accessing `/?page=home&update_widget=widget_id#widget_id`.
+  * `widgets/[widget-type]/[widget-name]/[widget-naem].config.php` will be shown below the widget.
+
 # API & Protocols
 
 * `sonub/api` folder has all the api codes and `sonub/api/index.php` serves as the endpoint.
@@ -917,3 +922,8 @@ run_hook('myFunc', $n, $v);
 d($n);
 d($v);
 ```
+
+
+# Trouble Shotting
+
+* When use meet, 'ERROR_WRONG_PASSWORD'

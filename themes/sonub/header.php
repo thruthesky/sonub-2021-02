@@ -12,7 +12,7 @@ $co = cafe_option();
         border-top: 1px solid #efefef; border-bottom: 1px solid #d0d0d0; box-shadow: 1px 1px 1px 1px #f8f8f8;
     }
 </style>
-<header class="d-sm-none">
+<header class="d-md-none">
     <nav class="d-flex justify-content-between bg-light">
         <div class="d-flex">
             <a class="p-2" href="/">필럽</a>
@@ -38,7 +38,7 @@ $co = cafe_option();
 
 
 
-<header class="d-none d-sm-block">
+<header class="d-none d-md-block">
     <nav class="d-flex justify-content-between l-center bg-light fs-xs greys">
         <ul class="list-menu p-menu">
             <li><a href="/">홈</a></li>
@@ -76,7 +76,7 @@ $co = cafe_option();
 
     <section class="logo-search">
         <div class="l-center d-flex justify-content-center align-items-center">
-            <a href="/" class="fs-xxl" style="font-family: Georgia">SONUB</a>
+            <a href="/" class="fs-xxl" style="font-family: Georgia"><?=cafe_option('name', 'SONUB')?></a>
             <form class="ms-3">
                 <input class="w-300px h-48px">
             </form>

@@ -12,5 +12,10 @@ if ( !$o ) {
         'path' => 'dynamic/default',
     ];
 }
+$o['id'] = $wo['id'];
 
 include widget($o['path'], $o);
+
+if ( in('update_widget') == $o['id'] ) {
+    include widget_config($o['path'], $o);
+}

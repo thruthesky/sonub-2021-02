@@ -402,6 +402,7 @@ function get_widget_options()
 
 /**
  * @param string $path is the 'widget_type/folder_name' to load the widget.
+ *  - if $path is 'a/b', then 'widgets/a/b/b.php' is loaded.
  * @param $options array
  *
  * @return string - PHP script path for widget loading
@@ -425,12 +426,33 @@ function widget( string $path, array $options = [] ) {
 }
 
 /**
- * @param $id - widget id.
- *  - 카페의 경우, cafe-id-[id] 와 같이 기록되면 된다.
+ * @param string $path
+ * @param array $default_options is the default options.
  * @return string
  */
-function dynamic_widget($id) {
-    set_widget_options(['id' => $id]);
+function widget_config( string $path, array $default_options = [] ) {
+    set_widget_options( $default_options );
+    $arr = explode('/', $path);
+    if ( count($arr) != 2 ) {
+        $_path = get_error_script('Malformed widget path', "[$path] is a malformed path for widget. There must be only one slash in the middle.");
+    } else {
+        $_path = THEME_DIR . "/widgets/$arr[0]/$arr[1]/$arr[1].config.php";
+        if ( ! file_exists($_path) ) {
+            $_path = get_error_script('File not found', "file: $_path Widget script does not exist!");
+        }
+    }
+    return $_path;
+}
+
+
+/**
+ * @param $id - widget id.
+ *  - 카페의 경우, cafe-id-[id] 와 같이 기록되면 된다.
+ * @param $widget_type
+ * @return string
+ */
+function dynamic_widget($id, $widget_type) {
+    set_widget_options(['id' => $id, 'widget_type' => $widget_type]);
     return THEME_DIR . '/etc/widget/load.php';
 }
 

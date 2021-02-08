@@ -28,7 +28,7 @@ if ( $co ) {
     jsBack("카페 아이디가 존재합니다. 다른 카페 아이디를 입력하세요.");
 }
 update_cafe_option($id, ['name' => in('name'), 'countryCode' => in('countryCode') ]);
-
+set_cafe_admin($id);
 jsGo(cafe_home_url($id));
 
 
