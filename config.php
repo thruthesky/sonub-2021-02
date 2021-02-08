@@ -83,7 +83,7 @@ if ( !defined('BROWSER_COOKIE_DOMAIN') ) define('BROWSER_COOKIE_DOMAIN', '');
 define('PASS_LOGIN_MOBILE_PREFIX', 'm');
 define('PASS_LOGIN_CLIENT_ID', 'b90hirE4UYwVf2GkHIiK');
 define('PASS_LOGIN_CLIENT_SECRET_KEY', '366c0f3775bfa48f2239226506659f5981afd3eb2b08189f9f9d22cdc4ca63c9');
-define('PASS_LOGIN_CALLBACK_URL', "https://local.sonub.com/wp-content/themes/sonub/pass-login-callback.php");
+define('PASS_LOGIN_CALLBACK_URL', "https://sonub.com/wp-content/themes/sonub/callbacks/pass-login-callback.php");
 define('PASS_LOGIN_SALT', 'Random_Salt_oO^.^Oo_S.0.48.PM'); // This is any random (secret) string.
 
 

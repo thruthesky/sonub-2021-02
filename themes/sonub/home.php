@@ -106,7 +106,6 @@
 
 <?php
 
-
 include widget('posts/two-columns', [
     'left' => [
         'category_name' => 'qna',

@@ -6,7 +6,7 @@
 
 
 
-require_once('../../../wp-load.php');
+require_once('../../../../wp-load.php');
 
 $user = pass_login_callback($_REQUEST);
 
