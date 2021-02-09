@@ -1,6 +1,17 @@
 <?php
 include_once('cafe.config.php');
 
+
+define('ADMIN_MENUS', [
+    [
+        'name' => '틀린 그림 찾기',
+        'script' => 'admin.game.find_wrong_picture',
+    ]
+]);
+
+
+
+
 foreach(CAFE_ROOT_DOMAINS as $_domain) {
     if ( stripos(get_domain_name(), $_domain) !== false ) {
         define( 'CAFE_ROOT_DOMAIN', 'sonub.com' );

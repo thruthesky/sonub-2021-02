@@ -484,7 +484,12 @@ function login($data)
 
 
 /**
- * @attention it saves user profile data only in `wp_usermeta` table. It does not change data in `wp_users` table.
+ * Save incoming data into user meta.
+ *
+ * @attention
+ *  - It saves user profile data only in `wp_usermeta` table. It does not change data in `wp_users` table.
+ *  - The input is key/value map and there is no limit to save properties.
+ *
  * @param $in
  * @return array
  *  - returns the user profile after update user meta.
@@ -2131,7 +2136,18 @@ function api_update_settings($data) {
     api_notify_app_update('settings');
 }
 function api_get_settings() {
-    return get_option('global_settings');
+    $options = get_option('global_settings');
+    if ( ! $options ) return $options;
+    $ret = [];
+    /// Strip slashes for quotes.
+    foreach( $options as $k => $v ) {
+        if ( is_string($v) ) {
+            $ret[$k] = stripslashes( $v );
+        } else {
+            $ret[$k] = $v;
+        }
+    }
+    return $ret;
 }
 
 /**
@@ -2160,12 +2176,13 @@ function api_notify_translation_update()
  * Get domain theme name
  *
  * @note if the page has admin folder, then it goes to admin theme.
+ * @param bool $admin 만약 admin=true 인 경우, 사용자가 관리자 페이지에 있으면 admin 테마를 리턴한다.
  * @return string
  */
-function get_domain_theme()
+function get_domain_theme($admin=true)
 {
     if (API_CALL) return null;
-    if (is_admin_page()) return 'admin';
+    if ($admin && is_admin_page()) return 'admin';
     global $domain_themes;
     if (!isset($domain_themes)) return null;
     $_host = get_host_name();

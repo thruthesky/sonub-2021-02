@@ -18,8 +18,9 @@ $domain_themes = [
 
 /**
  * Theme configuration exists, load it.
+ * @attention 관리자 페이지에 있는 경우, 관리자 페이지 theme 이 아닌, 실제 theme 의 config.php 를 실행한다.
  */
-$_path = THEME_DIR . "/configs/".get_domain_theme().".config.php";
+$_path = THEME_DIR . "/configs/".get_domain_theme(false).".config.php";
 if ( file_exists($_path) ) {
     require_once($_path);
 }

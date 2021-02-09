@@ -255,7 +255,7 @@ function get_theme_footer_path()
  */
 function get_theme_function_path()
 {
-    return THEME_DIR . "/themes/".DOMAIN_THEME."/".DOMAIN_THEME."-functions.php";
+    return THEME_DIR . "/themes/".get_domain_theme(false)."/".get_domain_theme(false).".functions.php";
 }
 
 /**
@@ -600,3 +600,22 @@ function delete_login_cookies() {
     setcookie("profile_photo_url", "", time()-3600, '/', BROWSER_COOKIE_DOMAIN);
 }
 
+
+
+function ln($en, $ko)
+{
+    $bl = browser_language();
+    if ( $bl == 'ko' ) return $ko;
+    else return $en;
+
+}
+
+function browser_language()
+{
+    if ( isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ) {
+        return substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+    }
+    else {
+        return 'en';
+    }
+}

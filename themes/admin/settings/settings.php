@@ -11,7 +11,10 @@ $in = api_get_settings();
 
 ?>
 <section>
-    @TODO: Textarea 에서 \n 이 안먹는다. vue.js 때문에 그런 것 같다. axio 로 로드해서 보여준다.
+
+    @todo 저장을 그냥 PHP submit 으로 하는데, Vue.js Axios 로 할 것.
+    각 항목 별로 저장하는데, 양식에서 값이 변경되면, 저장 버튼을 보여줄 것.
+
 
     <form method="post">
         <input type="hidden" name="page" value="admin/settings/settings">
@@ -26,17 +29,17 @@ $in = api_get_settings();
             <div>
                 Search categories:
                 If set, only these categories will be searched. By default, search all categories.</div>
-            <input class="w-100" type="text" name="search_categories" value="<?=$in['search_categories']?>">
+            <input class="w-100" type="text" name="search_categories" v-model="settings.search_categories">
         </div>
         <div>
             <div>
                 Like
             </div>
             <label>
-                <input type="radio" name="forum_like" value="Y" <? if ( $in['forum_like'] == 'Y' ) echo 'checked'; ?>> Show
+                <input type="radio" name="forum_like" value="Y" v-model="settings.forum_like"> Show
             </label>
             <label>
-                <input type="radio" name="forum_like" value="N" <? if ( $in['forum_like'] == 'N' ) echo 'checked'; ?>> Hide
+                <input type="radio" name="forum_like" value="N" v-model="settings.forum_like"> Hide
             </label>
         </div>
         <div>
@@ -44,10 +47,10 @@ $in = api_get_settings();
                 Dislike
             </div>
             <label>
-                <input type="radio" name="forum_dislike" value="Y" <? if ( ($in['forum_dislike'] ?? '') == 'Y' ) echo 'checked'; ?>> Show
+                <input type="radio" name="forum_dislike" value="Y" v-model="settings.forum_dislike"> Show
             </label>
             <label>
-                <input type="radio" name="forum_dislike" value="N" <? if ( ($in['forum_dislike'] ?? '') == 'N' ) echo 'checked'; ?>> Hide
+                <input type="radio" name="forum_dislike" value="N" v-model="settings.forum_dislike"> Hide
             </label>
         </div>
 
@@ -56,15 +59,44 @@ $in = api_get_settings();
         </div>
 
         <hr>
+        <h2>Point Settings</h2>
+<div>
+    <div>
+        회원 가입: <input>
+    </div>
+    <div>
+        글 작성: <input>, 1일 포인트 제한 글 개수: <input>
+        글 삭제: <input>
+    </div>
+    <div>
+        코멘 작성: <input>, 1일 포인트 제한 코멘트 개 수: <input>
+        코멘트 삭제: <input>
+    </div>
+    <div>
+        추천: <input>,
+        비 추천: <input>
+    </div>
+</div>
+
+
+        <hr>
+
 
         <h2>User Agreements</h2>
+<div class="row">
+    <div class="col-6">
 
         <h3>Terms and Conditions</h3>
-        <textarea class="w-100" rows="10" name="terms_and_conditions"><?=$in['terms_and_conditions'] ?? ''?></textarea>
+        <textarea class="w-100" rows="4" name="terms_and_conditions" v-model="settings.terms_and_conditions"></textarea>
+
+    </div>
+    <div class="col-6">
 
         <h3>Privacy Policy</h3>
-        <textarea class="w-100" rows="10" name="privacy_policy"><?=$in['privacy_policy'] ?? ''?></textarea>
+        <textarea class="w-100" rows="4" name="privacy_policy" v-model="settings.privacy_policy"></textarea>
 
+    </div>
+</div>
         <div>
             <button class="btn btn-primary" type="submit">Save</button>
         </div>
@@ -74,3 +106,19 @@ $in = api_get_settings();
     </form>
 
 </section>
+
+
+<script>
+    const mixin = {
+        data() {
+            return {
+                settings: {},
+            }
+        },
+        created() {
+            request('app.settings', undefined, function(re) {
+                app.settings = re;
+            }, alert);
+        },
+    }
+</script>
