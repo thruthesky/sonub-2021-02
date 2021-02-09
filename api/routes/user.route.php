@@ -12,7 +12,7 @@ class UserRoute {
     }
 
     public function otherProfile($in) {
-        return otherProfile($in);
+        return otherProfile($in['id']);
     }
 
     public function loginOrRegister($in) {

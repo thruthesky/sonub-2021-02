@@ -691,10 +691,13 @@ function profile($user_ID = null)
  */
 function otherProfile($user_ID = null)
 {
+
+    if (!$user_ID) return ERROR_EMPTY_ID;
     $user = new WP_User($user_ID);
     if (!isset($user->ID)) {
         return [];
     }
+
     $data = $user->to_array();
     unset($data['user_pass'], $data['user_activation_key'], $data['user_status'], $data['user_nicename'], $data['display_name'], $data['user_url']);
     $data = array_merge(user_metas($user_ID), $data);
