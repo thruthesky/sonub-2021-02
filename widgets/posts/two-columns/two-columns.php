@@ -16,7 +16,7 @@ $posts = latest_photos([
 ]);
 if ( empty($posts) ) {
 
-        echo "글 수가 충분하지 않아 위젯을 표시 할 수 없습니다.";
+        echo "글 수가 충분하지 않아 위젯을 표시 할 수 없습니다.<hr>@TODO: 기본 사진이나 글을 보여 줄 것.";
         return;
 
 }

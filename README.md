@@ -530,7 +530,17 @@ if ( in('page') == 'set' ) {
     exit;
 }
 ```
-  
+
+## 쿠키 저장
+
+* 웹브라우저에서 간단하게 ON/OFF 용도로
+  아래의 예제와 같이 md5('set')=md5('cookie') 와 같이 값을 주어 접속을 하면,
+  key 의 cookie 이름으로 value 의 값을 저장한다.
+  다양하게 활용을 하면 된다.
+
+````html
+<a href="/?<?=md5('set')?>=<?=md5('cookie')?>&key=<?=md5('widget')?>&value=<? echo is_widget_edit_mode() ? 'off' : 'on' ?>">
+````
   
 ## User management
 

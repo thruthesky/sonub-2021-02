@@ -15,7 +15,7 @@ $o = get_widget_options();
         <li>게시글 관리</li>
         <li>게시판 관리</li>
         <li>전체 사진 목록</li>
-        <li>카페 설정</li>
+        <li><a href="/?page=cafe.admin">카페 설정</a></li>
         <li>
             <a href="/?<?=md5('set')?>=<?=md5('cookie')?>&key=<?=md5('widget')?>&value=<? echo is_widget_edit_mode() ? 'off' : 'on' ?>">
                 위젯 설정:
@@ -26,6 +26,7 @@ $o = get_widget_options();
                 <? } ?>
             </a>
         </li>
+        <li>카페 운영 문의하기</li>
     </ul>
 
 </div>

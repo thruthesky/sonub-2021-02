@@ -17,17 +17,8 @@
 
 
     <?php
-
-    include dynamic_widget("cafe-left-sidebar-widget-1");
-    include dynamic_widget("cafe-left-sidebar-widget-2");
-    include dynamic_widget("cafe-left-sidebar-widget-3");
-    include dynamic_widget("cafe-left-sidebar-widget-4");
-    include dynamic_widget("cafe-left-sidebar-widget-5");
-    include dynamic_widget("cafe-left-sidebar-widget-6");
-    include dynamic_widget("cafe-left-sidebar-widget-7");
-    include dynamic_widget("cafe-left-sidebar-widget-8");
-    include dynamic_widget("cafe-left-sidebar-widget-9");
-    include dynamic_widget("cafe-left-sidebar-widget-10");
+    for( $i=0; $i<10; $i++)
+    include dynamic_widget("cafe-left-sidebar-widget-$i");
 
     include widget('posts/latest', ['category_name' => 'reminder', 'widget_title' => '공지사항']);
     ?>

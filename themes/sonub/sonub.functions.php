@@ -103,7 +103,14 @@ function is_cafe_admin() {
 function cafe_root_url() {
     return "https://" . CAFE_ROOT_DOMAIN;
 }
-function cafe_home_url($id) {
+
+/**
+ * 현재 카페 URL 을 리턴한다.
+ * @param null $id - 카페아이디가 주어지면, 해당 카페 URL 을 리턴한다.
+ * @return string
+ */
+function cafe_home_url($id=null) {
+    if ( $id === null ) $id = get_current_cafe_id_key();
     $id = str_replace(CAFE_ID_PREFIX, '', $id);
     return "https://$id.". CAFE_ROOT_DOMAIN;
 }
@@ -131,6 +138,7 @@ function cafe_url($category) : string {
  * @param $data
  */
 function update_cafe_option($id, $data) {
+    $id = cafe_id_key($id);
     update_option($id, $data, false);
 }
 

@@ -2867,6 +2867,11 @@ function country_code($sortby='CountryNameKR') {
     return $countries;
 }
 
+function country_name($code, $lang="CountryNameKR") {
+    $countries = json_decode(file_get_contents(THEME_DIR . '/etc/data/country-code.json'), true);
+    return $countries[$code][$lang];
+}
+
 
 /**
  * Hook system

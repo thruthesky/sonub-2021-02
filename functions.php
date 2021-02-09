@@ -28,7 +28,10 @@ require_once(THEME_DIR . '/lib/utility.php');
 
 
 /**
- * 쿠키를 설정하고, 홈으로 이동한다.
+ * 입력값에 md5('set') = md5('cookie') 가 들어오면, 쿠키를 설정하고, 홈으로 이동한다.
+ *
+ * @attention 'set' 과 'cookie' 의 값을 md5 로 하여, 알아보지 못하게 한다.
+ * 그리고 가능하면 키도 md5 한다.
  */
 if ( in(md5('set')) == md5('cookie') ) {
     setcookie(in('key'), in('value'));
@@ -642,6 +645,6 @@ function browser_language()
  *
  * @todo 카페에서는, 해당 카페 관리자만 해당 카페 위젯을 수정 할 수 있다. 다른 카페 관리자가 내 카페 위젯을 수정 할 수 없다.
  */
-function is_widget_edit_mode() {
+function is_widget_edit_mode(): bool {
     return ($_COOKIE[md5('widget')] ?? '') == 'on';
 }
