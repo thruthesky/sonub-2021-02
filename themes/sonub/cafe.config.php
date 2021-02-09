@@ -8,6 +8,10 @@ define('CAFE_ROOT_DOMAINS', ['sonub.com', 'philov.com', 'anyvie.com']);
 
 define('CAFE_DEFAULT_FORUM_LIST_WIDGET', 'forum-list/forum-list-default');
 define('CAFE_COMPANY_BOOK_WIDGET', 'forum-list/forum-list-company-book');
+
+/**
+ * 여기서 메뉴 이름을 바꾸면, 실제 홈페이지에서도 바뀌어 나타난다.
+ */
 define('CAFE_CATEGORIES', [
     'discussion' => [
         'name' => '자유게시판',
