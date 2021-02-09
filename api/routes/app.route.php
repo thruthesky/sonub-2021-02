@@ -65,4 +65,8 @@ class AppRoute {
     public function query($in) {
         return sql_query($in);
     }
+
+    public function settings() {
+        return api_get_settings();
+    }
 }

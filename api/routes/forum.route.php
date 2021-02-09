@@ -14,13 +14,6 @@ class ForumRoute
         return forum_search($in);
     }
 
-    ///
-    public function categories()
-    {
-        $categories = get_option('search_categories');
-        $categories = explode(',',$categories);
-        return $categories;
-    }
 
     /**
      * @note if in('ID') is set, then it will update the post. And category can be changed.
