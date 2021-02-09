@@ -10,6 +10,7 @@ if ( in('mode') == 'save' ) {
     foreach($in as $k => $v) {
         update_option($k, $v, false);
     }
+    api_notify_forum_settings_update();
 
     /// Firebase realtime database.
     ///

@@ -2113,18 +2113,34 @@ function api_delete_translation($in)
     return $in;
 }
 
+
+/**
+ * Update the document under 'notification' in Firebase RealTime Database.
+ * @throws \Kreait\Firebase\Exception\DatabaseException
+ */
+function api_notify_app_update($document) {
+    if (get_phpunit_mode()) return;
+    $db = getDatabase();
+    $reference = $db->getReference("notifications/" . $document);
+    $stamp = time();
+    $reference->set(['updatedAt' => $stamp]);
+}
+
 /**
  * Update the 'notification/translation' document in Firebase RealTime Database.
  * Clients may listen the document change and update the translations.
- * @throws \Kreait\Firebase\Exception\DatabaseException
  */
 function api_notify_translation_update()
 {
-    if (get_phpunit_mode()) return;
-    $db = getDatabase();
-    $reference = $db->getReference('notifications/translation');
-    $stamp = time();
-    $reference->set(['updatedAt' => $stamp]);
+    api_notify_app_update('translation');
+}
+
+/**
+ * Update the 'notification/settings' document in Firebase RealTime Database.
+ * Clients may listen the document change and update the translations.
+ */
+function api_notify_forum_settings_update() {
+    api_notify_app_update('settings');
 }
 
 
