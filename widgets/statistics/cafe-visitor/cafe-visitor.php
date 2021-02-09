@@ -1,1 +1,1 @@
-<div class="alert alert-danger">방문자 표시</div>
+<div class="alert alert-danger">카페 방문자 표시</div>

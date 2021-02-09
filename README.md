@@ -519,6 +519,19 @@ You can write css style like below.
 * `themes/theme-name/theme-name.functions.php` 에 관리자에서 사용될 코드를 집어 넣는다.
   이유는 `configs/theme.config.php` 는 소스 코드가 테마에 한정적이 않아서이다.
   
+  * theme.functions.php 의 활용 용도는 무궁무진하다.
+    예를 들어, 관리자가 위젯 수정 모드로 들어가려고 할 때, 관리자 링크에서 `href="/?page=set&key=widget&value=edit"` 와 같이
+    링크를 걸고, theme.functions.php 에서 아래와 같이 쿠키를 저장할 수 있다.
+    
+```php
+if ( in('page') == 'set' ) {
+    setcookie(in('key'), in('value'));
+    jsGo('/');
+    exit;
+}
+```
+  
+  
 ## User management
 
 * Wordpress has `wp_users` database for storing default user information like user_login, user_email, user_pass and other information.

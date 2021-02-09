@@ -1,6 +1,15 @@
 <?php
+
+define( 'CAFE_ID_PREFIX', 'cafe_' );
+
 include_once('cafe.config.php');
 
+foreach(CAFE_ROOT_DOMAINS as $_domain) {
+    if ( stripos(get_domain_name(), $_domain) !== false ) {
+        define( 'CAFE_ROOT_DOMAIN', 'sonub.com' );
+        break;
+    }
+}
 
 define('ADMIN_MENUS', [
     [
@@ -12,19 +21,11 @@ define('ADMIN_MENUS', [
 
 
 
-foreach(CAFE_ROOT_DOMAINS as $_domain) {
-    if ( stripos(get_domain_name(), $_domain) !== false ) {
-        define( 'CAFE_ROOT_DOMAIN', 'sonub.com' );
-        break;
-    }
-}
-define( 'CAFE_ID_PREFIX', 'cafe_' );
 
 /// 카페 페이지로 접속했는데, 해당 카페가 존재하지 않는 경우, 루트 에러 페이지로 이동.
 if ( is_in_cafe() && cafe_exists() === false ) {
     jsGo(cafe_root_url() . "?page=cafe.not_found");
 }
-
 
 function cafe_exists(): bool {
     $co = cafe_option();

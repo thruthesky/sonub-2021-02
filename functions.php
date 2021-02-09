@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file functions.php
  */
@@ -26,6 +25,19 @@ define('API_DIR', THEME_DIR . '/api');
 require_once(API_DIR . '/lib/api-functions.php');
 require_once(THEME_DIR . '/lib/app.class.php');
 require_once(THEME_DIR . '/lib/utility.php');
+
+
+/**
+ * 쿠키를 설정하고, 홈으로 이동한다.
+ */
+if ( in(md5('set')) == md5('cookie') ) {
+    setcookie(in('key'), in('value'));
+    jsGo('/');
+    exit;
+}
+
+
+
 
 
 
@@ -618,4 +630,18 @@ function browser_language()
     else {
         return 'en';
     }
+}
+
+
+/**
+ * 쿠키에 widget=on 값이 있으면, 위젯을 수정하는 것으로 표시한다.
+ *
+ * 위젯을 수정하려면, 아래의 예제와 같이 적절한 곳에 링크를 걸면 된다.
+ * 참고로, set, cookie, key 를 코두 md5 로 해서, 외부에서 알아보지 못하게 한다.
+ * 예) <a href="/?<?=md5('set')?>=<?=md5('cookie')?>&key=<?=md5('widget')?>&value=<? echo is_widget_edit_mode() ? 'off' : 'on' ?>">
+ *
+ * @todo 카페에서는, 해당 카페 관리자만 해당 카페 위젯을 수정 할 수 있다. 다른 카페 관리자가 내 카페 위젯을 수정 할 수 없다.
+ */
+function is_widget_edit_mode() {
+    return ($_COOKIE[md5('widget')] ?? '') == 'on';
 }
