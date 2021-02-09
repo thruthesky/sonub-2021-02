@@ -2116,18 +2116,46 @@ function api_delete_translation($in)
     return $in;
 }
 
+
+/**
+ * Updates global settings.
+ *
+ * @usage
+ *  - Client can save settings through interface.
+ *  - PHP can update settings programmatically.
+ *
+ *
+ * @logic
+ *  - It saves data into `global_settings` using `update_option()`
+ *  - And notify to client by updating Firebase realtime database.
+ */
+function api_update_settings($data) {
+    update_option('global_settings', $data, false);
+    api_notify_app_update('settings');
+}
+function api_get_settings() {
+    return get_option('global_settings');
+}
+
+/**
+ * Update the document under 'notification' in Firebase RealTime Database.
+ * @throws \Kreait\Firebase\Exception\DatabaseException
+ */
+function api_notify_app_update($document) {
+    if (get_phpunit_mode()) return;
+    $db = getDatabase();
+    $reference = $db->getReference("notifications/" . $document);
+    $stamp = time();
+    $reference->set(['updatedAt' => $stamp]);
+}
+
 /**
  * Update the 'notification/translation' document in Firebase RealTime Database.
  * Clients may listen the document change and update the translations.
- * @throws \Kreait\Firebase\Exception\DatabaseException
  */
 function api_notify_translation_update()
 {
-    if (get_phpunit_mode()) return;
-    $db = getDatabase();
-    $reference = $db->getReference('notifications/translation');
-    $stamp = time();
-    $reference->set(['updatedAt' => $stamp]);
+    api_notify_app_update('translation');
 }
 
 

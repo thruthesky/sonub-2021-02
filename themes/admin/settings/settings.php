@@ -2,18 +2,13 @@
 
 
 if ( in('mode') == 'save' ) {
-
     $in = in();
     unset($in['page'], $in['mode']);
 
-    d($in);
-    foreach($in as $k => $v) {
-        update_option($k, $v, false);
-    }
-
-    /// Firebase realtime database.
-    ///
+    api_update_settings($in);
 }
+$in = api_get_settings();
+
 ?>
 
 <form method="post">
@@ -25,7 +20,7 @@ if ( in('mode') == 'save' ) {
         <div>
             Search categories:
             If set, only these categories will be searched. By default, search all categories.</div>
-        <input type="text" name="search_categories" value="<?=get_option('search_categories')?>">
+        <input type="text" name="search_categories" value="<?=$in['search_categories']?>">
     </div>
 
     <hr>
@@ -35,10 +30,10 @@ if ( in('mode') == 'save' ) {
             Like
         </div>
         <label>
-            <input type="radio" name="forum_like" value="Y" <? if ( get_option('forum_like') == 'Y' ) echo 'checked'; ?>> Show
+            <input type="radio" name="forum_like" value="Y" <? if ( $in['forum_like'] == 'Y' ) echo 'checked'; ?>> Show
         </label>
         <label>
-            <input type="radio" name="forum_like" value="N" <? if ( get_option('forum_like') == 'N' ) echo 'checked'; ?>> Hide
+            <input type="radio" name="forum_like" value="N" <? if ( $in['forum_like'] == 'N' ) echo 'checked'; ?>> Hide
         </label>
     </div>
     <div>
@@ -46,10 +41,10 @@ if ( in('mode') == 'save' ) {
             Dislike
         </div>
         <label>
-            <input type="radio" name="forum_dislike" value="Y" <? if ( get_option('forum_dislike') == 'Y' ) echo 'checked'; ?>> Show
+            <input type="radio" name="forum_dislike" value="Y" <? if ( ($in['forum_dislike'] ?? '') == 'Y' ) echo 'checked'; ?>> Show
         </label>
         <label>
-            <input type="radio" name="forum_dislike" value="N" <? if ( get_option('forum_dislike') == 'N' ) echo 'checked'; ?>> Hide
+            <input type="radio" name="forum_dislike" value="N" <? if ( ($in['forum_dislike'] ?? '') == 'N' ) echo 'checked'; ?>> Hide
         </label>
     </div>
     <hr>

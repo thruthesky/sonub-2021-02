@@ -14,16 +14,12 @@ class ForumRoute
         return forum_search($in);
     }
 
+    ///
     public function categories()
     {
-        $rets = [];
-        $cats = get_category_list();
-        foreach ($cats as $cat) {
-            if (!in_array($cat->slug, EXCLUDED_CATEGORIES)) {
-                $rets[] = $cat->slug;
-            }
-        }
-        return $rets;
+        $categories = get_option('search_categories');
+        $categories = explode(',',$categories);
+        return $categories;
     }
 
     /**
