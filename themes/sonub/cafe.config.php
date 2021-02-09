@@ -9,14 +9,34 @@ define('CAFE_ROOT_DOMAINS', ['sonub.com', 'philov.com', 'anyvie.com']);
 define('CAFE_DEFAULT_FORUM_LIST_WIDGET', 'forum-list/forum-list-default');
 define('CAFE_COMPANY_BOOK_WIDGET', 'forum-list/forum-list-company-book');
 define('CAFE_CATEGORIES', [
+    'reminder' => [
+        'name' => '공지사항'
+    ],
+    'greeting' => [
+        'name' => '가입인사'
+    ],
     'discussion' => [
+        'name' => '자유게시판',
         'forum_list_widget' => CAFE_DEFAULT_FORUM_LIST_WIDGET,
     ],
     'qna' => [
+        'name' => '질문게시판',
         'forum_list_widget' => CAFE_DEFAULT_FORUM_LIST_WIDGET,
     ],
     'company_book' => [
+        'name' => '업소록',
         'forum_list_widget' => CAFE_COMPANY_BOOK_WIDGET,
+    ],
+    'buyandsell' => [
+        'name' => '회원장터',
+    ],
+    'cars' => [
+        'name' => '중고차매매',
+        'parent' => 'buyandsell',
+    ],
+    'cars' => [
+        'name' => '중고차매매',
+        'parent' => 'buyandsell',
     ],
 ]);
 

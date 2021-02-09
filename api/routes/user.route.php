@@ -11,6 +11,10 @@ class UserRoute {
         return profile();
     }
 
+    public function otherProfile($in) {
+        return otherProfile($in);
+    }
+
     public function loginOrRegister($in) {
         return login_or_register($in);
     }
@@ -18,5 +22,6 @@ class UserRoute {
     public function profileUpdate($in) {
         return profile_update($in);
     }
+
 
 }

@@ -134,10 +134,10 @@ function update_cafe_option($id, $data) {
  * @return array|false|mixed|void
  */
 function cafe_option($name = null, $default_value = null) {
+    if ( ! is_in_cafe() ) return $default_value;
     $id = get_cafe_id();
-    if ( ! is_in_cafe() ) return null;
     $co = get_option(cafe_id_key($id));
-    if ( ! $co ) return null;
+    if ( ! $co ) return $default_value;
     $co['id'] = $id;
     if ( $name ) return $co[$name] ?? $default_value;
     return $co;

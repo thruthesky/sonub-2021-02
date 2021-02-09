@@ -360,7 +360,11 @@ function check_email_format($email)
 
 
 /**
- * Returns a session_id (which never changes). This means, even if user changes his data, it can still validate the user's auth.
+ * Returns a session_id
+ *
+ * Session id never changes unless SESSION_ID_SALT changes. And SESSION_ID_SALT should never change once it is set.
+ *
+ * This means, even if user changes his data, it can still validate the user's auth.
  *
  * It can be used as 'secret password'. of the user.
  *
@@ -671,6 +675,41 @@ function profile($user_ID = null)
 
     return $data;
 }
+
+/**
+ *
+ * Returns other user's public profile information including
+ *  - ID
+ *  - nickname,
+ *  - profile_photo_url
+ *  - md5. the md5 string of user session_id.
+ *
+ * @param int $user_ID  user ID
+ *
+ * @return array
+ *  - if it cannot find user information, it return an empty array.
+ */
+function otherProfile($user_ID = null)
+{
+    $user = new WP_User($user_ID);
+    if (!isset($user->ID)) {
+        return [];
+    }
+    $data = $user->to_array();
+    unset($data['user_pass'], $data['user_activation_key'], $data['user_status'], $data['user_nicename'], $data['display_name'], $data['user_url']);
+    $data = array_merge(user_metas($user_ID), $data);
+    $data['session_id'] = get_session_id($user);
+
+    $ret = [
+        'ID' => $data['ID'],
+        'nickname' => $data['nickname'],
+        'profile_photo_url' => $data['profile_photo_url'],
+        'md5'=> md5($data['session_id']),
+    ];
+
+    return $ret;
+}
+
 
 
 /**
@@ -1745,6 +1784,7 @@ function forum_search($in)
 //    if (!isset($in['category_name']) && !isset($in['author'])) return ERROR_EMPTY_CATEGORY_OR_ID;
     // @deprecated @todo if 'category_name' is empty, then it will search all posts.
 //    if ($in['category_name'] == 'all_posts') $in['category_name'] = '';
+
     $posts = get_posts($in);
 
     $rets = [];

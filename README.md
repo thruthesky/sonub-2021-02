@@ -938,4 +938,6 @@ d($v);
 
 # Trouble Shotting
 
-* When use meet, 'ERROR_WRONG_PASSWORD'
+* When use meet, 'ERROR_WRONG_PASSWORD', check if the password is really wrong. like when user do pass-login, the salt in config may be changed.
+
+* When a user(or admin) logged in wordpress dashboard, then logout by easing session id in cookie may not work. you need to logout from wordpress.
