@@ -28,23 +28,23 @@ $comments = $post['comments'];
     </p>
 
     <p>
-        짧은 제목: <?php echo $post['short_title'] ?>
+        짧은 제목: <?php echo $post['short_title'] ?? '' ?>
     </p>
 
     <p>
-        제목: <?php echo $post['post_title'] ?>
+        제목: <?php echo $post['post_title'] ?? '' ?>
     </p>
 
     <p>
-        가격: <?php echo number_format($post['price']) ?>
+        가격: <?php echo number_format($post['price'] ?? '0') ?>
     </p>
 
     <p>
-        할인율: <?php echo $post['discount_rate'] ?>%
+        할인율: <?php echo $post['discount_rate'] ?? '0' ?>%
     </p>
 
     <p>
-        운영중: <?=$post['stop'] ? '아니오' : '예' ?>
+        운영중: <?=($post['stop'] ?? false) ? '아니오' : '예' ?>
     </p>
 
     <p>

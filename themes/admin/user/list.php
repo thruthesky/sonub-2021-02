@@ -21,14 +21,16 @@ $users = get_users( [ 'fields' => 'all_with_meta', 'number' => $no_of_records_pe
 </div>
 <?php
 foreach($users as $user){
-    $ln = "?page=admin/user/edit&ID=" . $user->ID;
+    $ln = "?page=admin/user/edit&user_ID=" . $user->ID;
     echo <<<EOH
+<a href="$ln">
 <div class="row">
     <div class="col-1">{$user->ID}</div>
     <div class="col">{$user->nickname}</div> 
     <div class="col">{$user->user_email}</div>
-    <div class="col-1  pointer" onclick="move('$ln')">Edit</div>
+    <div class="col-1">Edit</div>
 </div>
+</a>
 EOH;
 
 
@@ -41,7 +43,7 @@ EOH;
 //'page_no' => $page_no,
 //]);
 
-include_once widget('forum-list-pagination-default', [
+include_once widget('pagination/pagination-default', [
     'page_no' => $page_no,
 //    'blocks' => 5,
     'arrow' => true,

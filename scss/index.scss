@@ -153,6 +153,9 @@ a {
 .size-100 {
   width: 100px; height: 100px;
 }
+.size-128 {
+  width: 128px; height: 128px;
+}
 /// 퍼센티지 사이즈는 s-** 로 한다.
 // .s-49 는 부모를 'd-flex justify-content-between' 와 같이 하는 경우, 중간에 여백을 줄 수 있다.
 .s-49 {
@@ -353,4 +356,17 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
   box-sizing: border-box;
   background-color: #f7f9fa;
   border: 1px solid #dae1e6;
+}
+
+
+.avatar {
+  border-radius: 50%;
+}
+
+.hint {
+  display: inline-block;
+  border-bottom: 1px dotted #cdcdcd;
+  font-size: 12px;
+  color: grey;
+  font-style: italic;
 }

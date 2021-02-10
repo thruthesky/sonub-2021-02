@@ -994,6 +994,14 @@ d($v);
 ```
 
 
+# Settings
+
+* 관리자 페이지에서 설정을 할 수 있다.
+* 루트 도메인(1차 도메인) 별로 따로 설정을 한다.
+  * 서브도메인의 경우는 따로 설정이 없다. 단, 소너브 카페 기능 처럼 직접 구현 할 수 있다.
+* 주의: API 를 호출 할 때, 해당 1차 도메인으로 접속해야 한다. 다른 도메인 설정 정보를 가져와서 혼동 될 수 있으니 주의한다.
+
+
 # Trouble Shotting
 
 * When use meet, 'ERROR_WRONG_PASSWORD', check if the password is really wrong. like when user do pass-login, the salt in config may be changed.

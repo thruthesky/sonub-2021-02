@@ -653,6 +653,7 @@ function user_metas($user_ID)
  */
 function profile($user_ID = null)
 {
+    $arg_user_ID = $user_ID;
     if ($user_ID === null) {
         $user_ID = wp_get_current_user()->ID;
     }
@@ -677,7 +678,7 @@ function profile($user_ID = null)
         if (in_array($k, USER_META_EXCEPTIONS_FOR_CLIENT)) unset($data[$k]);
     }
 
-    if (admin()) $data['admin'] = true;
+    if ($arg_user_ID == null && admin()) $data['admin'] = true;
 
     return $data;
 }
@@ -1654,6 +1655,11 @@ function get_domain_name()
 
 /**
  * 1차 도메인을 리턴한다.
+ *
+ * 예)
+ * www.abc.co.kr -> abc.co.kr
+ * apple.banana.philgo.com -> philgo.com
+ *
  * @param string|null $_domain 테스트 할 도메인
  * @return string
  *
@@ -2176,11 +2182,12 @@ function api_delete_translation($in)
  * @todo 가입 약관과 개인 정보 보호는 양이 많으므로, 다른 설정으로 뺀다.
  */
 function api_update_settings($data) {
-    update_option('global_settings', $data, false);
+
+    update_option('settings_' . get_root_domain(), $data, false);
     api_notify_app_update('settings');
 }
 function api_get_settings() {
-    $options = get_option('global_settings');
+    $options = get_option('settings_' . get_root_domain());
     if ( ! $options ) return $options;
     $ret = [];
     /// Strip slashes for quotes.
