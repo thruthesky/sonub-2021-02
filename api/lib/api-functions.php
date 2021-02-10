@@ -2171,6 +2171,9 @@ function api_delete_translation($in)
  * @logic
  *  - It saves data into `global_settings` using `update_option()`
  *  - And notify to client by updating Firebase realtime database.
+ *
+ * @todo 기본 설정을 두고, 도메인마다 다른 설정을 사용 할 수 있도록 해 준다.
+ * @todo 가입 약관과 개인 정보 보호는 양이 많으므로, 다른 설정으로 뺀다.
  */
 function api_update_settings($data) {
     update_option('global_settings', $data, false);
@@ -2862,6 +2865,34 @@ function get_category_list()
     return $rets;
 }
 
+
+/**
+ * 계층적 카테고리 목록
+ *
+ * 카테고리를 계층적으로 recursive 하게 호출해서, 모든 카테고리를 리턴한다.
+ * 만약, 필터링을 하고 싶으면, 모든 결과를 가져 온 다음, 필터링 하면 된다.
+ *
+ * @param int $category is the root category ( or the start category to show below )
+ * @return array
+ */
+function get_category_tree($category=0, $depth=0) {
+    $r = [];
+    $args = array(
+        'taxonomy' => 'category',
+        'parent' => $category,
+        'hide_empty' => false,
+    );
+    $next = get_terms($args);
+    if ($next) {
+        foreach ($next as $cat) {
+            $cat->depth = $depth;
+            $r[] = $cat;
+            $r = array_merge($r, get_category_tree($cat->term_id, $depth + 1) );
+        }
+    }
+    return $r;
+}
+
 /**
  * Returns an array of WP_Term Objects of categories that are the top categories.
  * @return array
@@ -2871,6 +2902,14 @@ function get_root_categories()
     $args = array(
         'taxonomy' => 'category',
         'parent' => '0',
+        'hide_empty' => false,
+    );
+    return get_categories($args);
+}
+
+function get_all_categories() {
+    $args = array(
+        'taxonomy' => 'category',
         'hide_empty' => false,
     );
     return get_categories($args);

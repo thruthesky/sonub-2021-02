@@ -4,79 +4,94 @@
 if ( in('mode') == 'save' ) {
     $in = in();
     unset($in['page'], $in['mode']);
-
     api_update_settings($in);
+    jsGo('/?page=admin.settings.settings');
+    return;
 }
 $in = api_get_settings();
 
 ?>
 <section>
+    <div class="alert alert-secondary">
+        <h3>사이트 설정</h3>
+        <hr>
+        글로벌 설정입니다.
+    </div>
 
-    @todo 저장을 그냥 PHP submit 으로 하는데, Vue.js Axios 로 할 것.
-    각 항목 별로 저장하는데, 양식에서 값이 변경되면, 저장 버튼을 보여줄 것.
 
-
-    <form method="post">
+    <form action="/" method="post">
         <input type="hidden" name="page" value="admin/settings/settings">
         <input type="hidden" name="mode" value="save">
+
+<h2>기본 설정</h2>
+
+
+        <div class="mb-3">
+            <label for="site_name" class="form-label"><?=ln('Site Name', '사이트 이름')?></label>
+            <input name="site_name" type="text" class="form-control" id="site_name" placeholder="사이트 이름을 입력하세요."  v-model="settings.site_name">
+            <div id="site_name_text" class="form-text">
+                웹 브라우저 상단 제목이나 검색 엔진에 색인 될 사이트 이름입니다.
+                가능한 특수 문자를 입력하지 마세요.
+            </div>
+        </div>
+
 
 
 
         <hr>
-        <h2>Forum Global Settings</h2>
+        <h2><?=ln("Global Forum Settings", "게시판 설정")?></h2>
 
         <div>
-            <div>
-                Search categories:
-                If set, only these categories will be searched. By default, search all categories.</div>
-            <input class="w-100" type="text" name="search_categories" v-model="settings.search_categories">
-        </div>
-        <div>
-            <div>
-                Like
+            <label for="search_categories" class="form-label"><?=ln("Search Categories", "검색 가능한 카테고리")?></label>
+            <input class="form-control" id="search_categories" type="text" name="search_categories" v-model="settings.search_categories">
+            <div class="form-text">
+                여기에 기록하는 카테고리만 검색이 됩니다. 공백으로 구분해서 입력 가능. 예) qna,job<br>
+                검색을 할 때, 전체 게시판 검색을 할 수 있게 하려면, 공백으로 두세요.
             </div>
-            <label>
-                <input type="radio" name="forum_like" value="Y" v-model="settings.forum_like"> Show
-            </label>
-            <label>
-                <input type="radio" name="forum_like" value="N" v-model="settings.forum_like"> Hide
-            </label>
+
+
         </div>
+
+
+        <label>
+            Like
+        </label>
         <div>
-            <div>
-                Dislike
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" id="toggle_forum_like"  type="radio" name="forum_like" value="Y" v-model="settings.forum_like">
+                <label class="form-check-label" for="toggle_forum_like">보이기</label>
             </div>
-            <label>
-                <input type="radio" name="forum_dislike" value="Y" v-model="settings.forum_dislike"> Show
-            </label>
-            <label>
-                <input type="radio" name="forum_dislike" value="N" v-model="settings.forum_dislike"> Hide
-            </label>
+
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" id="toggle_forum_like2"  type="radio" name="forum_like" value="N" v-model="settings.forum_like">
+                <label class="form-check-label" for="toggle_forum_like2">숨기기</label>
+            </div>
+
+        </div>
+
+        <label>
+            Dislike
+        </label>
+        <div>
+
+
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" id="show_forum_dislike"  type="radio" name="forum_dislike" value="Y" v-model="settings.forum_dislike">
+                <label class="form-check-label" for="show_forum_dislike">보이기</label>
+            </div>
+
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" id="hide_forum_dislike"  type="radio" name="forum_dislike" value="N" v-model="settings.forum_dislike">
+                <label class="form-check-label" for="hide_forum_dislike">숨기기</label>
+            </div>
+
+
+
         </div>
 
         <div>
             <button class="btn btn-primary" type="submit">Save</button>
         </div>
-
-        <hr>
-        <h2>Point Settings</h2>
-<div>
-    <div>
-        회원 가입: <input>
-    </div>
-    <div>
-        글 작성: <input>, 1일 포인트 제한 글 개수: <input>
-        글 삭제: <input>
-    </div>
-    <div>
-        코멘 작성: <input>, 1일 포인트 제한 코멘트 개 수: <input>
-        코멘트 삭제: <input>
-    </div>
-    <div>
-        추천: <input>,
-        비 추천: <input>
-    </div>
-</div>
 
 
         <hr>

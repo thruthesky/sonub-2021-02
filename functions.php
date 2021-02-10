@@ -178,12 +178,23 @@ EOJ;
 /**
  * Returns theme script file path from the input $page
  *
+ * @logic
+ * - 현재 테마에서 파일을 찾는다. 없으면,
+ * - default 테마에서 파일을 찾는다. 없으면,
+ * - default/error.php 가 로드된다.
+ *
  * @note if the user is in 'admin' dashboard page, then 'admin' theme is used and there is no default script for admin page script.
  *
  * @param $theme
  * @param $page
  * @return string
  *  - an example of return string: /Users/thruthesky/www/wordpress/wp-content/themes/sonub/themes/forum/view.php
+ *
+ * @note 주의: 점(.)을 입력하면 안되고, 슬래시(/)를 입력해야 한다.
+ * @example 아래와 같이 사용 할 수 있다.
+ *
+ *      include get_theme_page_path( DOMAIN_THEME, 'error/forum-list-wrong-category');
+ *
  */
 function get_theme_page_path($theme, $page)
 {
@@ -564,7 +575,7 @@ function select_list_widgets($cat_ID, $type, $config_name) {
     $default_selected = category_meta($cat_ID, $config_name, $type . '-default');
 
 
-    echo "<select name='$config_name'>";
+    echo "<select name='$config_name' class='w-100'>";
     select_list_widgets_option($type, $default_selected);
     echo "</select>";
 

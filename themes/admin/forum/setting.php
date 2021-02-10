@@ -1,14 +1,9 @@
 <?php
 
-// $cat = get_category_settings(['slug' => in('slug')]);
-
 $cat = get_category_by_slug(in('slug'));
-// $metas = get_term_meta($cat->term_id);
-//
-//// d($cat);
-// d($metas);
 
-$root_categories = get_root_categories();
+$categories = get_category_tree();
+
 
 
 ?>
@@ -16,37 +11,39 @@ $root_categories = get_root_categories();
 
 
 <form @submit.prevent="onForumSettingFormSubmit($event)">
-<input type="hidden" name="cat_ID" value="<?=$cat->cat_ID?>">
-<table class="table table-striped">
-    <thead>
+    <input type="hidden" name="cat_ID" value="<?=$cat->cat_ID?>">
+    <table class="table table-striped">
+        <thead>
         <tr>
             <th scope="col">Options</th>
             <th scope="col">Values</th>
         </tr>
-    </thead>
-    <tbody>
+        </thead>
+        <tbody>
 
-    <tr>
-        <td>Parent Category</td>
-        <td>
-            <select name="category_parent">
-                <option value="0">None</option>
-                <? foreach( $root_categories as $_category ) {
-                    if ( $_category->term_id == $cat->term_id ) continue;
-                    ?>
-                    <option value="<?=$_category->term_id?>" <? if ($_category->term_id == $cat->category_parent) echo "selected"?>><?=$_category->cat_name?></option>
-                <? } ?>
-            </select>
-        </td>
-    </tr>
+        <tr>
+            <td>Parent Category</td>
+            <td>
+                <select name="category_parent">
+                    <option value="0">None</option>
+                    <? foreach( $categories as $_category ) {
+                        if ( $_category->term_id == $cat->term_id ) continue;
+                        ?>
+                        <option value="<?=$_category->term_id?>" <? if ($_category->term_id == $cat->category_parent) echo "selected"?>>
+                            <?=str_repeat('-', $_category->depth )?><?=$_category->name?>
+                        </option>
+                    <? } ?>
+                </select>
+            </td>
+        </tr>
 
 
-    <tr>
+        <tr>
             <td>Title</td>
             <td>
-                <input 
-                    name="cat_name"
-                    value="<?= $cat->cat_name ?>">
+                <input
+                        name="cat_name"
+                        value="<?= $cat->cat_name ?>">
             </td>
         </tr>
 
@@ -59,8 +56,44 @@ $root_categories = get_root_categories();
             </td>
         </tr>
 
+
         <tr>
-            <td>List Widget</td>
+            <td>Post Edit Widget</td>
+            <td>
+                <?
+                select_list_widgets($cat->term_id, 'forum-edit', 'forum_edit_widget');
+                ?>
+            </td>
+        </tr>
+
+
+
+
+        <tr>
+            <td>Post View Widget</td>
+            <td>
+                <?
+                select_list_widgets($cat->term_id, 'forum-view', 'forum_view_widget');
+                ?>
+            </td>
+        </tr>
+
+
+
+
+        <tr>
+            <td>Forum List Header</td>
+            <td>
+                <?
+                select_list_widgets($cat->term_id, 'forum-list-header', 'forum_list_header_widget');
+                ?>
+            </td>
+        </tr>
+
+
+
+        <tr>
+            <td>Forum List Widget</td>
             <td>
                 <?
                 select_list_widgets($cat->term_id, 'forum-list', 'forum_list_widget');
@@ -69,15 +102,16 @@ $root_categories = get_root_categories();
         </tr>
 
 
-
         <tr>
-            <td>Pagination Widget</td>
+            <td>Forum List Pagination Widget</td>
             <td>
                 <?
                 select_list_widgets($cat->term_id, 'pagination', 'pagination_widget');
                 ?>
             </td>
         </tr>
+
+
 
 
 
@@ -107,8 +141,8 @@ $root_categories = get_root_categories();
             <td>
                 <input
                         name="posts_per_page"
-                    type="text"
-                    value="<?=category_meta($cat->cat_ID, 'posts_per_page', POSTS_PER_PAGE)?>">
+                        type="text"
+                        value="<?=category_meta($cat->cat_ID, 'posts_per_page', POSTS_PER_PAGE)?>">
             </td>
         </tr>
         <tr>
@@ -116,8 +150,8 @@ $root_categories = get_root_categories();
             <td>
                 <input
                         name="no_of_pages_on_nav"
-                    type="text"
-                    value="<?=category_meta($cat->cat_ID, 'no_of_pages_on_nav', NO_OF_PAGES_ON_NAV)?>">
+                        type="text"
+                        value="<?=category_meta($cat->cat_ID, 'no_of_pages_on_nav', NO_OF_PAGES_ON_NAV)?>">
             </td>
         </tr>
 
@@ -128,8 +162,8 @@ $root_categories = get_root_categories();
                 <button type="submit">Submit</button>
             </td>
         </tr>
-    </tbody>
-</table>
+        </tbody>
+    </table>
 
 
 </form>
@@ -147,6 +181,7 @@ $root_categories = get_root_categories();
                 console.log('form data: ', getFormData(event));
                 request('forum.updateCategory', getFormData(event), function(setting) {
                     console.log("settings updated: ", setting);
+                    refresh();
                 }, app.error);
             }
         }

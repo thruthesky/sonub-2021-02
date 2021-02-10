@@ -1,5 +1,5 @@
 
-<header class="d-none d-md-block">
+
     <nav class="d-flex justify-content-between l-center bg-light fs-xs greys">
         <ul class="list-menu p-menu">
             <li><a href="/">홈</a></li>
@@ -24,5 +24,4 @@
 
 
 
-
-</header>
+    <section class="l-center p-3 p-lg-0 bg-white">

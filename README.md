@@ -267,8 +267,10 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
   * Lastly, you need to put it on admin page, so admin can choose which widget to display on the browser.
     * To see how to code on admin page, see `themes/sonub/themes/default/admin/forum/setting.php`.
 
-* Widgets that are not used in admin page may not need `.init` file.
+* Widgets that are not used in admin page may not need `.ini` file.
 
+* When including widgets, you can pass variables over the second parameter.
+  It is an optional and if you can get the needed data without passing the param, then you can it in your way.
 
 ### Dynamic Widget Config
 
@@ -813,6 +815,8 @@ addComponent('comment-form', commentForm);
 
 # 게시글에 각 항목 별 사진을 등록, 목록, 삭제하는 완전한 예제
 
+* 기본 파일 업로드 기능 외에, 원하는 필드로 사진을 업로드하는 방법에 대한 설명.
+
 ```html
 <?php
 if ( in('mode') == 'delete' ) {
@@ -851,6 +855,7 @@ if ( in('mode') == 'delete' ) {
         </div>
     </form>
     <div class="posts">
+        전체 글 목록
         <?
         $posts = forum_search(['category_name' => 'wrong_picture']);
         foreach($posts as $post) {

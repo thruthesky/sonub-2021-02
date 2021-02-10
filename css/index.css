@@ -42,8 +42,8 @@ a {
   overflow: hidden;
 }
 .l-content .l-body-middle {
-  margin-left: 16px;
-  margin-right: 16px;
+  padding-left: 16px;
+  padding-right: 16px;
   flex-grow: 1;
   overflow: hidden;
 }
@@ -328,6 +328,10 @@ input[type=file]::-webkit-file-upload-button {
   color: grey;
 }
 
+.light {
+  color: #bcbcbc;
+}
+
 .black {
   color: black;
 }
@@ -380,6 +384,7 @@ input[type=file]::-webkit-file-upload-button {
 
 .box {
   padding: 1em;
+  box-sizing: border-box;
   background-color: #f7f9fa;
   border: 1px solid #dae1e6;
 }
