@@ -664,6 +664,7 @@ function profile($user_ID = null)
     unset($data['user_pass'], $data['user_activation_key'], $data['user_status'], $data['user_nicename'], $data['display_name'], $data['user_url']);
 
     $data['session_id'] = get_session_id($user);
+    $data['md5'] = md5($data['session_id']);
 
     $data = array_merge(user_metas($user_ID), $data);
 
@@ -686,7 +687,7 @@ function profile($user_ID = null)
  *
  * @param int $user_ID  user ID
  *
- * @return array
+ * @return array | string
  *  - if it cannot find user information, it return an empty array.
  */
 function otherProfile($user_ID = null)
@@ -705,12 +706,23 @@ function otherProfile($user_ID = null)
 
     $ret = [
         'ID' => $data['ID'],
-        'nickname' => $data['nickname'],
-        'profile_photo_url' => $data['profile_photo_url'],
+        'nickname' => $data['nickname'] ?? '',
+        'profile_photo_url' => $data['profile_photo_url'] ?? '',
         'md5'=> md5($data['session_id']),
+        'roomId' => getRoomID($data['session_id'])
     ];
 
     return $ret;
+}
+
+function getRoomID($session_id) {
+    $current_session_id = get_session_id();
+    if (strcmp($current_session_id, $session_id) < 0 ) {
+        $session = $current_session_id . $session_id;
+    } else {
+        $session = $session_id . $current_session_id;
+    }
+    return md5($session);
 }
 
 
