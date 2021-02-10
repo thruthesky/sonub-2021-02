@@ -1,1 +1,1 @@
-Golden age footer.
+</section><!--/.l-body-->

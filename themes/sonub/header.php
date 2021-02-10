@@ -89,6 +89,6 @@ $co = cafe_option();
 
 <section class="l-center l-content bg-white">
 <?php
-  include 'sidebar-left.php';
+  include 'sidebar.left.php';
 ?>
     <section class="l-body-middle mt-3">

@@ -52,48 +52,47 @@ if ( count($right_photos) != 4 ) {
 }
 
 ?>
-<section class="posts-multi-column box row <?=$o['class'] ?? ''?>">
-
-
-    <div class="left col-12 col-sm-6">
-        <a class="d-block" href="<?=$big['url']?>">
-            <div class="h-xxxl of-hidden">
-                <img class="w-100" src="<?=$big['files'][0]['thumbnail_url']?>">
+<div class="container">
+    <section class="posts-multi-column box row <?=$o['class'] ?? ''?>">
+        <div class="col-12 col-sm-6">
+            <a class="d-block" href="<?=$big['url']?>">
+                <div class="h-xxxl of-hidden">
+                    <img class="w-100" src="<?=$big['files'][0]['thumbnail_url']?>">
+                </div>
+                <div class="mt-1 fs-md"><?=$big['post_title']?></div>
+            </a>
+            <hr>
+            <div class="posts">
+                <? foreach ($left_posts as $post) { ?>
+                    <a class="d-block h-1em" href="<?=$post['url']?>"><?=$post['post_title']?></a>
+                <? } ?>
             </div>
-            <div class="mt-1 fs-md"><?=$big['post_title']?></div>
-        </a>
-        <hr>
-        <div class="posts">
-            <? foreach ($left_posts as $post) { ?>
-                <a class="d-block h-1em" href="<?=$post['url']?>"><?=$post['post_title']?></a>
-            <? } ?>
         </div>
-    </div>
-    <div class="right col-12 col-sm-6">
-        <div class="posts">
-            <? foreach ($right_posts as $post) { ?>
-                <a class="d-block h-1em" href="<?=$post['url']?>"><?=$post['post_title']?></a>
-            <? } ?>
+        <div class="col-12 col-sm-6">
+            <div class="posts">
+                <? foreach ($right_posts as $post) { ?>
+                    <a class="d-block h-1em" href="<?=$post['url']?>"><?=$post['post_title']?></a>
+                <? } ?>
+            </div>
+            <div class="small-photos">
+                <? for($i=0; $i<2; $i++) { $post = $right_photos[$i]; ?>
+                    <a class="d-flex mt-1" href="<?=$post['url']?>">
+                        <img class="size-64" src="<?=$post['files'][0]['thumbnail_url']?>">
+                        <div class="fs-md h-64px of-hidden"><?=$post['post_title']?></div>
+                    </a>
+                <? } ?>
+            </div>
+            <div class="medium-photos d-flex justify-content-between mt-1">
+                <? for($i=2; $i<4; $i++) { $post = $right_photos[$i]; ?>
+                    <a class="s-49" href="<?=$post['url']?>">
+                        <img class="w-100" src="<?=$post['files'][0]['thumbnail_url']?>">
+                        <div class="h-2em fs-xs"><?=$post['post_title']?></div>
+                    </a>
+                <? } ?>
+            </div>
         </div>
-        <div class="small-photos">
-            <? for($i=0; $i<2; $i++) { $post = $right_photos[$i]; ?>
-                <a class="d-flex mt-1" href="<?=$post['url']?>">
-                    <img class="size-64" src="<?=$post['files'][0]['thumbnail_url']?>">
-                    <div class="fs-md h-64px of-hidden"><?=$post['post_title']?></div>
-                </a>
-            <? } ?>
-        </div>
-        <div class="medium-photos d-flex justify-content-between mt-1">
-            <? for($i=2; $i<4; $i++) { $post = $right_photos[$i]; ?>
-                <a class="s-49" href="<?=$post['url']?>">
-                    <img class="w-100" src="<?=$post['files'][0]['thumbnail_url']?>">
-                    <div class="h-2em fs-xs"><?=$post['post_title']?></div>
-                </a>
-            <? } ?>
-        </div>
-    </div>
-
-</section>
+    </section>
+</div>
 
 
 

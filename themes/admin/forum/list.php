@@ -5,6 +5,15 @@
 <hr>
 <h1>FORUM CATEGORIES</h1>
 
+<?php
+
+
+
+$categories = get_category_tree();
+
+
+?>
+
 <form method="get">
     <input type="hidden" name="page" value="admin/forum/list.submit">
     <input type="text" name="cat_name" value="">
@@ -12,7 +21,6 @@
 </form>
 <?php
 
-$categories = get_category_list();
 
 ?>
 
@@ -20,7 +28,7 @@ $categories = get_category_list();
     <table class="table table-striped">
         <thead>
             <tr>
-                <th scope="col">No.</th>
+                <th scope="col">No.</br>Posts</th>
                 <th scope="col">Category ID</th>
                 <th scope="col">Title</th>
                 <th scope="col">Description</th>
@@ -34,15 +42,24 @@ $categories = get_category_list();
             //    print_r($category);
             ?>
                 <tr>
-                    <td><?php echo $category->cat_ID ?></td>
-                    <td><a href="?page=admin/forum/setting&slug=<?php echo $category->slug ?>"><?php
+                    <td><?php echo $category->count ?></td>
+                    <td nowrap><a href="?page=admin.forum.list&slug=<?php echo $category->slug ?>"><?php
 
-                            if ( $category->parent ) echo "&nbsp;&nbsp;&nbsp;-- ";
-                            echo $category->slug ?></a></td>
+                            if ( $category->parent ) {
+                                echo str_repeat(' <b class="light">--</b> ', $category->depth );
+                            }
+                            echo $category->slug;
+                            ?>
+                        </a></td>
                     <td><?php
                         echo $category->name
                         ?></td>
-                    <td><?php echo $category->description ?></td>
+                    <td>
+                        <a href="/?page=forum.list&category=<?=$category->slug?>">
+                            <i class="fa fa-link fs-sm"></i>
+                            <?php echo $category->description ?>
+                        </a>
+                    </td>
                     <td class="text-center"> <i class="fa fa-<?=$category->list_on_view ? 'check green' : 'times red'?>"></i></td>
                 </tr>
             <?php } ?>
