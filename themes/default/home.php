@@ -6,7 +6,7 @@
 
 
 
-<h1>HOME</h1>
+<h1>DEFAULT THEME</h1>
 
 <?php
 
@@ -19,3 +19,5 @@ d($_COOKIE);
 
 {{ user }}
 
+<hr>
+You are using default theme. The theme you are access is [ <?php echo get_domain_theme()?> ].

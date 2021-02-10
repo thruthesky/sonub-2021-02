@@ -1,23 +1,25 @@
 
-<hr>
+<header class="l-center bg-grey">
 
-<a href="/">Home</a> |
-<a href="/?page=admin/index">Admin Dashboard</a> |
-<a href="/?page=admin/user/list">User list</a> |
-<a href="/?page=admin/forum/list">Forum Categories</a> |
-<a href="/?page=admin/push-notification/send">Send Push Notifications</a> |
-<a href="/?page=admin/files/list">Files</a> |
-<a href="/?page=admin/translations/translations">Translations</a> |
-<a href="/?page=admin/settings/settings">Settings</a> |
+    <a href="/?page=admin/home"><?=ln('Dashboard', '관리자 화면')?></a> |
+    <a href="/?page=admin/user/list"><?=ln('Users', '사용자')?></a> |
+    <a href="/?page=admin/forum/list"><?=ln('Forums', '게시판')?></a> |
+    <a href="/?page=admin/push-notification/send"><?=ln('Send Push Notifications', '푸시 알림 전송')?></a> |
+    <a href="/?page=admin/files/list">Files</a> |
+    <a href="/?page=admin/translations/translations">Translations</a> |
+    <a href="/?page=admin/shopping-mall/shopping-mall">쇼핑몰</a> |
+    <a href="/?page=admin.settings.settings">Settings</a> |
 
-<a href="/?page=admin/game/find_wrong_picture">틀린 그림 찾기</a>
+    <? if ( defined('ADMIN_MENUS') ) { ?>
+        <? foreach( ADMIN_MENUS as $menu ) { ?>
+            <a href="/?page=admin.in&script=<?=$menu['script']?>"><?=$menu['name']?></a> |
+        <? } ?>
+    <? } ?>
 
+</header>
 
-<hr>
-
-
-각 관리자 기능을 theme 에서 정의 하도록 할 것.
-
-각 테마에서 themes/abc/admin.php 파일을 읽어,
-
-현재 도메인에 맞는 테마만, 이곳에 보여준다. 그래서 틀린 그림 찾기를 이동한다.
+<section class="l-center l-content bg-white">
+    <?php
+    include 'sidebar-left.php';
+    ?>
+    <section class="l-body-middle mt-3">

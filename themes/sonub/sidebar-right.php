@@ -9,16 +9,8 @@
     </div>
 
     <?php
-    include dynamic_widget("cafe-right-sidebar-widget-1");
-    include dynamic_widget("cafe-right-sidebar-widget-2");
-    include dynamic_widget("cafe-right-sidebar-widget-3");
-    include dynamic_widget("cafe-right-sidebar-widget-4");
-    include dynamic_widget("cafe-right-sidebar-widget-5");
-    include dynamic_widget("cafe-right-sidebar-widget-6");
-    include dynamic_widget("cafe-right-sidebar-widget-7");
-    include dynamic_widget("cafe-right-sidebar-widget-8");
-    include dynamic_widget("cafe-right-sidebar-widget-9");
-    include dynamic_widget("cafe-right-sidebar-widget-10");
+    for( $i=0; $i<10; $i++)
+    include dynamic_widget("cafe-right-sidebar-widget-$i");
     ?>
 
         <?php
