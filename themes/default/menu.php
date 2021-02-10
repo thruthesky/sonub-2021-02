@@ -1,7 +1,7 @@
 <?php
 
 ?>
-<h1>Sonub</h1>
+<h1>Sonub Theme & API version 1.x</h1>
 <div class="d-flex justify-content-between">
     <div>
 

@@ -1636,6 +1636,32 @@ function get_domain_name()
     return get_host_name();
 }
 
+
+/**
+ * 1차 도메인을 리턴한다.
+ * @param string|null $_domain 테스트 할 도메인
+ * @return string
+ *
+ * @see api/phpunit/GetDomainNamesTest.php for test.
+ */
+function get_root_domain(string $_domain = null): string {
+    if ( $_domain == null ) $_domain = get_domain_name();
+    if ( empty($_domain) ) return '';
+
+    $_root_domains = ['.com', '.net', '.co.kr', '.kr'];
+    foreach( $_root_domains as $_root ) {
+        if ( stripos($_domain, $_root) !== false ) {
+            $_without_root = str_ireplace($_root, '', $_domain);
+            $_parts = explode('.', $_without_root);
+            $_1st = array_pop($_parts);
+            $_domain = $_1st . $_root;
+            break;
+        }
+    }
+    return $_domain;
+}
+
+
 function isCli()
 {
     return php_sapi_name() == 'cli';
@@ -2888,3 +2914,4 @@ function run_hook($name, &...$vars) {
         foreach( $_hook_functions[$name] as $func ) $func(...$vars);
     }
 }
+
