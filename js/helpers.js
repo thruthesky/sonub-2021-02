@@ -13,7 +13,7 @@ function build_query(params) {
  * @param data
  */
 function addSessionId(data) {
-    const _sid = app.sessionId();
+    const _sid = Cookies.get("session_id");
     if ( _sid ) {
         data['session_id'] = _sid;
     }

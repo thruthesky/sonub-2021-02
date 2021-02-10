@@ -8,13 +8,11 @@ define('CAFE_ROOT_DOMAINS', ['sonub.com', 'philov.com', 'anyvie.com']);
 
 define('CAFE_DEFAULT_FORUM_LIST_WIDGET', 'forum-list/forum-list-default');
 define('CAFE_COMPANY_BOOK_WIDGET', 'forum-list/forum-list-company-book');
+
+/**
+ * 여기서 메뉴 이름을 바꾸면, 실제 홈페이지에서도 바뀌어 나타난다.
+ */
 define('CAFE_CATEGORIES', [
-    'reminder' => [
-        'name' => '공지사항'
-    ],
-    'greeting' => [
-        'name' => '가입인사'
-    ],
     'discussion' => [
         'name' => '자유게시판',
         'forum_list_widget' => CAFE_DEFAULT_FORUM_LIST_WIDGET,
@@ -22,6 +20,27 @@ define('CAFE_CATEGORIES', [
     'qna' => [
         'name' => '질문게시판',
         'forum_list_widget' => CAFE_DEFAULT_FORUM_LIST_WIDGET,
+    ],
+    'reminder' => [
+        'name' => '공지사항'
+    ],
+    'greeting' => [
+        'name' => '가입인사'
+    ],
+    'knowhow' => [
+        'name' => '경험담'
+    ],
+    'job' => [
+        'name' => '구인구직'
+    ],
+    'international_marriage' => [
+        'name' => '국제결혼'
+    ],
+    'caution' => [
+        'name' => '주의사항'
+    ],
+    'looking_for' => [
+        'name' => '사람찾기'
     ],
     'company_book' => [
         'name' => '업소록',
@@ -34,8 +53,8 @@ define('CAFE_CATEGORIES', [
         'name' => '중고차매매',
         'parent' => 'buyandsell',
     ],
-    'cars' => [
-        'name' => '중고차매매',
+    'rentcar' => [
+        'name' => '렌트카',
         'parent' => 'buyandsell',
     ],
 ]);

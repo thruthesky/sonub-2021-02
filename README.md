@@ -267,8 +267,10 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
   * Lastly, you need to put it on admin page, so admin can choose which widget to display on the browser.
     * To see how to code on admin page, see `themes/sonub/themes/default/admin/forum/setting.php`.
 
-* Widgets that are not used in admin page may not need `.init` file.
+* Widgets that are not used in admin page may not need `.ini` file.
 
+* When including widgets, you can pass variables over the second parameter.
+  It is an optional and if you can get the needed data without passing the param, then you can it in your way.
 
 ### Dynamic Widget Config
 
@@ -365,7 +367,9 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
       * `api/lib/firebase.php`
   * theme index.php ( this is the theme/index.php that is the layout )
     * `index.php` loads
-      * `/theme/[DOMAIN_THEME]/[DOMAIN_THEME]-funtions.php` is loaded if exists.
+      * `/theme/[DOMAIN_THEME]/[DOMAIN_THEME].functions.php` is loaded if exists.
+        참고: theme.functions.php 와 theme.config.php 는 관리자 페이지에 있는 경우, 해당 테마의 스크립트를 실행한다.
+        참고: 따라서, 관리자 테마에서 항상 위젯의 .functions.php 를 실행한다.
       * Bootstrap 4.6 css
       * css/index.css ( compiled from scss/index.scss sass code )
       * `theme/[DOMAIN_THEME]/[MODULE]/[SCRIPT_NAME].css` if exists.
@@ -406,6 +410,7 @@ It's upto you whether you use Vue.js or not. You may do what you want without Vu
 
 * It is recommend to write Javascript code inside the PHP script like below.
   * Use `mixin` const variable name to apply a mixin to Vue.js app in `app.js`. It is just works as what mixin is.
+  * See example below and `# mxin` chapter
 
 ```html
 <h1>Profile</h1>
@@ -466,6 +471,28 @@ You can write css style like below.
 
 
 
+## mixin - Vue.js mixin on each page.
+
+* The app(website) can create a mixin on each page, like below.
+  * The example below shows how to interact with backend on mixin's `created()` method and display it in template.
+
+```html
+{{ settings }}
+<script>
+    const mixin = {
+        data() {
+            return {
+                settings: {},
+            }
+        },
+        created() {
+            request('app.settings', undefined, function(re) {
+                app.settings = re;
+            }, alert);
+        },
+    }
+</script>
+```
 
 
 
@@ -491,6 +518,32 @@ You can write css style like below.
 * `lib/utility.php` holds all utility functions that are directly related with the system core functionalities.
 
 
+* `themes/theme-name/theme-name.functions.php` 에 관리자에서 사용될 코드를 집어 넣는다.
+  이유는 `configs/theme.config.php` 는 소스 코드가 테마에 한정적이 않아서이다.
+  
+  * theme.functions.php 의 활용 용도는 무궁무진하다.
+    예를 들어, 관리자가 위젯 수정 모드로 들어가려고 할 때, 관리자 링크에서 `href="/?page=set&key=widget&value=edit"` 와 같이
+    링크를 걸고, theme.functions.php 에서 아래와 같이 쿠키를 저장할 수 있다.
+    
+```php
+if ( in('page') == 'set' ) {
+    setcookie(in('key'), in('value'));
+    jsGo('/');
+    exit;
+}
+```
+
+## 쿠키 저장
+
+* 웹브라우저에서 간단하게 ON/OFF 용도로
+  아래의 예제와 같이 md5('set')=md5('cookie') 와 같이 값을 주어 접속을 하면,
+  key 의 cookie 이름으로 value 의 값을 저장한다.
+  다양하게 활용을 하면 된다.
+
+````html
+<a href="/?<?=md5('set')?>=<?=md5('cookie')?>&key=<?=md5('widget')?>&value=<? echo is_widget_edit_mode() ? 'off' : 'on' ?>">
+````
+  
 ## User management
 
 * Wordpress has `wp_users` database for storing default user information like user_login, user_email, user_pass and other information.
@@ -762,6 +815,10 @@ addComponent('comment-form', commentForm);
 
 # 게시글에 각 항목 별 사진을 등록, 목록, 삭제하는 완전한 예제
 
+* 기본 파일 업로드 기능 외에, 원하는 필드로 사진을 업로드하는 방법에 대한 설명.
+* 참고: `widgets/forum-edit/forum-edit-shopping-mall/forum-edit-shopping-mall.php` 에 쇼핑몰 예제가 있다.
+
+
 ```html
 <?php
 if ( in('mode') == 'delete' ) {
@@ -800,6 +857,7 @@ if ( in('mode') == 'delete' ) {
         </div>
     </form>
     <div class="posts">
+        전체 글 목록
         <?
         $posts = forum_search(['category_name' => 'wrong_picture']);
         foreach($posts as $post) {

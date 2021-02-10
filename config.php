@@ -8,18 +8,22 @@
  * ================================================================================
  */
 
+define('APP_VERSION', '0.1.5');
+
 /**
  * Theme configuration
  */
 
 $domain_themes = [
-    'sonub' => 'sonub'
+    'sonub' => 'sonub',
+    'goldenage50' => 'goldenage50',
 ];
 
 /**
  * Theme configuration exists, load it.
+ * @attention 관리자 페이지에 있는 경우, 관리자 페이지 theme 이 아닌, 실제 theme 의 config.php 를 실행한다.
  */
-$_path = THEME_DIR . "/configs/".get_domain_theme().".config.php";
+$_path = THEME_DIR . "/configs/".get_domain_theme(false).".config.php";
 if ( file_exists($_path) ) {
     require_once($_path);
 }
@@ -67,8 +71,12 @@ define('NO_OF_PAGES_ON_NAV', 3);
  *
  * To apply login cookie(and all other cookies) to all sub domains, set the root domain(like `.domain.com`) name here
  *   - note, that dot(.) must be added on root domain.
+ *
+ * 만약, 개별 설정에서 정의된 쿠키가 없으면, 자동으로 ROOT_DOMAINS 에 있는 것을 기반으로 최상위 도메인(1차) 도메인으로 지정한다.
  */
-if ( !defined('BROWSER_COOKIE_DOMAIN') ) define('BROWSER_COOKIE_DOMAIN', '');
+if ( !defined('BROWSER_COOKIE_DOMAIN') ) {
+    define('BROWSER_COOKIE_DOMAIN', get_root_domain());
+}
 
 
 /**

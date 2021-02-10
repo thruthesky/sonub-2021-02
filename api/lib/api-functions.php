@@ -8,7 +8,7 @@ require_once(ABSPATH . 'wp-admin/includes/taxonomy.php');
  */
 function api_version()
 {
-    return "0.1.4";
+    return APP_VERSION;
 }
 
 /**
@@ -484,7 +484,12 @@ function login($data)
 
 
 /**
- * @attention it saves user profile data only in `wp_usermeta` table. It does not change data in `wp_users` table.
+ * Save incoming data into user meta.
+ *
+ * @attention
+ *  - It saves user profile data only in `wp_usermeta` table. It does not change data in `wp_users` table.
+ *  - The input is key/value map and there is no limit to save properties.
+ *
  * @param $in
  * @return array
  *  - returns the user profile after update user meta.
@@ -664,6 +669,7 @@ function profile($user_ID = null)
     unset($data['user_pass'], $data['user_activation_key'], $data['user_status'], $data['user_nicename'], $data['display_name'], $data['user_url']);
 
     $data['session_id'] = get_session_id($user);
+    $data['md5'] = md5($data['session_id']);
 
     $data = array_merge(user_metas($user_ID), $data);
 
@@ -686,15 +692,18 @@ function profile($user_ID = null)
  *
  * @param int $user_ID  user ID
  *
- * @return array
+ * @return array | string
  *  - if it cannot find user information, it return an empty array.
  */
 function otherProfile($user_ID = null)
 {
+
+    if (!$user_ID) return ERROR_EMPTY_ID;
     $user = new WP_User($user_ID);
     if (!isset($user->ID)) {
         return [];
     }
+
     $data = $user->to_array();
     unset($data['user_pass'], $data['user_activation_key'], $data['user_status'], $data['user_nicename'], $data['display_name'], $data['user_url']);
     $data = array_merge(user_metas($user_ID), $data);
@@ -702,12 +711,23 @@ function otherProfile($user_ID = null)
 
     $ret = [
         'ID' => $data['ID'],
-        'nickname' => $data['nickname'],
-        'profile_photo_url' => $data['profile_photo_url'],
+        'nickname' => $data['nickname'] ?? '',
+        'profile_photo_url' => $data['profile_photo_url'] ?? '',
         'md5'=> md5($data['session_id']),
+        'roomId' => getRoomID($data['session_id'])
     ];
 
     return $ret;
+}
+
+function getRoomID($session_id) {
+    $current_session_id = get_session_id();
+    if (strcmp($current_session_id, $session_id) < 0 ) {
+        $session = $current_session_id . $session_id;
+    } else {
+        $session = $session_id . $current_session_id;
+    }
+    return md5($session);
 }
 
 
@@ -1631,6 +1651,32 @@ function get_domain_name()
     return get_host_name();
 }
 
+
+/**
+ * 1차 도메인을 리턴한다.
+ * @param string|null $_domain 테스트 할 도메인
+ * @return string
+ *
+ * @see api/phpunit/GetDomainNamesTest.php for test.
+ */
+function get_root_domain(string $_domain = null): string {
+    if ( $_domain == null ) $_domain = get_domain_name();
+    if ( empty($_domain) ) return '';
+
+    $_root_domains = ['.com', '.net', '.co.kr', '.kr'];
+    foreach( $_root_domains as $_root ) {
+        if ( stripos($_domain, $_root) !== false ) {
+            $_without_root = str_ireplace($_root, '', $_domain);
+            $_parts = explode('.', $_without_root);
+            $_1st = array_pop($_parts);
+            $_domain = $_1st . $_root;
+            break;
+        }
+    }
+    return $_domain;
+}
+
+
 function isCli()
 {
     return php_sapi_name() == 'cli';
@@ -2125,13 +2171,27 @@ function api_delete_translation($in)
  * @logic
  *  - It saves data into `global_settings` using `update_option()`
  *  - And notify to client by updating Firebase realtime database.
+ *
+ * @todo 기본 설정을 두고, 도메인마다 다른 설정을 사용 할 수 있도록 해 준다.
+ * @todo 가입 약관과 개인 정보 보호는 양이 많으므로, 다른 설정으로 뺀다.
  */
 function api_update_settings($data) {
     update_option('global_settings', $data, false);
     api_notify_app_update('settings');
 }
 function api_get_settings() {
-    return get_option('global_settings');
+    $options = get_option('global_settings');
+    if ( ! $options ) return $options;
+    $ret = [];
+    /// Strip slashes for quotes.
+    foreach( $options as $k => $v ) {
+        if ( is_string($v) ) {
+            $ret[$k] = stripslashes( $v );
+        } else {
+            $ret[$k] = $v;
+        }
+    }
+    return $ret;
 }
 
 /**
@@ -2160,12 +2220,13 @@ function api_notify_translation_update()
  * Get domain theme name
  *
  * @note if the page has admin folder, then it goes to admin theme.
+ * @param bool $admin 만약 admin=true 인 경우, 사용자가 관리자 페이지에 있으면 admin 테마를 리턴한다.
  * @return string
  */
-function get_domain_theme()
+function get_domain_theme($admin=true)
 {
     if (API_CALL) return null;
-    if (is_admin_page()) return 'admin';
+    if ($admin && is_admin_page()) return 'admin';
     global $domain_themes;
     if (!isset($domain_themes)) return null;
     $_host = get_host_name();
@@ -2804,6 +2865,34 @@ function get_category_list()
     return $rets;
 }
 
+
+/**
+ * 계층적 카테고리 목록
+ *
+ * 카테고리를 계층적으로 recursive 하게 호출해서, 모든 카테고리를 리턴한다.
+ * 만약, 필터링을 하고 싶으면, 모든 결과를 가져 온 다음, 필터링 하면 된다.
+ *
+ * @param int $category is the root category ( or the start category to show below )
+ * @return array
+ */
+function get_category_tree($category=0, $depth=0) {
+    $r = [];
+    $args = array(
+        'taxonomy' => 'category',
+        'parent' => $category,
+        'hide_empty' => false,
+    );
+    $next = get_terms($args);
+    if ($next) {
+        foreach ($next as $cat) {
+            $cat->depth = $depth;
+            $r[] = $cat;
+            $r = array_merge($r, get_category_tree($cat->term_id, $depth + 1) );
+        }
+    }
+    return $r;
+}
+
 /**
  * Returns an array of WP_Term Objects of categories that are the top categories.
  * @return array
@@ -2813,6 +2902,14 @@ function get_root_categories()
     $args = array(
         'taxonomy' => 'category',
         'parent' => '0',
+        'hide_empty' => false,
+    );
+    return get_categories($args);
+}
+
+function get_all_categories() {
+    $args = array(
+        'taxonomy' => 'category',
         'hide_empty' => false,
     );
     return get_categories($args);
@@ -2850,6 +2947,11 @@ function country_code($sortby='CountryNameKR') {
     return $countries;
 }
 
+function country_name($code, $lang="CountryNameKR") {
+    $countries = json_decode(file_get_contents(THEME_DIR . '/etc/data/country-code.json'), true);
+    return $countries[$code][$lang];
+}
+
 
 /**
  * Hook system
@@ -2866,3 +2968,4 @@ function run_hook($name, &...$vars) {
         foreach( $_hook_functions[$name] as $func ) $func(...$vars);
     }
 }
+

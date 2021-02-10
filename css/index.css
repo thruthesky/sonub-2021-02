@@ -42,8 +42,8 @@ a {
   overflow: hidden;
 }
 .l-content .l-body-middle {
-  margin-left: 16px;
-  margin-right: 16px;
+  padding-left: 16px;
+  padding-right: 16px;
   flex-grow: 1;
   overflow: hidden;
 }
@@ -151,6 +151,11 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.size-16 {
+  width: 16px;
+  height: 16px;
 }
 
 .size-40 {
@@ -328,8 +333,16 @@ input[type=file]::-webkit-file-upload-button {
   color: grey;
 }
 
+.light {
+  color: #bcbcbc;
+}
+
 .black {
   color: black;
+}
+
+.blue {
+  color: blue;
 }
 
 .bg-lighter {
@@ -380,6 +393,7 @@ input[type=file]::-webkit-file-upload-button {
 
 .box {
   padding: 1em;
+  box-sizing: border-box;
   background-color: #f7f9fa;
   border: 1px solid #dae1e6;
 }

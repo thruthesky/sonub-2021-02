@@ -39,8 +39,8 @@ a {
     overflow: hidden;
   }
   .l-body-middle {
-    margin-left: 16px; // 본문에서 왼쪽에 16px 여백을 둠
-    margin-right: 16px; // 본문에서 왼쪽에 16px 여백을 둠
+    padding-left: 16px; // 본문에서 왼쪽에 16px 여백을 둠
+    padding-right: 16px; // 본문에서 왼쪽에 16px 여백을 둠
     flex-grow: 1; // flexbox 에서 남은 여백 차지하기
     overflow: hidden;
   }
@@ -134,10 +134,14 @@ a {
   display: flex; justify-content: center; align-items: center;
 }
 
-/// Pixel 사이즈는 size-** 로 한다.
-.size-40 {
-  width: 40px; height: 40px;
+/// size-xx 는 pixel 단위로, 너비, 높이를 지정한다.
+.size-16 {
+  width: 16px; height: 16px;
 }
+.size-40 {
+   width: 40px; height: 40px;
+ }
+
 .size-64 {
   width: 64px;
   height: 64px;
@@ -291,9 +295,15 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
 .grey {
   color: grey;
 }
+.light {
+  color: #bcbcbc;
+}
 
 .black {
   color: black;
+}
+.blue {
+  color: blue;
 }
 .bg-lighter {
   background-color: #fafafa;
@@ -340,6 +350,7 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
 
 .box {
   padding: 1em;
+  box-sizing: border-box;
   background-color: #f7f9fa;
   border: 1px solid #dae1e6;
 }

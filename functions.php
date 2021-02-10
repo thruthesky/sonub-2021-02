@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file functions.php
  */
@@ -26,6 +25,22 @@ define('API_DIR', THEME_DIR . '/api');
 require_once(API_DIR . '/lib/api-functions.php');
 require_once(THEME_DIR . '/lib/app.class.php');
 require_once(THEME_DIR . '/lib/utility.php');
+
+
+/**
+ * 입력값에 md5('set') = md5('cookie') 가 들어오면, 쿠키를 설정하고, 홈으로 이동한다.
+ *
+ * @attention 'set' 과 'cookie' 의 값을 md5 로 하여, 알아보지 못하게 한다.
+ * 그리고 가능하면 키도 md5 한다.
+ */
+if ( in(md5('set')) == md5('cookie') ) {
+    setcookie(in('key'), in('value'));
+    jsGo('/');
+    exit;
+}
+
+
+
 
 
 
@@ -163,12 +178,23 @@ EOJ;
 /**
  * Returns theme script file path from the input $page
  *
+ * @logic
+ * - 현재 테마에서 파일을 찾는다. 없으면,
+ * - default 테마에서 파일을 찾는다. 없으면,
+ * - default/error.php 가 로드된다.
+ *
  * @note if the user is in 'admin' dashboard page, then 'admin' theme is used and there is no default script for admin page script.
  *
  * @param $theme
  * @param $page
  * @return string
  *  - an example of return string: /Users/thruthesky/www/wordpress/wp-content/themes/sonub/themes/forum/view.php
+ *
+ * @note 주의: 점(.)을 입력하면 안되고, 슬래시(/)를 입력해야 한다.
+ * @example 아래와 같이 사용 할 수 있다.
+ *
+ *      include get_theme_page_path( DOMAIN_THEME, 'error/forum-list-wrong-category');
+ *
  */
 function get_theme_page_path($theme, $page)
 {
@@ -255,7 +281,7 @@ function get_theme_footer_path()
  */
 function get_theme_function_path()
 {
-    return THEME_DIR . "/themes/".DOMAIN_THEME."/".DOMAIN_THEME."-functions.php";
+    return THEME_DIR . "/themes/".get_domain_theme(false)."/".get_domain_theme(false).".functions.php";
 }
 
 /**
@@ -549,7 +575,7 @@ function select_list_widgets($cat_ID, $type, $config_name) {
     $default_selected = category_meta($cat_ID, $config_name, $type . '-default');
 
 
-    echo "<select name='$config_name'>";
+    echo "<select name='$config_name' class='w-100'>";
     select_list_widgets_option($type, $default_selected);
     echo "</select>";
 
@@ -600,3 +626,36 @@ function delete_login_cookies() {
     setcookie("profile_photo_url", "", time()-3600, '/', BROWSER_COOKIE_DOMAIN);
 }
 
+
+
+function ln($en, $ko)
+{
+    $bl = browser_language();
+    if ( $bl == 'ko' ) return $ko;
+    else return $en;
+
+}
+
+function browser_language()
+{
+    if ( isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ) {
+        return substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+    }
+    else {
+        return 'en';
+    }
+}
+
+
+/**
+ * 쿠키에 widget=on 값이 있으면, 위젯을 수정하는 것으로 표시한다.
+ *
+ * 위젯을 수정하려면, 아래의 예제와 같이 적절한 곳에 링크를 걸면 된다.
+ * 참고로, set, cookie, key 를 코두 md5 로 해서, 외부에서 알아보지 못하게 한다.
+ * 예) <a href="/?<?=md5('set')?>=<?=md5('cookie')?>&key=<?=md5('widget')?>&value=<? echo is_widget_edit_mode() ? 'off' : 'on' ?>">
+ *
+ * @todo 카페에서는, 해당 카페 관리자만 해당 카페 위젯을 수정 할 수 있다. 다른 카페 관리자가 내 카페 위젯을 수정 할 수 없다.
+ */
+function is_widget_edit_mode(): bool {
+    return ($_COOKIE[md5('widget')] ?? '') == 'on';
+}
