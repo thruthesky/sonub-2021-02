@@ -6,16 +6,11 @@
 
 
 
-/**
- * Get the post ID
- */
-$arr = explode('/', $_SERVER['REQUEST_URI']);
-$post_ID = $arr[1];
+$post = get_current_page_post();
+$post = post_response($post, ['with_autop' => true]);
+$post_ID = $post['ID'];
 
-/**
- * Get the post
- */
-$post = post_response($post_ID, ['with_autop' => true]);
+
 /**
  * Comments of the post
  */

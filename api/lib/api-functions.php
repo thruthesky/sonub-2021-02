@@ -1146,8 +1146,10 @@ function post_response($ID_or_post, $options = [])
 
     // url of the post
     // It's relative url.
-    $arr = explode('/', $post['guid'], 4);
-    $post['url'] = "/$post[ID]/" . array_pop($arr);
+//    $arr = explode('/', $post['guid'], 4);
+//    $post['url'] = "/$post[ID]/" . array_pop($arr);
+
+    $post['url'] = $post['guid'];
 
     //
     $post['files'] = get_uploaded_files($post['ID']);
@@ -1907,6 +1909,34 @@ function get_post_from_guid($guid)
         $id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid=%s", $guid));
     }
     if ($id) return get_post($id);
+    return null;
+}
+
+/**
+ * 글의 slug(post_name)으로 글을 찾아 리턴한다.
+ * @param $name
+ * @return array|WP_Post|null
+ */
+function get_post_by_name($name) {
+    return get_page_by_path($name, '', 'post');
+}
+
+/**
+ * 현재 페이지의 글을 리턴한다.
+ *
+ * 현재 페이지가 글을 보는 페이지라면, URL 로 부터 post_name 을 읽어서 리턴한다.
+ *
+ * @attention 워드프레스의 Permanent link 설정이 post name 이어야 올바로 동작한다.
+ *
+ * @return array|WP_Post|null
+ */
+function get_current_page_post() {
+    if ( isset($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI'] ) {
+        $_post_name = $_SERVER['REQUEST_URI'];
+        if ( $_post_name == '/' || $_post_name == '' ) return null;
+        $_post = get_page_by_path($_post_name, '', 'post');
+        return $_post;
+    }
     return null;
 }
 
@@ -2971,8 +3001,12 @@ function add_hook($name, $function) {
 }
 function run_hook($name, &...$vars) {
     global $_hook_functions;
+    $ret = null;
     if ( isset($_hook_functions[$name]) ) {
-        foreach( $_hook_functions[$name] as $func ) $func(...$vars);
+        foreach( $_hook_functions[$name] as $func ) {
+            $ret .= $func(...$vars);
+        }
     }
+    return $ret;
 }
 

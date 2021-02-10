@@ -4,6 +4,7 @@
  */
 
 
+
 /**
  * Directory(Folder) Constants.
  */
@@ -222,6 +223,8 @@ function get_theme_page_path($theme, $page)
 /**
  * Returns the theme script filename from the http request.
  *
+ * 게시글 보기 페이지의 경우, forum/view 를 리턴한다.
+ *
  * @note HTTP 입력 값에 in('page') 가 있으면, 해당 페이지 스크립트를 연다.
  *   만약, in('page') 가 없다면,
  *     - cafe 카테고리 하위의 카테고리라면
@@ -234,8 +237,7 @@ function get_theme_page_path($theme, $page)
  *  - 'forum/view'
  *  - 'forum/list'
  */
-function get_theme_page_file_name()
-{
+function get_theme_page_file_name() {
     if (in('page')) {
         $page = in('page');
     } else {
@@ -289,11 +291,17 @@ function get_theme_function_path()
  *
  * @usage Use this function to show error.
  *   - especially when it fails loading(importing) a php script.
+ *   - 에러가 있으면 언제든이 이 함수를 사용하면 된다.
  *
  * @param $title
  * @param $description
  *
  * @return string
+ *
+ * @example
+ *   include error_script('title', 'description');
+ *
+ *
  */
 global $_error_title;
 global $_error_description;
@@ -304,6 +312,7 @@ function get_error_script($title, $description)
     $_error_description = $description;
     return THEME_DIR . "/themes/default/error.php";
 }
+function error_script($title, $description) { return get_error_script($title, $description); }
 function get_error_title()
 {
     global $_error_title;
