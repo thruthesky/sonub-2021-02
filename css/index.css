@@ -153,6 +153,11 @@ a {
   align-items: center;
 }
 
+.size-16 {
+  width: 16px;
+  height: 16px;
+}
+
 .size-40 {
   width: 40px;
   height: 40px;
@@ -334,6 +339,10 @@ input[type=file]::-webkit-file-upload-button {
 
 .black {
   color: black;
+}
+
+.blue {
+  color: blue;
 }
 
 .bg-lighter {

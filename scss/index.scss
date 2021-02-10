@@ -135,9 +135,12 @@ a {
 }
 
 /// size-xx 는 pixel 단위로, 너비, 높이를 지정한다.
-.size-40 {
-  width: 40px; height: 40px;
+.size-16 {
+  width: 16px; height: 16px;
 }
+.size-40 {
+   width: 40px; height: 40px;
+ }
 
 .size-64 {
   width: 64px;
@@ -298,6 +301,9 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
 
 .black {
   color: black;
+}
+.blue {
+  color: blue;
 }
 .bg-lighter {
   background-color: #fafafa;

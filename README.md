@@ -816,6 +816,8 @@ addComponent('comment-form', commentForm);
 # 게시글에 각 항목 별 사진을 등록, 목록, 삭제하는 완전한 예제
 
 * 기본 파일 업로드 기능 외에, 원하는 필드로 사진을 업로드하는 방법에 대한 설명.
+* 참고: `widgets/forum-edit/forum-edit-shopping-mall/forum-edit-shopping-mall.php` 에 쇼핑몰 예제가 있다.
+
 
 ```html
 <?php
