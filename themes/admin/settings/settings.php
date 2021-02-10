@@ -33,10 +33,10 @@ $in = api_get_settings();
                 Like
             </div>
             <label>
-                <input type="radio" name="forum_like" value="Y" <? if ( $in['forum_like'] == 'Y' ) echo 'checked'; ?>> Show
+                <input type="radio" name="forum_like" value="Y" <? if ( ($in['forum_like'] ?? '' ) == 'Y' ) echo 'checked'; ?>> Show
             </label>
             <label>
-                <input type="radio" name="forum_like" value="N" <? if ( $in['forum_like'] == 'N' ) echo 'checked'; ?>> Hide
+                <input type="radio" name="forum_like" value="N" <? if ( ($in['forum_like'] ?? '' ) == 'N' ) echo 'checked'; ?>> Hide
             </label>
         </div>
         <div>
