@@ -4,7 +4,7 @@
         $_user = profile(in('user_ID'));
         ?>
 
-        <div class="alert alert-secondary">
+        <div class="option-box">
             <? if ( isset($_user['profile_photo_url']) && $_user['profile_photo_url'] ) { ?>
                 <img class="avatar d-block size-128" src="<?=$_user['profile_photo_url']?>">
             <? } ?>
