@@ -5,6 +5,9 @@
 $theme_page = get_theme_page_script_path();
 $theme_functions = get_theme_function_path();
 if ( file_exists($theme_functions) ) include $theme_functions;
+if ( is_in_admin_page() ) {
+    include 'themes/admin/admin.functions.php';
+}
 
 /**
  * If the page has ending '.submit.php', then it simple include the script and return without display theme.
@@ -31,6 +34,7 @@ $settings = api_get_settings();
     <?php load_theme_css($theme_page); ?>
     <?php live_reload_js() ?>
     <?php insert_initial_javascript() ?>
+    <?=run_hook('html_head')?>
 </head>
 <body class="<?=get_theme_page_class_name()?>">
 <section id="app">
