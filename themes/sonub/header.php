@@ -74,6 +74,7 @@ $co = cafe_option();
 
 
 
+
     <section class="logo-search">
         <div class="l-center d-flex justify-content-center align-items-center">
             <a href="/" class="fs-xxl" style="font-family: Georgia"><?=cafe_option('name', 'SONUB')?></a>

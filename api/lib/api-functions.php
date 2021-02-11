@@ -1319,15 +1319,18 @@ function file_response($post_or_ID): ?array
 
     ];
 
-    if ($ret['media_type'] == 'image') {
-        $ret['thumbnail_url'] = wp_upload_dir()['url'] . '/' . $images['sizes']['thumbnail']['file'];
-        $ret['thumbnail_width'] = $images['sizes']['thumbnail']['width'];
-        $ret['thumbnail_height'] = $images['sizes']['thumbnail']['height'];
+    if ($ret['media_type'] == 'image' && isset($images['sizes'])) {
+        if ( isset($images['sizes']['thumbnail']) ) {
+            $ret['thumbnail_url'] = wp_upload_dir()['url'] . '/' . $images['sizes']['thumbnail']['file'];
+            $ret['thumbnail_width'] = $images['sizes']['thumbnail']['width'];
+            $ret['thumbnail_height'] = $images['sizes']['thumbnail']['height'];
+        }
 
-
-        $ret['medium_url'] = wp_upload_dir()['url'] . '/' . $images['sizes']['medium']['file'];
-        $ret['medium_width'] = $images['sizes']['medium']['width'];
-        $ret['medium_height'] = $images['sizes']['medium']['height'];
+        if ( isset($images['sizes']['medium']) ) {
+            $ret['medium_url'] = wp_upload_dir()['url'] . '/' . $images['sizes']['medium']['file'];
+            $ret['medium_width'] = $images['sizes']['medium']['width'];
+            $ret['medium_height'] = $images['sizes']['medium']['height'];
+        }
 
 
     }
