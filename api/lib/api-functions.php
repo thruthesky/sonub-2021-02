@@ -2180,8 +2180,11 @@ function api_update_settings($data) {
     api_notify_app_update('settings');
 }
 function api_get_settings() {
+
     $options = get_option('global_settings');
-    if ( ! $options ) return $options;
+//    if ( ! $options ) return $options;
+    if ( ! $options ) return [];
+
     $ret = [];
     /// Strip slashes for quotes.
     foreach( $options as $k => $v ) {
