@@ -47,6 +47,7 @@
 
 * Install wordpress on HTTPS domain. It should work as normal.
 * Permalink must be set to 'post name'.
+  * Important! Site will produce 404 error if permalinks are changed. So, set it from the very first set up.
 
 ## Git repo source
 
@@ -525,6 +526,8 @@ You can write css style like below.
     예를 들어, 관리자가 위젯 수정 모드로 들어가려고 할 때, 관리자 링크에서 `href="/?page=set&key=widget&value=edit"` 와 같이
     링크를 걸고, theme.functions.php 에서 아래와 같이 쿠키를 저장할 수 있다.
     
+  * theme.functions.php 는 HTML 이 출력되기 전에 호출된다. 그래서 TITLE 훅을 해서 제목을 변경 할 때도 사용 할 수 있다.
+    
 ```php
 if ( in('page') == 'set' ) {
     setcookie(in('key'), in('value'));
@@ -962,6 +965,7 @@ if ( in('mode') == 'delete' ) {
 * 그리고 원하는 곳(함수 등)에서 훅을 호출하도록 하면 된다.
 * 동일한 hook 이름에 여러개 훅을 지정 할 수 있다.
 * 훅 함수에는 변수를 얼마든지 마음데로 지정 할 수 있으며 모두 reference 로 전달된다.
+* 훅 함수가 값을 리턴 할 수 있다. 동일한 훅에서 리턴되는 값을 모아서, run_hoo() 의 결과로 리턴한다.
 
 훅 함수 호출 예제)
 ```
@@ -981,17 +985,45 @@ add_hook('myFunc', function($name, &$v) {
 });
 add_hook('myFunc', function($name, &$v) {
     $v ++;
+    return '2nd hook ';
 });
 add_hook('myFunc', function(&$name, &$v) {
     $v ++;
     $name = 'abc';
+    return '3rd hook ';
 });
 $n = 'User name';
 $v = 1;
-run_hook('myFunc', $n, $v);
+echo run_hook('myFunc', $n, $v);
 d($n);
 d($v);
 ```
+
+## 훅으로 HTML TITLE 변경하기
+
+* 먼저 아래와 같이 HTML 페이지의 제목에서, `html_title` 훅을 통해서, 리턴 값이 있으면 그 리턴 문자열을 HTML TITLE 로 사용하게 한다.
+
+````html
+<TITLE><?= ($_ = run_hook('html_title'))? $_ : ($settings['site_name'] ?? '') ?></TITLE>
+````
+
+* 그리고 `theme.functions.php` 아래와 같이 적절한 값을 리턴하면 된다.
+
+````php
+add_hook('html_title', function() {
+    if ( is_in_cafe() ) {
+        $co = cafe_option();
+        return $co['name'];
+    }
+});
+````
+
+# Settings
+
+* 관리자 페이지에서 설정을 할 수 있다.
+* 루트 도메인(1차 도메인) 별로 따로 설정을 한다.
+  * 서브도메인의 경우는 따로 설정이 없다. 단, 소너브 카페 기능 처럼 직접 구현 할 수 있다.
+* 주의: API 를 호출 할 때, 해당 1차 도메인으로 접속해야 한다. 다른 도메인 설정 정보를 가져와서 혼동 될 수 있으니 주의한다.
 
 
 # Trouble Shotting

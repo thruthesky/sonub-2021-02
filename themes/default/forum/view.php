@@ -1,14 +1,19 @@
 <?php
 /**
- * Get the post ID
+ * @file view.php
  */
-$arr = explode('/', $_SERVER['REQUEST_URI']);
-$post_ID = $arr[1];
-
 /**
  * Get the post
  */
-$post = post_response($post_ID, ['with_autop' => true]);
+
+$post = get_current_page_post();
+if ( $post == null ) {
+    $_uri = urldecode($_SERVER['REQUEST_URI']);
+    include error_script("앗! 잘못된 접속 경로입니다.", "접속 경로 '$_uri' 에 해당하는 글이 없습니다.");
+    return;
+}
+$post = post_response($post, ['with_autop' => true]);
+
 
 
 /**

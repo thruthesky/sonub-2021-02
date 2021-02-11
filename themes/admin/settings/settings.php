@@ -133,7 +133,13 @@ $in = api_get_settings();
         created() {
             request('app.settings', undefined, function(re) {
                 app.settings = re;
-            }, alert);
+            }, function(e) {
+                if ( e === 'ERROR_EMPTY_RESPONSE' ) {
+                    // 맨 처음에는 설정이 없어서, 이 에러를 통과한다.
+                } else {
+                    alert(e);
+                }
+            });
         },
     }
 </script>

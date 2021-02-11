@@ -1,12 +1,10 @@
 <?php
-$user = profile(in('ID'));
+$user = profile(in('user_ID'));
 ?>
 
 
 
 <?php
-
-d($user);
 
 ?>
 
@@ -55,7 +53,7 @@ d($user);
 
                 <div class="mb-3">
                     <label class="form-label">Mobile number</label>
-                    <input type="text" class="form-control" name="mobile" value="<?=$user['mobile']??''?>">
+                    <input type="text" class="form-control" name="phoneNo" value="<?=$user['phoneNo']??''?>">
                 </div>
                 <button type="button" class="btn btn-secondary" onclick="history.back(-1)">Cancel</button>
                 <button type="submit" class="btn btn-primary" data-button="submit">Submit</button>

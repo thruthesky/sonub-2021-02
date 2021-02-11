@@ -2,7 +2,7 @@
 <hr>
 <?php
 if ( in('slug') )
-include 'forum/setting.php';
+include 'setting.php';
 ?>
 <hr>
 기본적으로 설명을 보여준다.

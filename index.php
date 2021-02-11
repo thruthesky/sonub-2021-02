@@ -17,11 +17,14 @@ $theme_header = get_theme_header_path();
 $theme_footer = get_theme_footer_path();
 
 $settings = api_get_settings();
+
+
+
 ?>
 <!doctype html>
 <html>
 <head>
-    <TITLE><?=$settings['site_name'] ?? ''?></TITLE>
+    <TITLE><?= ($_ = run_hook('html_title'))? $_ : ($settings['site_name'] ?? '') ?></TITLE>
     <link href="<?=THEME_URL?>/css/bootstrap-5.0.0-b1-min.css" rel="stylesheet">
     <link href="<?=THEME_URL?>/css/fontawesome-free-5.15.2-web/css/all.css" rel="stylesheet">
     <link rel="stylesheet" href="<?=THEME_URL?>/css/index.css?v=<?=build_version()?>">

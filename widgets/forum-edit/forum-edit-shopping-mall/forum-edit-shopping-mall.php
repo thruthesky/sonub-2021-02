@@ -38,13 +38,60 @@ if (in('category')) {
     </div>
 
 
+    <div class="form-group mb-3">
+        <label for="point">적립포인트</label>
+        <input type="number" class="form-control" id="point" name="point" v-model="post.point">
+        <div class="form-text">
+            화면 표시 예) 적립 포인트 1,000 Point 지급
+        </div>
+    </div>
+
+
+
     <div class="form-check form-switch">
         <input class="form-check-input" :class="{ 'bg-danger border-danger': post.stop, 'bg-primary border-primary': !post.stop }" type="checkbox" id="stop" name="stop" v-model="post.stop">
         <label class="form-check-label fs-md" :class="{ blue: post.stop == false, red: post.stop }" for="stop">
             {{ post.stop ? "중단 된 상태. 운영하기!" : "운영 중" }}
         </label>
     </div>
-    <div class="form-text">본 상품을 사이트(앱)에 노출을 일시 중지 할 수 있습니다. 회색이면 노출 중. 파란색이면 일시 중단된 상태.</div>
+    <div class="form-text">본 상품을 사이트(앱)에 노출이 안되도록 일시 중지 할 수 있습니다. 버튼이 빨간색이면 일시 중단된 상태.</div>
+
+
+    <div class="form-group mb-3">
+        <label for="volume">용량, 수량</label>
+        <input type="number" class="form-control" id="volume" name="volume" v-model="post.volume">
+        <div class="form-text">
+            상품의 크기나, 용량, 수량을 입력하세요.
+        </div>
+    </div>
+
+
+    <div class="form-group mb-3">
+        <label for="delivery_fee">배송비</label>
+        <input type="number" class="form-control" id="delivery_fee" name="delivery_fee" v-model="post.delivery_fee">
+        <div class="form-text">
+            배송비를 입력하세요.
+        </div>
+    </div>
+
+
+    <div class="form-group mb-3">
+        <label for="storage_method">보관방법</label>
+        <input type="text" class="form-control" id="storage_method" name="storage_method" v-model="post.storage_method">
+        <div class="form-text">
+            보관 방법을 입력하세요. 예) 냉장고에 보관하세요.
+        </div>
+    </div>
+
+
+    <div class="form-group mb-3">
+        <label for="expiry">유통기한</label>
+        <input type="text" class="form-control" id="expiry" name="expiry" v-model="post.expiry">
+        <div class="form-text">
+            유통 기한을 입력하세요. 예) 2022년 3월 30일 까지.
+        </div>
+    </div>
+
 
 
 

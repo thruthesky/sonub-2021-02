@@ -19,6 +19,14 @@ define('ADMIN_MENUS', [
 ]);
 
 
+add_hook('html_title', function() {
+    if ( is_in_cafe() ) {
+        $co = cafe_option();
+        return $co['name'];
+    }
+});
+
+
 
 
 
