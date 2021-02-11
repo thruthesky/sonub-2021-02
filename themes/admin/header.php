@@ -1,4 +1,8 @@
 <?php
+if ( !admin() ) {
+    jsBack('You are not admin!');
+    exit;
+}
 function is_admin_home(): bool {
     return strpos( in('page'), 'admin/home' ) !== false;
 }
@@ -9,9 +13,19 @@ function is_admin_forum_page(): bool {
     return strpos( in('page'), 'admin/forum' ) !== false;
 }
 ?>
-
+<style>
+    .option-box {
+        padding: 1em;
+        border-radius: 25px;
+        background-color: #f3f3f3;
+    }
+    .option-box h2 {
+        font-size: 1.2em;
+        font-weight: normal;
+    }
+</style>
 <header class="l-center bg-grey">
-    <a href="/?page=admin/home"><?=ln('Dashboard', '관리자 화면')?></a>
+    <a href="/?page=admin/home"><?=ln('Dashboard', '홈')?></a>
     <a href="/?page=admin/user/list"><?=ln('Users', '사용자')?></a>
     <a href="/?page=admin/forum/list"><?=ln('Forums', '게시판')?></a>
     <a href="/?page=admin/forum/point"><?=ln("Point", "포인트")?></a>

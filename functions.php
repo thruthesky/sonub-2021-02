@@ -28,21 +28,6 @@ require_once(THEME_DIR . '/lib/app.class.php');
 require_once(THEME_DIR . '/lib/utility.php');
 
 
-/**
- * 입력값에 md5('set') = md5('cookie') 가 들어오면, 쿠키를 설정하고, 홈으로 이동한다.
- *
- * @attention 'set' 과 'cookie' 의 값을 md5 로 하여, 알아보지 못하게 한다.
- * 그리고 가능하면 키도 md5 한다.
- */
-if ( in(md5('set')) == md5('cookie') ) {
-    setcookie(in('key'), in('value'));
-    jsGo('/');
-    exit;
-}
-
-
-
-
 
 
 /**
@@ -74,6 +59,50 @@ if (isset($_COOKIE['session_id']) && $_COOKIE['session_id']) {
 }
 
 
+
+/**
+ * 입력값에 md5('set') = md5('cookie') 가 들어오면, 쿠키를 설정하고, 홈으로 이동한다.
+ *
+ * @attention 'set' 과 'cookie' 의 값을 md5 로 하여, 알아보지 못하게 한다.
+ * 그리고 가능하면 키도 md5 한다.
+ *
+ * 이 것을 사용하기 쉽게한 것이 set_cookie() 함수이다.
+ *
+ * 사용 방법은
+ *
+ * radio button 에
+ * <input ... onclick="location.href='<?=set_cookie('language', 'en', '/?page=admin/home')?>'">
+ * 와 같이 해 놓고, 클릭을 하면, 쿠키를 저장하고 return url 로 돌아간다.
+ *
+ * 그리고 필요 할 때, get_cookie('language') 와 같이 해서, 쿠키 값을 가져오면 된다.
+ *
+ * 참고로: setcookie() 는 PHP 함수이고, set_cookie() 는 md5 로 쿠키 저장 URL 을 리턴하는 함수이다.
+ */
+if ( in(md5('set')) == md5('cookie') ) {
+    setcookie(in('key'), in('value'), time() + 365 * 24 * 60 * 60 , '/' , BROWSER_COOKIE_DOMAIN);
+    jsGo(in('return_url', '/'));
+    exit;
+}
+
+
+/**
+ * 쿠키를 저장 하고 리턴 URL 로 돌아갈 URL 을 리턴한다.
+ * @param $key
+ * @param $value
+ * @param $return_url
+ * @return string
+ */
+function set_cookie($key, $value, $return_url): string {
+    $key = md5($key);
+    $set = md5('set');
+    $cookie = md5('cookie');
+    $return_url = urlencode($return_url);
+    return "/?$set=$cookie&key=$key&value=$value&return_url=$return_url";
+}
+
+function get_cookie($key) {
+    return $_COOKIE[md5($key)] ?? null;
+}
 
 
 /**
@@ -608,7 +637,7 @@ function select_list_widgets_option($type, $default_selected) {
  * @param $profile
  */
 function set_login_cookies($profile) {
-    setcookie ( 'session_id' , $profile['session_id'] , time() + 365 * 24 * 60 * 60 , '/' , BROWSER_COOKIE_DOMAIN);
+    setcookie ( 'session_id' , $profile['session_id'], time() + 365 * 24 * 60 * 60 , '/' , BROWSER_COOKIE_DOMAIN);
     if ( isset($profile['nickname']) ) setcookie ( 'nickname' , $profile['nickname'] , time() + 365 * 24 * 60 * 60 , '/' , BROWSER_COOKIE_DOMAIN);
     if ( isset($profile['profile_photo_url']) ) setcookie ( 'profile_photo_url' , $profile['profile_photo_url'] , time() + 365 * 24 * 60 * 60 , '/' , BROWSER_COOKIE_DOMAIN);
 }
@@ -629,12 +658,17 @@ function delete_login_cookies() {
 
 function ln($en, $ko)
 {
-    $bl = browser_language();
+    $bl = get_user_language();
     if ( $bl == 'ko' ) return $ko;
     else return $en;
 
 }
 
+function get_user_language() {
+    $re = get_cookie('language');
+    if ( $re ) return $re;
+    return browser_language();
+}
 function browser_language()
 {
     if ( isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ) {
