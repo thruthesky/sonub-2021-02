@@ -696,7 +696,7 @@ function profile($user_ID = null)
  * @return array | string
  *  - if it cannot find user information, it return an empty array.
  */
-function otherProfile($user_ID = null)
+function other_profile($user_ID = null)
 {
 
     if (!$user_ID) return ERROR_EMPTY_ID;
@@ -1260,7 +1260,7 @@ function get_uploaded_files($parent_ID, $post_type = 'attachment')
 /**
  * Returns a single file information.
  * @note this returns upload photo information
- * @param $post_ID - the attachment post id.
+ * @param $post_ID - the attachment file(post) id. Not the post id that has title and content.
  *
  * @todo update thumbnail url. Thumbnail is not right.
  * @return array
@@ -1269,26 +1269,90 @@ function get_uploaded_files($parent_ID, $post_type = 'attachment')
  */
 function get_uploaded_file($post_ID)
 {
+    return file_response($post_ID);
+//
+//    $post = get_post($post_ID);
+//    if (!$post) return null;
+//    $ret = [
+//        'url' => $post->guid, // url is guid.
+//        'ID' => $post->ID, // wp_posts.ID
+//        //        'status' => $post->post_status,
+//        //        'author' => $post->post_author,
+//        //        'type' => $post->post_type,
+//        'media_type' => strpos($post->post_mime_type, 'image/') === 0 ? 'image' : 'file', // it will have 'image' or 'file'
+//        'type' => $post->post_mime_type,
+//        'name' => $post->post_name, // file name?
+//        //        'post' => $post->post_parent
+//    ];
+//    if ($ret['media_type'] == 'image') {
+//        $ret['thumbnail_url'] = $post->guid; // thumbnail url
+//    }
+//    /// Add image size, width, height
+//    //    $ret['exif'] = image_exif_details(image_path_from_url($ret['url']));
+//    return $ret;
+}
 
-    $post = get_post($post_ID);
-    if (!$post) return null;
+/**
+ * @param mixed $post_or_ID - Attachment(file) post id.
+ *   This is not the post id of a post that has title or content.
+ *   This is uploaded file id.
+ *
+ * @return array|null
+ */
+function file_response($post_or_ID): ?array
+{
+    if ( is_numeric($post_or_ID) ) $post = get_post($post_or_ID);
+    else $post = $post_or_ID;
+
+    if (empty($post)) return null;
+
+    $images = wp_get_attachment_metadata($post->ID);
+
     $ret = [
-        'url' => $post->guid, // url is guid.
-        'ID' => $post->ID, // wp_posts.ID
-        //        'status' => $post->post_status,
-        //        'author' => $post->post_author,
-        //        'type' => $post->post_type,
-        'media_type' => strpos($post->post_mime_type, 'image/') === 0 ? 'image' : 'file', // it will have 'image' or 'file'
+        'url' => $post->guid,
+        'ID' => $post->ID,
+        'name' => $post->post_name,
         'type' => $post->post_mime_type,
-        'name' => $post->post_name, // file name?
-        //        'post' => $post->post_parent
+        'media_type' => strpos($post->post_mime_type, 'image/') === 0 ? 'image' : 'file', // it will have 'image' or 'file'
+        'width' => $images['width'],
+        'height' => $images['height'],
+
     ];
+
     if ($ret['media_type'] == 'image') {
-        $ret['thumbnail_url'] = $post->guid; // thumbnail url
+        $ret['thumbnail_url'] = wp_upload_dir()['url'] . '/' . $images['sizes']['thumbnail']['file'];
+        $ret['thumbnail_width'] = $images['sizes']['thumbnail']['width'];
+        $ret['thumbnail_height'] = $images['sizes']['thumbnail']['height'];
+
+
+        $ret['medium_url'] = wp_upload_dir()['url'] . '/' . $images['sizes']['medium']['file'];
+        $ret['medium_width'] = $images['sizes']['medium']['width'];
+        $ret['medium_height'] = $images['sizes']['medium']['height'];
+
+
     }
-    /// Add image size, width, height
-    //    $ret['exif'] = image_exif_details(image_path_from_url($ret['url']));
+
     return $ret;
+//
+//    d($images);
+//
+//    $ret = [
+//        'url' => $post->guid, // url is guid.
+//        'ID' => $post->ID, // wp_posts.ID
+//        //        'status' => $post->post_status,
+//        //        'author' => $post->post_author,
+//        //        'type' => $post->post_type,
+//        'media_type' => strpos($post->post_mime_type, 'image/') === 0 ? 'image' : 'file', // it will have 'image' or 'file'
+//        'type' => $post->post_mime_type,
+//        'name' => $post->post_name, // file name?
+//        //        'post' => $post->post_parent
+//    ];
+//    if ($ret['media_type'] == 'image') {
+//        $ret['thumbnail_url'] = $post->guid; // thumbnail url
+//    }
+//    /// Add image size, width, height
+//    //    $ret['exif'] = image_exif_details(image_path_from_url($ret['url']));
+//    return $ret;
 }
 
 
@@ -1693,8 +1757,9 @@ function isCli()
 /**
  * Returns the URL of the domain.
  *
- * Wordpress `home_url()` returns the url that is set on `wp_options`. But we made it as multi theme supporting multi
- * domains, so each theme may have different domain. Use this method to get home url of each domain.
+ * Wordpress `home_url()` returns the url that is set on `wp_options`.
+ * But we made it as multi theme supporting multi domains, so each theme may have
+ * different domain. Use this method to get home url of each domain.
  *
  * @attention it depends on the api url. if the client browser url is 'abc.com' and apiUrl domain is 'def.com', it wil return 'def.com'.
  *
@@ -2216,10 +2281,18 @@ function api_update_settings($data) {
     update_option('settings_' . get_root_domain(), $data, false);
     api_notify_app_update('settings');
 }
+
+/**
+ *
+ * @return array
+ *   - If there is no settings, then it will return an assoc array with version.
+ */
 function api_get_settings() {
+    $ret = [
+        'version' => APP_VERSION,
+    ];
     $options = get_option('settings_' . get_root_domain());
-    if ( ! $options ) return $options;
-    $ret = [];
+    if ( ! $options ) return $ret;
     /// Strip slashes for quotes.
     foreach( $options as $k => $v ) {
         if ( is_string($v) ) {
@@ -3010,3 +3083,33 @@ function run_hook($name, &...$vars) {
     return $ret;
 }
 
+function get_thumbnail_url($post_ID) {
+    $images = wp_get_attachment_metadata($post_ID);
+    return wp_upload_dir()['url'] . '/' . $images['sizes']['thumbnail']['file'];
+}
+
+/**
+ * @param $in
+ * @return array
+ */
+function get_files($in): array
+{
+    $q = [
+        'post_type' => 'attachment',
+    ];
+
+    $q = array_merge($q, $in);
+
+    $posts = get_posts($q);
+
+
+    $rets = [];
+    foreach($posts as $post ) {
+        $file = file_response($post);
+        if ( $post->post_parent ) $file['post_parent'] = $post->post_parent;
+        $rets[] = $file;
+    }
+    return $rets;
+
+
+}

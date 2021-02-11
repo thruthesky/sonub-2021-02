@@ -49,6 +49,9 @@
 * Permalink must be set to 'post name'.
   * Important! Site will produce 404 error if permalinks are changed. So, set it from the very first set up.
 
+* On "Settings -> Media", set thumbnail size to "150x150" and medium size to "300x300".
+
+
 ## Git repo source
 
 * Clone the source into wordpress themes folder.
@@ -519,6 +522,9 @@ You can write css style like below.
 * `lib/utility.php` holds all utility functions that are directly related with the system core functionalities.
 
 
+
+### theme.functions.php
+
 * `themes/theme-name/theme-name.functions.php` 에 관리자에서 사용될 코드를 집어 넣는다.
   이유는 `configs/theme.config.php` 는 소스 코드가 테마에 한정적이 않아서이다.
   
@@ -535,6 +541,10 @@ if ( in('page') == 'set' ) {
     exit;
 }
 ```
+
+
+* 관리자 페이지에서는 해당 theme.functions.php 를 호출하고, 추가적으로 themes/admin/admin.functions.php 가 로드된다.
+
 
 ## 쿠키 저장
 
@@ -999,7 +1009,10 @@ d($n);
 d($v);
 ```
 
-## 훅으로 HTML TITLE 변경하기
+
+## 훅 목록과 설명
+
+### 훅으로 HTML TITLE 변경하기
 
 * 먼저 아래와 같이 HTML 페이지의 제목에서, `html_title` 훅을 통해서, 리턴 값이 있으면 그 리턴 문자열을 HTML TITLE 로 사용하게 한다.
 
@@ -1017,6 +1030,59 @@ add_hook('html_title', function() {
     }
 });
 ````
+
+### 훅으로 CSS 지정하기
+
+* CSS 를 훅으로 지정해야하는 이유 중 하나는,
+  * 페이지 스크립트에 `<style>` 을 추가하면 맨 HTML 에서 맨 밑에 추가되어 body background 를 지정하는 경우,
+    먼저 추가된 css 의 body background 가 보이기 때문에 화면이 번쩍인다.
+    그래서 아래와 같이 css 을 head 에 추가해서, 먼저 적용이 되도록 할 수 있다.
+
+```php
+<?php
+add_hook('html_head', function() {
+    return <<<EOS
+<style>
+    body {
+        background-color: #5c705f !important;
+        color: white !important;
+    }
+    header {
+        margin-top: 1em;
+        border-radius: 25px;
+        background-color: white;
+        color: black;
+    }
+    header a {
+        display: inline-block;
+        padding: 1em;
+    }
+    footer {
+        margin-top: 1em;
+        padding: 1em;
+        border-radius: 25px;
+        background-color: white;
+        color: black;
+    }
+    .l-sidebar {
+        margin-right: 1em;
+        padding: 1em;
+        border-radius: 25px;
+        background-color: white;
+        color: black;
+    }
+    .l-body-middle {
+        border-radius: 25px;
+        min-height: 1024px;
+        background-color: white;
+        color: black;
+    }
+</style>
+EOS;
+
+});
+```
+
 
 # Settings
 

@@ -1,23 +1,25 @@
 <?php
-$posts = get_files([]);
-
+$posts = get_files(['posts_per_page' => 40]);
 ?>
 
-
-<h1>Uploaded Files:</h1>
-
+<h1>사진</h1>
 
 <hr>
 <div class="container mt-3">
     <div class="row">
         <?php foreach ($posts as $post) {
-            // print_r($post);
         ?>
-            <div class="col-3 position-relative border">
+            <div class="col-3 mt-3">
                 <i class="fa fa-trash red fs-sm me-3 pointer" @click="deleteFile(<?= $post['ID'] ?>)"></i>
-                    <i class="fa fa-external-link-alt green fs-sm"></i>
+                <? if ( $post['post_parent'] ?? false ) {
+                    $parent = post_response($post['post_parent']);
+                    ?>
+                <a href="<?=$parent['url']?>">
+                <i class="fa fa-external-link-alt green fs-sm"></i>
                 </a>
-                <img class="w-100" src="<?= REQUESTED_HOME_URL . '/wp-content/uploads/' . $post['_wp_attached_file'] ?>" />
+                <? } ?>
+
+                <img class="w-100" src="<?= $post['thumbnail_url'] ?>" />
             </div>
         <?php } ?>  
     </div>

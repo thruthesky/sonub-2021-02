@@ -540,30 +540,20 @@ function jsBack($msg) {
 
 
 
-function get_files($in)
-{
-    $q = [
-        'numberposts' => -1,
-        'post_type' => 'attachment',
-    ];
-
-    if (isset($in['category_name'])) {
-        $q['category_name'] = $in['category_name'];
-    }
-
-    $posts = get_posts($q);
-    $rets = [];
-    foreach ($posts as $p) {
-        $rets[] = post_response($p);
-    }
-    return $rets;
-}
 
 /**
+ * @deprecated use is_in_admin_page
  * Returns true if the user is in admin page.
  * @return bool
  */
 function is_admin_page() {
+    return is_in_admin_page();
+}
+
+/**
+ * @return bool
+ */
+function is_in_admin_page(): bool {
     return strpos(in('page'), 'admin') === 0;
 }
 

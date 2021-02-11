@@ -67,7 +67,7 @@ class FileRoute {
          * Generating attachment metadata and Resized images derived from the original (thumbnails).
          *
          * @note - `wp_generate_attachment_metadata` will also generates different sizes of the image.
-         *          meaning, it will generate several more files.
+         *          meaning, it will generate several files.
          *
          * @note - it will only generates sizes according to default WP sizes and custom sizes added on functions.php.
          *
@@ -119,7 +119,4 @@ class FileRoute {
     }
 
 
-    public function list($in) {
-        return get_files($in);
-    }
 }
