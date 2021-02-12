@@ -92,7 +92,7 @@ if ( in(md5('set')) == md5('cookie') ) {
  * @param $return_url
  * @return string
  */
-function set_cookie($key, $value, $return_url): string {
+function set_cookie_url($key, $value, $return_url = '/'): string {
     $key = md5($key);
     $set = md5('set');
     $cookie = md5('cookie');
@@ -102,6 +102,9 @@ function set_cookie($key, $value, $return_url): string {
 
 function get_cookie($key) {
     return $_COOKIE[md5($key)] ?? null;
+}
+function is_widget_edit_mode() {
+    return get_cookie('widget_edit') == 'on';
 }
 
 
@@ -510,12 +513,13 @@ function widget_config( string $path, array $default_options = [] ) {
 
 
 /**
- * @param $id - widget id.
+ * @param $widget_id - widget id.
  *  - 카페의 경우, cafe-id-[id] 와 같이 기록되면 된다.
  * @return string
  */
-function dynamic_widget($id) {
-    set_widget_options(['id' => $id]);
+function dynamic_widget($widget_id, $options=[]) {
+    $options['widget_id'] = $widget_id;
+    set_widget_options($options);
     return THEME_DIR . '/etc/widget/load.php';
 }
 
@@ -679,16 +683,3 @@ function browser_language()
     }
 }
 
-
-/**
- * 쿠키에 widget=on 값이 있으면, 위젯을 수정하는 것으로 표시한다.
- *
- * 위젯을 수정하려면, 아래의 예제와 같이 적절한 곳에 링크를 걸면 된다.
- * 참고로, set, cookie, key 를 코두 md5 로 해서, 외부에서 알아보지 못하게 한다.
- * 예) <a href="/?<?=md5('set')?>=<?=md5('cookie')?>&key=<?=md5('widget')?>&value=<? echo is_widget_edit_mode() ? 'off' : 'on' ?>">
- *
- * @todo 카페에서는, 해당 카페 관리자만 해당 카페 위젯을 수정 할 수 있다. 다른 카페 관리자가 내 카페 위젯을 수정 할 수 없다.
- */
-function is_widget_edit_mode(): bool {
-    return ($_COOKIE[md5('widget')] ?? '') == 'on';
-}

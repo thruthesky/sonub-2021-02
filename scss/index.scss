@@ -286,12 +286,18 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
 
 
 .border-radius {
-  border-radius: 3px;
+  border-radius: 3px !important;
 }
 
 
-.border-25 {
-  border-radius: 25px;
+.border-radius-xs {
+  border-radius: 8px;
+}
+.border-radius-sm {
+  border-radius: 12px;
+}
+.border-radius-md {
+  border-radius: 16px;
 }
 
 /**
@@ -315,6 +321,10 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
 }
 .bg-lighter {
   background-color: #fafafa;
+}
+
+.bg-grey {
+  background-color: #efefef;
 }
 .bg-blue {
   background-color: blue;

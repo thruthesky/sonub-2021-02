@@ -39,7 +39,7 @@ $co = cafe_option();
 
 
 <header class="d-none d-md-block">
-    <nav class="d-flex justify-content-between l-center bg-light fs-xs greys">
+    <nav class="d-flex justify-content-between l-center  mt-2 border-radius-xs bg-grey fs-xs">
         <ul class="list-menu p-menu">
             <li><a href="/">홈</a></li>
             <? if ( loggedIn() ) { ?>

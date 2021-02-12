@@ -3,7 +3,7 @@
 
     <?php
     if ( is_cafe_admin() ) {
-        include widget('cafe/admin');
+        include widget('cafe/admin', ['class' => 'border-radius-md']);
     } else { ?>
         <div class="box mb-2">
             <div class="fs-xs">
@@ -18,13 +18,9 @@
 
     <?php
     for( $i=0; $i<10; $i++)
-    include dynamic_widget("cafe-left-sidebar-widget-$i");
+    include dynamic_widget("cafe-left-sidebar-widget-$i", ['class' => 'border-radius-md']);
 
-    include widget('posts/latest', ['category_name' => 'reminder', 'widget_title' => '공지사항']);
     ?>
 
-    <?php
-    include widget('posts/latest', ['category_name' => 'qna', 'widget_title' => '질문과 답변']);
-    ?>
 
 </section>

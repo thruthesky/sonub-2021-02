@@ -285,10 +285,29 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
 * On the widget config, all form data is saved by `etc/widget/config.head.php`.
 
 * 설정에 `dyanmic=yes` 로 된 위젯은 dynamic 으로도 사용 될 수 있고, 또 그냥 사용 될 수 있다.
-* 그냥 사용 할 때에는 위젯 옵션으로 일일히 값을 넘기면 된다.
-* dynamic 으로 사용 할 때에는 위젯 id 만 넘기면, option 에 저장된 설정을 읽어, 자동 적용을 한다.
-* config 에서 원하는 값을 저장 할 수 있다.
+  `dynamic=yes` 설정 옵션이 없는 경우는 다이나믹 위젯 선택 목록에 나오지 않는다.
+  * 참고로, dynamic 위젯을 그냥 위젯으로 사용 할 때에는 일반적인 방법으로 위젯에 옵션 값을 넘기면 된다.
+* 다이나믹 위젯을 원하는 위치에서
+  `include dynamic_widget('widget_id')` 와 같이 호출하면, 그 위치에
+  관리자가 원하는 위젯을 선택 할 수 있다.
+  스크립트에서는 내부적으로 widget_id 에 해당하는 설정을, get_option() 으로 읽어
+  자동 적용을 한다.
+* 그리고, 위젯 설정 모드로 들어가면, 위젯 설정 아이콘을 클릭해서, 설정 화면을 열 수 있다.
+  설정 화면에서 위젯 타입 선택, 게시판 카테고리 선택, 제목 변경 등 다양하게 변경을 할 수 있다.
+  
+* 다음은 다이나믹 위젯을 사용하는 경우, 위젯에서 받는 일반적인 값으로 각 위젯마다 값이 다를 수 있다.
 
+````text
+Array
+(
+    [class] => border-radius-md
+    [widget_id] => cafe-left-sidebar-widget-4
+    [path] => posts/latest
+    [widget_type] => posts
+    [widget_title] => 아이디는?
+    [category] => 
+)
+````
 
 # API & Protocols
 
@@ -1097,3 +1116,17 @@ EOS;
 * When use meet, 'ERROR_WRONG_PASSWORD', check if the password is really wrong. like when user do pass-login, the salt in config may be changed.
 
 * When a user(or admin) logged in wordpress dashboard, then logout by easing session id in cookie may not work. you need to logout from wordpress.
+
+
+
+# Cafe
+
+## 관리자 모드
+
+
+쿠키에 widget_edit=on 값이 있으면, 위젯을 수정하는 것으로 표시한다.
+위젯을 수정하려면, set_cookie_url 을 링크를 걸어 on/off 를 하면 된다.
+
+
+카페 관리자는 다이나믹 위젯으로 위젯 설정을 할 수 있다.
+

@@ -3,25 +3,25 @@
 
 
 
-$o = get_widget_options();
-$dwo = get_dynamic_widget_options($o['id']);
-if ( empty($dwo) ) $dwo = $o;
+$dwo = get_widget_options();
+//$dwo = get_dynamic_widget_options($o['widget_id']);
+//if ( empty($dwo) ) $dwo = $o;
 
 if ( in('mode') == 'save' ) {
+
 
     $in = in();
     unset($in['mode'], $in['page'], $in['update_widget']);
     $dwo = array_merge($dwo, $in);
 
-    set_dynamic_widget_options($o['id'], $dwo);
-    $id = $o['id'];
-    jsGo("/?page=home&update_widget={$id}#$id");
+    set_dynamic_widget_options($dwo['widget_id'], $dwo);
+    jsGo("/?page=home&update_widget={$dwo[widget_id]}#$dwo[widget_id]");
 }
 
 ?>
 
 <section>
-    <div class="fs-xs">위젯 설정 ID: <?=$dwo['id']?></div>
+    <div class="fs-xs">위젯 설정 ID: <?=$dwo['widget_id']?></div>
     <form>
         <input type="hidden" name="mode" value="save">
         <input type="hidden" name="page" value="<?=in('page')?>">

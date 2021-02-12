@@ -23,13 +23,13 @@
     <hr>
     <div class="form-check form-check-inline">
         <input class="form-check-input" type="radio" name="language" id="korean" value="ko" <? if ( get_user_language() == 'ko' ) echo 'checked'; ?>
-        onclick="location.href='<?=set_cookie('language', 'ko', '/?page=admin/home')?>'"
+        onclick="location.href='<?=set_cookie_url('language', 'ko', '/?page=admin/home')?>'"
         >
         <label class="form-check-label" for="korean">한국어</label>
     </div>
     <div class="form-check form-check-inline">
         <input class="form-check-input" type="radio" name="language" id="english" value="en" <? if ( get_user_language() == 'en' ) echo 'checked'; ?>
-               onclick="location.href='<?=set_cookie('language', 'en', '/?page=admin/home')?>'"
+               onclick="location.href='<?=set_cookie_url('language', 'en', '/?page=admin/home')?>'"
         >
         <label class="form-check-label" for="english">영어</label>
     </div>
