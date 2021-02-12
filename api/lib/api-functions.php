@@ -41,6 +41,10 @@ function get_JSON_input()
  * @param null $default
  * @return mixed|null
  *
+ * @주의 HTTP 입력이 page=forum.edit 인 경우, in('page') 는 forum/edit 으로 리턴한다.
+ *  이 때, page=forum.edit.submit 인 경우, forum/edit.submit 으로 리턴한다.
+ *
+ *  즉, page 의 . 를 / 으로 바꾸어 리턴한다.
  */
 function in($name = null, $default = null)
 {
@@ -2339,7 +2343,7 @@ function api_notify_translation_update()
 function get_domain_theme($admin=true)
 {
     if (API_CALL) return null;
-    if ($admin && is_admin_page()) return 'admin';
+    if ($admin && is_in_admin_page()) return 'admin';
     global $domain_themes;
     if (!isset($domain_themes)) return null;
     $_host = get_host_name();
@@ -2739,7 +2743,7 @@ function get_first_slug($categories)
 function category_meta($cat_ID, $name, $default_value = '')
 {
     $v = get_term_meta($cat_ID, $name, true);
-    run_hook(__FUNCTION__, $name, $v);
+    run_hook('category_meta', $name, $v);
     if ($v) return $v;
     else return $default_value;
 }

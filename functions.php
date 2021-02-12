@@ -232,7 +232,7 @@ EOJ;
 function get_theme_page_path($theme, $page)
 {
 
-    if ( is_admin_page() ) {
+    if ( is_in_admin_page() ) {
         $page = str_replace("admin/", "", $page);
         return THEME_DIR . "/themes/admin/$page.php";
     }
@@ -249,6 +249,18 @@ function get_theme_page_path($theme, $page)
     return $script;
 }
 
+/**
+ * get_theme_page_path 를 짧게 쓸 수 있는 helper 함수
+ * @param $page
+ * @return string
+ */
+function get_script($page): string {
+    return get_theme_page_path(DOMAIN_THEME, $page);
+}
+
+
+
+
 
 
 
@@ -260,6 +272,10 @@ function get_theme_page_path($theme, $page)
  * @note HTTP 입력 값에 in('page') 가 있으면, 해당 페이지 스크립트를 연다.
  *   만약, in('page') 가 없다면,
  *     - cafe 카테고리 하위의 카테고리라면
+ *
+ * @주의 in('page') 의 경우, forum.list 로 입력되어도, forum/list 로 리턴한다.
+ *   즉, . 을 / 로 바꾸어, 폴더 경로에 맞도록 리턴하는 것이다.
+ *   만약, /submit 으로 끝이나면 .submit 으로 변경해서 리턴한다. 즉, forum/edit/submit 은 forum/edit.submit 으로 된다.
  *
  * Example of returns would be
  *  - 'home' for home page or if there is no information from http request.
@@ -273,8 +289,7 @@ function get_theme_page_file_name() {
     if (in('page')) {
         $page = in('page');
     } else {
-        $uri = $_SERVER['REQUEST_URI'];
-        if (empty($uri) || $uri == '/') $page = 'home';
+        if ( is_in_home_page() ) $page = 'home';
         else $page = 'forum/view';
     }
     return $page;
@@ -354,6 +369,13 @@ function get_error_description()
 {
     global $_error_description;
     return $_error_description;
+}
+
+/**
+ * widget 이나 page 등에서 스크립트를 로드 할 필요가 없는 경우, 이 empty 스크립트를 지정한다.
+ */
+function empty_script() {
+    return THEME_DIR . "/themes/default/empty.php";
 }
 
 
@@ -505,7 +527,8 @@ function widget_config( string $path, array $default_options = [] ) {
     } else {
         $_path = THEME_DIR . "/widgets/$arr[0]/$arr[1]/$arr[1].config.php";
         if ( ! file_exists($_path) ) {
-            $_path = get_error_script('File not found', "file: $_path Widget script does not exist!");
+            $_path = empty_script();
+//            $_path = get_error_script('File not found', "file: $_path Widget script does not exist!");
         }
     }
     return $_path;
@@ -561,6 +584,11 @@ function jsGo($url)
     return 0;
 }
 
+/**
+ * Javascript 로 돌아가기를 하고, PHP exit 한다.
+ * @param $msg
+ *
+ */
 function jsBack($msg) {
     echo "
     <script>
@@ -579,15 +607,25 @@ function jsBack($msg) {
  * Returns true if the user is in admin page.
  * @return bool
  */
-function is_admin_page() {
-    return is_in_admin_page();
-}
+//function is_admin_page() {
+//    return is_in_admin_page();
+//}
 
 /**
+ * 사용자가 관리자 페이지에 있으면 참을 리턴한다.
  * @return bool
  */
 function is_in_admin_page(): bool {
     return strpos(in('page'), 'admin') === 0;
+}
+
+/**
+ * 사용자가 홈페이지에 있으면 true 를 리턴한다.
+ * @return bool
+ */
+function is_in_home_page(): bool {
+    $uri = $_SERVER['REQUEST_URI'];
+    return empty($uri) || $uri == '/';
 }
 
 

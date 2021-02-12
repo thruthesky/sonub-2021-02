@@ -28,13 +28,16 @@ $settings = api_get_settings();
 <html>
 <head>
     <TITLE><?= ($_ = run_hook('html_title'))? $_ : ($settings['site_name'] ?? '') ?></TITLE>
-    <link href="<?=THEME_URL?>/css/bootstrap-5.0.0-b1-min.css" rel="stylesheet">
+    <link href="<?=THEME_URL?>/etc/bootstrap-5-b2/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?=THEME_URL?>/css/fontawesome-free-5.15.2-web/css/all.css" rel="stylesheet">
     <link rel="stylesheet" href="<?=THEME_URL?>/css/index.css?v=<?=build_version()?>">
     <?php load_theme_css($theme_page); ?>
     <?php live_reload_js() ?>
     <?php insert_initial_javascript() ?>
     <?=run_hook('html_head')?>
+    <style>
+        .btn { transition: none !important; }
+    </style>
 </head>
 <body class="<?=get_theme_page_class_name()?>">
 <section id="app">
@@ -46,6 +49,7 @@ $settings = api_get_settings();
         end_capture_script_style();
     ?>
 </section>
+
 
 <? insert_extracted_styles_from_script() ?>
 
@@ -73,7 +77,7 @@ $settings = api_get_settings();
         cookie_domain: '<?=get_cookie_domain()?>',
     };
 </script>
-<script src="<?=THEME_URL?>/js/bootstrap-5.0.0-b1-min.js"></script>
+<script src="<?=THEME_URL?>/etc/bootstrap-5-b2/js/bootstrap.min.js"></script>
 <script src="<?=THEME_URL?>/js/vue.3.0.5-min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-messaging.js"></script>
@@ -82,6 +86,7 @@ $settings = api_get_settings();
 <?php load_theme_js($theme_page); ?>
 <? if ( is_forum_page() ) { ?><script src="<?php echo THEME_URL . '/js/app.forum.js'?>?v=<?=build_version()?>"></script><? } ?>
 <script src="<?php echo THEME_URL . '/js/app.js'?>?v=<?=build_version()?>"></script>
+
 
 
 </body>

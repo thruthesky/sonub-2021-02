@@ -5,6 +5,29 @@
 * The reason why we have chosen as its backend frame is because 1) It's easy. Team members can easily learn it. 2) It's almost a standard CMS and widely used all over the world.
 
 
+#### 제대로 된 위젯을 만들어, 위젯 시스템을 종료할 것. 위젯 시스템을 bootstrap 팝업 창을 띄워서 할 것
+
+config.php 와 가티 .php 를 작성하지 말고, .ini 파일에 아래와 같이 설정을 해서, vue.js 로 읽어서 동적으로 설정을 할 수 있도록 한다.
+
+```
+[form]
+widget_title[type] = text
+widget_title[label] = '위젯 타이틀'
+widget_title[default] = '제목'
+widget_title[hint] = '제목을 입력하세요.'
+
+category[type] = select
+category[label] = '글 카테고리'
+category[options] = cafe_category_options
+category[default_value] = ''
+category[default_label] = '카테고리 선택'
+category[hint] = '글 카테고리를 선택하세요.'
+
+no_of_posts[type] = number
+no_of_posts[label] = 글 수
+no_of_posts[hint] = 몇 개의 글을 목록할까요?
+no_of_posts[default] = 5
+```
 
 
 
@@ -143,7 +166,7 @@ node live-reload.js
 
 * `sonub` is the theme folder.
 * `sonub/api` is the api folder and most of codes goes in this folder.
-  * `composer` is installed in this folder.
+  * `composer` is installed in this folder. But `vendor/autoload.php` is included by `functions.php`.
   * `sonub/api/lib/api-functions.php` is the PHP script that holds most of the core functions.
   * `sonub/api/phpunit` is the unit testing folder.
   * `sonub/api/ext` folder is where you can put your own custom routes.
@@ -271,10 +294,15 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
   * Lastly, you need to put it on admin page, so admin can choose which widget to display on the browser.
     * To see how to code on admin page, see `themes/sonub/themes/default/admin/forum/setting.php`.
 
-* Widgets that are not used in admin page may not need `.ini` file.
+* Widgets that do not have `.ini` file will no be shown in admin settings.
+  That means, the widget cannot be set in admin page. It may only be used programmatically.
 
 * When including widgets, you can pass variables over the second parameter.
   It is an optional and if you can get the needed data without passing the param, then you can it in your way.
+
+* Important, widgets must get data from `get_widget_options()` since, the parameta has hook patched data.
+  * For instance, on forum list widget, the category variable has patached by hook before the widget is loaded.
+
 
 ### Dynamic Widget Config
 
@@ -995,6 +1023,16 @@ if ( in('mode') == 'delete' ) {
 * 동일한 hook 이름에 여러개 훅을 지정 할 수 있다.
 * 훅 함수에는 변수를 얼마든지 마음데로 지정 할 수 있으며 모두 reference 로 전달된다.
 * 훅 함수가 값을 리턴 할 수 있다. 동일한 훅에서 리턴되는 값을 모아서, run_hoo() 의 결과로 리턴한다.
+  
+* 모든 훅 함수는 값을 리턴하거나 파라메타로 받은 레퍼런스 변수를 수정하는 것이 원칙이다.
+  * 가능한, 어떤 값을 화면으로 출력하지 않도록 해야하지만,
+  * 글 쓰기에서 권한이 없는 경우, 미리 체크를 해야하지만, 그렇지 못한 경우 훅에서 검사해서
+    Javascript 로 goBack() 하고 exit 할 수 있다.
+    이 처럼 꼭 필요한 경우에는 직접 HTML 출력을 한다.
+  
+* 훅의 목적은 가능한 기본 코드를 재 사용하되, 원하는 기능 또는 UI/UX 로 적용하기 위한 것이다.
+  * 예를 들면, 게시판 목록의 기본 widget 을 사용하되, 사용자 화면에 보이거나, 알림 등의 재 활용 할 수 있도록 하는 것이다.
+  
 
 훅 함수 호출 예제)
 ```
@@ -1030,6 +1068,25 @@ d($v);
 
 
 ## 훅 목록과 설명
+
+### 전체 목록
+
+html_head, html_title, site_name,
+category_meta,
+
+* forum_list_header_top - 게시판 목록 최 상단에 표시
+* forum_list_header_bottom - 게시판 목록의 헤더의 맨 아래 부분에 표시.
+
+* forum_category - 포럼의 전체 영역(카테고리 목록이나 글 쓰기 등)에서 해당 게시판의 category 정보를 변경 할 수 있다.
+  이를 통해 cat_name 등을 변경 하여 게시판 이름을 다르게 출력 할 수 있다.
+
+
+
+### 게시판 설정 훅
+
+- 게시판 설정을 가져오는 함수 `category_meta()` 가 있는데, 이 함수는 단순히, 게시판의 wp_termmeta, 값을 가져오는 helper 함수이다.
+  이 함수를 사용 할 때, `category_meta` 훅을 발생시킨다.
+  주로 게시판 설정을 변경하고자 할 때 사용가능하다.
 
 ### 훅으로 HTML TITLE 변경하기
 
@@ -1102,6 +1159,12 @@ EOS;
 });
 ```
 
+# Markdown 사용
+
+* https://commonmark.thephpleague.com/1.5/ 을 사용한다.
+* 도움말 페이지 등을 내용이 긴 HTML 을 markdown 으로 출력한다.
+  `etc/markdown/display-markdown.php` 을 참조.
+
 
 # Settings
 
@@ -1129,4 +1192,12 @@ EOS;
 
 
 카페 관리자는 다이나믹 위젯으로 위젯 설정을 할 수 있다.
+
+## 도메인 별 설정
+
+* 특정 도메인에 교민 사이트 국가를 미리 정할 수 있다. 그래서 카페를 개설 할 때, 선택 할 필요없이 고정된다.
+  cafe.config.php 에서 설정을 하면 된다.
+  설정 예)
+  `CAFE_DOMAIN_SETTING => ['countryCode' => 'KR']`
+  
 

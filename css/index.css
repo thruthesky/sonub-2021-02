@@ -49,6 +49,17 @@ a {
 }
 
 /**
+ * Paddings
+ */
+.p-a-xs a {
+  padding: 0.5em !important;
+}
+
+.px-25 {
+  padding: 0.75em !important;
+}
+
+/**
  * Utilities
  */
 .fs-xxs {
@@ -343,10 +354,14 @@ input[type=file]::-webkit-file-upload-button {
  * Colors
  */
 .white {
-  color: white;
+  color: white !important;
 }
 
 .grey {
+  color: grey;
+}
+
+.greys * {
   color: grey;
 }
 
@@ -363,7 +378,7 @@ input[type=file]::-webkit-file-upload-button {
 }
 
 .bg-lighter {
-  background-color: #fafafa;
+  background-color: #f8f8f8;
 }
 
 .bg-grey {
@@ -434,6 +449,29 @@ input[type=file]::-webkit-file-upload-button {
   font-size: 12px;
   color: grey;
   font-style: italic;
+}
+
+/**
+ * etc/markdwon/display-markdown.php 에 사용되는 MARKDOWN 용 style
+ */
+ul.table-of-contents li {
+  padding: 0 !important;
+}
+ul.table-of-contents li p {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.markdown li {
+  padding: 0.5em 0;
+}
+
+.heading-permalink {
+  display: inline-block;
+  padding: 0.1em 0.25em 0 0;
+  color: #999999;
+  font-size: 0.8em;
+  vertical-align: top;
 }
 
 /*# sourceMappingURL=index.css.map */

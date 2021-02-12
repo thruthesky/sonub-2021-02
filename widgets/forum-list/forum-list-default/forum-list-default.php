@@ -7,16 +7,21 @@ $offset = ($page_no - 1) * $posts_per_page;
 $q = ['category_name' => $category->slug, 'posts_per_page' => $posts_per_page, 'offset' => $offset];
 $posts = forum_search($q);
 
+if ( empty($posts) ) {
+    include get_script('error/forum.no-posts');
+    return;
+}
 ?>
+
 <section class="post-list p-2">
     <?php
     foreach ($posts as $post) {
-    ?>
+        ?>
         <a class="d-flex justify-content-between mb-2" href="<?php echo $post['url'] ?>">
 
             <div class="d-flex">
                 <? if ( $post['profile_photo_url'] ) { ?>
-                <img class="me-3 size-40 circle" src="<?= $post['profile_photo_url'] ?>">
+                    <img class="me-3 size-40 circle" src="<?= $post['profile_photo_url'] ?>">
                 <? } ?>
                 <h1><?php echo $post['post_title'] ?></h1>
             </div>

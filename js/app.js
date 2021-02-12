@@ -260,6 +260,7 @@ const AttributeBinding = {
         };
       }
     },
+
     /**
      * alert
      * @param title

@@ -47,6 +47,21 @@ a {
 }
 
 /**
+ * Paddings
+ */
+// padding of child a tags.
+.p-a-xs {
+  a {
+    padding: .5em !important;
+  }
+}
+
+// px-2 와 px-3 의 중간 사이즈이다.
+.px-25 {
+  padding: .75em !important;
+}
+
+/**
  * Utilities
  */
 .fs-xxs {
@@ -210,6 +225,8 @@ a {
   height: 128px;
 }
 
+
+/// Lines and Heights
 /// 글자 행의 높이는 글자 크기, 행 높이로 나누어진다.
 /// 글자가 1em 인 경우, height: 1em 이면, 너무 딱 맞는 높이가 된다. 그래서 약간 여백을 주려면 height: 1.5em 정도로 한다.
 /// .h-1em, .h-2em 이 꽤 유용하다.
@@ -304,9 +321,12 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
  * Colors
  */
 .white {
-  color: white;
+  color: white !important;
 }
 .grey {
+  color: grey;
+}
+.greys * {
   color: grey;
 }
 .light {
@@ -320,7 +340,7 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
   color: blue;
 }
 .bg-lighter {
-  background-color: #fafafa;
+  background-color: #f8f8f8;
 }
 
 .bg-grey {
@@ -389,4 +409,34 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
   font-size: 12px;
   color: grey;
   font-style: italic;
+}
+
+/**
+ * etc/markdwon/display-markdown.php 에 사용되는 MARKDOWN 용 style
+ */
+
+ul.table-of-contents {
+  li {
+    padding: 0 !important;
+    p {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+  }
+}
+
+
+.markdown {
+  li {
+    padding: .5em 0;
+  }
+}
+
+
+.heading-permalink {
+  display: inline-block;
+  padding: .1em .25em 0 0;
+  color: #999999;
+  font-size: .8em;
+  vertical-align: top;
 }

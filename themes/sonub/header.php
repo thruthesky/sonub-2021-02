@@ -38,8 +38,9 @@ $co = cafe_option();
 
 
 
+
 <header class="d-none d-md-block">
-    <nav class="d-flex justify-content-between l-center  mt-2 border-radius-xs bg-grey fs-xs">
+    <nav class="d-flex justify-content-between l-center  mt-2 border-radius-xs greys bg-lighter fs-xs p-a-xs">
         <ul class="list-menu p-menu">
             <li><a href="/">홈</a></li>
             <? if ( loggedIn() ) { ?>
@@ -83,6 +84,7 @@ $co = cafe_option();
             </form>
         </div>
     </section>
+
 
     <? include 'header.desktop.mainmenu.php' ?>
 

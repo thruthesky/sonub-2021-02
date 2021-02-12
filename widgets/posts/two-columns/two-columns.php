@@ -11,7 +11,7 @@
  */
 $o = get_widget_options();
 $posts = latest_photos([
-    'category_name' => $o['left']['category_name'],
+    'category_name' => $o['left']['category_name'] ?? '',
     'posts_per_page' => 1,
 ]);
 if ( empty($posts) ) {
@@ -23,7 +23,7 @@ if ( empty($posts) ) {
 $big = $posts[0];
 
 $left_posts = latest_search([
-    'category_name' => $o['left']['category_name'],
+    'category_name' => $o['left']['category_name'] ?? '',
     'posts_per_page' => 7,
     'post__not_in' => [$big['ID']],
 ]);
@@ -32,7 +32,7 @@ $left_posts = latest_search([
 
 
 $right_photos = latest_photos([
-    'category_name' => $o['middle']['category_name'],
+    'category_name' => $o['right']['category_name'] ?? '',
     'posts_per_page' => 4,
 ]);
 
@@ -41,7 +41,7 @@ $right_photos = latest_photos([
 
 
 $right_posts = latest_search([
-    'category_name' => $o['middle']['category_name'],
+    'category_name' => $o['right']['category_name'] ?? '',
     'posts_per_page' => 4,
     'post__not_in' => App::getIDs($right_photos),
 ]);
@@ -53,7 +53,7 @@ if ( count($right_photos) != 4 ) {
 
 ?>
 <div class="container">
-    <section class="posts-multi-column box row <?=$o['class'] ?? ''?>">
+    <section class="posts-multi-column box mb-2 row <?=$o['class'] ?? ''?>">
         <div class="col-12 col-sm-6">
             <a class="d-block" href="<?=$big['url']?>">
                 <div class="h-xxxl of-hidden">

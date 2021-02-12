@@ -6,12 +6,9 @@ $o = get_widget_options();
 <div class="box mb-2 <?=$o['class'] ?? ''?>">
     <div class="d-flex justify-content-between">
         <div>카페 관리자</div>
-        <div>
-            <i class="fa fa-cog"></i>
-        </div>
     </div>
     <ul>
-        <li>회원 관리</li>
+        <li><a href="https://github.com/thruthesky/sonub/issues/14" target="_blank">@TODO 회원 관리</a></li>
         <li>게시글 관리</li>
         <li>게시판 관리</li>
         <li>전체 사진 목록</li>
@@ -27,6 +24,7 @@ $o = get_widget_options();
                 <? } ?>
             </a>
         </li>
+        <li><a href="/?page=cafe.tip">카페 운영 팁</a></li>
         <li>카페 운영 문의하기</li>
     </ul>
 

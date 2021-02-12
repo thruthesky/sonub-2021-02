@@ -4,10 +4,11 @@
  * @desc view page
  */
 
+$o = get_widget_options();
+$category = $o['category'];
 /**
  * Get the post
  */
-
 $post = get_current_page_post();
 $post = post_response($post, ['with_autop' => true]);
 

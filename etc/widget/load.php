@@ -3,7 +3,7 @@
 $o = get_widget_options();
 $dwo = get_dynamic_widget_options($o['widget_id']);
 
-if ( ! $dwo ) { // dynamic 위젯 설정이 안된 경우,
+if ( ! $dwo || empty($dwo['path']) ) { // dynamic 위젯 설정이 안된 경우,
     if ( is_widget_edit_mode() ) { // 관리자가 위젯 설정을 한다고하면 기본 위젯 보여 줌
         $dwo['path'] = 'dynamic/default';
     } else {
