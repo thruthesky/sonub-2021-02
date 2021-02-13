@@ -6,7 +6,7 @@ include_once('cafe.config.php');
 
 foreach(CAFE_ROOT_DOMAINS as $_domain) {
     if ( stripos(get_domain_name(), $_domain) !== false ) {
-        define( 'CAFE_ROOT_DOMAIN', 'sonub.com' );
+        define( 'CAFE_ROOT_DOMAIN', get_root_domain() );
         break;
     }
 }
