@@ -47,6 +47,17 @@ a {
 }
 
 /**
+ * 페이지 구성요소.
+ * 검색에 사용되는 입력 창은 포커스 라인을 보이지 않는다.
+ */
+.search {
+  input:focus {
+    outline: none !important;
+  }
+}
+
+
+/**
  * Paddings
  */
 // padding of child a tags.
