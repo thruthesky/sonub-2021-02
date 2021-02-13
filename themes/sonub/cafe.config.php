@@ -21,6 +21,9 @@ define('NO_OF_CAFE_WIDGETS', 12);
  * README.md 참고
  */
 define('CAFE_DOMAIN_SETTING', [
+    'philov.com' => [
+        'countryCode' => 'PH',
+    ],
     'philgo.net' => [
         'countryCode' => 'PH',
     ],
