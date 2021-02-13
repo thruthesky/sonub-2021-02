@@ -15,6 +15,7 @@ define('APP_VERSION', '0.1.5');
  */
 
 $domain_themes = [
+    'philov' => 'sonub',
     'sonub' => 'sonub',
     'goldenage50' => 'goldenage50',
 ];
