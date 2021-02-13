@@ -23,8 +23,9 @@ if ( is_in_cafe() == false ) {
             include dynamic_widget("cafe-home-widget-$i", ['class' => 'border-radius-md']);
         }
     } else {
-        echo "위젯을 선택해주세요.";
-        include widget('posts/latest', ['widget_title' => '최근 글']);
+        include widget('posts/latest', ['widget_title' => '최근 글', 'class' => 'border-radius-md']);
+        include widget('posts/latest', ['widget_title' => '최근 글', 'class' => 'border-radius-md']);
+        include widget('posts/latest', ['widget_title' => '최근 글', 'class' => 'border-radius-md']);
     }
 
 }

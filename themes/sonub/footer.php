@@ -6,8 +6,10 @@ if ( is_in_home_page() ) {
 ?>
 </section><!--/.l-content-->
 
-<footer>
-    <nav class="d-none d-sm-flex justify-content-between l-center bg-light">
-        (C) 2021 Sonub.com
+<footer class="mt-5">
+    <nav class="l-center bg-light border-radius-md">
+        <div class="p-5">
+            (C) 2021 <?=get_root_domain()?>
+        </div>
     </nav>
 </footer>

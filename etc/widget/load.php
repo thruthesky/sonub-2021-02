@@ -1,6 +1,7 @@
 <?php
 
 $o = get_widget_options();
+/// @var $dwo 현재 위젯 설정 정보를 가지고 있다.
 $dwo = get_dynamic_widget_options($o['widget_id']);
 
 if ( ! $dwo || empty($dwo['path']) ) { // dynamic 위젯 설정이 안된 경우,
@@ -11,7 +12,7 @@ if ( ! $dwo || empty($dwo['path']) ) { // dynamic 위젯 설정이 안된 경우
         return;
     }
 }
-
+/// 위젯 옵션과 다이나믹 위젯 옵션을 합친다.
 $dwo = array_merge($o, $dwo);
 
 if ( !isset($dwo['widget_type']) ) $dwo['widget_type'] = '';
@@ -31,6 +32,8 @@ include widget($dwo['path'], $dwo);
 <?php } ?>
     </div>
 <?php
+/// 위젯 수정 모드이면, 선택된 위젯을 설정 할 수 있도록 한다.
+/// $dwo 변수를 그대로 사용 할 수 있다.
 if ( in('update_widget') == $o['widget_id'] ) {
     /// 위젯 수정. 현재 위젯이 업데이트하려는 위젯 id 와 동일하면 수정.
     /// @todo 현재 카페 관리자만 수정 할 수 있도록 한다.

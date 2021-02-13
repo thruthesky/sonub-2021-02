@@ -1,4 +1,6 @@
-
+<?php
+global $dwo;
+?>
 <div class="d-flex justify-content-between align-items-center my-2">
     <button class="btn btn-sm btn-secondary px-3" type="submit">저장</button>
     <div class="fs-xs">
@@ -6,6 +8,7 @@
     </div>
 </div>
 
+<div class="fs-xs">위젯: <?=$dwo['widget_id']?></div>
 </form>
 </section>
 

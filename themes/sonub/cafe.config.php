@@ -138,6 +138,11 @@ add_hook('forum_category', function(&$category) {
     }
 });
 
+/**
+ * 게시판 헤더 밑 부분 훅
+ *
+ * - 전체 공유 공지 표시
+ */
 add_hook('forum_list_header_bottom', function(&$category) {
     $orgCategory = original_category($category->slug);
     if ( isset(CAFE_CATEGORIES[$orgCategory]) ) {
@@ -149,4 +154,26 @@ add_hook('forum_list_header_bottom', function(&$category) {
 EOH;
 
     }
+});
+
+
+/**
+ * 위젯 카테고리 설정에서, 카페의 카테고리를 넣어준다. 이 때, 국가별 코드도 같이 넣어 준다.
+ */
+add_hook('widget/config.category_name categories', function(&$categories) {
+    $categories = [];
+    foreach( CAFE_CATEGORIES as $slug => $opt ) {
+        $obj = new stdClass();
+        $obj->slug = $slug . '_' . cafe_country_code();
+        $obj->cat_name = $opt['name'];
+        $categories[] = $obj;
+    }
+});
+
+/**
+ * 위젯 카테고리 설정에서, 카테고리를 선택하지 않는 경우, 카페 국가로 제한 한다.
+ */
+add_hook('widget/config.category_name default_option', function(&$option) {
+    $option['label'] = '전체 카테고리';
+    $option['value'] = cafe_country_code();
 });

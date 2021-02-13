@@ -625,7 +625,7 @@ function is_in_admin_page(): bool {
  */
 function is_in_home_page(): bool {
     $uri = $_SERVER['REQUEST_URI'];
-    return empty($uri) || $uri == '/';
+    return empty($uri) || $uri == '/' || in('page') == 'home';
 }
 
 

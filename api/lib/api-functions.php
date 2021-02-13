@@ -418,7 +418,7 @@ function my($field)
 /**
  * Login
  *
- * It logs in and return 0 on success.
+ * It let user log in and return 0 on success.
  *
  * It returns zero(0). Or error code on error.
  *
@@ -1955,6 +1955,7 @@ function latest_photos($in) {
             'compare' => '!='
         ]
     ];
+
     return latest_search($in);
 }
 

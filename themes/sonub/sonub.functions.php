@@ -248,11 +248,13 @@ function original_category($categorySlug) {
 }
 
 function update_widget_icon($widget_id) {
-    return "<a href='/?page=home&update_widget=$widget_id#$widget_id'><i class='fa fa-cog'></a></i>";
+    return "<a href='/?page=home&update_widget=$widget_id#$widget_id'><i class='fa fa-cog'></i></a>";
 }
 
 
 /**
+ *
+ * 다이나믹 위젯의 설정을 저장/삭제하고 가져오는 함수
  * @param $id - widget id
  * @return false|mixed|void
  */
@@ -261,6 +263,10 @@ function get_dynamic_widget_options($id) {
 }
 function set_dynamic_widget_options($id, $data) {
     return update_option(get_current_cafe_id_key() . '-' .$id, $data, false);
+}
+
+function delete_dynamic_widget_options($id) {
+    return delete_option(get_current_cafe_id_key() . '-' .$id);
 }
 
 

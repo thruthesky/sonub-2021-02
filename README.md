@@ -5,29 +5,6 @@
 * The reason why we have chosen as its backend frame is because 1) It's easy. Team members can easily learn it. 2) It's almost a standard CMS and widely used all over the world.
 
 
-#### 제대로 된 위젯을 만들어, 위젯 시스템을 종료할 것. 위젯 시스템을 bootstrap 팝업 창을 띄워서 할 것
-
-config.php 와 가티 .php 를 작성하지 말고, .ini 파일에 아래와 같이 설정을 해서, vue.js 로 읽어서 동적으로 설정을 할 수 있도록 한다.
-
-```
-[form]
-widget_title[type] = text
-widget_title[label] = '위젯 타이틀'
-widget_title[default] = '제목'
-widget_title[hint] = '제목을 입력하세요.'
-
-category[type] = select
-category[label] = '글 카테고리'
-category[options] = cafe_category_options
-category[default_value] = ''
-category[default_label] = '카테고리 선택'
-category[hint] = '글 카테고리를 선택하세요.'
-
-no_of_posts[type] = number
-no_of_posts[label] = 글 수
-no_of_posts[hint] = 몇 개의 글을 목록할까요?
-no_of_posts[default] = 5
-```
 
 
 
@@ -310,7 +287,14 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
   * `widgets/[widget-type]/[widget-name]/[widget-naem].config.php` will be shown below the widget for configuration the widget.
   * If widget is not selected, `widgets/dynamic/default` widget will be used.
 
-* On the widget config, all form data is saved by `etc/widget/config.head.php`.
+* 위젯 설정 FORM 을 전송하면, `etc/widget/config.head.php` 에서 저장한다.
+
+* 주의: 위젯 설정은 그대로 get_posts() 함수로 전달된다. 따라서, 위젯에서 저장하는 변수를 임의대로 작정하면 안되고,
+  카테고리를 지정하는 경우,'category_name' 와 같이 검색 옵션에 사용되는 옵션 이름으로 기록해야한다.
+  
+  * 카테고리: category_name
+  * 글 수: posts_per_page
+  * 특정 사용자가 쓴 글:  도움말: 글의 URL 을 복사해 넣으면 그 사용자의 최신글을 표시.
 
 * 설정에 `dyanmic=yes` 로 된 위젯은 dynamic 으로도 사용 될 수 있고, 또 그냥 사용 될 수 있다.
   `dynamic=yes` 설정 옵션이 없는 경우는 다이나믹 위젯 선택 목록에 나오지 않는다.
@@ -322,6 +306,10 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
   자동 적용을 한다.
 * 그리고, 위젯 설정 모드로 들어가면, 위젯 설정 아이콘을 클릭해서, 설정 화면을 열 수 있다.
   설정 화면에서 위젯 타입 선택, 게시판 카테고리 선택, 제목 변경 등 다양하게 변경을 할 수 있다.
+
+* 옵션에 특정 사용자가 쓴 글 옵션을 줄 필요 없다. 왜냐하면 그 사용자가 정말 여러가지의 글을 쓸 수 있기 때문에 특정 카테고리화를 할 수 없다.
+* 카페 기능에서, 위젯을 사용 할 때, '내 카페에서 쓴 글만 표시' 옵션을 사용하지 않는다. 왜냐하면,
+  내 카페에서 쓴 글이 다른 카페에서 보여 질 수 있고, 코멘트가 다른 카페에서 쓰여지고, 그 연관 새 글이 쓰여질 수 있기 때문이다.
   
 * 다음은 다이나믹 위젯을 사용하는 경우, 위젯에서 받는 일반적인 값으로 각 위젯마다 값이 다를 수 있다.
 
@@ -1033,6 +1021,7 @@ if ( in('mode') == 'delete' ) {
 * 훅의 목적은 가능한 기본 코드를 재 사용하되, 원하는 기능 또는 UI/UX 로 적용하기 위한 것이다.
   * 예를 들면, 게시판 목록의 기본 widget 을 사용하되, 사용자 화면에 보이거나, 알림 등의 재 활용 할 수 있도록 하는 것이다.
   
+* 위젯에서 훅을 사용하는 경우, `widgets/posts/latest option` 와 같이 공백을 두고, `위젯경로 훅이름`으로 훅 이름을 정한다.
 
 훅 함수 호출 예제)
 ```
@@ -1069,10 +1058,15 @@ d($v);
 
 ## 훅 목록과 설명
 
-### 전체 목록
+### 전체 훅 목록
 
-html_head, html_title, site_name,
-category_meta,
+* html_head
+
+* html_title
+  
+* site_name - HTML 에 사이트 이름을 출력 할 때
+
+* category_meta,
 
 * forum_list_header_top - 게시판 목록 최 상단에 표시
 * forum_list_header_bottom - 게시판 목록의 헤더의 맨 아래 부분에 표시.
@@ -1080,7 +1074,22 @@ category_meta,
 * forum_category - 포럼의 전체 영역(카테고리 목록이나 글 쓰기 등)에서 해당 게시판의 category 정보를 변경 할 수 있다.
   이를 통해 cat_name 등을 변경 하여 게시판 이름을 다르게 출력 할 수 있다.
 
+* `widgets/posts/latest option` - 최근 글 위젯에서 글을 가져오기 전에 옵션을 수정 할 수 있는 훅
+  `widgets/**/**` 에 기본적으로 모든 위젯의 훅이 들어있도록 한다.
 
+
+* `widget/config.category_name categories`
+  다이나믹 위젯 설정에서 카테고리를 재 지정 할 수 있다.
+  전달되는 변수는 get_categories() 의 결과인데,
+  변경을 하려면 배열에 category term object 를 넣어주거나
+  [stdClass(slug ='', cat_name=>'')] 과 같이 slug 와 cat_name 을 가지는 stdClass 를 넣어줘도 된다.
+  
+  특히, 교민 포털 카테고리에서는 게시판 카테고리가 존재하지 않을 수도 있으므로, stdClass 로 만들어 넣어줘야한다.
+
+* `widget/config.category_name default_option`
+  카테고리 선택에서, 선택된 값이 없을 경우, 기본적으로 보여 줄 옵션이다. 보통은 빈 값에, "카테고리 선택" 을 표시하면 된다.
+  하지만, 카페에서는 카테고리 선택이 되지 않은 경우, 국가별 카테고리로 검색을 제한해야 한다.
+  
 
 ### 게시판 설정 훅
 
@@ -1200,4 +1209,5 @@ EOS;
   설정 예)
   `CAFE_DOMAIN_SETTING => ['countryCode' => 'KR']`
   
+* 위젯에서, 국가별 게시판 카테고리를 정해 주어야하는데, 설정에서 국가별 카테고리를 선택 할 수 있도록 한다.
 

@@ -10,14 +10,17 @@
  * - $o['widget_title'] is the widget title.
  */
 $o = get_widget_options();
+run_hook('widgets/posts/latest-photos option', $o);
+$o['category_name'] = 'kr';
 $posts = latest_photos($o);
+//d($posts);
 
 
 
 
 
 ?>
-<section class="posts-latest box mb-2 <?=$o['class'] ?? ''?>">
+<section class="latest-photos box mb-2 <?=$o['class'] ?? ''?>">
     <a class="d-flex justify-content-between" href="/?page=forum/list&category=<?=$o['category_name'] ?? ''?>">
         <h2 class="fs-normal"><?=$o['widget_title'] ?? ''?></h2>
         <i class="fa fa-angle-double-right"></i>
@@ -29,14 +32,21 @@ $posts = latest_photos($o);
 if (           empty($post['files']) ) continue;
             ?>
             <div class="post w-100px of-hidden">
-                <a href="<?=$post['url']?>" class="post-title fs-normal">
+                <a class="p-1 fs-normal" href="<?=$post['url']?>">
                     <img class="size-100" src="<?=$post['files'][0]['thumbnail_url']?>">
-                    <div class="fs-xs"><?=$post['post_title']?></div>
+                    <div class="p-1 fs-xs h-2em"><?=$post['post_title']?></div>
                 </a>
             </div>
         <? } ?>
     </div>
 </section>
 
-
+<style>
+    .latest-photos .posts .post:first-child a {
+        padding-left: 0!important;
+    }
+    .latest-photos .posts .post:last-child a {
+        padding-right: 0!important;
+    }
+</style>
 
