@@ -46,6 +46,7 @@ $co = cafe_option();
             <li><a href="/?page=cafe.all-posts">전체 글</a></li>
             <? if ( loggedIn() ) { ?>
                 <li><a href="/?page=user/profile">회원정보</a></li>
+                <a href="/?page=user/logout.submit">로그아웃</a>
             <? } else { ?>
             <? } ?>
         </ul>
