@@ -1326,22 +1326,22 @@ function file_response($post_or_ID): ?array
     ];
 
     $images = wp_get_attachment_metadata($post->ID);
-if ( $images ) {
+    if ( $images ) {
         $ret['width'] = $images['width'];
         $ret['height'] = $images['height'];
-    if ($ret['media_type'] == 'image' && isset($images['sizes'])) {
-        if ( isset($images['sizes']['thumbnail']) ) {
-            $ret['thumbnail_url'] = wp_upload_dir()['url'] . '/' . $images['sizes']['thumbnail']['file'];
-            $ret['thumbnail_width'] = $images['sizes']['thumbnail']['width'];
-            $ret['thumbnail_height'] = $images['sizes']['thumbnail']['height'];
-        }
-        if ( isset($images['sizes']['medium']) ) {
-            $ret['medium_url'] = wp_upload_dir()['url'] . '/' . $images['sizes']['medium']['file'];
-            $ret['medium_width'] = $images['sizes']['medium']['width'];
-            $ret['medium_height'] = $images['sizes']['medium']['height'];
+        if ($ret['media_type'] == 'image' && isset($images['sizes'])) {
+            if ( isset($images['sizes']['thumbnail']) ) {
+                $ret['thumbnail_url'] = wp_upload_dir()['url'] . '/' . $images['sizes']['thumbnail']['file'];
+                $ret['thumbnail_width'] = $images['sizes']['thumbnail']['width'];
+                $ret['thumbnail_height'] = $images['sizes']['thumbnail']['height'];
+            }
+            if ( isset($images['sizes']['medium']) ) {
+                $ret['medium_url'] = wp_upload_dir()['url'] . '/' . $images['sizes']['medium']['file'];
+                $ret['medium_width'] = $images['sizes']['medium']['width'];
+                $ret['medium_height'] = $images['sizes']['medium']['height'];
+            }
         }
     }
-}
 
     return $ret;
 //
@@ -3131,6 +3131,19 @@ function get_files($in): array
         $rets[] = $file;
     }
     return $rets;
+}
 
-
+/**
+ * $post 의 첫번째 이미지 URL 을 리턴한다.
+ *
+ * - thumbnail_url 이 존재하지 않으면, thumbnail url 을 리턴한다.
+ *
+ * @param array $post post_response() 의 post 이다.
+ * @return string
+ */
+function image_url($post): string {
+    if ( !isset($post['files']) ) return '';
+    if ( count($post['files']) == 0 ) return '';
+    if ( isset($post['files'][0]['thumbnail_url']) && $post['files'][0]['thumbnail_url']) return $post['files'][0]['thumbnail_url'];
+    else return $post['files'][0]['url'];
 }

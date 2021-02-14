@@ -170,6 +170,7 @@ add_filter('redirect_canonical', 'remove_redirect_guess_404_permalink');
 function live_reload_js()
 {
     /// TODO print this only for localhost(local dev)
+    if ( is_localhost() )
     echo <<<EOH
    <script src="https://local.sonub.com:12345/socket.io/socket.io.js"></script>
    <script>

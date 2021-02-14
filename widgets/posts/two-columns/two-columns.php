@@ -64,6 +64,7 @@ if ( count($right_photos) == 0 ) {
     }
 }
 
+
 $right_posts = latest_search([
     'category_name' => $o['right']['category_name'] ?? '',
     'posts_per_page' => 3,
@@ -87,7 +88,7 @@ if ( count($right_posts) == 0 ) {
         <div class="col-12 col-sm-6">
             <a class="d-block" href="<?=$big['url']?>">
                 <div class="of-hidden">
-                    <img class="w-100 border-radius-md" style="height: 155px;" src="<?=$big['files'][0]['thumbnail_url']?>">
+                    <img class="w-100 border-radius-md" style="height: 155px;" src="<?=image_url($big)?>">
                 </div>
                 <div class="mt-2 fs-sm"><?=$big['post_title']?></div>
             </a>
@@ -109,7 +110,7 @@ if ( count($right_posts) == 0 ) {
                     if ( !isset($right_photos[$i]) ) continue;
                     $post = $right_photos[$i]; ?>
                     <a class="d-flex mt-2" href="<?=$post['url']?>">
-                        <img class="size-64 border-radius-md" src="<?=$post['files'][0]['thumbnail_url']?>">
+                        <img class="size-64 border-radius-md" src="<?=image_url($post)?>">
                         <div class="ms-2 fs-sm h-64px of-hidden"><?=$post['post_title']?></div>
                     </a>
                 <? } ?>
@@ -119,7 +120,7 @@ if ( count($right_posts) == 0 ) {
                     if ( !isset($right_photos[$i]) ) continue;
                     $post = $right_photos[$i]; ?>
                     <a class="s-48" href="<?=$post['url']?>">
-                        <img class="w-100 border-radius-md" src="<?=$post['files'][0]['thumbnail_url']?>">
+                        <img class="w-100 border-radius-md" src="<?=image_url($post)?>">
                         <div class="mt-2 h-2em fs-xs"><?=$post['post_title']?></div>
                     </a>
                 <? } ?>
