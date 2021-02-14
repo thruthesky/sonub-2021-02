@@ -1316,34 +1316,32 @@ function file_response($post_or_ID): ?array
 
     if (empty($post)) return null;
 
-    $images = wp_get_attachment_metadata($post->ID);
-
     $ret = [
         'url' => $post->guid,
         'ID' => $post->ID,
         'name' => $post->post_name,
         'type' => $post->post_mime_type,
         'media_type' => strpos($post->post_mime_type, 'image/') === 0 ? 'image' : 'file', // it will have 'image' or 'file'
-        'width' => $images['width'],
-        'height' => $images['height'],
 
     ];
 
+    $images = wp_get_attachment_metadata($post->ID);
+if ( $images ) {
+        $ret['width'] = $images['width'];
+        $ret['height'] = $images['height'];
     if ($ret['media_type'] == 'image' && isset($images['sizes'])) {
         if ( isset($images['sizes']['thumbnail']) ) {
             $ret['thumbnail_url'] = wp_upload_dir()['url'] . '/' . $images['sizes']['thumbnail']['file'];
             $ret['thumbnail_width'] = $images['sizes']['thumbnail']['width'];
             $ret['thumbnail_height'] = $images['sizes']['thumbnail']['height'];
         }
-
         if ( isset($images['sizes']['medium']) ) {
             $ret['medium_url'] = wp_upload_dir()['url'] . '/' . $images['sizes']['medium']['file'];
             $ret['medium_width'] = $images['sizes']['medium']['width'];
             $ret['medium_height'] = $images['sizes']['medium']['height'];
         }
-
-
     }
+}
 
     return $ret;
 //
