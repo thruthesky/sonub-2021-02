@@ -22,14 +22,17 @@ define('CAFE_DOMAIN_SETTING', [
     'philov.com' => [
         'countryCode' => 'PH',
         'countryName' => '필리핀',
+        'siteName' => '필러브',
     ],
     'tellvi.com' => [
         'countryCode' => 'VN',
         'countryName' => '베트남',
+        'siteName' => '텔비',
     ],
     'sonub.com' => [
         'countryCode' => '',
         'countryName' => '전세계',
+        'siteName' => '소너브'
     ]
 ]);
 
