@@ -28,6 +28,9 @@ $settings = api_get_settings();
 <html>
 <head>
     <TITLE><?= ($_ = run_hook('html_title'))? $_ : ($settings['site_name'] ?? '') ?></TITLE>
+    <link rel="shortcut icon" href="<?= ($_ = run_hook('favicon')) ? $_ : 'favicon.ico'?>">
+
+
     <link href="<?=THEME_URL?>/etc/bootstrap-5-b2/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?=THEME_URL?>/css/fontawesome-free-5.15.2-web/css/all.css" rel="stylesheet">
     <link rel="stylesheet" href="<?=THEME_URL?>/css/index.css?v=<?=build_version()?>">

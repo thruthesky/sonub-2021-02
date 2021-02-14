@@ -274,3 +274,8 @@ add_hook('widget/config.category_name default_option', function(&$option) {
     $option['label'] = '전체 카테고리';
     $option['value'] = cafe_country_code();
 });
+
+
+add_hook('favicon', function() {
+    return DOMAIN_THEME_URL . '/favicon/' . get_root_domain() . '/' . 'favicon.ico';
+});

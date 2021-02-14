@@ -1066,6 +1066,7 @@ d($v);
 ```
 
 
+
 ## 훅 목록과 설명
 
 ### 전체 훅 목록
@@ -1075,6 +1076,16 @@ d($v);
 * html_title
   
 * site_name - HTML 에 사이트 이름을 출력 할 때
+
+* `favicon` - 파비콘을 변경 할 수 있는 훅
+
+예제) 훅에서 값을 리턴하면 그 값을 경로로 사용. 아니면, favicon.ico 를 사용.
+
+```html
+<link rel="shortcut icon" href="<?= ($_ = run_hook('favicon')) ? $_ : 'favicon.ico'?>">
+```
+
+
 
 * category_meta,
 
