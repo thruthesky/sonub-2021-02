@@ -23,12 +23,11 @@ define('NO_OF_CAFE_WIDGETS', 12);
 define('CAFE_DOMAIN_SETTING', [
     'philov.com' => [
         'countryCode' => 'PH',
-    ],
-    'philgo.net' => [
-        'countryCode' => 'PH',
+        'countryName' => '필리핀',
     ],
     'sonub.com' => [
         'countryCode' => 'KR',
+        'countryName' => '한국',
     ]
 ]);
 

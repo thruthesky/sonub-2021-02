@@ -42,7 +42,7 @@ $co = cafe_option();
 <header class="d-none d-md-block">
     <nav class="d-flex justify-content-between l-center  mt-2 border-radius-xs greys bg-lighter fs-xs p-a-xs">
         <ul class="list-menu p-menu">
-            <li><a href="/">홈</a></li>
+            <li><a href="/">&nbsp; 홈</a></li>
             <? if ( loggedIn() ) { ?>
                 <li><a href="/?page=user/profile">회원정보</a></li>
                 <li><a href="/?page=user/logout.submit">로그아웃</a></li>
@@ -52,7 +52,6 @@ $co = cafe_option();
             <? } ?>
 
         </ul>
-
 
 
         <ul class="list-menu">
@@ -74,16 +73,22 @@ $co = cafe_option();
     </nav>
 
 
-
-
-    <section class="logo-search">
+    <section class="logo-search mt-3">
         <div class="l-center d-flex justify-content-center align-items-center">
-            <a href="/" class="fs-xxl" style="font-family: Georgia"><?=cafe_option('name', 'SONUB')?></a>
-            <form class="ms-3">
-                <input class="w-300px h-48px">
+            <? if ( is_in_cafe() ) { ?>
+            <a href="/" class="fs-xxl" style="font-family: Georgia"><?=cafe_option('name', '카페이름')?></a>
+            <? } else { ?>
+                <a class="d-block" href="/" style="width: 230px; height: 58px; overflow: hidden;">
+                    <img class="w-100" src="<?=DOMAIN_THEME_URL?>/img/logo/<?=get_root_domain()?>.jpg">
+                </a>
+            <? } ?>
+            <form class="search ms-3 position-relative">
+                <input class="ps-3 pe-5 w-300px h-48px border-radius-md" style="border: 1px solid #7a878a">
+                <i class="position-absolute right p-3 fa fa-search"></i>
             </form>
         </div>
     </section>
+
 
 
     <? include 'header.desktop.mainmenu.php' ?>

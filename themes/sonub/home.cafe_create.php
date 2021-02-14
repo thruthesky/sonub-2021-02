@@ -1,15 +1,22 @@
-전 세계를 잇는 교민 카페 생성!
+<?php
+
+$root = get_root_domain();
+$setting = CAFE_DOMAIN_SETTING[$root]
+
+?>
+
+<?=$setting['countryName']?> 교민 카페 포털
+
 <form>
     <input type="hidden" name="page" value="cafe/create.submit">
     <div>
-        카페 URL: <input class="w-100px" name="id">.<?=CAFE_ROOT_DOMAIN?> 변경불가<br>
+        카페 URL: <input class="w-100px" name="id">.<?=CAFE_ROOT_DOMAIN?><br>
     </div>
     <div>
         카페 이름: <input name="name">
     </div>
 
     <?
-    $root = get_root_domain();
     if ( isset(CAFE_DOMAIN_SETTING[$root]) && isset(CAFE_DOMAIN_SETTING[$root]['countryCode']) ) {
     ?>
         <input type="hidden" name="countryCode" value="<?=CAFE_DOMAIN_SETTING[$root]['countryCode']?>">
