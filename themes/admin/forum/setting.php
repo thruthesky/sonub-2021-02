@@ -7,7 +7,7 @@ $categories = get_category_tree();
 
 
 ?>
-<h1><?= in('slug') ?> Settings</h1>
+<h1><?= in('slug') ?> 설정</h1>
 
 
 <form @submit.prevent="onForumSettingFormSubmit($event)">
@@ -15,14 +15,14 @@ $categories = get_category_tree();
     <table class="table table-striped">
         <thead>
         <tr>
-            <th scope="col">Options</th>
-            <th scope="col">Values</th>
+            <th scope="col">옵션</th>
+            <th scope="col">설정</th>
         </tr>
         </thead>
         <tbody>
 
         <tr>
-            <td>Parent Category</td>
+            <td><?=ln('Parent Category', '부모 게시판')?></td>
             <td>
                 <select name="category_parent">
                     <option value="0">None</option>
@@ -39,7 +39,7 @@ $categories = get_category_tree();
 
 
         <tr>
-            <td>Title</td>
+            <td><?=ln('Title', '게시판 이름')?></td>
             <td>
                 <input
                         name="cat_name"
@@ -48,7 +48,7 @@ $categories = get_category_tree();
         </tr>
 
         <tr>
-            <td>Description</td>
+            <td><?=ln('Description', '설명')?></td>
             <td>
                 <input
                         name="category_description"
@@ -58,7 +58,7 @@ $categories = get_category_tree();
 
 
         <tr>
-            <td>Post Edit Widget</td>
+            <td><?=ln('Post Edit Widget', '글 수정 위젯')?></td>
             <td>
                 <?
                 select_list_widgets($cat->term_id, 'forum-edit', 'forum_edit_widget');
@@ -70,7 +70,7 @@ $categories = get_category_tree();
 
 
         <tr>
-            <td>Post View Widget</td>
+            <td><?=ln('Post View Widget', '글 읽기 위젯')?></td>
             <td>
                 <?
                 select_list_widgets($cat->term_id, 'forum-view', 'forum_view_widget');
@@ -82,7 +82,7 @@ $categories = get_category_tree();
 
 
         <tr>
-            <td>Forum List Header</td>
+            <td><?=ln('Forum List Header', '글 목록 헤더 위젯')?></td>
             <td>
                 <?
                 select_list_widgets($cat->term_id, 'forum-list-header', 'forum_list_header_widget');
@@ -93,7 +93,7 @@ $categories = get_category_tree();
 
 
         <tr>
-            <td>Forum List Widget</td>
+            <td><?=ln('Forum List Widget', '글 목록 위젯')?></td>
             <td>
                 <?
                 select_list_widgets($cat->term_id, 'forum-list', 'forum_list_widget');
@@ -103,7 +103,7 @@ $categories = get_category_tree();
 
 
         <tr>
-            <td>Forum List Pagination Widget</td>
+            <td><?=ln('Forum List Pagination Widget', '네비게이션 위젯')?></td>
             <td>
                 <?
                 select_list_widgets($cat->term_id, 'pagination', 'pagination_widget');
@@ -117,7 +117,7 @@ $categories = get_category_tree();
 
 
         <tr>
-            <td>Post list under view page</td>
+            <td><?=ln('Post list under view page', '글 읽기 아래에 글목록')?></td>
             <td>
                 <label>
                     <input
@@ -170,7 +170,7 @@ $categories = get_category_tree();
 
 <ul>
     <li>
-        Post list under view page - is enabled if the box is checked.
+        글 읽기 아래에 글 목록 - 글 읽기 페이지 아래에, 글 목록을 보여주는 옵션입니다.
     </li>
 </ul>
 

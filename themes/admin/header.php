@@ -24,16 +24,16 @@ function is_admin_forum_page(): bool {
         font-weight: normal;
     }
 </style>
-<header class="l-center bg-grey">
-    <a href="/?page=admin/home"><?=ln('Dashboard', '홈')?></a>
+<header class="l-center bg-grey fs-sm">
+    <a class="ps-4" href="/?page=admin/home"><?=ln('Dashboard', '홈')?></a>
     <a href="/?page=admin/user/list"><?=ln('Users', '사용자')?></a>
     <a href="/?page=admin/forum/list"><?=ln('Forums', '게시판')?></a>
     <a href="/?page=admin/forum/point"><?=ln("Point", "포인트")?></a>
     <a href="/?page=admin/push-notification/send"><?=ln('Send Push Notifications', '푸시 알림 전송')?></a>
-    <a href="/?page=admin/files/list">Files</a>
-    <a href="/?page=admin/translations/translations">Translations</a>
+    <a href="/?page=admin/files/list"><?=ln('Files', '업로드파일')?></a>
+    <a href="/?page=admin/translations/translations"><?=ln('Translations', '언어화')?></a>
     <a href="/?page=admin/shopping-mall/shopping-mall">쇼핑몰</a>
-    <a href="/?page=admin.settings.settings">Settings</a>
+    <a href="/?page=admin.settings.settings"><?=ln('Settings', '설정')?></a>
 
     <? if ( defined('ADMIN_MENUS') ) { ?>
         <? foreach( ADMIN_MENUS as $menu ) { ?>
@@ -43,7 +43,7 @@ function is_admin_forum_page(): bool {
 
 </header>
 
-<section class="l-center l-content">
+<section class="l-center l-content fs-sm">
     <?php
     include 'sidebar.left.php';
     ?>

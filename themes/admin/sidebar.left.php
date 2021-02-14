@@ -1,5 +1,10 @@
-<section class="l-sidebar d-none d-md-block mt-3 of-hidden">
 
+
+
+
+
+
+<section class="l-sidebar d-none d-md-block mt-3 of-hidden">
     <? if ( in('user_ID') ) {
         $_user = profile(in('user_ID'));
         ?>
