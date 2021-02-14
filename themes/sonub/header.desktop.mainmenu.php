@@ -57,7 +57,10 @@
                 <li><a class="px-3 py-2" href="<?=cafe_url('p_c_o_r_s')?>">나라별 교민사이트</a></li>
             </ul>
             <ul class="list-menu">
-                <li><a class="px-3 py-2 ps-0" href="/?page=cafe/intro"><i class="fa fa-question-circle fs-lg"></i></a></li>
+
+                <li>
+                    <a href="/?page=user/profile"><img class="size-32 circle" :src="user.profile_photo_url" v-if="user && user.profile_photo_url !== 'undefined'"></a>
+                </li>
                 <li><a class="px-3 py-2 ps-0" href="/?page=cafe/intro"><i class="fa fa-bars fs-lg"></i></a></li>
             </ul>
         <? } ?>

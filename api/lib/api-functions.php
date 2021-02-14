@@ -1153,7 +1153,13 @@ function post_response($ID_or_post, $options = [])
 //    $arr = explode('/', $post['guid'], 4);
 //    $post['url'] = "/$post[ID]/" . array_pop($arr);
 
-    $post['url'] = $post['guid'];
+    /**
+     * Guid 는 wp_options 에 등록된 도메인의 URL 을 리턴하지만, url 은 현재 도메인의 URL 을 리턴한다.
+     */
+    $url = $post['guid'];
+    $pu = parse_url($url);
+    $post['url'] = str_replace($pu['host'], get_domain_name(), $url);
+
 
     //
     $post['files'] = get_uploaded_files($post['ID']);
@@ -1699,6 +1705,8 @@ function table_get($in)
 
 
 /**
+ * 도메인을 리턴한다.
+ * 예) www.abc.com, second.host.abc.com
  * Returns requested url domain
  * @return mixed
  */
@@ -1890,6 +1898,9 @@ function between($val, $min, $max)
 
 
 /**
+ *
+ * 주의: 모든 글 가져오는 루틴은 반드시 이 함수를 써야한다. 왜냐하면, 이 함수에 forum_search 훅이 있고, 모든 글 가져오는 루틴에서 사용 가능하게 하기 위해서이다.
+ *
  * @param $in
  * 
  * $in['author'] is the author ID.
@@ -1910,6 +1921,10 @@ function forum_search($in)
 //    if (!isset($in['category_name']) && !isset($in['author'])) return ERROR_EMPTY_CATEGORY_OR_ID;
     // @deprecated @todo if 'category_name' is empty, then it will search all posts.
 //    if ($in['category_name'] == 'all_posts') $in['category_name'] = '';
+
+    /// 글 가져오는 옵션을 변경 할 수 있는 훅
+    /// 예) 카페에서, 해당 카페 국가의 글만 가져오도록 옵션을 변경 할 수 있다.
+    run_hook('forum_search_option', $in);
 
     $posts = get_posts($in);
 

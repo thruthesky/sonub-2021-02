@@ -1,4 +1,5 @@
 <?php
+if ( !loggedIn() ) jsBack('로그인을 해 주세요.');
 if ( in('id') == null ) jsBack('카페 아이디를 입력하세요.');
 if ( in('name') == null ) jsBack('카페 이름을 입력하세요.');
 if ( in('countryCode') == null ) jsBack('교민 사이트 국가를 선택하세요.');

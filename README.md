@@ -1006,6 +1006,16 @@ if ( in('mode') == 'delete' ) {
 
 # Hook System
 
+* 워드프레스 자체의 훅을 사용 할 것을 강력히 권장한다. 하지만, 워드프레스로 할 수 없거나, 번거로운 경우, 직접 훅을 쓰면 된다.
+
+참고) 워드프레스 훅 중에 글 가져오는 쿼리를 변경 할 수 있는 훅
+```php
+function set_custom_isvars( $_this ) {
+    d($_this);
+}
+add_action('parse_query', 'set_custom_isvars');
+```
+
 * Hook 함수를 먼저 선언 해야한다. 예) functions.php 에서 선언
 * 그리고 원하는 곳(함수 등)에서 훅을 호출하도록 하면 된다.
 * 동일한 hook 이름에 여러개 훅을 지정 할 수 있다.
@@ -1068,6 +1078,9 @@ d($v);
 
 * category_meta,
 
+
+* forum_search_option - 글 가져오는 옵션을 변경 할 수 있는 훅. 예) 국가별 카테고리에서, 카테고리 지정이 없으면, 국가 카테고리로 기본 지정한다.
+  
 * forum_list_header_top - 게시판 목록 최 상단에 표시
 * forum_list_header_bottom - 게시판 목록의 헤더의 맨 아래 부분에 표시.
 

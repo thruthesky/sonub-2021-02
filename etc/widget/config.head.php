@@ -16,6 +16,9 @@ if ( in('mode') == 'save' ) {
         $dwo['path'] = '';
         delete_dynamic_widget_options($dwo['widget_id']);
     } else {
+        if ( !isset($dwo['posts_per_page']) || empty($dwo['posts_per_page']) ) $dwo['posts_per_page'] = 5;
+        else if ( $dwo['posts_per_page'] > 20 ) $dwo['posts_per_page'] = 20;
+
         set_dynamic_widget_options($dwo['widget_id'], $dwo);
     }
     $mode = time();

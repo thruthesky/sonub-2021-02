@@ -43,6 +43,7 @@ $co = cafe_option();
     <nav class="d-flex justify-content-between l-center  mt-2 border-radius-xs greys bg-lighter fs-xs p-a-xs">
         <ul class="list-menu p-menu">
             <li><a href="/">&nbsp; 홈</a></li>
+            <li><a href="/?page=cafe.all-posts">전체 글</a></li>
             <? if ( loggedIn() ) { ?>
                 <li><a href="/?page=user/profile">회원정보</a></li>
                 <li><a href="/?page=user/logout.submit">로그아웃</a></li>
@@ -65,9 +66,6 @@ $co = cafe_option();
             <? } ?>
             <li>
                 <a class="ms-2" href="/?page=user/settings" v-if="loggedIn()"><i class="fa fa-cog"></i></a>
-            </li>
-            <li>
-                <a href="/?page=user/profile"><img class="size-40 circle" :src="user.profile_photo_url" v-if="user && user.profile_photo_url !== 'undefined'"></a>
             </li>
         </ul>
     </nav>

@@ -7,7 +7,6 @@
             include dynamic_widget("cafe-right-sidebar-widget-$i", ['class' => 'border-radius-md']);
         }
     } else {
-        include widget('login/social-login', ['class' => 'border-radius-md']);
         include widget('posts/latest', ['widget_title' => '최근 글', 'class' => 'border-radius-md']);
     }
 

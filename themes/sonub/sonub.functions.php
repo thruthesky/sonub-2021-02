@@ -4,12 +4,8 @@ define( 'CAFE_ID_PREFIX', 'cafe_' );
 
 include_once('cafe.config.php');
 
-foreach(CAFE_ROOT_DOMAINS as $_domain) {
-    if ( stripos(get_domain_name(), $_domain) !== false ) {
-        define( 'CAFE_ROOT_DOMAIN', get_root_domain() );
-        break;
-    }
-}
+
+define( 'CAFE_ROOT_DOMAIN', get_root_domain() );
 
 define('ADMIN_MENUS', [
     [
@@ -92,9 +88,17 @@ function get_current_cafe_admin_id() {
  *
  * @return bool
  */
-function is_in_cafe() {
+function is_in_cafe(): bool {
     if ( get_cafe_id() ) return true;
     else return false;
+}
+
+/**
+ * 카페 메인 (루트) 사이트에 있으면 참을 리턴한다.
+ * @return bool
+ */
+function is_in_cafe_main(): bool {
+    return is_in_home_page();
 }
 
 /**
@@ -225,14 +229,37 @@ function set_cafe_country_code($id, $code) {
 }
 
 /**
+ * 카페가 속한 국가 코드를 리턴한다.
+ * - 카페가 아니거나 루트 사이트의 경우, 설정에 있는 국가 코드를 리턴한다.
  * @return string
  */
 function cafe_country_code(): string {
-    return get_option(get_current_cafe_id_key() . '_countryCode');
+    $code = get_option(get_current_cafe_id_key() . '_countryCode');
+    if ( $code ) return $code;
+
+        $setting = get_cafe_domain_settings();
+        return $setting['countryCode'];
+
 }
 
+
+
+/**
+ * @return array
+ */
+function get_cafe_domain_settings(): array {
+    $root = get_root_domain();
+    $setting = CAFE_DOMAIN_SETTING[$root];
+    return $setting;
+}
+
+/**
+ * 카페가 속한 국가의 이름을 리턴한다.
+ * 만약, 카페가 아니라 루트사이트이면 루트 사이트 국가 이름을 리턴한다.
+ * @return string
+ */
 function cafe_country_name(): string {
-    return country_name(get_option(get_current_cafe_id_key() . '_countryCode'));
+    return country_name(cafe_country_code());
 }
 
 

@@ -14,7 +14,6 @@ run_hook('widgets/posts/latest option', $o);
 $posts = forum_search($o);
 
 
-
 ?>
 <section class="posts-latest box mb-2 <?=$o['class'] ?? ''?>">
     <a class="d-flex justify-content-between" href="/?page=forum/list&category=<?=$o['category'] ?? ''?>">
