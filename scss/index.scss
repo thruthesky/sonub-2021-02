@@ -186,14 +186,22 @@ a {
   width: 128px; height: 128px;
 }
 /// 퍼센티지 사이즈는 s-** 로 한다.
-// .s-49 는 부모를 'd-flex justify-content-between' 와 같이 하는 경우, 중간에 여백을 줄 수 있다.
+// .s-48, .s-49 는 부모를 'd-flex justify-content-between' 와 같이 하는 경우, 중간에 여백을 줄 수 있다.
+.s-48 {
+  width: 48%;
+  height: 48%;
+  min-width: 48%;
+  max-width: 48%;
+  min-height: 48%;
+  max-height: 48%;
+}
 .s-49 {
-  width: 49%;
-  height: 49%;
-  min-width: 49%;
-  max-width: 49%;
-  min-height: 49%;
-  max-height: 49%;
+   width: 49%;
+   height: 49%;
+   min-width: 49%;
+   max-width: 49%;
+   min-height: 49%;
+   max-height: 49%;
 }
 .s-50 {
    width: 50%;

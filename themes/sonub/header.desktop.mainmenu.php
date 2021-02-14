@@ -50,11 +50,14 @@
 
             <ul class="list-menu bold">
                 <li><a class="px-3 py-2 ps-0" href="/?page=cafe/intro">카페</a></li>
+                <li><a class="px-3 py-2 ps-0" href="/?page=cafe/intro">자유게시판</a></li>
+                <li><a class="px-3 py-2 ps-0" href="/?page=cafe/intro">질문게시판</a></li>
+                <li><a class="px-3 py-2 ps-0" href="/?page=cafe/intro">가입인사</a></li>
+                <li><a class="px-3 py-2 ps-0" href="/?page=cafe/intro">경험담</a></li>
                 <li><a class="px-3 py-2" href="<?=cafe_url('travel')?>">여행</a></li>
                 <li><a class="px-3 py-2" href="<?=cafe_url('company_book')?>">업소록</a></li>
                 <li><a class="px-3 py-2" href="<?=cafe_url('buyandsell')?>">회원장터</a></li>
                 <li><a class="px-3 py-2" href="<?=cafe_url('business')?>">비즈니스</a></li>
-                <li><a class="px-3 py-2" href="<?=cafe_url('p_c_o_r_s')?>">나라별 교민사이트</a></li>
             </ul>
             <ul class="list-menu">
 

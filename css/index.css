@@ -206,6 +206,15 @@ a {
   height: 128px;
 }
 
+.s-48 {
+  width: 48%;
+  height: 48%;
+  min-width: 48%;
+  max-width: 48%;
+  min-height: 48%;
+  max-height: 48%;
+}
+
 .s-49 {
   width: 49%;
   height: 49%;

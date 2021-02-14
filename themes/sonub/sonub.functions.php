@@ -85,10 +85,16 @@ function get_current_cafe_admin_id() {
  * 현재 페이지가 카페 페이지라면 true 를 리턴한다.
  *
  * @usage 현재 사용자가 카페에 있는지 루트 사이트에 있는지 판단 할 때 사용.
+ * @note CAFE_ROOT_DOMAINS 에 있는 도메인이라면, 카페도메인이 아닌 메인 도메인이다.
  *
  * @return bool
  */
 function is_in_cafe(): bool {
+    if ( defined('TEST_CAFE_ROOT_DOMAINS') ) {
+        if ( in_array( get_domain_name(), TEST_CAFE_ROOT_DOMAINS ) ) {
+            return false;
+        }
+    }
     if ( get_cafe_id() ) return true;
     else return false;
 }
@@ -98,7 +104,7 @@ function is_in_cafe(): bool {
  * @return bool
  */
 function is_in_cafe_main(): bool {
-    return is_in_home_page();
+    return is_in_cafe();
 }
 
 /**

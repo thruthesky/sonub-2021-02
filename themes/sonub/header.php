@@ -46,19 +46,15 @@ $co = cafe_option();
             <li><a href="/?page=cafe.all-posts">전체 글</a></li>
             <? if ( loggedIn() ) { ?>
                 <li><a href="/?page=user/profile">회원정보</a></li>
-                <li><a href="/?page=user/logout.submit">로그아웃</a></li>
             <? } else { ?>
-                <li><a href="/?page=user/login">로그인</a></li>
-                <li><a href="/?page=user/register">회원가입</a></li>
             <? } ?>
-
         </ul>
 
 
         <ul class="list-menu">
-            <li><a class="" href="#">광고문의</a></li>
-            <li><a href="#">운영자문의</a></li>
-            <li><a href="/?page=menu/all">전체메뉴</a></li>
+            <li><a class="" href="/?page=forum.list&category=admin_advertisement">광고문의</a></li>
+            <li><a href="/?page=forum.list&category=admin_inquiry">운영자문의</a></li>
+            <li><a href="/?page=cafe/sitemap">전체메뉴</a></li>
             <? if ( admin() ) { ?>
                 <li>
                     <a href="/?page=admin/home">Admin</a>
