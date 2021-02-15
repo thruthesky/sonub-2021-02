@@ -58,18 +58,3 @@
 
 
 </section>
-
-<style>
-    .l-sidebar {
-        width: 360px !important;
-        min-width: 360px !important;
-        max-width: 360px !important;
-    }
-    .l-sidebar::after {
-        content: '';
-        display: block;
-        width: 360px !important;
-        min-width: 360px !important;
-        max-width: 360px !important;
-    }
-</style>

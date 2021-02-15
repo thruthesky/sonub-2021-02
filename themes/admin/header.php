@@ -23,6 +23,32 @@ function is_admin_forum_page(): bool {
         font-size: 1.2em;
         font-weight: normal;
     }
+
+
+    .l-sidebar {
+        width: 328px !important;
+        min-width: 328px !important;
+        max-width: 328px !important;
+    }
+    .l-sidebar::after {
+        content: '';
+        display: block;
+        width: 328px !important;
+        min-width: 328px !important;
+        max-width: 328px !important;
+    }
+    .admin-forum-list .l-sidebar {
+        width: 420px !important;
+        min-width: 420px !important;
+        max-width: 420px !important;
+    }
+    .admin-forum-list .l-sidebar::after {
+        content: '';
+        display: block;
+        width: 420px !important;
+        min-width: 420px !important;
+        max-width: 420px !important;
+    }
 </style>
 <header class="l-center bg-grey fs-sm">
     <a class="ps-4" href="/?page=admin/home"><?=ln('Dashboard', '홈')?></a>

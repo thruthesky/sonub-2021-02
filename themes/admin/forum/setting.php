@@ -117,7 +117,7 @@ $categories = get_category_tree();
 
 
         <tr>
-            <td><?=ln('Post list under view page', '글 읽기 아래에 글목록')?></td>
+            <td><?=ln('Post list under view page', '글 읽기 아래 목록')?></td>
             <td>
                 <label>
                     <input
@@ -137,7 +137,7 @@ $categories = get_category_tree();
             </td>
         </tr>
         <tr>
-            <td>No of posts per page</td>
+            <td><?=ln('No of posts per page', '페이지 글 수')?></td>
             <td>
                 <input
                         name="posts_per_page"
@@ -146,7 +146,7 @@ $categories = get_category_tree();
             </td>
         </tr>
         <tr>
-            <td>No of pages on navigator</td>
+            <td nowrap><?=ln('No of pages on navigator', '네이게이션 페이지 수')?></td>
             <td>
                 <input
                         name="no_of_pages_on_nav"
@@ -170,7 +170,7 @@ $categories = get_category_tree();
 
 <ul>
     <li>
-        글 읽기 아래에 글 목록 - 글 읽기 페이지 아래에, 글 목록을 보여주는 옵션입니다.
+        글 읽기 아래 목록 - 글 읽기 페이지 아래에, 글 목록을 보여주는 옵션입니다.
     </li>
 </ul>
 
