@@ -1199,6 +1199,11 @@ EOS;
   `etc/markdown/display-markdown.php` 을 참조.
 
 
+# 포인트 시스템
+
+* 사용자 meta 의 point 키에 저장된다.
+  * 이 `point` 는 직접 수정 할 수 없으며, `point_update()` 함수를 통해서만 가능하다.
+
 # Settings
 
 * 관리자 페이지에서 설정을 할 수 있다.
@@ -1207,12 +1212,37 @@ EOS;
 * 주의: API 를 호출 할 때, 해당 1차 도메인으로 접속해야 한다. 다른 도메인 설정 정보를 가져와서 혼동 될 수 있으니 주의한다.
 
 
-# Trouble Shotting
+# 관리자 페이지
 
-* When use meet, 'ERROR_WRONG_PASSWORD', check if the password is really wrong. like when user do pass-login, the salt in config may be changed.
+## 관리자 페이지 커스터마이징
 
-* When a user(or admin) logged in wordpress dashboard, then logout by easing session id in cookie may not work. you need to logout from wordpress.
+* 테마 별로 홈페이지가 완전히 다를 수 있다. 예를 들면, 어떤 홈페이지는 id/password 로 회원 가입을 하고 또 어떤 홈페이지에서는 
+  패스 로그인으로 실명 인증만 할 수 있다. 
+  이에 따라, 관리자 페이지의 사용자 목록, 정보 보기, 수정 등의 페이지가 완전히 달라져야한다.
+  
+* 테마에 해당 페이지가 없으면, theme/default/**/**.php 의 것을 로드하는데, 관리자페이지도 이와 동일하다.
+  다만, 관리자 페이지 스크립트와 일반 페이지 스크립트에서 파일명 충돌을 피하기 위해서 관리자 스크립트는
+  항상 `themes/default/admin` 아래에 들어가게 된다. 그리고 이것은 자연스럽게 되는 것이다.
+  
+  예를 들어, 현재 테마가 sonub 이고, `?page=admin/user/list` 로 접속을 했다면,
+  themes/admin/user/list.php 를 찾고 없으면,
+  themes/default/admin/user/list.php 를 찾는다.
+  
+  각종 sidebar 도 이런 원리이다.
 
+* 관리자 테마에서
+  `themes/admin/sidebar.left.php` 는 layout 을 이루는 한 부분이고,
+  `themes/admin/sidebar.php` 는 최 상위 sidebar 내용을 출력한다.
+  그리고 각 `themes/admin/**/sidebar.php` 와 같이 폴더마다 sidebar 가 존재한다.
+  
+* 파일 우선 순위
+  `themes/admin/**/**.php` 의 파일을 먼저 찾고, 없으면,
+  `themes/해당테마/admin/**/**.php` 에서 찾고 없으면,
+  `themes/default/admin/**/**.php` 가 사용된다.
+
+  * 예를 들면, `themes/admin/sidebar.php` 가 기본 사이드바로 출력되는데, 처음 부터 이 파일이 존재하지 않는다.
+    따라서, `themes/default/admin/sidebar.php` 가 사용되는 것이다.
+    만약, 해당 테마에서 `themes/해당테마/`
 
 
 # Cafe
@@ -1234,4 +1264,12 @@ EOS;
   `CAFE_DOMAIN_SETTING => ['countryCode' => 'KR']`
   
 * 위젯에서, 국가별 게시판 카테고리를 정해 주어야하는데, 설정에서 국가별 카테고리를 선택 할 수 있도록 한다.
+
+
+
+# Trouble Shotting
+
+* When use meet, 'ERROR_WRONG_PASSWORD', check if the password is really wrong. like when user do pass-login, the salt in config may be changed.
+
+* When a user(or admin) logged in wordpress dashboard, then logout by easing session id in cookie may not work. you need to logout from wordpress.
 

@@ -12,7 +12,7 @@ $categories = get_category_tree();
 
 <form @submit.prevent="onForumSettingFormSubmit($event)">
     <input type="hidden" name="cat_ID" value="<?=$cat->cat_ID?>">
-    <table class="table table-striped">
+    <table class="table">
         <thead>
         <tr>
             <th scope="col">옵션</th>
@@ -56,6 +56,49 @@ $categories = get_category_tree();
             </td>
         </tr>
 
+        <tr class="table-dark">
+            <td colspan="2">포인트 설정</td>
+        </tr>
+        <tr class="table-light">
+            <td colspan="2">
+                <div class="hint">
+                    포인트 설정에서 삭제 포인트는 음수 값만 입력 할 수 있습니다.
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td><?=ln('Point', '글 쓰기 포인트')?></td>
+            <td>
+                <input type="number" name="post_create_point" value="<?=category_meta($cat->cat_ID, 'post_create_point','0')?>">
+            </td>
+        </tr>
+        <tr>
+            <td><?=ln('Point', '글 삭제 포인트')?></td>
+            <td>
+                <input type="number" name="post_delete_point" value="<?=category_meta($cat->cat_ID, 'post_delete_point','0')?>">
+            </td>
+        </tr>
+
+
+        <tr>
+            <td><?=ln('Point', '코멘트 쓰기 포인트')?></td>
+            <td>
+                <input type="number" name="comment_create_point" value="<?=category_meta($cat->cat_ID, 'comment_create_point','0')?>">
+            </td>
+        </tr>
+        <tr>
+            <td><?=ln('Point', '코멘트 삭제 포인트')?></td>
+            <td>
+                <input type="number" name="comment_delete_point" value="<?=category_meta($cat->cat_ID, 'comment_delete_point','0')?>">
+            </td>
+        </tr>
+
+
+
+        <tr class="table-dark">
+            <td colspan="2">위젯 설정</td>
+        </tr>
 
         <tr>
             <td><?=ln('Post Edit Widget', '글 수정 위젯')?></td>

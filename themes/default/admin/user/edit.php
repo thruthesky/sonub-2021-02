@@ -51,6 +51,7 @@ $user = profile(in('user_ID'));
                     <input type="text" class="form-control" name="nickname"value="<?=$user['nickname']??''?>">
                 </div>
 
+
                 <div class="mb-3">
                     <label class="form-label">Mobile number</label>
                     <input type="text" class="form-control" name="phoneNo" value="<?=$user['phoneNo']??''?>">

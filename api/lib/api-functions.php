@@ -299,8 +299,8 @@ function session_login($session_id)
     $arr = explode('_', $session_id);
     if (count($arr) != 2) return ERROR_MALFORMED_SESSION_ID;
     list($ID, $trash) = $arr;
-    debug_log("user session ID: $ID", $session_id);
-    debug_log('server', $_SERVER);
+//    debug_log("user session ID: $ID", $session_id);
+//    debug_log('server', $_SERVER);
     $user = get_userdata($ID);
     //    debug_log(print_r($user, true));
     if ($user) {
@@ -495,12 +495,14 @@ function login($data)
  *  - The input is key/value map and there is no limit to save properties.
  *
  * @param $in
- * @return array
+ * @return array|string
  *  - returns the user profile after update user meta.
  */
 function profile_update($in)
 {
-    user_update_meta(wp_get_current_user()->ID, $in);
+    $re = user_update_meta(wp_get_current_user()->ID, $in);
+    debug_log("re: $re");
+    if ( api_error($re) ) return $re;
     return profile();
 }
 
@@ -508,9 +510,14 @@ function profile_update($in)
 /**
  * Update user information.
  *
+ *
  * @note permission check must be done before this method call.
  *
- * @note It can change user's email and password only if they are set. If they are not set, then they are not touched at all.
+ * @note It can change user's email and password only if they are set.
+ *  If they are not set, then they are not touched at all.
+ *
+ *  Whilst profile_update() cannot change user's email and password.
+ *
  * @note It can also change whatever meta data.
  * @caution All the meta data will be over written. This means, if a meta value is empty value, then the empty value will be saved.
  *
@@ -530,13 +537,6 @@ function admin_user_profile_update($in)
         $up['user_email'] = $in['user_email'];
     }
 
-
-    //    if (isset($in['user_nicename']) && !empty($in['user_nicename'])) $up['user_nicename'] = $in['user_nicename'];
-    //    if (isset($in['user_url']) && !empty($in['user_url'])) $up['user_url'] = $in['user_url'];
-    //    if (isset($in['user_activation_key']) && !empty($in['user_activation_key'])) $up['user_activation_key'] = $in['user_activation_key'];
-    //    if (isset($in['user_status']) && !empty($in['user_status'])) $up['user_status'] = $in['user_status'];
-    //    if (isset($in['display_name']) && !empty($in['display_name'])) $up['display_name'] = $in['display_name'];
-
     if (isset($in['user_pass']) && !empty($in['user_pass'])) {
         $up['user_pass'] = wp_hash_password($in['user_pass']);
     }
@@ -546,7 +546,8 @@ function admin_user_profile_update($in)
         $wpdb->update('wp_users', $up, ['ID' => $user->ID]);
     }
 
-    user_update_meta($user->ID, $in);
+    $re = user_update_meta($user->ID, $in);
+    if ( api_error($re) ) return $re;
     return profile($user->ID);
 }
 
@@ -619,15 +620,19 @@ function register($in)
 /**
  * @param $user_ID
  * @param $data
+ * @return void|string
  */
-function user_update_meta($user_ID, $data)
+function user_update_meta($user_ID, $data): string
 {
     foreach ($data as $k => $v) {
         if (!in_array($k, USER_META_EXCEPTIONS)) {
+            if ( $k == 'point' ) return ERROR_POINT_CANNOT_BE_UPDATED;
             update_user_meta($user_ID, $k, $v);
         }
     }
 }
+
+
 
 
 function user_metas($user_ID)
@@ -2680,6 +2685,9 @@ function update_category($in)
     $cat = get_category($in['cat_ID']);
     if ($cat == null) return ERROR_CATEGORY_NOT_EXIST_BY_THAT_ID;
 
+
+
+    /// 카테고리 기본 정보 업데이트.
     if (isset($in['field']) && isset($in['value'])) {
         $re = update_category_meta($in);
     } else {
@@ -2696,8 +2704,10 @@ function update_category($in)
      */
     if ($re) return $re;
 
+    ///
     $ret = get_category($in['cat_ID'])->to_array();
 
+    /// 추가 (메타) 정보 업데이트
     $metas = get_term_meta($in['cat_ID'], '', true);
     foreach ($metas as $key => $values) {
         $ret[$key] = $values[0];
@@ -2707,6 +2717,10 @@ function update_category($in)
 }
 
 /**
+ * 카테고리 기본와 메타 정보 업데이트.
+ *
+ * 기본 정보는 cat_name, category_description, category_parent 만 수정 가능하다.
+ * 그 외에는 모두 메타 데이터에 추가(저장)된다.
  *
  * Updates a field(or a meta) of a category.
  *
@@ -2721,6 +2735,8 @@ function update_category_meta($in)
             return $re->get_error_message();
         }
     } else {
+        if ( $in['field'] == 'post_delete_point' && $in['value'] > 0 ) return ERROR_POST_DELETE_POINT_MUST_BE_LESS_THAN_ZERO;
+        if ( $in['field'] == 'comment_delete_point' && $in['value'] > 0 ) return ERROR_COMMENT_DELETE_POINT_MUST_BE_LESS_THAN_ZERO;
         $re = update_term_meta($in['cat_ID'], $in['field'], $in['value']);
         if (is_wp_error($re)) {
             return $re->get_error_message();

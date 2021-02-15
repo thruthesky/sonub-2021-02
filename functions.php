@@ -215,12 +215,16 @@ EOJ;
  * @logic
  * - 현재 테마에서 파일을 찾는다. 없으면,
  * - default 테마에서 파일을 찾는다. 없으면,
+ * - $default_page 파일이 존재하면, 해당 파일을 사용한다. 없으면,
  * - default/error.php 가 로드된다.
+ *
+ * - 관리자 페이지인 경우, themes/admin 에서 스크립트 파일을 찾는다. 없으면 themes/default 에서 찾는다.
  *
  * @note if the user is in 'admin' dashboard page, then 'admin' theme is used and there is no default script for admin page script.
  *
  * @param $theme
  * @param $page
+ * @param null $default_page
  * @return string
  *  - an example of return string: /Users/thruthesky/www/wordpress/wp-content/themes/sonub/themes/forum/view.php
  *
@@ -228,35 +232,67 @@ EOJ;
  * @example 아래와 같이 사용 할 수 있다.
  *
  *      include get_theme_page_path( DOMAIN_THEME, 'error/forum-list-wrong-category');
- *
  */
-function get_theme_page_path($theme, $page)
+function get_theme_page_path($theme, $page, $default_page = null): string
 {
+    ///
+    $org_script = get_script_path($theme, $page);
+    if ( file_exists($org_script) ) return $org_script;
 
-    if ( is_in_admin_page() ) {
-        $page = str_replace("admin/", "", $page);
-        return THEME_DIR . "/themes/admin/$page.php";
+    /// 기본 경로에 없으면, $default_page 가 존재하는지 확인
+    if ( $default_page ) {
+        $script = get_script_path($theme, $default_page);
+        if ( file_exists($script) ) return $script;
     }
 
-    $script = THEME_DIR . "/themes/$theme/$page.php";
+    return get_error_script('File not found', "file: $org_script<br>" . 'The file you are referring does not exists on server');
 
+}
+
+/**
+ * 테마에 맞는 script 경로를 리턴한다.
+ * @logic
+ * - 관리자 페이지에 있으면 $theme 을 themes/admin 로 인식하여 themes/admin 폴더에서 찾는다.
+ * - 현재 theme 아래에 파일이 없으면 themes/default 경로로 리턴한다.
+ * @param $theme
+ * @param $page
+ * @return string
+ */
+function get_script_path($theme, $page): string {
+
+    if ( is_in_admin_page() ) {
+        $admin_page = str_replace("admin/", "", $page);
+        $script = THEME_DIR . "/themes/admin/$admin_page.php";
+    } else {
+        $script = THEME_DIR . "/themes/$theme/$page.php";
+    }
 
     if (!file_exists($script)) {
         $script = THEME_DIR . "/themes/default/$page.php";
     }
-    if (!file_exists($script)) {
-        $script = get_error_script('File not found', "file: $script<br>" . 'The file you are referring does not exists on server');
-    }
+
     return $script;
 }
 
 /**
  * get_theme_page_path 를 짧게 쓸 수 있는 helper 함수
  * @param $page
+ * @param null $default_page
  * @return string
  */
-function get_script($page): string {
-    return get_theme_page_path(DOMAIN_THEME, $page);
+function script($page, $default_page = null): string {
+    return get_theme_page_path(DOMAIN_THEME, $page, $default_page);
+}
+
+/**
+ * 현재 페이지 스크립트의 바로 위 폴더 이름을 리턴한다.
+ * themes/default/admin/user/list.php 이면 user 를 리턴한다.
+ */
+function script_folder_name(): string {
+    $p = script(script_file_name());
+    $arr = explode('/', $p);
+    array_pop($arr);
+    return $arr[ count($arr) - 1 ];
 }
 
 
@@ -294,6 +330,14 @@ function get_theme_page_file_name() {
         else $page = 'forum/view';
     }
     return $page;
+}
+
+/**
+ * Short for get_theme_page_file_name();
+ * @return array|mixed|string
+ */
+function script_file_name() {
+    return get_theme_page_file_name();
 }
 
 /**

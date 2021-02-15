@@ -8,7 +8,7 @@ $q = ['category_name' => $category->slug, 'posts_per_page' => $posts_per_page, '
 $posts = forum_search($q);
 
 if ( empty($posts) ) {
-    include get_script('error/forum.no-posts');
+    include script('error/forum.no-posts');
     return;
 }
 ?>
