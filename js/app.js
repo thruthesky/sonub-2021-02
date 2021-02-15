@@ -35,6 +35,9 @@ const AttributeBinding = {
     console.log("mounted!");
   },
   methods: {
+    profile_photo_url() {
+      return this.loggedIn() ? this.user.profile_photo_url : '/wp-content/themes/sonub/img/anonymous.png';
+    },
     /**
      * Debouncing functions
      *

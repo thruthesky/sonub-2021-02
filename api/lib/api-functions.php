@@ -452,7 +452,8 @@ function login($data)
     if (is_wp_error($user)) return ERROR_WRONG_PASSWORD;
 
 
-    user_update_meta($user->ID, $data);
+    $re = user_update_meta($user->ID, $data);
+    if ( api_error($re) ) return $re;
 
     wp_set_current_user($user->ID);
 
@@ -609,7 +610,8 @@ function register($in)
     }
 
 
-    user_update_meta($user_ID, $in);
+    $re = user_update_meta($user_ID, $in);
+    if ( api_error($re) ) return $re;
 
     wp_set_current_user($user_ID);
 
@@ -630,6 +632,7 @@ function user_update_meta($user_ID, $data): string
             update_user_meta($user_ID, $k, $v);
         }
     }
+    return '';
 }
 
 

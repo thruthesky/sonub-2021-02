@@ -1,6 +1,6 @@
 <?php
 ?>
-<nav class="desktop-mainmenu mt-3 mb-1">
+<nav class="mainmenu-desktop mt-3 mb-1">
     <div class="l-center d-flex justify-content-between">
 
         <? if ( is_in_cafe() ) {
@@ -61,7 +61,7 @@
             <ul class="list-menu">
 
                 <li>
-                    <a href="/?page=user/profile"><img class="size-32 circle" :src="user.profile_photo_url" v-if="user && user.profile_photo_url !== 'undefined'"></a>
+                    <a :href="loggedIn() ? '/?page=user/profile' : '/?page=user/login'"><img class="size-32 circle" :src="profile_photo_url()"></a>
                 </li>
                 <li><a class="px-3 py-2 ps-0" href="/?page=cafe/intro"><i class="fa fa-bars fs-lg"></i></a></li>
             </ul>
@@ -69,3 +69,9 @@
 
     </div>
 </nav>
+
+<style>
+    .mainmenu-desktop {
+        border-top: 1px solid #efefef; border-bottom: 1px solid #d0d0d0; box-shadow: 1px 1px 1px 1px #f8f8f8;
+    }
+</style>

@@ -4,35 +4,9 @@ $co = cafe_option();
 
 ?>
 
-<style>
-    /*.l-center {*/
-    /*    max-width: 800px;*/
-    /*}*/
-    .desktop-mainmenu {
-        border-top: 1px solid #efefef; border-bottom: 1px solid #d0d0d0; box-shadow: 1px 1px 1px 1px #f8f8f8;
-    }
-</style>
+
 <header class="d-md-none">
-    <nav class="d-flex justify-content-between bg-light">
-        <div class="d-flex">
-            <a class="p-2" href="/">필럽</a>
-            <a class="p-2" href="/?page=forum.list&cafe">게시판</a>
-            <a class="p-2" href="/?page=cafe/intro">카페</a>
-            <a class="p-2" href="/?page=buyandsell/intro">회원장터</a>
-        </div>
-        <div class="d-flex align-items-center">
-            <? if ( App::page('menu/all') ) { ?>
-                <a href="/"><i class="fa fa-times-circle p-2 fs-lg black"></i></a>
-            <? } else { ?>
-                <? if (loggedIn()) { ?>
-                    <a href="/?page=user/logout.submit">로그아웃</a>
-                <? } else { ?>
-                    <a href="/?page=user/login">로그인</a>
-                <? } ?>
-                <a href="/?page=menu/all"><i class="fa fa-bars p-2 fs-lg"></i></a>
-            <? } ?>
-        </div>
-    </nav>
+    <? include 'header.mainmenu.mobile.php' ?>
 </header>
 
 
@@ -86,7 +60,7 @@ $co = cafe_option();
 
 
 
-    <? include 'header.desktop.mainmenu.php' ?>
+    <? include 'header.mainmenu.desktop.php' ?>
 
 </header>
 
