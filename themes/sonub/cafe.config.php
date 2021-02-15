@@ -22,17 +22,17 @@ define('CAFE_DOMAIN_SETTING', [
     'philov.com' => [
         'countryCode' => 'PH',
         'countryName' => '필리핀',
-        'siteName' => '필러브',
+        'name' => '필러브',
     ],
     'tellvi.com' => [
         'countryCode' => 'VN',
         'countryName' => '베트남',
-        'siteName' => '텔비',
+        'name' => '텔비',
     ],
     'sonub.com' => [
         'countryCode' => '',
         'countryName' => '전세계',
-        'siteName' => '소너브'
+        'name' => '소너브'
     ]
 ]);
 
@@ -173,6 +173,8 @@ function get_cafe_category($slug): array {
     return CAFE_CATEGORIES[$slug];
 }
 
+
+
 /**
  * 글을 가져 올 때, 카테고리 설정이 되지 않은 경우,
  * CAFE_DOMAIN_SETTINGS 에 설정된 해당 카페의 국가의 글만 가져오도록 한정시킨다.
@@ -279,6 +281,19 @@ add_hook('widget/config.category_name default_option', function(&$option) {
     $option['label'] = '전체 카테고리';
     $option['value'] = cafe_country_code();
 });
+
+
+add_hook('html_title', function() {
+    if ( is_in_cafe() ) {
+        $co = cafe_option();
+        return $co['name'];
+    } else {
+        return get_cafe_domain_settings()['name'];
+    }
+});
+
+
+
 
 
 add_hook('favicon', function() {

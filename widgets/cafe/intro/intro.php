@@ -1,6 +1,6 @@
 
 <div class="mb-2 p-3 border-radius-md" style="background-color: #0c01a5;">
-   <div class="white">최 신식 카페 기능</div>
+   <div class="white">최신 기능을 갖춘 카페</div>
     <div class="hint white">
         지금까지 존재하지 않았던 최신 기능을 탑재한 인터넷 카페!
     </div>
@@ -27,8 +27,8 @@
 
     <a href="/?page=cafe/intro#설치-가능">
     <div class="mt-2 bg-white p-3 border-radius-md fs-sm">
-        <div class="bold">설치 가능</div>
-        <div>앱 스토어 등록이 필요 없음</div>
+        <div class="bold">앱 아이콘 설치 가능</div>
+        <div>핸드폰 홈 스크린에 카페 앱 설치</div>
     </div>
     </a>
 
@@ -36,7 +36,7 @@
     <a href="/?page=cafe/intro#공유-카페">
     <div class="mt-2 bg-white p-3 border-radius-md fs-sm">
         <div class="bold">공유 카페</div>
-        <div>국가 별 카페 글 공유</div>
+        <div><?=get_cafe_domain_settings()['countryName']?> 전체 카페 글 공유. 풍부한 자료</div>
     </div>
     </a>
 

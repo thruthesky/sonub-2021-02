@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * @file sonub.functions.php
+ */
+/**
+ * @note 모든 훅은 cafe.config.php 에 있다.
+ */
 define( 'CAFE_ID_PREFIX', 'cafe_' );
 
 include_once('cafe.config.php');
@@ -13,16 +18,6 @@ define('ADMIN_MENUS', [
         'script' => 'admin.game.find_wrong_picture',
     ]
 ]);
-
-
-add_hook('html_title', function() {
-    if ( is_in_cafe() ) {
-        $co = cafe_option();
-        return $co['name'];
-    }
-});
-
-
 
 
 
