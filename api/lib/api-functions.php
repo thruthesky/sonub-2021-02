@@ -1161,9 +1161,7 @@ function post_response($ID_or_post, $options = [])
     /**
      * Guid 는 wp_options 에 등록된 도메인의 URL 을 리턴하지만, url 은 현재 도메인의 URL 을 리턴한다.
      */
-    $url = $post['guid'];
-    $pu = parse_url($url);
-    $post['url'] = str_replace($pu['host'], get_domain_name(), $url);
+    $url = fix_host($post['guid']);
 
 
     //
@@ -1308,6 +1306,20 @@ function get_uploaded_file($post_ID)
 }
 
 /**
+ * URL 에 워드프레스의 wp_options 에 있는 기본 host 를 현재 host 로 변경한다.
+ *
+ * @usage 이미지 경로 표시나, 기타 링크를 걸 때 사용 할 수 있다.
+ * @param string $url
+ * @return string
+ */
+function fix_host(string $url): string {
+    if ( empty($url) ) return '';
+    $pu = parse_url($url);
+    if ( ! $pu ) return $url;
+    if ( ! isset($pu['host']) ) return $url;
+    return str_replace($pu['host'], get_domain_name(), $url);
+}
+/**
  * @param mixed $post_or_ID - Attachment(file) post id.
  *   This is not the post id of a post that has title or content.
  *   This is uploaded file id.
@@ -1322,7 +1334,7 @@ function file_response($post_or_ID): ?array
     if (empty($post)) return null;
 
     $ret = [
-        'url' => $post->guid,
+        'url' => fix_host($post->guid),
         'ID' => $post->ID,
         'name' => $post->post_name,
         'type' => $post->post_mime_type,
@@ -1336,12 +1348,12 @@ function file_response($post_or_ID): ?array
         $ret['height'] = $images['height'];
         if ($ret['media_type'] == 'image' && isset($images['sizes'])) {
             if ( isset($images['sizes']['thumbnail']) ) {
-                $ret['thumbnail_url'] = wp_upload_dir()['url'] . '/' . $images['sizes']['thumbnail']['file'];
+                $ret['thumbnail_url'] = fix_host(wp_upload_dir()['url'] . '/' . $images['sizes']['thumbnail']['file']);
                 $ret['thumbnail_width'] = $images['sizes']['thumbnail']['width'];
                 $ret['thumbnail_height'] = $images['sizes']['thumbnail']['height'];
             }
             if ( isset($images['sizes']['medium']) ) {
-                $ret['medium_url'] = wp_upload_dir()['url'] . '/' . $images['sizes']['medium']['file'];
+                $ret['medium_url'] = fix_host(wp_upload_dir()['url'] . '/' . $images['sizes']['medium']['file']);
                 $ret['medium_width'] = $images['sizes']['medium']['width'];
                 $ret['medium_height'] = $images['sizes']['medium']['height'];
             }

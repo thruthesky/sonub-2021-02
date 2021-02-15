@@ -1267,6 +1267,12 @@ EOS;
 
 
 
+# 이미지 자원
+
+* 이미지가 없는 경우나 잘못된 경우, /img 아래의 xbox.jpg 를 보여주면 된다.
+
+
+
 # Trouble Shotting
 
 * When use meet, 'ERROR_WRONG_PASSWORD', check if the password is really wrong. like when user do pass-login, the salt in config may be changed.
