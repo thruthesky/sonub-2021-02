@@ -15,6 +15,8 @@ define('APP_VERSION', '0.1.5');
  */
 
 $domain_themes = [
+    'philov' => 'sonub',
+    'tellvi' => 'sonub',
     'sonub' => 'sonub',
     'goldenage50' => 'goldenage50',
 ];
@@ -75,7 +77,7 @@ define('NO_OF_PAGES_ON_NAV', 3);
  * 만약, 개별 설정에서 정의된 쿠키가 없으면, 자동으로 ROOT_DOMAINS 에 있는 것을 기반으로 최상위 도메인(1차) 도메인으로 지정한다.
  */
 if ( !defined('BROWSER_COOKIE_DOMAIN') ) {
-    define('BROWSER_COOKIE_DOMAIN', get_root_domain());
+    define('BROWSER_COOKIE_DOMAIN', '.' . get_root_domain());
 }
 
 

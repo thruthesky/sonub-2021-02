@@ -39,7 +39,7 @@ const forumMixin = {
         data.files.push(v.ID);
       });
       request('forum.editPost', data, function(post) {
-        console.log('post edit', post);
+        // console.log('post edit', post);
         move(post['url']);
       }, this.error);
     },

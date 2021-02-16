@@ -22,4 +22,10 @@ $post = post_response($post, ['with_autop' => true]);
 $category = get_category_by_slug($post['category']);
 
 
-include_once widget(category_meta($category->term_id, 'forum_view_widget', 'forum-view/forum-view-default'));
+run_hook('forum_category', $category);
+$o = [
+    'category' => $category,
+];
+
+
+include_once widget(category_meta($category->term_id, 'forum_view_widget', 'forum-view/forum-view-default'), $o);

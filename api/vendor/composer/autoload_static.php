@@ -29,7 +29,7 @@ class ComposerStaticInitdf9b2e9d9780cb33ece6ebb2a3acf570
     public static $prefixLengthsPsr4 = array (
         'p' => 
         array (
-            'phpseclib\\' => 10,
+            'phpseclib3\\' => 11,
             'phpDocumentor\\Reflection\\' => 25,
         ),
         'l' => 
@@ -63,6 +63,7 @@ class ComposerStaticInitdf9b2e9d9780cb33ece6ebb2a3acf570
             'Psr\\Cache\\' => 10,
             'Prophecy\\' => 9,
             'PhpParser\\' => 10,
+            'ParagonIE\\ConstantTime\\' => 23,
         ),
         'M' => 
         array (
@@ -70,6 +71,7 @@ class ComposerStaticInitdf9b2e9d9780cb33ece6ebb2a3acf570
         ),
         'L' => 
         array (
+            'League\\CommonMark\\' => 18,
             'Lcobucci\\JWT\\' => 13,
         ),
         'K' => 
@@ -112,7 +114,7 @@ class ComposerStaticInitdf9b2e9d9780cb33ece6ebb2a3acf570
     );
 
     public static $prefixDirsPsr4 = array (
-        'phpseclib\\' => 
+        'phpseclib3\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib',
         ),
@@ -190,9 +192,17 @@ class ComposerStaticInitdf9b2e9d9780cb33ece6ebb2a3acf570
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
         ),
+        'ParagonIE\\ConstantTime\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
+        ),
         'Monolog\\' => 
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
+        ),
+        'League\\CommonMark\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/league/commonmark/src',
         ),
         'Lcobucci\\JWT\\' => 
         array (
@@ -295,6 +305,7 @@ class ComposerStaticInitdf9b2e9d9780cb33ece6ebb2a3acf570
 
     public static $classMap = array (
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Google_AccessToken_Revoke' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
         'Google_AccessToken_Verify' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
         'Google_AuthHandler_AuthHandlerFactory' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',

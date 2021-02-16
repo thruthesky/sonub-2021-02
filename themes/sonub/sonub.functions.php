@@ -1,15 +1,16 @@
 <?php
-
+/**
+ * @file sonub.functions.php
+ */
+/**
+ * @note 모든 훅은 cafe.config.php 에 있다.
+ */
 define( 'CAFE_ID_PREFIX', 'cafe_' );
 
 include_once('cafe.config.php');
 
-foreach(CAFE_ROOT_DOMAINS as $_domain) {
-    if ( stripos(get_domain_name(), $_domain) !== false ) {
-        define( 'CAFE_ROOT_DOMAIN', 'sonub.com' );
-        break;
-    }
-}
+
+define( 'CAFE_ROOT_DOMAIN', get_root_domain() );
 
 define('ADMIN_MENUS', [
     [
@@ -17,16 +18,6 @@ define('ADMIN_MENUS', [
         'script' => 'admin.game.find_wrong_picture',
     ]
 ]);
-
-
-add_hook('html_title', function() {
-    if ( is_in_cafe() ) {
-        $co = cafe_option();
-        return $co['name'];
-    }
-});
-
-
 
 
 
@@ -71,8 +62,9 @@ function get_cafe_id() {
 /**
  * 현재 카페의 id 를 options 이나 다른 곳에 사용하기 쉽도록 cafe_[id] 와 같이 리턴한다.
  * @return string
+ *  - 예) cafe_local, cafe_my_cafe_id
  */
-function get_current_cafe_id_key() {
+function get_current_cafe_id_key(): string {
     return cafe_id_key( get_cafe_id() );
 }
 
@@ -88,19 +80,33 @@ function get_current_cafe_admin_id() {
  * 현재 페이지가 카페 페이지라면 true 를 리턴한다.
  *
  * @usage 현재 사용자가 카페에 있는지 루트 사이트에 있는지 판단 할 때 사용.
+ * @note CAFE_ROOT_DOMAINS 에 있는 도메인이라면, 카페도메인이 아닌 메인 도메인이다.
  *
  * @return bool
  */
-function is_in_cafe() {
+function is_in_cafe(): bool {
+    if ( defined('TEST_CAFE_ROOT_DOMAINS') ) {
+        if ( in_array( get_domain_name(), TEST_CAFE_ROOT_DOMAINS ) ) {
+            return false;
+        }
+    }
     if ( get_cafe_id() ) return true;
     else return false;
+}
+
+/**
+ * 카페 메인 (루트) 사이트에 있으면 참을 리턴한다.
+ * @return bool
+ */
+function is_in_cafe_main(): bool {
+    return is_in_cafe();
 }
 
 /**
  * 워드프레스 관리자이거나 현재 접속한 카페의 관리자이면 참을 리턴한다.
  * @return bool
  */
-function is_cafe_admin() {
+function is_cafe_admin(): bool {
     if ( notLoggedIn() ) return false;
     if ( admin() ) return true;
     if ( get_current_cafe_admin_id() == wp_get_current_user()->ID ) return true;
@@ -129,11 +135,8 @@ function cafe_home_url($id=null) {
  * @return string
  */
 function cafe_url($category) : string {
-    $co = cafe_option();
-    if ( !isset($co['countryCode']) ) {
-        return "/?page=cafe.wrong_setting";
-    }
-    return "/?page=forum.list&category={$category}_$co[countryCode]";
+    $code = cafe_country_code();
+    return "/?page=forum.list&category={$category}_$code";
 }
 
 
@@ -160,15 +163,45 @@ function update_cafe_option($id, $data) {
  * @param string $name is the option name
  * @param mixed $default_value is the default value.
  * @return array|false|mixed|void
+ *
+ *  - 넓은 메뉴가 하나도 설정되지 않았다면, [`wide_menu` => false] 의 값이 리턴된다.
  */
+$_cafe_option = null;
 function cafe_option($name = null, $default_value = null) {
+
     if ( ! is_in_cafe() ) return $default_value;
+
+    /// 메모리 캐시 값을 리턴한다.
+    global $_cafe_option;
+    if ( $_cafe_option ) {
+        if ( $name ) return $_cafe_option[$name] ?? $default_value;
+        return $_cafe_option;
+    }
+
+    /// DB 에서 읽어, 메모리에 저장하고 리턴한다.
     $id = get_cafe_id();
     $co = get_option(cafe_id_key($id));
     if ( ! $co ) return $default_value;
     $co['id'] = $id;
     if ( $name ) return $co[$name] ?? $default_value;
-    return $co;
+
+    $co['wide_menu'] = false;
+    for($i = 0; $i < NO_OF_WIDE_CAFE_MENU; $i ++ ) {
+        if ( isset($co["wide_menu_$i"]) && $co["wide_menu_$i"] ) {
+            $co['wide_menu'] = true;
+            break;
+        }
+    }
+    $co['narrow_menu'] = false;
+    for($i = 0; $i < NO_OF_WIDE_CAFE_MENU; $i ++ ) {
+        if ( isset($co["narrow_menu_$i"]) && $co["narrow_menu_$i"] ) {
+            $co['narrow_menu'] = true;
+            break;
+        }
+    }
+
+    $_cafe_option = $co;
+    return $_cafe_option;
 }
 
 /**
@@ -192,21 +225,64 @@ function get_cafe_admin_id($id): int {
     return get_option($id . '_admin');
 }
 
+function set_cafe_country_code($id, $code) {
+    update_option($id . '_countryCode', $code, false);
+}
+
+/**
+ * 카페가 속한 국가 코드를 리턴한다.
+ * - 카페가 아니거나 루트 사이트의 경우, 설정에 있는 국가 코드를 리턴한다.
+ * @return string
+ */
+function cafe_country_code(): string {
+    $code = get_option(get_current_cafe_id_key() . '_countryCode');
+    if ( $code ) return $code;
+
+        $setting = get_cafe_domain_settings();
+        return $setting['countryCode'];
+
+}
 
 
 
+/**
+ * @return array
+ */
+function get_cafe_domain_settings(): array {
+    $root = get_root_domain();
+    $setting = CAFE_DOMAIN_SETTING[$root];
+    return $setting;
+}
+
+/**
+ * 카페가 속한 국가의 이름을 리턴한다.
+ * 만약, 카페가 아니라 루트사이트이면 루트 사이트 국가 이름을 리턴한다.
+ * @return string
+ */
+function cafe_country_name(): string {
+    return country_name(cafe_country_code());
+}
 
 
+/**
+ *
+ * 카테고리 slug 'abc_kr' 에서 'abc' 만 리턴한다.
+ *
+ * @param $categorySlug
+ * @return false|string
+ */
 function original_category($categorySlug) {
     return substr($categorySlug, 0, strlen($categorySlug) - 3 );
 }
 
 function update_widget_icon($widget_id) {
-    return "<a href='/?page=home&update_widget=$widget_id#$widget_id'><i class='fa fa-cog'></a></i>";
+    return "<a href='/?page=home&update_widget=$widget_id#$widget_id'><i class='fa fa-cog'></i></a>";
 }
 
 
 /**
+ *
+ * 다이나믹 위젯의 설정을 저장/삭제하고 가져오는 함수
  * @param $id - widget id
  * @return false|mixed|void
  */
@@ -217,4 +293,21 @@ function set_dynamic_widget_options($id, $data) {
     return update_option(get_current_cafe_id_key() . '-' .$id, $data, false);
 }
 
+function delete_dynamic_widget_options($id) {
+    return delete_option(get_current_cafe_id_key() . '-' .$id);
+}
 
+
+/**
+ * 본문, 왼쪽/오른쪽 사이드바에 설정된 위젯이 있으면 true 를 리턴하고 없으면 false 를 리턴한다.
+ * @param $prefix
+ * @return bool
+ */
+function has_widget_of($prefix): bool {
+    for ($i = 0; $i < NO_OF_CAFE_WIDGETS; $i++) {
+        $dynamic_widget_id = "$prefix-$i";
+        $dow = get_dynamic_widget_options($dynamic_widget_id);
+        if ( $dow ) return true;
+    }
+    return false;
+}

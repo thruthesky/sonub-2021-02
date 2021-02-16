@@ -1,11 +1,5 @@
+<?php
+include THEME_DIR . '/etc/widget/config.category_name.php';
+include THEME_DIR . '/etc/widget/config.widget_title.php';
+include THEME_DIR . '/etc/widget/config.posts_per_page.php';
 
-
-
-<div>
-    위젯 타이틀
-    <input type="text" name="widget_title" value="<?=$dwo['widget_title']??''?>">
-</div>
-<div>
-    카테고리
-    <input type="text" name="category">
-</div>

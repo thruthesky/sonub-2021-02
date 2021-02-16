@@ -1,21 +1,18 @@
 <?php
 
 $post = null;
-if (in('category')) {
-    $category = in('category');
-} else {
-    $post = post_response(in('ID'));
-    $category = $post['category'];
-}
+$o = get_widget_options();
+$category = $o['category'];
+
 
 
 ?>
 
-<h1> POST EDIT : <?php echo $category ?></h1>
+<h1><?=$category->cat_name?></h1>
 
 <form @submit.prevent="onPostEditFormSubmit($event)">
     <?php if ($post != null) { ?> <input type="hidden" id="ID" name="ID" value="<?php echo $post['ID'] ?>"> <?php } ?>
-    <input type="hidden" id="category" name="category" value="<?php echo $category ?>">
+    <input type="hidden" id="category" name="category" value="<?php echo $category->slug ?>">
     <div class="form-group">
         <label for="post_title">Title</label>
         <input type="text" class="form-control" id="post_title" name="post_title" value="<?php echo $post != null ? $post['post_title'] : '' ?>">

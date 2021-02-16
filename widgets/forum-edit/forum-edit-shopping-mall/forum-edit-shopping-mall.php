@@ -10,6 +10,13 @@ if (in('category')) {
 <h1>상품 등록</h1>
 
 <form @submit.prevent="onFormSubmit($event)">
+
+    <div class="form-group mb-3">
+        <label for="post_title">제목</label>
+        <input type="text" class="form-control" id="post_title" name="post_title" v-model="post.post_title">
+    </div>
+
+
     <div class="form-group mb-3">
         <label for="short_title">짧은 제목</label>
         <input type="text" class="form-control" id="short_title" name="short_title" v-model="post.short_title">
@@ -19,8 +26,13 @@ if (in('category')) {
     </div>
 
     <div class="form-group mb-3">
-        <label for="post_title">제목</label>
-        <input type="text" class="form-control" id="post_title" name="post_title" v-model="post.post_title">
+        <label for="short_title">키워드(또는 카피)</label>
+        <input type="text" class="form-control" id="keywords" name="keywords" v-model="post.keywords">
+        <div class="form-text">
+            상품을 설명을 할 때, 보여지는 짧은 키워드 문구. 한 줄로 입력 할 수 있으며, 콤마로 구분하여 입력 가능.
+            <div class="d-block hint">예) 여름 신상품 초특가 세일</div>
+            <div class="d-block hint">예) 신발,장화</div>
+        </div>
     </div>
 
     <div class="form-group mb-3">
@@ -62,6 +74,16 @@ if (in('category')) {
         <input type="number" class="form-control" id="volume" name="volume" v-model="post.volume">
         <div class="form-text">
             상품의 크기나, 용량, 수량을 입력하세요.
+        </div>
+    </div>
+
+
+
+    <div class="form-group mb-3">
+        <label for="short_title">옵션</label>
+        <input type="text" class="form-control" id="options" name="options" v-model="post.options">
+        <div class="form-text">
+            상품 옵션을 추가 할 수 있습니다. 코마로 구분하여 입력. 예) 빨강색, 파랑색
         </div>
     </div>
 

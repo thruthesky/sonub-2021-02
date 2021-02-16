@@ -1,3 +1,3 @@
 <?php
 
-define('BROWSER_COOKIE_DOMAIN', '.sonub.com');
+//define('BROWSER_COOKIE_DOMAIN', '.sonub.com');

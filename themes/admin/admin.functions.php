@@ -37,6 +37,12 @@ add_hook('html_head', function() {
         background-color: white;
         color: black;
     }
+    h1 {
+        margin-top: .8rem;
+        padding: .5em;
+        border-radius: 25px;
+        background-color: #f4f4f4;
+    }
 </style>
 EOS;
 

@@ -41,6 +41,10 @@ function get_JSON_input()
  * @param null $default
  * @return mixed|null
  *
+ * @주의 HTTP 입력이 page=forum.edit 인 경우, in('page') 는 forum/edit 으로 리턴한다.
+ *  이 때, page=forum.edit.submit 인 경우, forum/edit.submit 으로 리턴한다.
+ *
+ *  즉, page 의 . 를 / 으로 바꾸어 리턴한다.
  */
 function in($name = null, $default = null)
 {
@@ -295,8 +299,8 @@ function session_login($session_id)
     $arr = explode('_', $session_id);
     if (count($arr) != 2) return ERROR_MALFORMED_SESSION_ID;
     list($ID, $trash) = $arr;
-    debug_log("user session ID: $ID", $session_id);
-    debug_log('server', $_SERVER);
+//    debug_log("user session ID: $ID", $session_id);
+//    debug_log('server', $_SERVER);
     $user = get_userdata($ID);
     //    debug_log(print_r($user, true));
     if ($user) {
@@ -414,7 +418,7 @@ function my($field)
 /**
  * Login
  *
- * It logs in and return 0 on success.
+ * It let user log in and return 0 on success.
  *
  * It returns zero(0). Or error code on error.
  *
@@ -448,7 +452,8 @@ function login($data)
     if (is_wp_error($user)) return ERROR_WRONG_PASSWORD;
 
 
-    user_update_meta($user->ID, $data);
+    $re = user_update_meta($user->ID, $data);
+    if ( api_error($re) ) return $re;
 
     wp_set_current_user($user->ID);
 
@@ -491,12 +496,14 @@ function login($data)
  *  - The input is key/value map and there is no limit to save properties.
  *
  * @param $in
- * @return array
+ * @return array|string
  *  - returns the user profile after update user meta.
  */
 function profile_update($in)
 {
-    user_update_meta(wp_get_current_user()->ID, $in);
+    $re = user_update_meta(wp_get_current_user()->ID, $in);
+    debug_log("re: $re");
+    if ( api_error($re) ) return $re;
     return profile();
 }
 
@@ -504,9 +511,14 @@ function profile_update($in)
 /**
  * Update user information.
  *
+ *
  * @note permission check must be done before this method call.
  *
- * @note It can change user's email and password only if they are set. If they are not set, then they are not touched at all.
+ * @note It can change user's email and password only if they are set.
+ *  If they are not set, then they are not touched at all.
+ *
+ *  Whilst profile_update() cannot change user's email and password.
+ *
  * @note It can also change whatever meta data.
  * @caution All the meta data will be over written. This means, if a meta value is empty value, then the empty value will be saved.
  *
@@ -526,13 +538,6 @@ function admin_user_profile_update($in)
         $up['user_email'] = $in['user_email'];
     }
 
-
-    //    if (isset($in['user_nicename']) && !empty($in['user_nicename'])) $up['user_nicename'] = $in['user_nicename'];
-    //    if (isset($in['user_url']) && !empty($in['user_url'])) $up['user_url'] = $in['user_url'];
-    //    if (isset($in['user_activation_key']) && !empty($in['user_activation_key'])) $up['user_activation_key'] = $in['user_activation_key'];
-    //    if (isset($in['user_status']) && !empty($in['user_status'])) $up['user_status'] = $in['user_status'];
-    //    if (isset($in['display_name']) && !empty($in['display_name'])) $up['display_name'] = $in['display_name'];
-
     if (isset($in['user_pass']) && !empty($in['user_pass'])) {
         $up['user_pass'] = wp_hash_password($in['user_pass']);
     }
@@ -542,7 +547,8 @@ function admin_user_profile_update($in)
         $wpdb->update('wp_users', $up, ['ID' => $user->ID]);
     }
 
-    user_update_meta($user->ID, $in);
+    $re = user_update_meta($user->ID, $in);
+    if ( api_error($re) ) return $re;
     return profile($user->ID);
 }
 
@@ -604,7 +610,8 @@ function register($in)
     }
 
 
-    user_update_meta($user_ID, $in);
+    $re = user_update_meta($user_ID, $in);
+    if ( api_error($re) ) return $re;
 
     wp_set_current_user($user_ID);
 
@@ -615,15 +622,20 @@ function register($in)
 /**
  * @param $user_ID
  * @param $data
+ * @return void|string
  */
-function user_update_meta($user_ID, $data)
+function user_update_meta($user_ID, $data): string
 {
     foreach ($data as $k => $v) {
         if (!in_array($k, USER_META_EXCEPTIONS)) {
+            if ( $k == 'point' ) return ERROR_POINT_CANNOT_BE_UPDATED;
             update_user_meta($user_ID, $k, $v);
         }
     }
+    return '';
 }
+
+
 
 
 function user_metas($user_ID)
@@ -1149,7 +1161,11 @@ function post_response($ID_or_post, $options = [])
 //    $arr = explode('/', $post['guid'], 4);
 //    $post['url'] = "/$post[ID]/" . array_pop($arr);
 
-    $post['url'] = $post['guid'];
+    /**
+     * Guid 는 wp_options 에 등록된 도메인의 URL 을 리턴하지만, url 은 현재 도메인의 URL 을 리턴한다.
+     */
+    $url = fix_host($post['guid']);
+
 
     //
     $post['files'] = get_uploaded_files($post['ID']);
@@ -1293,6 +1309,20 @@ function get_uploaded_file($post_ID)
 }
 
 /**
+ * URL 에 워드프레스의 wp_options 에 있는 기본 host 를 현재 host 로 변경한다.
+ *
+ * @usage 이미지 경로 표시나, 기타 링크를 걸 때 사용 할 수 있다.
+ * @param string $url
+ * @return string
+ */
+function fix_host(string $url): string {
+    if ( empty($url) ) return '';
+    $pu = parse_url($url);
+    if ( ! $pu ) return $url;
+    if ( ! isset($pu['host']) ) return $url;
+    return str_replace($pu['host'], get_domain_name(), $url);
+}
+/**
  * @param mixed $post_or_ID - Attachment(file) post id.
  *   This is not the post id of a post that has title or content.
  *   This is uploaded file id.
@@ -1306,30 +1336,31 @@ function file_response($post_or_ID): ?array
 
     if (empty($post)) return null;
 
-    $images = wp_get_attachment_metadata($post->ID);
-
     $ret = [
-        'url' => $post->guid,
+        'url' => fix_host($post->guid),
         'ID' => $post->ID,
         'name' => $post->post_name,
         'type' => $post->post_mime_type,
         'media_type' => strpos($post->post_mime_type, 'image/') === 0 ? 'image' : 'file', // it will have 'image' or 'file'
-        'width' => $images['width'],
-        'height' => $images['height'],
 
     ];
 
-    if ($ret['media_type'] == 'image') {
-        $ret['thumbnail_url'] = wp_upload_dir()['url'] . '/' . $images['sizes']['thumbnail']['file'];
-        $ret['thumbnail_width'] = $images['sizes']['thumbnail']['width'];
-        $ret['thumbnail_height'] = $images['sizes']['thumbnail']['height'];
-
-
-        $ret['medium_url'] = wp_upload_dir()['url'] . '/' . $images['sizes']['medium']['file'];
-        $ret['medium_width'] = $images['sizes']['medium']['width'];
-        $ret['medium_height'] = $images['sizes']['medium']['height'];
-
-
+    $images = wp_get_attachment_metadata($post->ID);
+    if ( $images ) {
+        $ret['width'] = $images['width'];
+        $ret['height'] = $images['height'];
+        if ($ret['media_type'] == 'image' && isset($images['sizes'])) {
+            if ( isset($images['sizes']['thumbnail']) ) {
+                $ret['thumbnail_url'] = fix_host(wp_upload_dir()['url'] . '/' . $images['sizes']['thumbnail']['file']);
+                $ret['thumbnail_width'] = $images['sizes']['thumbnail']['width'];
+                $ret['thumbnail_height'] = $images['sizes']['thumbnail']['height'];
+            }
+            if ( isset($images['sizes']['medium']) ) {
+                $ret['medium_url'] = fix_host(wp_upload_dir()['url'] . '/' . $images['sizes']['medium']['file']);
+                $ret['medium_width'] = $images['sizes']['medium']['width'];
+                $ret['medium_height'] = $images['sizes']['medium']['height'];
+            }
+        }
     }
 
     return $ret;
@@ -1692,6 +1723,8 @@ function table_get($in)
 
 
 /**
+ * 도메인을 리턴한다.
+ * 예) www.abc.com, second.host.abc.com
  * Returns requested url domain
  * @return mixed
  */
@@ -1883,6 +1916,9 @@ function between($val, $min, $max)
 
 
 /**
+ *
+ * 주의: 모든 글 가져오는 루틴은 반드시 이 함수를 써야한다. 왜냐하면, 이 함수에 forum_search 훅이 있고, 모든 글 가져오는 루틴에서 사용 가능하게 하기 위해서이다.
+ *
  * @param $in
  * 
  * $in['author'] is the author ID.
@@ -1903,6 +1939,10 @@ function forum_search($in)
 //    if (!isset($in['category_name']) && !isset($in['author'])) return ERROR_EMPTY_CATEGORY_OR_ID;
     // @deprecated @todo if 'category_name' is empty, then it will search all posts.
 //    if ($in['category_name'] == 'all_posts') $in['category_name'] = '';
+
+    /// 글 가져오는 옵션을 변경 할 수 있는 훅
+    /// 예) 카페에서, 해당 카페 국가의 글만 가져오도록 옵션을 변경 할 수 있다.
+    run_hook('forum_search_option', $in);
 
     $posts = get_posts($in);
 
@@ -1948,6 +1988,7 @@ function latest_photos($in) {
             'compare' => '!='
         ]
     ];
+
     return latest_search($in);
 }
 
@@ -2336,7 +2377,7 @@ function api_notify_translation_update()
 function get_domain_theme($admin=true)
 {
     if (API_CALL) return null;
-    if ($admin && is_admin_page()) return 'admin';
+    if ($admin && is_in_admin_page()) return 'admin';
     global $domain_themes;
     if (!isset($domain_themes)) return null;
     $_host = get_host_name();
@@ -2659,6 +2700,9 @@ function update_category($in)
     $cat = get_category($in['cat_ID']);
     if ($cat == null) return ERROR_CATEGORY_NOT_EXIST_BY_THAT_ID;
 
+
+
+    /// 카테고리 기본 정보 업데이트.
     if (isset($in['field']) && isset($in['value'])) {
         $re = update_category_meta($in);
     } else {
@@ -2675,8 +2719,10 @@ function update_category($in)
      */
     if ($re) return $re;
 
+    ///
     $ret = get_category($in['cat_ID'])->to_array();
 
+    /// 추가 (메타) 정보 업데이트
     $metas = get_term_meta($in['cat_ID'], '', true);
     foreach ($metas as $key => $values) {
         $ret[$key] = $values[0];
@@ -2686,6 +2732,10 @@ function update_category($in)
 }
 
 /**
+ * 카테고리 기본와 메타 정보 업데이트.
+ *
+ * 기본 정보는 cat_name, category_description, category_parent 만 수정 가능하다.
+ * 그 외에는 모두 메타 데이터에 추가(저장)된다.
  *
  * Updates a field(or a meta) of a category.
  *
@@ -2700,6 +2750,8 @@ function update_category_meta($in)
             return $re->get_error_message();
         }
     } else {
+        if ( $in['field'] == 'post_delete_point' && $in['value'] > 0 ) return ERROR_POST_DELETE_POINT_MUST_BE_LESS_THAN_ZERO;
+        if ( $in['field'] == 'comment_delete_point' && $in['value'] > 0 ) return ERROR_COMMENT_DELETE_POINT_MUST_BE_LESS_THAN_ZERO;
         $re = update_term_meta($in['cat_ID'], $in['field'], $in['value']);
         if (is_wp_error($re)) {
             return $re->get_error_message();
@@ -2736,7 +2788,7 @@ function get_first_slug($categories)
 function category_meta($cat_ID, $name, $default_value = '')
 {
     $v = get_term_meta($cat_ID, $name, true);
-    run_hook(__FUNCTION__, $name, $v);
+    run_hook('category_meta', $name, $v);
     if ($v) return $v;
     else return $default_value;
 }
@@ -3110,6 +3162,19 @@ function get_files($in): array
         $rets[] = $file;
     }
     return $rets;
+}
 
-
+/**
+ * $post 의 첫번째 이미지 URL 을 리턴한다.
+ *
+ * - thumbnail_url 이 존재하지 않으면, thumbnail url 을 리턴한다.
+ *
+ * @param array $post post_response() 의 post 이다.
+ * @return string
+ */
+function image_url($post): string {
+    if ( !isset($post['files']) ) return '';
+    if ( count($post['files']) == 0 ) return '';
+    if ( isset($post['files'][0]['thumbnail_url']) && $post['files'][0]['thumbnail_url']) return $post['files'][0]['thumbnail_url'];
+    else return $post['files'][0]['url'];
 }

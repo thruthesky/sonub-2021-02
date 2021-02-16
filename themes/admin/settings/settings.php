@@ -12,30 +12,43 @@ $in = api_get_settings();
 
 ?>
 <section>
-    <div class="alert alert-secondary">
-        <h3>사이트 설정</h3>
-        <hr>
+
+        <h1>사이트 설정</h1>
+
+    <div class="hint">
         글로벌 설정입니다.
     </div>
+
 
 
     <form action="/" method="post">
         <input type="hidden" name="page" value="admin/settings/settings">
         <input type="hidden" name="mode" value="save">
 
-<h2>기본 설정</h2>
+        <div class="option-box">
 
-
-        <div class="mb-3">
-            <label for="site_name" class="form-label"><?=ln('Site Name', '사이트 이름')?></label>
-            <input name="site_name" type="text" class="form-control" id="site_name" placeholder="사이트 이름을 입력하세요."  v-model="settings.site_name">
-            <div id="site_name_text" class="form-text">
-                웹 브라우저 상단 제목이나 검색 엔진에 색인 될 사이트 이름입니다.
-                가능한 특수 문자를 입력하지 마세요.
+            <h2>기본 설정</h2>
+            <hr>
+            <div class="mb-3">
+                <label for="site_name" class="form-label"><?=ln('Site Name', '사이트 이름')?></label>
+                <input name="site_name" type="text" class="form-control" id="site_name" placeholder="사이트 이름을 입력하세요."  v-model="settings.site_name">
+                <div class="form-text">
+                    웹 브라우저 상단 제목이나 검색 엔진에 색인 될 사이트 이름입니다.
+                    가능한 특수 문자를 입력하지 마세요.
+                </div>
             </div>
+
+            <div class="mb-3">
+                <label for="site_description" class="form-label"><?=ln('Site Description', '사이트 설명')?></label>
+                <input name="site_description" type="text" class="form-control" id="site_description" placeholder="사이트 설명을 입력하세요."  v-model="settings.site_description">
+                <div class="form-text">
+                    검색 엔진에 색인 될 기본 사이트 설명입니다. 가능한 특수 문자를 입력하지마세요.
+                    각 글 읽기 페이지는 글 내용에 대한 설명이 색인됩니다.
+                </div>
+            </div>
+
+
         </div>
-
-
 
 
         <hr>

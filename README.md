@@ -143,7 +143,7 @@ node live-reload.js
 
 * `sonub` is the theme folder.
 * `sonub/api` is the api folder and most of codes goes in this folder.
-  * `composer` is installed in this folder.
+  * `composer` is installed in this folder. But `vendor/autoload.php` is included by `functions.php`.
   * `sonub/api/lib/api-functions.php` is the PHP script that holds most of the core functions.
   * `sonub/api/phpunit` is the unit testing folder.
   * `sonub/api/ext` folder is where you can put your own custom routes.
@@ -271,10 +271,15 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
   * Lastly, you need to put it on admin page, so admin can choose which widget to display on the browser.
     * To see how to code on admin page, see `themes/sonub/themes/default/admin/forum/setting.php`.
 
-* Widgets that are not used in admin page may not need `.ini` file.
+* Widgets that do not have `.ini` file will no be shown in admin settings.
+  That means, the widget cannot be set in admin page. It may only be used programmatically.
 
 * When including widgets, you can pass variables over the second parameter.
   It is an optional and if you can get the needed data without passing the param, then you can it in your way.
+
+* Important, widgets must get data from `get_widget_options()` since, the parameta has hook patched data.
+  * For instance, on forum list widget, the category variable has patached by hook before the widget is loaded.
+
 
 ### Dynamic Widget Config
 
@@ -282,13 +287,43 @@ where the `post_ID` is the post ID and `post-title` is the post title(part of gu
   * `widgets/[widget-type]/[widget-name]/[widget-naem].config.php` will be shown below the widget for configuration the widget.
   * If widget is not selected, `widgets/dynamic/default` widget will be used.
 
-* On the widget config, all form data is saved by `etc/widget/config.head.php`.
+* 위젯 설정 FORM 을 전송하면, `etc/widget/config.head.php` 에서 저장한다.
+
+* 주의: 위젯 설정은 그대로 get_posts() 함수로 전달된다. 따라서, 위젯에서 저장하는 변수를 임의대로 작정하면 안되고,
+  카테고리를 지정하는 경우,'category_name' 와 같이 검색 옵션에 사용되는 옵션 이름으로 기록해야한다.
+  
+  * 카테고리: category_name
+  * 글 수: posts_per_page
+  * 특정 사용자가 쓴 글:  도움말: 글의 URL 을 복사해 넣으면 그 사용자의 최신글을 표시.
 
 * 설정에 `dyanmic=yes` 로 된 위젯은 dynamic 으로도 사용 될 수 있고, 또 그냥 사용 될 수 있다.
-* 그냥 사용 할 때에는 위젯 옵션으로 일일히 값을 넘기면 된다.
-* dynamic 으로 사용 할 때에는 위젯 id 만 넘기면, option 에 저장된 설정을 읽어, 자동 적용을 한다.
-* config 에서 원하는 값을 저장 할 수 있다.
+  `dynamic=yes` 설정 옵션이 없는 경우는 다이나믹 위젯 선택 목록에 나오지 않는다.
+  * 참고로, dynamic 위젯을 그냥 위젯으로 사용 할 때에는 일반적인 방법으로 위젯에 옵션 값을 넘기면 된다.
+* 다이나믹 위젯을 원하는 위치에서
+  `include dynamic_widget('widget_id')` 와 같이 호출하면, 그 위치에
+  관리자가 원하는 위젯을 선택 할 수 있다.
+  스크립트에서는 내부적으로 widget_id 에 해당하는 설정을, get_option() 으로 읽어
+  자동 적용을 한다.
+* 그리고, 위젯 설정 모드로 들어가면, 위젯 설정 아이콘을 클릭해서, 설정 화면을 열 수 있다.
+  설정 화면에서 위젯 타입 선택, 게시판 카테고리 선택, 제목 변경 등 다양하게 변경을 할 수 있다.
 
+* 옵션에 특정 사용자가 쓴 글 옵션을 줄 필요 없다. 왜냐하면 그 사용자가 정말 여러가지의 글을 쓸 수 있기 때문에 특정 카테고리화를 할 수 없다.
+* 카페 기능에서, 위젯을 사용 할 때, '내 카페에서 쓴 글만 표시' 옵션을 사용하지 않는다. 왜냐하면,
+  내 카페에서 쓴 글이 다른 카페에서 보여 질 수 있고, 코멘트가 다른 카페에서 쓰여지고, 그 연관 새 글이 쓰여질 수 있기 때문이다.
+  
+* 다음은 다이나믹 위젯을 사용하는 경우, 위젯에서 받는 일반적인 값으로 각 위젯마다 값이 다를 수 있다.
+
+````text
+Array
+(
+    [class] => border-radius-md
+    [widget_id] => cafe-left-sidebar-widget-4
+    [path] => posts/latest
+    [widget_type] => posts
+    [widget_title] => 아이디는?
+    [category] => 
+)
+````
 
 # API & Protocols
 
@@ -971,11 +1006,32 @@ if ( in('mode') == 'delete' ) {
 
 # Hook System
 
+* 워드프레스 자체의 훅을 사용 할 것을 강력히 권장한다. 하지만, 워드프레스로 할 수 없거나, 번거로운 경우, 직접 훅을 쓰면 된다.
+
+참고) 워드프레스 훅 중에 글 가져오는 쿼리를 변경 할 수 있는 훅
+```php
+function set_custom_isvars( $_this ) {
+    d($_this);
+}
+add_action('parse_query', 'set_custom_isvars');
+```
+
 * Hook 함수를 먼저 선언 해야한다. 예) functions.php 에서 선언
 * 그리고 원하는 곳(함수 등)에서 훅을 호출하도록 하면 된다.
 * 동일한 hook 이름에 여러개 훅을 지정 할 수 있다.
 * 훅 함수에는 변수를 얼마든지 마음데로 지정 할 수 있으며 모두 reference 로 전달된다.
 * 훅 함수가 값을 리턴 할 수 있다. 동일한 훅에서 리턴되는 값을 모아서, run_hoo() 의 결과로 리턴한다.
+  
+* 모든 훅 함수는 값을 리턴하거나 파라메타로 받은 레퍼런스 변수를 수정하는 것이 원칙이다.
+  * 가능한, 어떤 값을 화면으로 출력하지 않도록 해야하지만,
+  * 글 쓰기에서 권한이 없는 경우, 미리 체크를 해야하지만, 그렇지 못한 경우 훅에서 검사해서
+    Javascript 로 goBack() 하고 exit 할 수 있다.
+    이 처럼 꼭 필요한 경우에는 직접 HTML 출력을 한다.
+  
+* 훅의 목적은 가능한 기본 코드를 재 사용하되, 원하는 기능 또는 UI/UX 로 적용하기 위한 것이다.
+  * 예를 들면, 게시판 목록의 기본 widget 을 사용하되, 사용자 화면에 보이거나, 알림 등의 재 활용 할 수 있도록 하는 것이다.
+  
+* 위젯에서 훅을 사용하는 경우, `widgets/posts/latest option` 와 같이 공백을 두고, `위젯경로 훅이름`으로 훅 이름을 정한다.
 
 훅 함수 호출 예제)
 ```
@@ -1010,7 +1066,60 @@ d($v);
 ```
 
 
+
 ## 훅 목록과 설명
+
+### 전체 훅 목록
+
+* html_head
+
+* html_title
+  
+* site_name - HTML 에 사이트 이름을 출력 할 때
+
+* `favicon` - 파비콘을 변경 할 수 있는 훅
+
+예제) 훅에서 값을 리턴하면 그 값을 경로로 사용. 아니면, favicon.ico 를 사용.
+
+```html
+<link rel="shortcut icon" href="<?= ($_ = run_hook('favicon')) ? $_ : 'favicon.ico'?>">
+```
+
+
+
+* category_meta,
+
+
+* forum_search_option - 글 가져오는 옵션을 변경 할 수 있는 훅. 예) 국가별 카테고리에서, 카테고리 지정이 없으면, 국가 카테고리로 기본 지정한다.
+  
+* forum_list_header_top - 게시판 목록 최 상단에 표시
+* forum_list_header_bottom - 게시판 목록의 헤더의 맨 아래 부분에 표시.
+
+* forum_category - 포럼의 전체 영역(카테고리 목록이나 글 쓰기 등)에서 해당 게시판의 category 정보를 변경 할 수 있다.
+  이를 통해 cat_name 등을 변경 하여 게시판 이름을 다르게 출력 할 수 있다.
+
+* `widgets/posts/latest option` - 최근 글 위젯에서 글을 가져오기 전에 옵션을 수정 할 수 있는 훅
+  `widgets/**/**` 에 기본적으로 모든 위젯의 훅이 들어있도록 한다.
+
+
+* `widget/config.category_name categories`
+  다이나믹 위젯 설정에서 카테고리를 재 지정 할 수 있다.
+  전달되는 변수는 get_categories() 의 결과인데,
+  변경을 하려면 배열에 category term object 를 넣어주거나
+  [stdClass(slug ='', cat_name=>'')] 과 같이 slug 와 cat_name 을 가지는 stdClass 를 넣어줘도 된다.
+  
+  특히, 교민 포털 카테고리에서는 게시판 카테고리가 존재하지 않을 수도 있으므로, stdClass 로 만들어 넣어줘야한다.
+
+* `widget/config.category_name default_option`
+  카테고리 선택에서, 선택된 값이 없을 경우, 기본적으로 보여 줄 옵션이다. 보통은 빈 값에, "카테고리 선택" 을 표시하면 된다.
+  하지만, 카페에서는 카테고리 선택이 되지 않은 경우, 국가별 카테고리로 검색을 제한해야 한다.
+  
+
+### 게시판 설정 훅
+
+- 게시판 설정을 가져오는 함수 `category_meta()` 가 있는데, 이 함수는 단순히, 게시판의 wp_termmeta, 값을 가져오는 helper 함수이다.
+  이 함수를 사용 할 때, `category_meta` 훅을 발생시킨다.
+  주로 게시판 설정을 변경하고자 할 때 사용가능하다.
 
 ### 훅으로 HTML TITLE 변경하기
 
@@ -1083,6 +1192,17 @@ EOS;
 });
 ```
 
+# Markdown 사용
+
+* https://commonmark.thephpleague.com/1.5/ 을 사용한다.
+* 도움말 페이지 등을 내용이 긴 HTML 을 markdown 으로 출력한다.
+  `etc/markdown/display-markdown.php` 을 참조.
+
+
+# 포인트 시스템
+
+* 사용자 meta 의 point 키에 저장된다.
+  * 이 `point` 는 직접 수정 할 수 없으며, `point_update()` 함수를 통해서만 가능하다.
 
 # Settings
 
@@ -1092,8 +1212,70 @@ EOS;
 * 주의: API 를 호출 할 때, 해당 1차 도메인으로 접속해야 한다. 다른 도메인 설정 정보를 가져와서 혼동 될 수 있으니 주의한다.
 
 
+# 관리자 페이지
+
+## 관리자 페이지 커스터마이징
+
+* 테마 별로 홈페이지가 완전히 다를 수 있다. 예를 들면, 어떤 홈페이지는 id/password 로 회원 가입을 하고 또 어떤 홈페이지에서는 
+  패스 로그인으로 실명 인증만 할 수 있다. 
+  이에 따라, 관리자 페이지의 사용자 목록, 정보 보기, 수정 등의 페이지가 완전히 달라져야한다.
+  
+* 테마에 해당 페이지가 없으면, theme/default/**/**.php 의 것을 로드하는데, 관리자페이지도 이와 동일하다.
+  다만, 관리자 페이지 스크립트와 일반 페이지 스크립트에서 파일명 충돌을 피하기 위해서 관리자 스크립트는
+  항상 `themes/default/admin` 아래에 들어가게 된다. 그리고 이것은 자연스럽게 되는 것이다.
+  
+  예를 들어, 현재 테마가 sonub 이고, `?page=admin/user/list` 로 접속을 했다면,
+  themes/admin/user/list.php 를 찾고 없으면,
+  themes/default/admin/user/list.php 를 찾는다.
+  
+  각종 sidebar 도 이런 원리이다.
+
+* 관리자 테마에서
+  `themes/admin/sidebar.left.php` 는 layout 을 이루는 한 부분이고,
+  `themes/admin/sidebar.php` 는 최 상위 sidebar 내용을 출력한다.
+  그리고 각 `themes/admin/**/sidebar.php` 와 같이 폴더마다 sidebar 가 존재한다.
+  
+* 파일 우선 순위
+  `themes/admin/**/**.php` 의 파일을 먼저 찾고, 없으면,
+  `themes/해당테마/admin/**/**.php` 에서 찾고 없으면,
+  `themes/default/admin/**/**.php` 가 사용된다.
+
+  * 예를 들면, `themes/admin/sidebar.php` 가 기본 사이드바로 출력되는데, 처음 부터 이 파일이 존재하지 않는다.
+    따라서, `themes/default/admin/sidebar.php` 가 사용되는 것이다.
+    만약, 해당 테마에서 `themes/해당테마/`
+
+
+# Cafe
+
+## 관리자 모드
+
+
+쿠키에 widget_edit=on 값이 있으면, 위젯을 수정하는 것으로 표시한다.
+위젯을 수정하려면, set_cookie_url 을 링크를 걸어 on/off 를 하면 된다.
+
+
+카페 관리자는 다이나믹 위젯으로 위젯 설정을 할 수 있다.
+
+## 도메인 별 설정
+
+* 특정 도메인에 교민 사이트 국가를 미리 정할 수 있다. 그래서 카페를 개설 할 때, 선택 할 필요없이 고정된다.
+  cafe.config.php 에서 설정을 하면 된다.
+  설정 예)
+  `CAFE_DOMAIN_SETTING => ['countryCode' => 'KR']`
+  
+* 위젯에서, 국가별 게시판 카테고리를 정해 주어야하는데, 설정에서 국가별 카테고리를 선택 할 수 있도록 한다.
+
+
+
+# 이미지 자원
+
+* 이미지가 없는 경우나 잘못된 경우, /img 아래의 xbox.jpg 를 보여주면 된다.
+
+
+
 # Trouble Shotting
 
 * When use meet, 'ERROR_WRONG_PASSWORD', check if the password is really wrong. like when user do pass-login, the salt in config may be changed.
 
 * When a user(or admin) logged in wordpress dashboard, then logout by easing session id in cookie may not work. you need to logout from wordpress.
+

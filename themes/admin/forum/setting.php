@@ -7,22 +7,22 @@ $categories = get_category_tree();
 
 
 ?>
-<h1><?= in('slug') ?> Settings</h1>
+<h1><?= in('slug') ?> 설정</h1>
 
 
 <form @submit.prevent="onForumSettingFormSubmit($event)">
     <input type="hidden" name="cat_ID" value="<?=$cat->cat_ID?>">
-    <table class="table table-striped">
+    <table class="table">
         <thead>
         <tr>
-            <th scope="col">Options</th>
-            <th scope="col">Values</th>
+            <th scope="col">옵션</th>
+            <th scope="col">설정</th>
         </tr>
         </thead>
         <tbody>
 
         <tr>
-            <td>Parent Category</td>
+            <td><?=ln('Parent Category', '부모 게시판')?></td>
             <td>
                 <select name="category_parent">
                     <option value="0">None</option>
@@ -39,7 +39,7 @@ $categories = get_category_tree();
 
 
         <tr>
-            <td>Title</td>
+            <td><?=ln('Title', '게시판 이름')?></td>
             <td>
                 <input
                         name="cat_name"
@@ -48,7 +48,7 @@ $categories = get_category_tree();
         </tr>
 
         <tr>
-            <td>Description</td>
+            <td><?=ln('Description', '설명')?></td>
             <td>
                 <input
                         name="category_description"
@@ -56,9 +56,52 @@ $categories = get_category_tree();
             </td>
         </tr>
 
+        <tr class="table-dark">
+            <td colspan="2">포인트 설정</td>
+        </tr>
+        <tr class="table-light">
+            <td colspan="2">
+                <div class="hint">
+                    포인트 설정에서 삭제 포인트는 음수 값만 입력 할 수 있습니다.
+                </div>
+            </td>
+        </tr>
 
         <tr>
-            <td>Post Edit Widget</td>
+            <td><?=ln('Point', '글 쓰기 포인트')?></td>
+            <td>
+                <input type="number" name="post_create_point" value="<?=category_meta($cat->cat_ID, 'post_create_point','0')?>">
+            </td>
+        </tr>
+        <tr>
+            <td><?=ln('Point', '글 삭제 포인트')?></td>
+            <td>
+                <input type="number" name="post_delete_point" value="<?=category_meta($cat->cat_ID, 'post_delete_point','0')?>">
+            </td>
+        </tr>
+
+
+        <tr>
+            <td><?=ln('Point', '코멘트 쓰기 포인트')?></td>
+            <td>
+                <input type="number" name="comment_create_point" value="<?=category_meta($cat->cat_ID, 'comment_create_point','0')?>">
+            </td>
+        </tr>
+        <tr>
+            <td><?=ln('Point', '코멘트 삭제 포인트')?></td>
+            <td>
+                <input type="number" name="comment_delete_point" value="<?=category_meta($cat->cat_ID, 'comment_delete_point','0')?>">
+            </td>
+        </tr>
+
+
+
+        <tr class="table-dark">
+            <td colspan="2">위젯 설정</td>
+        </tr>
+
+        <tr>
+            <td><?=ln('Post Edit Widget', '글 수정 위젯')?></td>
             <td>
                 <?
                 select_list_widgets($cat->term_id, 'forum-edit', 'forum_edit_widget');
@@ -70,7 +113,7 @@ $categories = get_category_tree();
 
 
         <tr>
-            <td>Post View Widget</td>
+            <td><?=ln('Post View Widget', '글 읽기 위젯')?></td>
             <td>
                 <?
                 select_list_widgets($cat->term_id, 'forum-view', 'forum_view_widget');
@@ -82,7 +125,7 @@ $categories = get_category_tree();
 
 
         <tr>
-            <td>Forum List Header</td>
+            <td><?=ln('Forum List Header', '글 목록 헤더 위젯')?></td>
             <td>
                 <?
                 select_list_widgets($cat->term_id, 'forum-list-header', 'forum_list_header_widget');
@@ -93,7 +136,7 @@ $categories = get_category_tree();
 
 
         <tr>
-            <td>Forum List Widget</td>
+            <td><?=ln('Forum List Widget', '글 목록 위젯')?></td>
             <td>
                 <?
                 select_list_widgets($cat->term_id, 'forum-list', 'forum_list_widget');
@@ -103,7 +146,7 @@ $categories = get_category_tree();
 
 
         <tr>
-            <td>Forum List Pagination Widget</td>
+            <td><?=ln('Forum List Pagination Widget', '네비게이션 위젯')?></td>
             <td>
                 <?
                 select_list_widgets($cat->term_id, 'pagination', 'pagination_widget');
@@ -117,7 +160,7 @@ $categories = get_category_tree();
 
 
         <tr>
-            <td>Post list under view page</td>
+            <td><?=ln('Post list under view page', '글 읽기 아래 목록')?></td>
             <td>
                 <label>
                     <input
@@ -137,7 +180,7 @@ $categories = get_category_tree();
             </td>
         </tr>
         <tr>
-            <td>No of posts per page</td>
+            <td><?=ln('No of posts per page', '페이지 글 수')?></td>
             <td>
                 <input
                         name="posts_per_page"
@@ -146,7 +189,7 @@ $categories = get_category_tree();
             </td>
         </tr>
         <tr>
-            <td>No of pages on navigator</td>
+            <td nowrap><?=ln('No of pages on navigator', '네이게이션 페이지 수')?></td>
             <td>
                 <input
                         name="no_of_pages_on_nav"
@@ -170,7 +213,7 @@ $categories = get_category_tree();
 
 <ul>
     <li>
-        Post list under view page - is enabled if the box is checked.
+        글 읽기 아래 목록 - 글 읽기 페이지 아래에, 글 목록을 보여주는 옵션입니다.
     </li>
 </ul>
 

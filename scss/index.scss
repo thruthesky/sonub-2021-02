@@ -47,6 +47,32 @@ a {
 }
 
 /**
+ * 페이지 구성요소.
+ * 검색에 사용되는 입력 창은 포커스 라인을 보이지 않는다.
+ */
+.search {
+  input:focus {
+    outline: none !important;
+  }
+}
+
+
+/**
+ * Paddings
+ */
+// padding of child a tags.
+.p-a-xs {
+  a {
+    padding: .5em !important;
+  }
+}
+
+// px-2 와 px-3 의 중간 사이즈이다.
+.px-25 {
+  padding: .75em !important;
+}
+
+/**
  * Utilities
  */
 .fs-xxs {
@@ -138,6 +164,9 @@ a {
 .size-16 {
   width: 16px; height: 16px;
 }
+.size-32 {
+   width: 32px; height: 32px;
+}
 .size-40 {
    width: 40px; height: 40px;
  }
@@ -157,14 +186,22 @@ a {
   width: 128px; height: 128px;
 }
 /// 퍼센티지 사이즈는 s-** 로 한다.
-// .s-49 는 부모를 'd-flex justify-content-between' 와 같이 하는 경우, 중간에 여백을 줄 수 있다.
+// .s-48, .s-49 는 부모를 'd-flex justify-content-between' 와 같이 하는 경우, 중간에 여백을 줄 수 있다.
+.s-48 {
+  width: 48%;
+  height: 48%;
+  min-width: 48%;
+  max-width: 48%;
+  min-height: 48%;
+  max-height: 48%;
+}
 .s-49 {
-  width: 49%;
-  height: 49%;
-  min-width: 49%;
-  max-width: 49%;
-  min-height: 49%;
-  max-height: 49%;
+   width: 49%;
+   height: 49%;
+   min-width: 49%;
+   max-width: 49%;
+   min-height: 49%;
+   max-height: 49%;
 }
 .s-50 {
    width: 50%;
@@ -210,6 +247,8 @@ a {
   height: 128px;
 }
 
+
+/// Lines and Heights
 /// 글자 행의 높이는 글자 크기, 행 높이로 나누어진다.
 /// 글자가 1em 인 경우, height: 1em 이면, 너무 딱 맞는 높이가 된다. 그래서 약간 여백을 주려면 height: 1.5em 정도로 한다.
 /// .h-1em, .h-2em 이 꽤 유용하다.
@@ -286,21 +325,30 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
 
 
 .border-radius {
-  border-radius: 3px;
+  border-radius: 3px !important;
 }
 
 
-.border-25 {
-  border-radius: 25px;
+.border-radius-xs {
+  border-radius: 8px;
+}
+.border-radius-sm {
+  border-radius: 12px;
+}
+.border-radius-md {
+  border-radius: 16px;
 }
 
 /**
  * Colors
  */
 .white {
-  color: white;
+  color: white !important;
 }
 .grey {
+  color: grey;
+}
+.greys * {
   color: grey;
 }
 .light {
@@ -314,7 +362,11 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
   color: blue;
 }
 .bg-lighter {
-  background-color: #fafafa;
+  background-color: #f8f8f8;
+}
+
+.bg-grey {
+  background-color: #efefef;
 }
 .bg-blue {
   background-color: blue;
@@ -379,4 +431,34 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
   font-size: 12px;
   color: grey;
   font-style: italic;
+}
+
+/**
+ * etc/markdwon/display-markdown.php 에 사용되는 MARKDOWN 용 style
+ */
+
+ul.table-of-contents {
+  li {
+    padding: 0 !important;
+    p {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+  }
+}
+
+
+.markdown {
+  li {
+    padding: .5em 0;
+  }
+}
+
+
+.heading-permalink {
+  display: inline-block;
+  padding: .1em .25em 0 0;
+  color: #999999;
+  font-size: .8em;
+  vertical-align: top;
 }

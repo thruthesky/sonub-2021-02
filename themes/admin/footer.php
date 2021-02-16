@@ -2,5 +2,5 @@
 </section>
 
 <footer class="l-center">
-    <h1>Admin Footer</h1>
+    Sonub Theme & Api 0.2.1
 </footer>
