@@ -509,6 +509,127 @@ function profile_update($in)
 
 
 /**
+ * 포인트 증/감
+ *
+ * - from_user_ID 와 to_user_ID 가 동일하면, 그것은 시스템에 의해서 발생하는 포인트이다.
+ *   예를 들면, 글/코멘트 쓰기/삭제, 로그인 보너스 등에서 from_user_ID 와 to_user_ID 가 동일하다.
+ *
+ * - from_user_ID 와 to_user_ID 가 동일한 경우, point 는 반드시 0 의 값이어야 한다.
+ *   자기 자신의 포인트를 변경하는 경우는 시스템에 지정된 포인트만 변경 할 수 있다.
+ *   이 때에는 reason 에 추천,글쓰기 등의 코드인
+ *      POINT_POST_CREATE, POST_POST_DELETE, POST_COMMENT_CREATE 와 같은 코드가 들어와야 하고,
+ *   그에 맞는 포인트가 자동으로 정해진다.
+ *
+ * - 특히, 글/코멘트 쓰기/삭제 등에서는 post_ID 에 글 번호가 들어와야 한다.
+ *   그래서 각 게시판별로 포인트 값을 다르게 설정 할 수 있다.
+ *
+ * - target 에는 글/코멘트 생성/삭제/추천 등에서 글 번호, 코멘트 번호 등이 들어간다.
+ *
+ * - point 이전을 하는 경우, from_user_ID 와 to_user_ID 가 다르며, 이 때에 이전하고하자는 값의 point 가 들어간다.
+ *
+ */
+function point_update($in) {
+
+    if ( !isset($in['from_user_ID']) || empty($in['from_user_ID'])) return ERROR_FROM_USER_ID_NOT_SET;
+    if ( !isset($in['to_user_ID']) || empty($in['to_user_ID']) ) return ERROR_TO_USER_ID_NOT_SET;
+    if ( !isset($in['reason']) || empty($in['reason']) ) return ERROR_REASON_NOT_SET;
+
+    $from_user = get_user_by('id', $in['from_user_ID']);
+    if ( ! $from_user ) return ERROR_FROM_USER_NOT_EXISTS;
+
+    $to_user = get_user_by('id', $in['to_user_ID']);
+    if ( ! $to_user ) return ERROR_TO_USER_NOT_EXISTS;
+
+//    if ( $in['from_user_ID'] == $in['to_user_ID'] ) {
+//        if ( !in_array($in['reason'], POINT_COMMUNITY_ACTIVITY) ) return ERROR_WRONG_POINT_REASON;
+//        if ( !isset($in['post_ID']) || empty($in['post_ID']) ) return ERROR_POST_ID;
+//    }
+
+
+    switch( $in['reason'] ) {
+        case POINT_REGISTER:
+            break;
+
+        case POINT_LOGIN:
+            break;
+
+        case POINT_LIKE :
+            if ( $in['from_user_ID'] == $in['to_user_ID'] ) return ERROR_CANNOT_LIKE_OWN_POST;
+
+            $point_like_deduction = get_option(POINT_LIKE_DEDUCTION, 0);
+            $from_user_point = get_user_point($in['from_user_ID']);
+            if ( $from_user_point + $point_like_deduction < 0 ) return ERROR_LACK_OF_POINT;
+
+            update_user_meta($from_user->ID, POINT, $from_user_point + $point_like_deduction);
+
+            $point_like = get_option(POINT_LIKE, 0);
+
+
+            $to_user_point = get_user_point($in['to_user_ID']);
+            update_user_meta($to_user->ID, POINT, $to_user_point + $point_like);
+
+
+            break;
+
+        case POINT_DISLIKE:
+            if ( $in['from_user_ID'] == $in['to_user_ID'] ) return ERROR_CANNOT_DISLIKE_OWN_POST;
+
+            $point_dislike_deduction = get_option(POINT_DISLIKE_DEDUCTION, 0);
+
+            $from_user_point = get_user_point($in['from_user_ID']);
+            if ( $from_user_point + $point_dislike_deduction < 0 ) return ERROR_LACK_OF_POINT;
+
+            update_user_meta($from_user->ID, POINT, $from_user_point + $point_dislike_deduction);
+
+
+            $point_dislike = get_option(POINT_DISLIKE, 0);
+            $to_user_point = get_user_point($in['to_user_ID']);
+            update_user_meta($to_user->ID, POINT, $to_user_point + $point_dislike);
+
+            break;
+
+        case POINT_POST_CREATE:
+            break;
+
+        case POINT_POST_DELETE:
+            break;
+
+        case POINT_COMMENT_CREATE:
+            break;
+
+        case POINT_COMMENT_DELETE:
+            break;
+
+        default: break;
+    }
+
+    $from_user_point = get_user_meta($in['from_user_ID'], POINT, true);
+    return null;
+}
+
+/**
+ * @param $user_ID
+ * @return mixed
+ */
+function get_user_point($user_ID) {
+    $re = get_user_meta($user_ID, POINT, true);
+    if ( empty($re) ) return 0;
+    else return $re;
+}
+
+
+
+
+/**
+ * 사용자 포인트 삭제. 포인트를 0으로 만드는 것과 동일한 효과.
+ * @param $user_ID
+ */
+function point_reset($user_ID) {
+    delete_user_meta($user_ID, POINT);
+}
+
+
+/**
  * Update user information.
  *
  *
@@ -1164,7 +1285,7 @@ function post_response($ID_or_post, $options = [])
     /**
      * Guid 는 wp_options 에 등록된 도메인의 URL 을 리턴하지만, url 은 현재 도메인의 URL 을 리턴한다.
      */
-    $url = fix_host($post['guid']);
+    $post['url'] = fix_host($post['guid']);
 
 
     //

@@ -90,9 +90,9 @@ class FileRoute {
      */
     public function delete()
     {
-
-
         if (!in('ID')) return ERROR_EMPTY_ID;
+        $p = get_post(in('ID'));
+        if ( empty($p) ) return ERROR_FILE_NOT_FOUND;
 
         if (admin() || is_my_file(in('ID'))) {
             // pass
