@@ -1020,8 +1020,16 @@ function send_message_to_users($in)
     if (!isset($in['body'])) return ERROR_EMPTY_BODY;
     $all_tokens = [];
 
-    $users = explode(',', $in['users']);
+    if (gettype($in['users']) == 'array') {
+        $users = $in['users'];
+    } else {
+        $users = explode(',', $in['users']);
+    }
     foreach ($users as $ID) {
+        if ( isset($in['subscription']) ) {
+            $re = get_user_meta($ID, $in['subscription'], true);
+            if ( $re == 'N' ) continue;
+        }
         $tokens = get_user_tokens($ID);
         $all_tokens = array_merge($all_tokens, $tokens);
     }
@@ -1030,8 +1038,13 @@ function send_message_to_users($in)
     if (!isset($in['imageUrl'])) $in['imageUrl'] = '';
 
     if ( !isset($in['data'])) $in['data'] = [];
+    if ( !isset($in['click_action'])) $in['click_action'] = '/';
     $in['data']['senderId'] = wp_get_current_user()->ID;
-    return sendMessageToTokens($all_tokens, $in['title'], $in['body'], $in['click_action'], $in['data'], $in['imageUrl']);
+    $re = sendMessageToTokens($all_tokens, $in['title'], $in['body'], $in['click_action'], $in['data'], $in['imageUrl']);
+//    print_r($re);
+    return [
+        'tokens' => $all_tokens
+    ];
 }
 
 
