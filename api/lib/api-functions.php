@@ -541,6 +541,7 @@ function point_update($in): string {
 
     if ( !isset($in[REASON]) || empty($in[REASON]) ) return ERROR_REASON_NOT_SET;
 
+    // 가입/로그인 또는 글 생성/삭제와 같이 시스템이 포인트를 주는 경우, 포인트 주고/받는 사람을 동일하게 한다.
     if ( in_array($in[REASON], [ POINT_REGISTER, POINT_LOGIN, POINT_POST_CREATE, POINT_POST_DELETE, POINT_COMMENT_CREATE, POINT_COMMENT_DELETE ])  ) {
         $in[FROM_USER_ID] = wp_get_current_user()->ID;
         $in[TO_USER_ID] = wp_get_current_user()->ID;
@@ -563,10 +564,18 @@ function point_update($in): string {
     else $point = 0;
 
 
+    $category = null;
     // 게시글 번호가 입력되었으면, 글 존재 확인
     if ( isset($in['post_ID']) ) {
-        $post = get_post($in['post_ID']);
-        if ( ! $post ) return ERROR_POST_NOT_FOUND;
+        $post = post_response($in['post_ID']);
+        if ( api_error($post) ) return $post;
+        $category = $post['category'];
+    }
+    // 코멘트 번호가 입력되면, 코멘트 존재 확인
+    if ( isset($in['comment_ID']) ) {
+        $comment = comment_response($in['comment_ID']);
+        if ( api_error($comment) ) return $comment;
+        $category = get_first_category($comment['comment_post_ID']);
     }
 
     // 포인트 기록
@@ -625,9 +634,9 @@ function point_update($in): string {
             if ( $in['from_user_ID'] == $in['to_user_ID'] ) return ERROR_CANNOT_LIKE_OWN_POST;
 
             // 시간/수 제한 체크
-            if ( point_time_limit_check([TO_USER_ID => $to_user->ID, REASON => POINT_LIKE ]) ) return ERROR_POINT_TIME_LIMIT;
+//            if ( point_time_limit_check([TO_USER_ID => $to_user->ID, REASON => POINT_LIKE ]) ) return ERROR_POINT_TIME_LIMIT;
             // 일/수 제한 체크
-            if ( point_daily_limit_check([TO_USER_ID => $to_user->ID, REASON => POINT_LIKE])) return ERROR_POINT_DAILY_LIMIT;
+//            if ( point_daily_limit_check([TO_USER_ID => $to_user->ID, REASON => POINT_LIKE])) return ERROR_POINT_DAILY_LIMIT;
 
 
             // 추천하는 사람이 포인트가 모자라는 경우,
@@ -660,15 +669,23 @@ function point_update($in): string {
             break;
 
         case POINT_POST_CREATE:
+            if ( !isset($in['post_ID']) || empty($in['post_ID']) ) return ERROR_EMPTY_POST_ID;
+            change_user_point($to_user->ID, category_meta($category, POINT_POST_CREATE) );
             break;
 
         case POINT_POST_DELETE:
+            if ( !isset($in['post_ID']) || empty($in['post_ID']) ) return ERROR_EMPTY_POST_ID;
+            change_user_point($to_user->ID, category_meta($category, POINT_POST_DELETE) );
             break;
 
         case POINT_COMMENT_CREATE:
+            if ( !isset($in['comment_ID']) || empty($in['comment_ID']) ) return ERROR_EMPTY_COMMENT_ID;
+            change_user_point($to_user->ID, category_meta($category, POINT_COMMENT_CREATE) );
             break;
 
         case POINT_COMMENT_DELETE:
+            if ( !isset($in['comment_ID']) || empty($in['comment_ID']) ) return ERROR_EMPTY_COMMENT_ID;
+            change_user_point($to_user->ID, category_meta($category, POINT_COMMENT_DELETE) );
             break;
 
         default: break;
@@ -729,12 +746,15 @@ function set_user_point($user_ID, $point) {
 /**
  * 포인트를 증감 또는 차감한다.
  *
- * $reason 은 POINT_LIKE 또는 POINT_LIKE_DEDUCTION 과 같이 포인트 REASON 일 수 있다. $reason 의 설정된 포인트가 음수인 경우, 포인트가 차감된다.
+ * $reason 은 POINT_LIKE 또는 POINT_LIKE_DEDUCTION 과 같이 포인트 REASON 이다.
+ * $reason 의 설정된 포인트가 음수인 경우, 포인트가 차감된다.
  *
  *
- * 주의: 포인트를 차감 할 때, DB 의 포인트 필드에 음수 값을 저장하지 못한다. 따라서 음수 값 대신, 0을 저장한다.
+ * 주의: 포인트를 차감 할 때, 0 이하(음수) 값을 DB 에 저장하지 않는다.
+ *      대신, 포인가 0 이하로 내려가면 그냥 0 을 저장한다.
  *
- * 예) 사용자 포인트가 10 이고, 증가 저장하려는 값이 -15 이면, 결과는 -5 가 된다. 하지만 -5 를 저장하는 것이 아니라, 0 을 저장한다.
+ * 예) 사용자 포인트가 10 이고, 증가 저장하려는 값이 -15 이면, 결과는 -5 가 된다.
+ *   하지만 -5 를 저장하는 것이 아니라, 0 을 저장한다.
  *   이 때, 사용자로 부터 차감된 포인트 -10을 리턴한다.
  *
  * 예제) 만약, B 가 1000 의 값을 가지고 있는 경우, 그리고 비추천 받는 포인트가 1500 이라면, B 의 포인트는 0이 되, -1000 이 리턴된다.
@@ -1539,7 +1559,7 @@ function post_response($ID_or_post, $options = [])
     $post = array_merge($singles, $post);
 
 
-    // get post slug as category name and pass
+    // get first category of the post as category name and pass
     if (count($post['post_category'])) {
         $cat = get_category($post['post_category'][0]);
         $post['category'] = $cat->slug;
@@ -1819,13 +1839,28 @@ function image_path_from_url($url)
     return $path;
 }
 
-
-
+/**
+ * 글의 첫번째 카테고리 slug 를 리턴한다.
+ * @param $post_ID
+ * - null 카테고리가 없으면 null 이 리턴된다.
+ * @return null
+ */
+function get_first_category($post_ID) {
+    $post = get_post($post_ID, ARRAY_A);
+    // get first category of the post as category name and pass
+    if (count($post['post_category'])) {
+        $cat = get_category($post['post_category'][0]);
+        return $cat->slug;
+    } else {
+        return null;
+    }
+}
 
 
 function comment_response($comment_id, $options = [])
 {
     $comment = get_comment($comment_id, ARRAY_A);
+    if ( ! $comment ) return ERROR_COMMENT_NOT_FOUND;
     $ret['comment_ID'] = $comment['comment_ID'];
     $ret['comment_post_ID'] = $comment['comment_post_ID'];
     $ret['comment_parent'] = $comment['comment_parent'];
@@ -3109,13 +3144,17 @@ function get_first_slug($categories)
 
 /**
  * Helper function of `get_term_meta`.
- * @param $cat_ID
+ * @param $cat_ID - 카테고리 번호 또는 slug
  * @param $name
  * @param string $default_value
  * @return mixed|string
  */
 function category_meta($cat_ID, $name, $default_value = '')
 {
+    if ( is_string($cat_ID) ) {
+        $cat = get_category_by_slug($cat_ID);
+        $cat_ID = $cat->term_id;
+    }
     $v = get_term_meta($cat_ID, $name, true);
     run_hook('category_meta', $name, $v);
     if ($v) return $v;
