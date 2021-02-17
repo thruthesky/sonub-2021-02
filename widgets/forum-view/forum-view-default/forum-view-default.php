@@ -20,7 +20,9 @@ $comments = $post['comments'];
 <article class="card border border-dark p-2 m-3">
     <h1><?php echo $post['post_title'] ?></h1>
     <p>
-        ID: <?php echo $post['ID'] ?> <br>
+        ID: <?php echo $post['ID'] ?>,
+        Date: <?=$post['short_date_time']?>
+        <br>
         Content: <?php echo $post['post_content_autop'] ?>
     </p>
 

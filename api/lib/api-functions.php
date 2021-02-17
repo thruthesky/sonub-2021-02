@@ -457,6 +457,10 @@ function login($data)
 
     wp_set_current_user($user->ID);
 
+
+    point_update([REASON => POINT_LOGIN]);
+
+
     /**
      * Update the token for the login user.
      *
@@ -483,6 +487,10 @@ function login($data)
             subscribeTopics($topics,$tokens);
         }
     }
+
+
+
+
 
     return profile();
 }
@@ -531,74 +539,123 @@ function profile_update($in)
  */
 function point_update($in): string {
 
-    if ( !isset($in['from_user_ID']) || empty($in['from_user_ID'])) return ERROR_FROM_USER_ID_NOT_SET;
-    if ( !isset($in['to_user_ID']) || empty($in['to_user_ID']) ) return ERROR_TO_USER_ID_NOT_SET;
     if ( !isset($in[REASON]) || empty($in[REASON]) ) return ERROR_REASON_NOT_SET;
 
+    if ( in_array($in[REASON], [ POINT_REGISTER, POINT_LOGIN, POINT_POST_CREATE, POINT_POST_DELETE, POINT_COMMENT_CREATE, POINT_COMMENT_DELETE ])  ) {
+        $in[FROM_USER_ID] = wp_get_current_user()->ID;
+        $in[TO_USER_ID] = wp_get_current_user()->ID;
+    }
+
+    if ( !isset($in[FROM_USER_ID]) || empty($in[FROM_USER_ID])) return ERROR_FROM_USER_ID_NOT_SET;
+    if ( !isset($in[TO_USER_ID]) || empty($in[TO_USER_ID]) ) return ERROR_TO_USER_ID_NOT_SET;
+    if ( !in_array($in[REASON], REASONS) ) return ERROR_WRONG_POINT_REASON;
+
+
+    // 포인트 주고 받는 사람 확인
     $from_user = get_user_by('id', $in['from_user_ID']);
     if ( ! $from_user ) return ERROR_FROM_USER_NOT_EXISTS;
 
     $to_user = get_user_by('id', $in['to_user_ID']);
     if ( ! $to_user ) return ERROR_TO_USER_NOT_EXISTS;
 
+    // 포인트가 입력이 안되면, 기본 0
     if ( isset($in[POINT]) ) $point = $in[POINT];
     else $point = 0;
 
-//    if ( $in['from_user_ID'] == $in['to_user_ID'] ) {
-//        if ( !in_array($in['reason'], POINT_COMMUNITY_ACTIVITY) ) return ERROR_WRONG_POINT_REASON;
-//        if ( !isset($in['post_ID']) || empty($in['post_ID']) ) return ERROR_POST_ID;
-//    }
 
-    /// 관리자가 포인트를 수정하는 경우, 입력 검사
-    if ( $in['reason'] == POINT_UPDATE ) {
-        if ( admin() == false ) return ERROR_PERMISSION_DENIED;
-        if ( empty($point) ) return ERROR_POINT_IS_NOT_SET;
-        if ( $point < 0 ) return ERROR_POINT_CANNOT_BE_SET_LESS_THAN_ZERO;
-        if ( isset($in['post_ID']) ) return ERROR_WRONG_INPUT;
+    // 게시글 번호가 입력되었으면, 글 존재 확인
+    if ( isset($in['post_ID']) ) {
+        $post = get_post($in['post_ID']);
+        if ( ! $post ) return ERROR_POST_NOT_FOUND;
     }
+
+    // 포인트 기록
+    $history = [
+        FROM_USER_ID => $from_user->ID,
+        TO_USER_ID => $to_user->ID,
+        REASON => $in[REASON],
+
+        'from_user_point_before' => get_user_point($from_user->ID),
+        'to_user_point_before' => get_user_point($to_user->ID),
+
+        'from_user_point_apply' => 0,
+        'to_user_point_apply' => 0,
+
+        'from_user_point_after' => 0,
+        'to_user_point_after' => 0,
+
+        'target_ID' => 0,
+        'stamp' => time(),
+    ];
 
     switch( $in[REASON] ) {
         case POINT_UPDATE:
+            // 검사
+            if ( admin() == false ) return ERROR_PERMISSION_DENIED;
+            if ( empty($point) ) return ERROR_POINT_IS_NOT_SET;
+            if ( $point < 0 ) return ERROR_POINT_CANNOT_BE_SET_LESS_THAN_ZERO;
+            if ( isset($in['post_ID']) ) return ERROR_WRONG_INPUT;
+
+            // 포인트 변경
             set_user_point($to_user->ID, $point);
+            $history['target_ID'] = $to_user->ID;
+            $history['to_user_point_apply'] = $point;
             break;
+
         case POINT_REGISTER:
+            /// 회원 가입 포인트는 한번만 증가한다. 두번째는 ERROR_POINT_REGISTER_DONE 에러가 나는데 그냥 무시한다.
+            $res = get_point_history([TO_USER_ID => $to_user->ID, REASON => POINT_REGISTER, 'between' => [ stamp_today(), stamp_tomorrow() ]]);
+            if ( count($res) > 0 ) return ERROR_POINT_REGISTER_DONE;
+            change_user_point($to_user->ID, POINT_REGISTER);
+            $history['from_user_point_apply'] = POINT_REGISTER;
+            $history['to_user_point_apply'] = POINT_REGISTER;
             break;
 
         case POINT_LOGIN:
+            /// 로그인 포인트는 하루에 한번만 증가한다. 두번째는 ERROR_POINT_LOGIN_DONE 에러가 나는데 그냥 무시한다.
+            $res = get_point_history([TO_USER_ID => $to_user->ID, REASON => POINT_LOGIN, 'between' => [ stamp_today(), stamp_tomorrow() ]]);
+            if ( count($res) > 0 ) return ERROR_POINT_LOGIN_DONE;
+            change_user_point($to_user->ID, POINT_LOGIN);
+            $history['from_user_point_apply'] = POINT_LOGIN;
+            $history['to_user_point_apply'] = POINT_LOGIN;
             break;
 
         case POINT_LIKE :
+            if ( !isset($in['post_ID']) || empty($in['post_ID']) ) return ERROR_EMPTY_POST_ID;
             if ( $in['from_user_ID'] == $in['to_user_ID'] ) return ERROR_CANNOT_LIKE_OWN_POST;
 
-            $point_like_deduction = get_option(POINT_LIKE_DEDUCTION, 0);
-            $from_user_point = get_user_point($in['from_user_ID']);
-            if ( $from_user_point + $point_like_deduction < 0 ) return ERROR_LACK_OF_POINT;
-
-            update_user_meta($from_user->ID, POINT, $from_user_point + $point_like_deduction);
-
-            $point_like = get_option(POINT_LIKE, 0);
+            // 시간/수 제한 체크
+            if ( point_time_limit_check([TO_USER_ID => $to_user->ID, REASON => POINT_LIKE ]) ) return ERROR_POINT_TIME_LIMIT;
+            // 일/수 제한 체크
+            if ( point_daily_limit_check([TO_USER_ID => $to_user->ID, REASON => POINT_LIKE])) return ERROR_POINT_DAILY_LIMIT;
 
 
-            $to_user_point = get_user_point($in['to_user_ID']);
-            update_user_meta($to_user->ID, POINT, $to_user_point + $point_like);
+            // 추천하는 사람이 포인트가 모자라는 경우,
+            if ( lack_of_point($from_user->ID, POINT_LIKE_DEDUCTION) ) return ERROR_LACK_OF_POINT;
+            change_user_point($from_user->ID, POINT_LIKE_DEDUCTION);
 
+            // 추천 받는 포인트는 0 이상이어야 함. 춫천 받는 사람은 무조건 포인트가 증가하거나 변동하지 않아야 함. 감소해서는 안된다.
+            // @todo 에러 처리로 할 것. 추천 받는 포인트는 0 이상으로
+            change_user_point( $to_user->ID, POINT_LIKE );
 
+            $history['target_ID'] = $in['post_ID'];
+            $history['from_user_point_apply'] = get_option(POINT_LIKE_DEDUCTION, 0);
+            $history['to_user_point_apply'] = get_option(POINT_LIKE, 0);
             break;
 
         case POINT_DISLIKE:
+            if ( !isset($in['post_ID']) || empty($in['post_ID']) ) return ERROR_EMPTY_POST_ID;
             if ( $in['from_user_ID'] == $in['to_user_ID'] ) return ERROR_CANNOT_DISLIKE_OWN_POST;
 
-            $point_dislike_deduction = get_option(POINT_DISLIKE_DEDUCTION, 0);
+            // 비추천 하는 사람이 포인트가 모자라면, 에러
+            if ( lack_of_point($from_user->ID, POINT_DISLIKE_DEDUCTION) ) return ERROR_LACK_OF_POINT;
+            change_user_point($from_user->ID, POINT_DISLIKE_DEDUCTION );
 
-            $from_user_point = get_user_point($in['from_user_ID']);
-            if ( $from_user_point + $point_dislike_deduction < 0 ) return ERROR_LACK_OF_POINT;
-
-            update_user_meta($from_user->ID, POINT, $from_user_point + $point_dislike_deduction);
-
-
-            $point_dislike = get_option(POINT_DISLIKE, 0);
-            $to_user_point = get_user_point($in['to_user_ID']);
-            update_user_meta($to_user->ID, POINT, $to_user_point + $point_dislike);
+            // 비추천 받는 포인트는 0 이하이어야 함. 사람이 포인트가 모자라면, 0 점 처리. 비추천 받는 포인트는 무조건 0 이하.
+            $deducted_point = change_user_point($to_user->ID, POINT_DISLIKE);
+            $history['target_ID'] = $in['post_ID'];
+            $history['from_user_point_apply'] = get_option(POINT_DISLIKE_DEDUCTION, 0);
+            $history['to_user_point_apply'] = $deducted_point;
 
             break;
 
@@ -620,8 +677,30 @@ function point_update($in): string {
     /// @todo 레코드를 기록하고, 그 ID를 리턴한다. 주의: 모든 경우, (추천을 해도), 레코드가 1개 발생.
     /// 레코드에는 from_user_before_point, from_user_after_point, to_user_before_point, after_user_before_point
     /// 와 같이 기록을 한다.
-    $from_user_point = get_user_meta($in['from_user_ID'], POINT, true);
-    return 0;
+    $history['from_user_point_after'] = get_user_point($from_user->ID);
+    $history['to_user_point_after'] = get_user_point($to_user->ID);
+    global $wpdb;
+    $wpdb->insert('api_point_history', $history);
+    return $wpdb->insert_id;
+}
+
+/**
+ * @param $options
+ * @return null
+ */
+function get_point_history($options) {
+    global $wpdb;
+    $conds = [];
+    if ( isset($options[FROM_USER_ID]) ) $conds[] = FROM_USER_ID . "=" . $options[FROM_USER_ID];
+    if ( isset($options[TO_USER_ID]) ) $conds[] = TO_USER_ID . "=" . $options[TO_USER_ID];
+    if ( isset($options[REASON]) ) $conds[] = REASON . "='" . $options[REASON] . "'";
+    if ( isset($options['between']) ) $conds[] = "stamp BETWEEN {$options['between'][0]} AND {$options['between'][1]}";
+
+    if ( empty($conds) ) return null;
+
+    $q_where = "WHERE " . implode(' AND ', $conds);
+    $q = "SELECT * FROM api_point_history $q_where";
+    return $wpdb->get_results($q, ARRAY_A);
 }
 
 /**
@@ -646,43 +725,94 @@ function set_user_point($user_ID, $point) {
     update_user_meta($user_ID, POINT, $point);
 }
 
+
 /**
- * 회원의 포인트가 모자라면 true 를 리턴한다.
+ * 포인트를 증감 또는 차감한다.
+ *
+ * $reason 은 POINT_LIKE 또는 POINT_LIKE_DEDUCTION 과 같이 포인트 REASON 일 수 있다. $reason 의 설정된 포인트가 음수인 경우, 포인트가 차감된다.
+ *
+ *
+ * 주의: 포인트를 차감 할 때, DB 의 포인트 필드에 음수 값을 저장하지 못한다. 따라서 음수 값 대신, 0을 저장한다.
+ *
+ * 예) 사용자 포인트가 10 이고, 증가 저장하려는 값이 -15 이면, 결과는 -5 가 된다. 하지만 -5 를 저장하는 것이 아니라, 0 을 저장한다.
+ *   이 때, 사용자로 부터 차감된 포인트 -10을 리턴한다.
+ *
+ * 예제) 만약, B 가 1000 의 값을 가지고 있는 경우, 그리고 비추천 받는 포인트가 1500 이라면, B 의 포인트는 0이 되, -1000 이 리턴된다.
+ *   change_user_point($to_user->ID, POINT_DISLIKE);
+ *
+ * 예제) 회원 가입시 2,000 포인트가 증가한다면, 리턴하는 값은 2,000 이다.
+ *
+ *
+ * @param $user_ID
+ * @param $reason
+ *
+ *
+ * @return int
+ *  0 이 리턴되면 값을 증가하지 않았음.
+ *  양수이면 - 증가한 값
+ *  음수이면 - 차감된 값
+ *
+ *
+ */
+function change_user_point(int $user_ID, string $reason): int {
+    $user_point = get_user_point($user_ID);
+    $reason_point = get_option($reason, 0);
+
+    $saving_point = $user_point + $reason_point;
+    // 포인트를 차감을 하는 경우,
+    if ( $reason_point < 0 ) {
+        // 0 보다 작으면,
+        if ( $saving_point < 0 ) {
+            // 0 을 저장
+            set_user_point($user_ID, 0);
+            // 차감된 포인트를 리턴
+            return -$user_point;
+        } else {
+            // 차감 후, 사용자 포인트가 남은 경우, (0 이상인 경우), 포인트 전액 차감 후 차감된 포인트 리턴
+            set_user_point($user_ID, $saving_point);
+            return $reason_point;
+        }
+    } else {
+        // 포인트를 증가 시키는 경우, 포인트 증가 후, 증가된 포인트 리턴
+        set_user_point($user_ID, $saving_point);
+        return $reason_point;
+    }
+}
+
+
+/**
+ * 회원의 포인트가 해당 REASON 의 포인트 보다 모자라면 true 를 리턴한다.
  *
  * 예를 들어, 추천을 하려는 회원의 포인트가 모자라는 경우, 이 함수를 통해서 검사를 할 수 있다.
  * 추천하는데 차감(소모)되는 포인트가 100 인데, 회원 포인트가 50 밖에 없다면, 50이 모자란다. 이 때, true 를 리턴한다.
  *
- * 또 다른 예로, 회원의 포인트가 50 인데, 관리자가 그 회원의 포인트를 200 을 차감하려 한다면, 150 모자란다.
- * 이 때에도 true 를 리턴한다.
- *
- * 모든 경우에, 입력값 $point 가 음수로 입력 될 때만 lack_of_point() 가 참을 리턴 할 수 있다. 양수의 값이 들어오면,
- * 포인트를 추가하는 것이므로, 포인트가 모자라는 체크를 할 필요 없다.
  *
  * @param $user_ID
- * @param $point
+ * @param $reason
  * @return bool
  *
  * @example
- *              if ( lack_of_point( $from_user->ID, $point ) ) return ERROR_LACK_OF_POINT;
+ *              if ( lack_of_point( $from_user->ID, POINT_DISLIKE ) ) return ERROR_LACK_OF_POINT;
  */
-function lack_of_point($user_ID, $point): bool
+function lack_of_point($user_ID, $reason): bool
 {
-    if ( $point >= 0 ) return false;
-    return 0 < get_user_point($user_ID) + $point;
+    $reason_point = get_option($reason, 0);
+    if ( $reason_point == 0 ) return false;
+    return ( get_user_point($user_ID) + $reason_point ) < 0;
 }
 
 
 
 
 /**
- * 사용자 포인트 삭제. 포인트를 0으로 만드는 것과 동일한 효과.
+ * 사용자 인트를 0으로 만드는 것과 동일한 효과.
  *
  * @주의: RestApi 로 바로 호출되지 않도록 한다.
  *
  * @param $user_ID
  */
 function point_reset($user_ID) {
-    delete_user_meta($user_ID, POINT);
+    set_user_point($user_ID, 0);
 }
 
 
@@ -733,6 +863,9 @@ function admin_user_profile_update($in)
 /**
  * Register
  *
+ * 모든 회원 가입은 이 함수를 통해서 이루어져야한다.
+ * pass login 의 경우, login_or_register() => register() 순서로 호출이 된다.
+ *
  *
  *
  * It logs in and return 0 on success.
@@ -753,6 +886,8 @@ function admin_user_profile_update($in)
  * @return mixed
  *  zero(0) on success.
  *  otherwise, error code.
+ * @throws \Kreait\Firebase\Exception\FirebaseException
+ * @throws \Kreait\Firebase\Exception\MessagingException
  */
 function register($in)
 {
@@ -792,6 +927,9 @@ function register($in)
     if ( api_error($re) ) return $re;
 
     wp_set_current_user($user_ID);
+
+
+    point_update([REASON => POINT_REGISTER]);
 
     return profile();
 }
@@ -3368,4 +3506,16 @@ function image_url($post): string {
     if ( count($post['files']) == 0 ) return '';
     if ( isset($post['files'][0]['thumbnail_url']) && $post['files'][0]['thumbnail_url']) return $post['files'][0]['thumbnail_url'];
     else return $post['files'][0]['url'];
+}
+
+
+
+function stamp_yesterday() {
+    return strtotime('yesterday');
+}
+function stamp_today() {
+    return strtotime('today');
+}
+function stamp_tomorrow() {
+    return strtotime('tomorrow');
 }
