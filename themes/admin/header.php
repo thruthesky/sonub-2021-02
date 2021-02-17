@@ -24,7 +24,6 @@ function is_admin_forum_page(): bool {
         font-weight: normal;
     }
 
-
     .l-sidebar {
         width: 328px !important;
         min-width: 328px !important;
@@ -37,6 +36,16 @@ function is_admin_forum_page(): bool {
         min-width: 328px !important;
         max-width: 328px !important;
     }
+
+    .l-body-middle > h1 {
+        margin-top: .8rem;
+        padding: .5em;
+        border-radius: 25px;
+        background-color: #e8eeef;
+        border: 1px solid #e4e6ea;
+        color: #4b596e;
+    }
+
     .admin-forum-list .l-sidebar {
         width: 420px !important;
         min-width: 420px !important;
@@ -49,6 +58,7 @@ function is_admin_forum_page(): bool {
         min-width: 420px !important;
         max-width: 420px !important;
     }
+
 </style>
 <header class="l-center bg-grey fs-sm">
     <a class="ps-4" href="/?page=admin/home"><?=ln('Dashboard', '홈')?></a>

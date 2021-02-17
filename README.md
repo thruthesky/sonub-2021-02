@@ -1279,3 +1279,25 @@ EOS;
 
 * When a user(or admin) logged in wordpress dashboard, then logout by easing session id in cookie may not work. you need to logout from wordpress.
 
+
+# 우편번호
+
+- 우체국 최신 우편번호(2021년 2월)자료를  zipcode 에 넣어 놨다.
+
+검색 예)
+select * from zipcode where eupmyun like '테헤란로%' or doro like '테헤란로%' or buildname like '테헤란로%' or ri like '테헤란로%';
+
+
+
+# 포인트 시스템
+
+- `api_point_history` 에 포인트 기록이 남는다. 이전, 이후의 포인트 변화를 같이 기록한다.
+- `from_userID` 와 `reason` 그리고 `stamp` 3 개에 복합 index 가 걸려 있어,
+  - 24시간 마다 한번씩 출석 포너스를 인정 한다던가,
+  - 날짜별로 글 보너스를 10개만 준다던지
+  - 또는 5시간 마다 최대 몇개의 글만 보너스를 준다던지 할 수 있다.
+    제한을 할 때 사용된다.
+    
+
+
+

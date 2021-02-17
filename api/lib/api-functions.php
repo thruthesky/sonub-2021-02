@@ -509,6 +509,184 @@ function profile_update($in)
 
 
 /**
+ * 포인트 증/감
+ *
+ * - from_user_ID 와 to_user_ID 가 동일하면, 그것은 시스템에 의해서 발생하는 포인트이다.
+ *   예를 들면, 글/코멘트 쓰기/삭제, 로그인 보너스 등에서 from_user_ID 와 to_user_ID 가 동일하다.
+ *
+ * - from_user_ID 와 to_user_ID 가 동일한 경우, point 는 반드시 0 의 값이어야 한다.
+ *   자기 자신의 포인트를 변경하는 경우는 시스템에 지정된 포인트만 변경 할 수 있다.
+ *   이 때에는 reason 에 추천,글쓰기 등의 코드인
+ *      POINT_POST_CREATE, POST_POST_DELETE, POST_COMMENT_CREATE 와 같은 코드가 들어와야 하고,
+ *   그에 맞는 포인트가 자동으로 정해진다.
+ *
+ * - 특히, 글/코멘트 쓰기/삭제 등에서는 post_ID 에 글 번호가 들어와야 한다.
+ *   그래서 각 게시판별로 포인트 값을 다르게 설정 할 수 있다.
+ *
+ * - target 에는 글/코멘트 생성/삭제/추천 등에서 글 번호, 코멘트 번호 등이 들어간다.
+ *
+ * - point 이전을 하는 경우, from_user_ID 와 to_user_ID 가 다르며, 이 때에 이전하고하자는 값의 point 가 들어간다.
+ * @param $in
+ * @return int|string
+ */
+function point_update($in): string {
+
+    if ( !isset($in['from_user_ID']) || empty($in['from_user_ID'])) return ERROR_FROM_USER_ID_NOT_SET;
+    if ( !isset($in['to_user_ID']) || empty($in['to_user_ID']) ) return ERROR_TO_USER_ID_NOT_SET;
+    if ( !isset($in[REASON]) || empty($in[REASON]) ) return ERROR_REASON_NOT_SET;
+
+    $from_user = get_user_by('id', $in['from_user_ID']);
+    if ( ! $from_user ) return ERROR_FROM_USER_NOT_EXISTS;
+
+    $to_user = get_user_by('id', $in['to_user_ID']);
+    if ( ! $to_user ) return ERROR_TO_USER_NOT_EXISTS;
+
+    if ( isset($in[POINT]) ) $point = $in[POINT];
+    else $point = 0;
+
+//    if ( $in['from_user_ID'] == $in['to_user_ID'] ) {
+//        if ( !in_array($in['reason'], POINT_COMMUNITY_ACTIVITY) ) return ERROR_WRONG_POINT_REASON;
+//        if ( !isset($in['post_ID']) || empty($in['post_ID']) ) return ERROR_POST_ID;
+//    }
+
+    /// 관리자가 포인트를 수정하는 경우, 입력 검사
+    if ( $in['reason'] == POINT_UPDATE ) {
+        if ( admin() == false ) return ERROR_PERMISSION_DENIED;
+        if ( empty($point) ) return ERROR_POINT_IS_NOT_SET;
+        if ( $point < 0 ) return ERROR_POINT_CANNOT_BE_SET_LESS_THAN_ZERO;
+        if ( isset($in['post_ID']) ) return ERROR_WRONG_INPUT;
+    }
+
+    switch( $in[REASON] ) {
+        case POINT_UPDATE:
+            set_user_point($to_user->ID, $point);
+            break;
+        case POINT_REGISTER:
+            break;
+
+        case POINT_LOGIN:
+            break;
+
+        case POINT_LIKE :
+            if ( $in['from_user_ID'] == $in['to_user_ID'] ) return ERROR_CANNOT_LIKE_OWN_POST;
+
+            $point_like_deduction = get_option(POINT_LIKE_DEDUCTION, 0);
+            $from_user_point = get_user_point($in['from_user_ID']);
+            if ( $from_user_point + $point_like_deduction < 0 ) return ERROR_LACK_OF_POINT;
+
+            update_user_meta($from_user->ID, POINT, $from_user_point + $point_like_deduction);
+
+            $point_like = get_option(POINT_LIKE, 0);
+
+
+            $to_user_point = get_user_point($in['to_user_ID']);
+            update_user_meta($to_user->ID, POINT, $to_user_point + $point_like);
+
+
+            break;
+
+        case POINT_DISLIKE:
+            if ( $in['from_user_ID'] == $in['to_user_ID'] ) return ERROR_CANNOT_DISLIKE_OWN_POST;
+
+            $point_dislike_deduction = get_option(POINT_DISLIKE_DEDUCTION, 0);
+
+            $from_user_point = get_user_point($in['from_user_ID']);
+            if ( $from_user_point + $point_dislike_deduction < 0 ) return ERROR_LACK_OF_POINT;
+
+            update_user_meta($from_user->ID, POINT, $from_user_point + $point_dislike_deduction);
+
+
+            $point_dislike = get_option(POINT_DISLIKE, 0);
+            $to_user_point = get_user_point($in['to_user_ID']);
+            update_user_meta($to_user->ID, POINT, $to_user_point + $point_dislike);
+
+            break;
+
+        case POINT_POST_CREATE:
+            break;
+
+        case POINT_POST_DELETE:
+            break;
+
+        case POINT_COMMENT_CREATE:
+            break;
+
+        case POINT_COMMENT_DELETE:
+            break;
+
+        default: break;
+    }
+
+    /// @todo 레코드를 기록하고, 그 ID를 리턴한다. 주의: 모든 경우, (추천을 해도), 레코드가 1개 발생.
+    /// 레코드에는 from_user_before_point, from_user_after_point, to_user_before_point, after_user_before_point
+    /// 와 같이 기록을 한다.
+    $from_user_point = get_user_meta($in['from_user_ID'], POINT, true);
+    return 0;
+}
+
+/**
+ * @param $user_ID
+ * @return mixed
+ */
+function get_user_point($user_ID): int
+{
+    $re = get_user_meta($user_ID, POINT, true);
+    if ( empty($re) ) return 0;
+    else return $re;
+}
+
+/**
+ * 회원의 포인트 지정 함수는 이 함수를 통해서 해야만 한다.
+ * 이 함수에서, 포인트 음수의 값이 들어오면 0 으로 저장한다.
+ * @param $user_ID
+ * @param $point
+ */
+function set_user_point($user_ID, $point) {
+    if ( $point < 0 ) $point = 0;
+    update_user_meta($user_ID, POINT, $point);
+}
+
+/**
+ * 회원의 포인트가 모자라면 true 를 리턴한다.
+ *
+ * 예를 들어, 추천을 하려는 회원의 포인트가 모자라는 경우, 이 함수를 통해서 검사를 할 수 있다.
+ * 추천하는데 차감(소모)되는 포인트가 100 인데, 회원 포인트가 50 밖에 없다면, 50이 모자란다. 이 때, true 를 리턴한다.
+ *
+ * 또 다른 예로, 회원의 포인트가 50 인데, 관리자가 그 회원의 포인트를 200 을 차감하려 한다면, 150 모자란다.
+ * 이 때에도 true 를 리턴한다.
+ *
+ * 모든 경우에, 입력값 $point 가 음수로 입력 될 때만 lack_of_point() 가 참을 리턴 할 수 있다. 양수의 값이 들어오면,
+ * 포인트를 추가하는 것이므로, 포인트가 모자라는 체크를 할 필요 없다.
+ *
+ * @param $user_ID
+ * @param $point
+ * @return bool
+ *
+ * @example
+ *              if ( lack_of_point( $from_user->ID, $point ) ) return ERROR_LACK_OF_POINT;
+ */
+function lack_of_point($user_ID, $point): bool
+{
+    if ( $point >= 0 ) return false;
+    return 0 < get_user_point($user_ID) + $point;
+}
+
+
+
+
+/**
+ * 사용자 포인트 삭제. 포인트를 0으로 만드는 것과 동일한 효과.
+ *
+ * @주의: RestApi 로 바로 호출되지 않도록 한다.
+ *
+ * @param $user_ID
+ */
+function point_reset($user_ID) {
+    delete_user_meta($user_ID, POINT);
+}
+
+
+/**
  * Update user information.
  *
  *
@@ -1020,8 +1198,16 @@ function send_message_to_users($in)
     if (!isset($in['body'])) return ERROR_EMPTY_BODY;
     $all_tokens = [];
 
-    $users = explode(',', $in['users']);
+    if (gettype($in['users']) == 'array') {
+        $users = $in['users'];
+    } else {
+        $users = explode(',', $in['users']);
+    }
     foreach ($users as $ID) {
+        if ( isset($in['subscription']) ) {
+            $re = get_user_meta($ID, $in['subscription'], true);
+            if ( $re == 'N' ) continue;
+        }
         $tokens = get_user_tokens($ID);
         $all_tokens = array_merge($all_tokens, $tokens);
     }
@@ -1030,8 +1216,13 @@ function send_message_to_users($in)
     if (!isset($in['imageUrl'])) $in['imageUrl'] = '';
 
     if ( !isset($in['data'])) $in['data'] = [];
+    if ( !isset($in['click_action'])) $in['click_action'] = '/';
     $in['data']['senderId'] = wp_get_current_user()->ID;
-    return sendMessageToTokens($all_tokens, $in['title'], $in['body'], $in['click_action'], $in['data'], $in['imageUrl']);
+    $re = sendMessageToTokens($all_tokens, $in['title'], $in['body'], $in['click_action'], $in['data'], $in['imageUrl']);
+//    print_r($re);
+    return [
+        'tokens' => $all_tokens
+    ];
 }
 
 
@@ -1164,7 +1355,7 @@ function post_response($ID_or_post, $options = [])
     /**
      * Guid 는 wp_options 에 등록된 도메인의 URL 을 리턴하지만, url 은 현재 도메인의 URL 을 리턴한다.
      */
-    $url = fix_host($post['guid']);
+    $post['url'] = fix_host($post['guid']);
 
 
     //

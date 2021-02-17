@@ -122,4 +122,18 @@ class NotificationRoute {
         }
     }
 
+    public function chatSubscription($in) {
+        if ( ! is_user_logged_in() ) return ERROR_LOGIN_FIRST;
+        if ( ! isset($in['topic']) && empty($in['topic']) ) return ERROR_EMPTY_TOPIC;
+        $sub = get_user_meta(wp_get_current_user()->ID, $in['topic'], true) == "Y";
+        if ( !$sub ) {
+            user_update_meta(wp_get_current_user()->ID, [ $in['topic'] => 'Y' ]);
+        } else {
+            user_update_meta(wp_get_current_user()->ID, [ $in['topic'] => 'N' ]);
+        }
+        return [
+            $in['topic'] => get_user_meta(wp_get_current_user()->ID, $in['topic'], true)
+        ];
+    }
+
 }
