@@ -131,7 +131,9 @@ class NotificationRoute {
         } else {
             user_update_meta(wp_get_current_user()->ID, [ $in['topic'] => 'N' ]);
         }
-        return get_user_meta(wp_get_current_user()->ID, $in['topic'], true);
+        return [
+            $in['topic'] => get_user_meta(wp_get_current_user()->ID, $in['topic'], true)
+        ];
     }
 
 }
