@@ -55,7 +55,19 @@ class ForumRoute
         }
     }
 
+    public function searchComments($in)
+    {
+        // if (!isset($in['user_id'])) return ERROR_EMPTY_ID;
 
+
+        $comments = get_comments($in);
+        $rets = [];
+        foreach ($comments as $comment) {
+            $rets[] = comment_response($comment->comment_ID);
+        }
+
+        return $rets;
+    }
 
 
     public function getComment()
