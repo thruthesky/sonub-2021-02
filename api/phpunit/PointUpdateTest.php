@@ -24,7 +24,7 @@ final class PointUpdateTest extends TestCase
         update_option(POINT_LIKE_DEDUCTION, 0);
         update_option(POINT_DISLIKE_DEDUCTION, 0);
         update_option(POINT_LIKE_HOUR_LIMIT, 0);
-        update_option(POINT_LIKE_COUNT_LIMIT, 0);
+        update_option(POINT_LIKE_HOUR_COUNT_LIMIT, 0);
         update_option(POINT_LIKE_DAILY_LIMIT, 0);
     }
 

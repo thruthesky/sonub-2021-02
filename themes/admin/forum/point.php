@@ -10,7 +10,7 @@ if ( in('mode') == 'save' ) {
     update_option(POINT_LIKE_DEDUCTION, in(POINT_LIKE_DEDUCTION));
     update_option(POINT_DISLIKE_DEDUCTION, in(POINT_DISLIKE_DEDUCTION));
     update_option(POINT_LIKE_HOUR_LIMIT, in(POINT_LIKE_HOUR_LIMIT));
-    update_option(POINT_LIKE_COUNT_LIMIT, in(POINT_LIKE_COUNT_LIMIT));
+    update_option(POINT_LIKE_HOUR_COUNT_LIMIT, in(POINT_LIKE_HOUR_COUNT_LIMIT));
     update_option(POINT_LIKE_DAILY_LIMIT, in(POINT_LIKE_DAILY_LIMIT));
 }
 
@@ -95,7 +95,7 @@ if ( in('mode') == 'save' ) {
             </div>
             <div class="col">
                 <label class="form-label">추천/비추천 포인트 증/감 회수 제한</label>
-                <input type="number" class="form-control" name="POINT_LIKE_COUNT_LIMIT" placeholder="0" value="<?=get_option(POINT_LIKE_COUNT_LIMIT, 0)?>">
+                <input type="number" class="form-control" name="POINT_LIKE_HOUR_COUNT_LIMIT" placeholder="0" value="<?=get_option(POINT_LIKE_HOUR_COUNT_LIMIT, 0)?>">
             </div>
         </div>
 

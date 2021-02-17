@@ -699,7 +699,6 @@ function select_list_widgets($cat_ID, $type, $config_name) {
 
 function select_list_widgets_option($type, $default_selected) {
     foreach( glob(THEME_DIR . "/widgets/$type/**/*.ini") as $file ) {
-        d($file);
         $arr = explode('/', $file);
         array_pop($arr);
         $widget_name = array_pop($arr);
