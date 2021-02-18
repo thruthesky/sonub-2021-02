@@ -70,26 +70,26 @@ $categories = get_category_tree();
         <tr>
             <td><?=ln('Point', '글 쓰기 포인트')?></td>
             <td>
-                <input type="number" name="post_create_point" value="<?=category_meta($cat->cat_ID, 'post_create_point','0')?>">
+                <input type="number" name="<?=POINT_POST_CREATE?>" value="<?=category_meta($cat->cat_ID, POINT_POST_CREATE,'0')?>">
             </td>
         </tr>
         <tr>
             <td><?=ln('Point', '글 삭제 포인트')?></td>
             <td>
-                <input type="number" name="post_delete_point" value="<?=category_meta($cat->cat_ID, 'post_delete_point','0')?>">
+                <input type="number" name="<?=POINT_POST_DELETE?>" value="<?=category_meta($cat->cat_ID, POINT_POST_DELETE,'0')?>">
             </td>
         </tr>
 
         <tr>
             <td><?=ln('Point', '코멘트 쓰기 포인트')?></td>
             <td>
-                <input type="number" name="comment_create_point" value="<?=category_meta($cat->cat_ID, 'comment_create_point','0')?>">
+                <input type="number" name="<?=POINT_COMMENT_CREATE?>" value="<?=category_meta($cat->cat_ID, POINT_COMMENT_CREATE,'0')?>">
             </td>
         </tr>
         <tr>
             <td><?=ln('Point', '코멘트 삭제 포인트')?></td>
             <td>
-                <input type="number" name="comment_delete_point" value="<?=category_meta($cat->cat_ID, 'comment_delete_point','0')?>">
+                <input type="number" name="<?=POINT_COMMENT_DELETE?>" value="<?=category_meta($cat->cat_ID, POINT_COMMENT_DELETE,'0')?>">
             </td>
         </tr>
 
@@ -97,15 +97,15 @@ $categories = get_category_tree();
         <tr>
             <td><?=ln('Point', '시간/수 제한')?></td>
             <td>
-                <input class="w-64px" type="number" name="POINT_HOUR_LIMIT" value="<?=category_meta($cat->cat_ID, POINT_HOUR_LIMIT, '0')?>">
+                <input class="w-64px" type="number" name="<?=POINT_HOUR_LIMIT?>" value="<?=category_meta($cat->cat_ID, POINT_HOUR_LIMIT, '0')?>">
                 /
-                <input class="w-64px" type="number" name="POINT_HOUR_COUNT_LIMIT" value="<?=category_meta($cat->cat_ID, POINT_HOUR_COUNT_LIMIT, '0')?>">
+                <input class="w-64px" type="number" name="<?=POINT_HOUR_COUNT_LIMIT?>" value="<?=category_meta($cat->cat_ID, POINT_HOUR_COUNT_LIMIT, '0')?>">
             </td>
         </tr>
         <tr>
             <td><?=ln('Point', '일/수 제한')?></td>
             <td>
-                <input class="w-64px" type="number" name="POINT_DAILY_LIMIT" value="<?=category_meta($cat->cat_ID, POINT_DAILY_LIMIT, '0')?>">
+                <input class="w-64px" type="number" name="<?=POINT_DAILY_LIMIT?>" value="<?=category_meta($cat->cat_ID, POINT_DAILY_LIMIT, '0')?>">
             </td>
         </tr>
 

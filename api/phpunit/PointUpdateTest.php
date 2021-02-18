@@ -32,7 +32,10 @@ final class PointUpdateTest extends TestCase
             wp_insert_category( ['cat_name'=> 'point_test', 'category_description'=> 'point_test' ], true );
             $cat = get_category_by_slug('point_test');
         }
-
+        update_category_meta(['cat_ID' => $cat->term_id, 'field' => POINT_POST_CREATE, 'value' => 0]);
+        update_category_meta(['cat_ID' => $cat->term_id, 'field' => POINT_COMMENT_CREATE, 'value' => 0]);
+        update_category_meta(['cat_ID' => $cat->term_id, 'field' => POINT_POST_DELETE, 'value' => 0]);
+        update_category_meta(['cat_ID' => $cat->term_id, 'field' => POINT_COMMENT_DELETE, 'value' => 0]);
     }
 
     public function testGetInput(): void
@@ -248,6 +251,17 @@ final class PointUpdateTest extends TestCase
     }
 
     public function testPostCreate(): void {
+        $this->clear();
+        update_category( ['slug' => 'point_test',
+            POINT_POST_CREATE => 100,
+            POINT_COMMENT_CREATE => 50,
+            POINT_POST_DELETE => -80,
+            POINT_COMMENT_DELETE => -40]
+        );
+
+        wp_set_current_user($this->A);
+        $re = point_update(['reason' => POINT_POST_CREATE, 'post_ID' => 1]);
+        self::assertTrue($re > 0);
 
     }
 

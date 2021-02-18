@@ -543,9 +543,14 @@ function point_update($in): string {
 
     // 가입/로그인 또는 글 생성/삭제와 같이 시스템이 포인트를 주는 경우, 포인트 주고/받는 사람을 동일하게 한다.
     if ( in_array($in[REASON], [ POINT_REGISTER, POINT_LOGIN, POINT_POST_CREATE, POINT_POST_DELETE, POINT_COMMENT_CREATE, POINT_COMMENT_DELETE ])  ) {
+
+        // @todo 이와 같은 경우, from_user_ID 와 to_user_ID 가 입력되면 에러 리턴.
         $in[FROM_USER_ID] = wp_get_current_user()->ID;
         $in[TO_USER_ID] = wp_get_current_user()->ID;
     }
+    // @todo 추천을 하는 경우, 글이 있으면 글 번호를 바탕으로 from_user_ID 와 to_user_ID 를 구한다.
+    // @todo 사용자 프로필을 추천하는 경우, to_user_ID 만들어와야 한다.
+    // @todo 즉, 이와 같은 경우, from_user_ID 와 to_user_ID 는 입력 받지 않는다. 입력 하면 에러.
 
     if ( !isset($in[FROM_USER_ID]) || empty($in[FROM_USER_ID])) return ERROR_FROM_USER_ID_NOT_SET;
     if ( !isset($in[TO_USER_ID]) || empty($in[TO_USER_ID]) ) return ERROR_TO_USER_ID_NOT_SET;
@@ -3039,6 +3044,9 @@ function getUserForumTopics($user_ID) {
  *
  *
  *  - $in['cat_ID'] is the category term id
+ *  - $in['slug'] is the category slug.
+ *    One of cat_ID or slug must be passed.
+ *
  *  - $in['field'] is the category field(property) to update.
  *    $in['field'] can be one of
  *      - 'cat_name' - category name or title.
@@ -3052,7 +3060,10 @@ function getUserForumTopics($user_ID) {
  *  [ 'cat_ID' => 1,'field' => 'A', 'value' => 'Apple' ]
  *
  *  - Example of input for multiple fields update.
- *  [ 'cat_ID' => 1, 'cat_name' => 'title', 'category_description' => 'This is description', 'A' => 'Apple' ]
+ *      [ 'cat_ID' => 1, 'cat_name' => 'title', 'category_description' => 'This is description', 'A' => 'Apple' ]
+ *
+ * - Example of multiple fields update.
+ *      update_category( ['slug' => 'point_test', POINT_POST_CREATE => 100, POINT_COMMENT_CREATE => 50] );
  *
  * @return mixed
  *  - error code on error.
@@ -3061,8 +3072,10 @@ function getUserForumTopics($user_ID) {
 function update_category($in)
 {
 
-    if (!isset($in['cat_ID'])) return ERROR_EMPTY_CATEGORY_ID;
-    $cat = get_category($in['cat_ID']);
+    if (!isset($in['cat_ID']) && !isset($in['slug']) ) return ERROR_EMPTY_CATEGORY_ID_OR_SLUG;
+    if ( isset($in['cat_ID']) ) $cat = get_category($in['cat_ID']);
+    else $cat = get_category_by_slug($in['slug']);
+
     if ($cat == null) return ERROR_CATEGORY_NOT_EXIST_BY_THAT_ID;
 
 
@@ -3075,7 +3088,7 @@ function update_category($in)
             if ($k == 'session_id') continue;
             if ($k == 'route') continue;
             if ($k == 'cat_ID') continue;
-            $re = update_category_meta(['cat_ID' => $in['cat_ID'], 'field' => $k, 'value' => $v]);
+            $re = update_category_meta(['cat_ID' => $cat->term_id, 'field' => $k, 'value' => $v]);
             if ($re) break;
         }
     }
@@ -3085,10 +3098,10 @@ function update_category($in)
     if ($re) return $re;
 
     ///
-    $ret = get_category($in['cat_ID'])->to_array();
+    $ret = get_category($cat->term_id)->to_array();
 
     /// 추가 (메타) 정보 업데이트
-    $metas = get_term_meta($in['cat_ID'], '', true);
+    $metas = get_term_meta($cat->term_id, '', true);
     foreach ($metas as $key => $values) {
         $ret[$key] = $values[0];
     }
@@ -3097,15 +3110,21 @@ function update_category($in)
 }
 
 /**
+ * Updates a field(or a meta) of a category.
+ *
  * 카테고리 기본와 메타 정보 업데이트.
  *
  * 기본 정보는 cat_name, category_description, category_parent 만 수정 가능하다.
  * 그 외에는 모두 메타 데이터에 추가(저장)된다.
  *
- * Updates a field(or a meta) of a category.
+ * 좀 더 편하게 사용하려면, update_category() 함수를 사용한다.
  *
  * @param $in
  * @return int|string
+ *
+ * @example
+ *  update_category_meta(['cat_ID' => $in['cat_ID'], 'field' => $k, 'value' => $v]);
+ *  update_category_meta(['cat_ID' => $cat->term_id, 'field' => POINT_COMMENT_CREATE, 'value' => 0]);
  */
 function update_category_meta($in)
 {
