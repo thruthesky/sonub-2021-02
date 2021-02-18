@@ -35,10 +35,18 @@ if (in('category')) {
         </div>
     </div>
 
-    <div class="form-group mb-3">
+    <div class="form-group mb-2">
         <label for="price">가격</label>
         <input type="number" class="form-control" id="price" name="price" v-model="post.price">
     </div>
+
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="leatPrice" name="least_price"  v-model="post.least_price">
+            <label class="form-check-label" for="leatPrice">
+                옵션에 상품 가격 입력 <a href="https://docs.google.com/document/d/1JnEIoytM1MgS35emOju90qeDoIH963VeMHLaqvOhA7o/edit#heading=h.t9yy0z10h3rp" target="_blank">[?]</a>
+            </label>
+        </div>
+
 
 
     <div class="form-group mb-3">
@@ -80,10 +88,11 @@ if (in('category')) {
 
 
     <div class="form-group mb-3">
-        <label for="short_title">옵션</label>
+        <label for="short_title"><a href="https://docs.google.com/document/d/1JnEIoytM1MgS35emOju90qeDoIH963VeMHLaqvOhA7o/edit#heading=h.inp7ewl4tmv3" target="_blank">옵션 [?]</a></label>
         <input type="text" class="form-control" id="options" name="options" v-model="post.options">
         <div class="form-text">
-            상품 옵션을 추가 할 수 있습니다. 코마로 구분하여 입력. 예) 빨강색, 파랑색
+            <a href="https://docs.google.com/document/d/1JnEIoytM1MgS35emOju90qeDoIH963VeMHLaqvOhA7o/edit#heading=h.inp7ewl4tmv3" target="_blank">상품 옵션 설명 참고 [?]</a>
+
         </div>
     </div>
 
@@ -178,6 +187,7 @@ if (in('category')) {
                     app.post = res;
                     // true, false 를 DB 에 저장하면, 1, 0 이 되는데, 아래와 같이 boolean 으로 변환 해 주어야 한다.
                     app.post.stop = app.post.stop === '1';
+                    app.post.least_price = app.post.least_price === '1';
                 }, alert);
             }
         },

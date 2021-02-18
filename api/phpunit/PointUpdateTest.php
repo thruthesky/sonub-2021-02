@@ -26,6 +26,13 @@ final class PointUpdateTest extends TestCase
         update_option(POINT_LIKE_HOUR_LIMIT, 0);
         update_option(POINT_LIKE_HOUR_COUNT_LIMIT, 0);
         update_option(POINT_LIKE_DAILY_LIMIT, 0);
+
+        $cat = get_category_by_slug('point_test');
+        if ( !$cat ) {
+            wp_insert_category( ['cat_name'=> 'point_test', 'category_description'=> 'point_test' ], true );
+            $cat = get_category_by_slug('point_test');
+        }
+
     }
 
     public function testGetInput(): void
@@ -238,6 +245,10 @@ final class PointUpdateTest extends TestCase
 
         $profile = login_or_register(['user_email' => $email, 'user_pass' => $email]);
         self::assertTrue( get_user_point($profile['ID']) == (get_option(POINT_REGISTER) + get_option(POINT_LOGIN)), "$email's point: " . get_user_point($profile['ID']));
+    }
+
+    public function testPostCreate(): void {
+
     }
 
 //

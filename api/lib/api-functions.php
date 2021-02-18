@@ -620,6 +620,7 @@ function point_update($in): string {
             $history['to_user_point_apply'] = POINT_REGISTER;
             break;
 
+
         case POINT_LOGIN:
             /// 로그인 포인트는 하루에 한번만 증가한다. 두번째는 ERROR_POINT_LOGIN_DONE 에러가 나는데 그냥 무시한다.
             $res = get_point_history([TO_USER_ID => $to_user->ID, REASON => POINT_LOGIN, 'between' => [ stamp_today(), stamp_tomorrow() ]]);
