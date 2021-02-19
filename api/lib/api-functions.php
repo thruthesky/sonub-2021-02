@@ -2460,7 +2460,16 @@ function get_category_IDs_of_post($post_ID)
 }
 
 /**
+ * An alias of `api_edit_post`
  * @param $in
+ */
+function api_create_post($in) {
+    api_edit_post($in);
+}
+
+/**
+ * @param $in
+ *   - $in['ID'] - if it is set, it's going to update.
  *   - when $in['ID'] is set, post_title, post_content, category will be preserved even if they are not set.
  * @return array|mixed|string
  *
@@ -2525,6 +2534,12 @@ function api_edit_post($in)
     }
 
     update_post_properties($ID, $in);
+
+    if ( !isset($in['ID']) ) { // 새로운 글 생성을 했다.
+        point_update([REASON => POINT_POST_CREATE, 'post_ID' => $ID]);
+    } else { // 글 수정을 했다.
+        //
+    }
 
     // NEW POST IS CREATED => Send notification to forum subscriber
     if (!isset($in['ID'])) {
@@ -3577,4 +3592,70 @@ function stamp_today() {
 }
 function stamp_tomorrow() {
     return strtotime('tomorrow');
+}
+
+
+
+/**
+ * 잘못된 JSON 포맷 문자열을 바로 잡는다. 그래서 json_decode(fixJson($str)); 와 같이 할 수 있다.
+ * @param $s
+ * @return string|string[]|null
+ *
+ * @example
+ *         $str = <<<EOJ
+{
+address: '배송지 주소',
+name: '받는 사람 이름',
+phoneNo: '받는 사람 전화번호',
+memo: '포장지에 적을 메모',
+price: '18,100',
+noOfItems: 2,
+order: {
+'111': {
+postTitle: '',
+price: 1000,
+discountRate: 0,
+orderPrice: 4500,
+selectedOptions: {
+'Default Option': {
+count: 3,
+price: 0,
+discountRate: 0,
+},
+pepper: {
+count: 1,
+price: 500,
+discountRate: 0,
+},
+},
+},
+'222': {
+postTitle: '두번째 테스트 상품',
+price: 2000,
+discountRate: 50,
+orderPrice: 13600,
+selectedOptions: {
+potato: {
+count: 1,
+price: 5000,
+discountRate: 20,
+},
+tomato: {
+count: 2,
+price: 6000,
+discountRate: 20,
+},
+},
+},
+},
+}
+EOJ;
+json_decode(fixJson($str));
+ *
+ */
+function fixJson($s) {
+    $s = str_replace("'", '"', $s);
+    $s = preg_replace("/^(\s+)([a-zA-Z]+)/m", "$1\"$2\"", $s);
+    $s = preg_replace("/,(\s)+}/m", "$1}", $s);
+    return $s;
 }

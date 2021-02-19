@@ -260,8 +260,14 @@ final class PointUpdateTest extends TestCase
         );
 
         wp_set_current_user($this->A);
+
         $re = point_update(['reason' => POINT_POST_CREATE, 'post_ID' => 1]);
         self::assertTrue($re > 0);
+        self::assertTrue( get_user_point($this->A) == 0, 'Point after post create is ' . get_user_point($this->A) );
+
+        ////
+        api_create_post(['post_title' => 'abc']);
+        self::assertTrue( get_user_point($this->A) == 100, 'Point after post create is ' . get_user_point($this->A) );
 
     }
 
