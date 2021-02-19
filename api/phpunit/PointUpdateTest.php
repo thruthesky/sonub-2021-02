@@ -261,13 +261,48 @@ final class PointUpdateTest extends TestCase
 
         wp_set_current_user($this->A);
 
+        /// 포인트가 없는 게시판에, 글 작성을 해서, 포인트가 추가 안됨
         $re = point_update(['reason' => POINT_POST_CREATE, 'post_ID' => 1]);
         self::assertTrue($re > 0);
         self::assertTrue( get_user_point($this->A) == 0, 'Point after post create is ' . get_user_point($this->A) );
 
-        ////
-        api_create_post(['post_title' => 'abc']);
+        /// 글 쓰기 포인트 100 추가
+        $re = api_create_post(['category' => 'point_test', 'post_title' => 'abc']);
+        self::assertTrue(api_error($re) === false, "Api_error() true? " . api_error($re) === true ? 'y' : 'n');
         self::assertTrue( get_user_point($this->A) == 100, 'Point after post create is ' . get_user_point($this->A) );
+
+        /// 글 쓰기 포인트를 1,200 으로 하고, 다시 글 쓰면 총 1,300 이 됨.
+        update_category(['slug' => 'point_test', POINT_POST_CREATE => 1200]);
+        $re = api_create_post(['category' => 'point_test', 'post_title' => 'abc']);
+        self::assertTrue( get_user_point($this->A) == 1300, 'Point after post create is ' . get_user_point($this->A) );
+    }
+
+    public function testCommentCreate(): void {
+
+    }
+    public function testPostDelete(): void {
+
+    }
+    public function testCommentDelete(): void {
+
+    }
+
+    public function testLikeTimeLimit(): void {
+
+    }
+    public function testLikeDayLimit(): void {
+
+    }
+    public function testPostTimeLimit(): void {
+
+    }
+    public function testPostDayLimit(): void {
+
+    }
+    public function testCommentTimeLimit(): void {
+
+    }
+    public function testCommentDayLimit(): void {
 
     }
 

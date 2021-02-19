@@ -752,8 +752,11 @@ function set_user_point($user_ID, $point) {
 /**
  * 포인트를 증감 또는 차감한다.
  *
- * $reason 은 POINT_LIKE 또는 POINT_LIKE_DEDUCTION 과 같이 포인트 REASON 이다.
- * $reason 의 설정된 포인트가 음수인 경우, 포인트가 차감된다.
+ * $reason 은 문자열 아니면, 숫자 값이 들어온다.
+ *  예를 들면, POINT_LIKE 또는 POINT_LIKE_DEDUCTION 과 같이 포인트 REASON 이 들어 오거나
+ *  숫자로 100, -200 와 같이 들어 올 수 있다.
+ *
+ * $reason 의 값(또는 설정된 포인트)이 음수인 경우, 포인트가 차감된다.
  *
  *
  * 주의: 포인트를 차감 할 때, 0 이하(음수) 값을 DB 에 저장하지 않는다.
@@ -780,9 +783,10 @@ function set_user_point($user_ID, $point) {
  *
  *
  */
-function change_user_point(int $user_ID, string $reason): int {
+function change_user_point(int $user_ID, $reason): int {
     $user_point = get_user_point($user_ID);
-    $reason_point = get_option($reason, 0);
+    if ( is_numeric($reason) ) $reason_point = $reason;
+    else $reason_point = get_option($reason, 0);
 
     $saving_point = $user_point + $reason_point;
     // 포인트를 차감을 하는 경우,
@@ -2464,7 +2468,7 @@ function get_category_IDs_of_post($post_ID)
  * @param $in
  */
 function api_create_post($in) {
-    api_edit_post($in);
+    return api_edit_post($in);
 }
 
 /**
@@ -2536,7 +2540,8 @@ function api_edit_post($in)
     update_post_properties($ID, $in);
 
     if ( !isset($in['ID']) ) { // 새로운 글 생성을 했다.
-        point_update([REASON => POINT_POST_CREATE, 'post_ID' => $ID]);
+        $re = point_update([REASON => POINT_POST_CREATE, 'post_ID' => $ID]);
+        if ( api_error($re) ) return $re;
     } else { // 글 수정을 했다.
         //
     }
