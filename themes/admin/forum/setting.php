@@ -94,12 +94,23 @@ $categories = get_category_tree();
         </tr>
 
 
+        <tr class="table-dark">
+            <td colspan="2">제한 설정</td>
+        </tr>
+        <tr class="table-light">
+            <td colspan="2">
+                <div class="hint">
+                    포인트 설정 및 글 쓰기 제한. 포인트에는 기본 적용됩니다.
+                </div>
+            </td>
+        </tr>
+
         <tr>
             <td><?=ln('Point', '시간/수 제한')?></td>
             <td>
                 <input class="w-64px" type="number" name="<?=POINT_HOUR_LIMIT?>" value="<?=category_meta($cat->cat_ID, POINT_HOUR_LIMIT, '0')?>">
                 /
-                <input class="w-64px" type="number" name="<?=POINT_HOUR_COUNT_LIMIT?>" value="<?=category_meta($cat->cat_ID, POINT_HOUR_COUNT_LIMIT, '0')?>">
+                <input class="w-64px" type="number" name="<?=POINT_HOUR_LIMIT_COUNT?>" value="<?=category_meta($cat->cat_ID, POINT_HOUR_LIMIT_COUNT, '0')?>">
             </td>
         </tr>
         <tr>
@@ -111,9 +122,32 @@ $categories = get_category_tree();
 
 
 
+        <tr>
+            <td><?=ln('Point', '글/코멘트에 제한')?></td>
+            <td>
+                <label>
+                    <input
+                            type="radio"
+                            name="<?=BAN_ON_LIMIT?>"
+                            value="Y"
+                        <?php if (category_meta($cat->cat_ID, BAN_ON_LIMIT, '') == 'Y' ) echo 'checked' ?>> 예,
+                </label>
+                &nbsp;
+                <label>
+                    <input
+                            type="radio"
+                            name="<?=BAN_ON_LIMIT?>"
+                            value="N"
+                        <?php if (category_meta($cat->cat_ID, BAN_ON_LIMIT, '') != 'Y' ) echo 'checked' ?>> 아니오
+                </label>
+            </td>
+        </tr>
+
+
+
 
         <tr class="table-dark">
-            <td colspan="2">위젯 설정</td>
+            <td colspan="2">웹 위젯 설정</td>
         </tr>
 
         <tr>
@@ -183,7 +217,7 @@ $categories = get_category_tree();
                             type="radio"
                             name="list_on_view"
                             value="Y"
-                        <?php if (category_meta($cat->cat_ID, 'list_on_view', '') == 'Y' ) echo 'checked' ?>> Yes,
+                        <?php if (category_meta($cat->cat_ID, 'list_on_view', '') == 'Y' ) echo 'checked' ?>> 예,
                 </label>
                 &nbsp;
                 <label>
@@ -191,7 +225,7 @@ $categories = get_category_tree();
                             type="radio"
                             name="list_on_view"
                             value="N"
-                        <?php if (category_meta($cat->cat_ID, 'list_on_view', '') != 'Y' ) echo 'checked' ?>> No
+                        <?php if (category_meta($cat->cat_ID, 'list_on_view', '') != 'Y' ) echo 'checked' ?>> 아니오
                 </label>
             </td>
         </tr>
@@ -213,6 +247,41 @@ $categories = get_category_tree();
                         value="<?=category_meta($cat->cat_ID, 'no_of_pages_on_nav', NO_OF_PAGES_ON_NAV)?>">
             </td>
         </tr>
+
+
+        <tr class="table-dark">
+            <td colspan="2">앱 위젯 설정</td>
+        </tr>
+
+        <tr>
+            <td><?=ln('Post List Widget', '글 목록 위젯')?></td>
+            <td>
+                <label class="">
+                    <input
+                            type="radio"
+                            name="mobile_forum_list_widget"
+                            value="text"
+                        <?php if (category_meta($cat->cat_ID, 'mobile_forum_list_widget', 'text') == 'text' ) echo 'checked' ?>> 텍스트
+                </label>
+                <label class="ps-2">
+                    <input
+                            type="radio"
+                            name="mobile_forum_list_widget"
+                            value="gallery"
+                        <?php if (category_meta($cat->cat_ID, 'mobile_forum_list_widget', 'text') == 'gallery' ) echo 'checked' ?>> 갤러리
+                </label>
+
+                <label class="ps-2">
+                    <input
+                            type="radio"
+                            name="mobile_forum_list_widget"
+                            value="thumbnail"
+                        <?php if (category_meta($cat->cat_ID, 'mobile_forum_list_widget', 'text') == 'thumbnail' ) echo 'checked' ?>> 썸네일
+                </label>
+
+            </td>
+        </tr>
+
 
 
         <tr>

@@ -517,6 +517,7 @@ function profile_update($in)
 
 
 /**
+ * @deprecated
  * 포인트 증/감
  *
  * - from_user_ID 와 to_user_ID 가 동일하면, 그것은 시스템에 의해서 발생하는 포인트이다.
@@ -536,21 +537,48 @@ function profile_update($in)
  * - point 이전을 하는 경우, from_user_ID 와 to_user_ID 가 다르며, 이 때에 이전하고하자는 값의 point 가 들어간다.
  * @param $in
  * @return int|string
+ *
+ * @note 이 코드를 분리해서, 각 필요한 곳에 코딩을 하는 것이 좋겠다. 만약, 새로운 포인트 증/감 루틴을 추가한다면, 복잡한 절차가 필요하다.
  */
 function point_update($in): string {
 
+
     if ( !isset($in[REASON]) || empty($in[REASON]) ) return ERROR_REASON_NOT_SET;
+
+
+
+    $category = null;
+    $post_or_comment_user_ID = 0;
+
+    // 게시글 번호가 입력되었으면, 글 존재 확인
+    if ( isset($in['post_ID']) ) {
+        $post = post_response($in['post_ID']);
+        if ( api_error($post) ) return $post;
+        $post_or_comment_user_ID = $post['post_author'];
+        $category = $post['category'];
+    }
+    // 코멘트 번호가 입력되면, 코멘트 존재 확인
+    if ( isset($in['comment_ID']) ) {
+        $comment = comment_response($in['comment_ID']);
+        if ( api_error($comment) ) return $comment;
+        $post_or_comment_user_ID = $comment['user_id'];
+        $category = get_first_category($comment['comment_post_ID']);
+    }
+
+
 
     // 가입/로그인 또는 글 생성/삭제와 같이 시스템이 포인트를 주는 경우, 포인트 주고/받는 사람을 동일하게 한다.
     if ( in_array($in[REASON], [ POINT_REGISTER, POINT_LOGIN, POINT_POST_CREATE, POINT_POST_DELETE, POINT_COMMENT_CREATE, POINT_COMMENT_DELETE ])  ) {
-
-        // @todo 이와 같은 경우, from_user_ID 와 to_user_ID 가 입력되면 에러 리턴.
         $in[FROM_USER_ID] = wp_get_current_user()->ID;
         $in[TO_USER_ID] = wp_get_current_user()->ID;
     }
-    // @todo 추천을 하는 경우, 글이 있으면 글 번호를 바탕으로 from_user_ID 와 to_user_ID 를 구한다.
-    // @todo 사용자 프로필을 추천하는 경우, to_user_ID 만들어와야 한다.
-    // @todo 즉, 이와 같은 경우, from_user_ID 와 to_user_ID 는 입력 받지 않는다. 입력 하면 에러.
+    if ( in_array($in[REASON], POINT_LIKE_ACTIONS) ) {
+        $in[FROM_USER_ID] = wp_get_current_user()->ID;
+        $in[TO_USER_ID] = $post_or_comment_user_ID;
+    }
+
+
+
 
     if ( !isset($in[FROM_USER_ID]) || empty($in[FROM_USER_ID])) return ERROR_FROM_USER_ID_NOT_SET;
     if ( !isset($in[TO_USER_ID]) || empty($in[TO_USER_ID]) ) return ERROR_TO_USER_ID_NOT_SET;
@@ -569,19 +597,68 @@ function point_update($in): string {
     else $point = 0;
 
 
-    $category = null;
-    // 게시글 번호가 입력되었으면, 글 존재 확인
-    if ( isset($in['post_ID']) ) {
-        $post = post_response($in['post_ID']);
-        if ( api_error($post) ) return $post;
-        $category = $post['category'];
-    }
-    // 코멘트 번호가 입력되면, 코멘트 존재 확인
-    if ( isset($in['comment_ID']) ) {
-        $comment = comment_response($in['comment_ID']);
-        if ( api_error($comment) ) return $comment;
-        $category = get_first_category($comment['comment_post_ID']);
-    }
+    // 글/코멘트 시간/수 제한
+    $re = count_over(
+        $in[REASON],
+        POINT_POST_COMMENT_ACTIONS,
+        category_meta($category, POINT_HOUR_LIMIT, 0)  * 60 * 60,
+        category_meta($category, POINT_HOUR_LIMIT_COUNT)
+    );
+    if ( $re ) return ERROR_HOUR_COUNT_LIMIT;
+
+
+    // 추천/비추천 시간/수 제한
+
+    $re = count_over(
+        $in[REASON],
+        POINT_LIKE_ACTIONS,
+        get_option(POINT_LIKE_HOUR_LIMIT) * 60 * 60,
+        get_option(POINT_LIKE_HOUR_LIMIT_COUNT)
+    );
+    if ( $re ) return ERROR_HOUR_COUNT_LIMIT;
+
+
+
+//    if ( in_array($in[REASON], POINT_LIKE_ACTIONS) ) {
+//        if ( get_option(POINT_LIKE_HOUR_LIMIT_COUNT) ) {
+//            $count = count_my_point_actions( get_option(POINT_LIKE_HOUR_LIMIT) * 60 * 60, POINT_LIKE_ACTIONS );
+//            if ( $count >= get_option(POINT_LIKE_HOUR_LIMIT_COUNT) ) {
+//                return ERROR_HOUR_COUNT_LIMIT;
+//            }
+//        }
+//    }
+
+    // 글/코멘트 일/수 제한
+    $re = count_over(
+        $in[REASON],
+        POINT_POST_COMMENT_ACTIONS,
+        24  * 60 * 60,
+        category_meta($category, POINT_DAILY_LIMIT)
+    );
+    if ( $re ) return ERROR_HOUR_COUNT_LIMIT;
+
+
+    // 추천/비추천 일/수 제한
+    $re = count_over(
+        $in[REASON],
+        POINT_LIKE_ACTIONS,
+        24  * 60 * 60,
+        get_option(POINT_LIKE_DAILY_LIMIT)
+    );
+    if ( $re ) return ERROR_HOUR_COUNT_LIMIT;
+
+//    if ( in_array($in[REASON], POINT_LIKE_ACTIONS) ) {
+//        if ( get_option(POINT_LIKE_DAILY_LIMIT) ) {
+//            $count = count_my_point_actions( 24 * 60 * 60, POINT_LIKE_ACTIONS );
+//            if ( $count >= get_option(POINT_LIKE_DAILY_LIMIT) ) {
+//                return ERROR_DAILY_LIMIT;
+//            }
+//        }
+//    }
+
+
+
+
 
     // 포인트 기록
     $history = [
@@ -592,15 +669,24 @@ function point_update($in): string {
         'from_user_point_before' => get_user_point($from_user->ID),
         'to_user_point_before' => get_user_point($to_user->ID),
 
+        // 아래의 두 값은 상황에 따라 변경이 되어야 한다.
         'from_user_point_apply' => 0,
         'to_user_point_apply' => 0,
 
+        // 아래의 두 값은 포인트 증/감을 한 다음, history 에 기록하기 직전에 자동으로 추가된다.
         'from_user_point_after' => 0,
         'to_user_point_after' => 0,
 
+        // 이 값도 상황에 따라 변경되어야 한다.
         'target_ID' => 0,
+        // 글/코멘트에서는 카테고리 값이 기록된다.
+        'cat_ID' => 0,
         'stamp' => time(),
     ];
+    if ( $category ) {
+        $cat = get_category_by_slug($category);
+        $history['cat_ID'] = $cat->term_id;
+    }
 
     switch( $in[REASON] ) {
         case POINT_UPDATE:
@@ -666,6 +752,7 @@ function point_update($in): string {
             if ( lack_of_point($from_user->ID, POINT_DISLIKE_DEDUCTION) ) return ERROR_LACK_OF_POINT;
             change_user_point($from_user->ID, POINT_DISLIKE_DEDUCTION );
 
+
             // 비추천 받는 포인트는 0 이하이어야 함. 사람이 포인트가 모자라면, 0 점 처리. 비추천 받는 포인트는 무조건 0 이하.
             $deducted_point = change_user_point($to_user->ID, POINT_DISLIKE);
             $history['target_ID'] = $in['post_ID'];
@@ -676,26 +763,35 @@ function point_update($in): string {
 
         case POINT_POST_CREATE:
             if ( !isset($in['post_ID']) || empty($in['post_ID']) ) return ERROR_EMPTY_POST_ID;
-            change_user_point($to_user->ID, category_meta($category, POINT_POST_CREATE) );
+            change_user_point($to_user->ID, category_meta($category, POINT_POST_CREATE, 0) );
             $history['target_ID'] = $in['post_ID'];
+            $history['from_user_point_apply'] = category_meta($category, POINT_POST_CREATE, 0);
+            $history['to_user_point_apply'] = category_meta($category, POINT_POST_CREATE, 0);
             break;
 
         case POINT_POST_DELETE:
             if ( !isset($in['post_ID']) || empty($in['post_ID']) ) return ERROR_EMPTY_POST_ID;
-            change_user_point($to_user->ID, category_meta($category, POINT_POST_DELETE) );
+            change_user_point($to_user->ID, category_meta($category, POINT_POST_DELETE, 0) );
             $history['target_ID'] = $in['post_ID'];
+            $history['from_user_point_apply'] = category_meta($category, POINT_POST_DELETE, 0);
+            $history['to_user_point_apply'] = category_meta($category, POINT_POST_DELETE, 0);
             break;
 
         case POINT_COMMENT_CREATE:
             if ( !isset($in['comment_ID']) || empty($in['comment_ID']) ) return ERROR_EMPTY_COMMENT_ID;
-            change_user_point($to_user->ID, category_meta($category, POINT_COMMENT_CREATE) );
+            change_user_point($to_user->ID, category_meta($category, POINT_COMMENT_CREATE, 0) );
             $history['target_ID'] = $in['comment_ID'];
+            $history['from_user_point_apply'] = category_meta($category, POINT_COMMENT_CREATE, 0);
+            $history['to_user_point_apply'] = category_meta($category, POINT_COMMENT_CREATE, 0);
+
             break;
 
         case POINT_COMMENT_DELETE:
             if ( !isset($in['comment_ID']) || empty($in['comment_ID']) ) return ERROR_EMPTY_COMMENT_ID;
-            change_user_point($to_user->ID, category_meta($category, POINT_COMMENT_DELETE) );
+            change_user_point($to_user->ID, category_meta($category, POINT_COMMENT_DELETE, 0) );
             $history['target_ID'] = $in['comment_ID'];
+            $history['from_user_point_apply'] = category_meta($category, POINT_COMMENT_DELETE, 0);
+            $history['to_user_point_apply'] = category_meta($category, POINT_COMMENT_DELETE, 0);
             break;
 
         default: break;
@@ -706,9 +802,31 @@ function point_update($in): string {
     /// 와 같이 기록을 한다.
     $history['from_user_point_after'] = get_user_point($from_user->ID);
     $history['to_user_point_after'] = get_user_point($to_user->ID);
+
     global $wpdb;
     $wpdb->insert('api_point_history', $history);
+
     return $wpdb->insert_id;
+}
+
+/**
+ * 해당 REASON 에 대해서, $actions 들을 찾아 그 수가 넘으면 에러를 리턴한다.
+ * @param $reason
+ * @param $actions
+ * @param $stamp
+ * @param $count
+ * @return string
+ */
+function count_over($reason, $actions, $stamp, $count) {
+    if ( in_array($reason, $actions) ) {
+        if ( $count ) {
+            $total = count_my_point_actions( $stamp, $actions );
+            if ( $total >= $count ) {
+               return true;
+            }
+        }
+    }
+    return false;
 }
 
 /**
@@ -731,12 +849,18 @@ function get_point_history($options) {
 }
 
 /**
+ * 사용자 포인트를 리턴한다. 값이 없으면 0 을 리턴한다.
+ *
+ * 주의: get_user_meta 는 캐시를 하기 때문에 직접 DB 쿼리를 한다.
+ *
  * @param $user_ID
  * @return mixed
  */
 function get_user_point($user_ID): int
 {
-    $re = get_user_meta($user_ID, POINT, true);
+    global $wpdb;
+    $q = "SELECT meta_value FROM wp_usermeta WHERE user_id=$user_ID AND meta_key='".POINT."'";
+    $re = $wpdb->get_var($q);
     if ( empty($re) ) return 0;
     else return $re;
 }
@@ -791,6 +915,8 @@ function change_user_point(int $user_ID, $reason): int {
     $user_point = get_user_point($user_ID);
     if ( is_numeric($reason) ) $reason_point = $reason;
     else $reason_point = get_option($reason, 0);
+
+
 
     $saving_point = $user_point + $reason_point;
     // 포인트를 차감을 하는 경우,
@@ -1984,6 +2110,7 @@ function is_my_file($file_ID)
  */
 function is_my_post($post_ID)
 {
+    if ( !$post_ID ) return false;
     $p = get_post($post_ID);
     if ($p) {
         return $p->post_author == wp_get_current_user()->ID;
@@ -2003,6 +2130,7 @@ function is_my_post($post_ID)
  */
 function is_my_comment($comment_ID)
 {
+    if ( !$comment_ID ) return false;
     $c = get_comment($comment_ID);
     if ($c) {
         return $c->user_id == wp_get_current_user()->ID;
@@ -2497,18 +2625,34 @@ function api_edit_post($in)
 
 
     if (isset($in['ID'])) {
+        /// 글 수정
         $post = get_post($in['ID']);
-        // Preserve old properties.
-        //            if (in('category') == null) $data['post_category'] = $post->post_category;
-        //            if (in('post_title') == null) $data['post_title'] = $post->post_title;
-        //            if (in('post_content') == null) $data['post_content'] = $post->post_content;
-
         $data['post_title'] = isset($in['post_title']) ? $in['post_title'] : $post->post_title;
         $data['post_content'] = isset($in['post_content']) ? $in['post_content'] : $post->post_content;
         $data['post_category'] = get_category_IDs_of_post($post->ID);
         $data['ID'] = $in['ID'];
         debug_log('Updating data: ', $data);
     } else {
+        /// 글 쓰기
+
+        // 제한에 걸리면, 글 쓰기 금지. 문제 발생. 카테고리 별로, 글 쓰기를 제한해야 하는데, 카테고리 정보가 저장이 되지 않는다.
+        if ( category_meta($in['category'], BAN_ON_LIMIT) == 'Y' ) {
+            $re = count_over(
+                POINT_POST_CREATE,
+                [POINT_POST_CREATE],
+                category_meta($in['category'], POINT_HOUR_LIMIT, 0)  * 60 * 60,
+                category_meta($in['category'], POINT_HOUR_LIMIT_COUNT)
+            );
+            if ( $re ) return ERROR_HOUR_COUNT_LIMIT;
+
+            $re = count_over(
+                POINT_POST_CREATE,
+                [POINT_POST_CREATE],
+                24  * 60 * 60,
+                category_meta($in['category'], POINT_DAILY_LIMIT)
+            );
+            if ( $re ) return ERROR_HOUR_COUNT_LIMIT;
+        }
         $data['post_title'] = $in['post_title'] ?? '';
         $data['post_content'] = $in['post_content'] ?? '';
     }
@@ -2519,6 +2663,8 @@ function api_edit_post($in)
         if (!$catID) return ERROR_WRONG_CATEGORY;
         $data['post_category'] = [$catID];
     }
+
+
 
     debug_log('post create or update data: ', $data);
     $ID = wp_insert_post($data, true);
@@ -2543,11 +2689,12 @@ function api_edit_post($in)
 
     update_post_properties($ID, $in);
 
-    if ( !isset($in['ID']) ) { // 새로운 글 생성을 했다.
+    // 새로운 글 생성을 했다. 포인트 수정
+    if ( !isset($in['ID']) ) {
         $re = point_update([REASON => POINT_POST_CREATE, 'post_ID' => $ID]);
-        debug_log("POINT_POST_CREATE: result $re");
+        if ( api_error($re) ) debug_log("POINT_POST_CREATE: result $re");
     } else { // 글 수정을 했다.
-        //
+        ////
     }
 
     // NEW POST IS CREATED => Send notification to forum subscriber
@@ -3068,8 +3215,9 @@ function getUserForumTopics($user_ID) {
  *
  *
  *  - $in['cat_ID'] is the category term id
+ *  - $in['category'] is the category slug.
  *  - $in['slug'] is the category slug.
- *    One of cat_ID or slug must be passed.
+ *    One of cat_ID or slug, $in['category'] must be passed.
  *
  *  - $in['field'] is the category field(property) to update.
  *    $in['field'] can be one of
@@ -3095,10 +3243,12 @@ function getUserForumTopics($user_ID) {
  */
 function update_category($in)
 {
-
+    if ( isset($in['category']) ) $in['slug'] = $in['category'];
     if (!isset($in['cat_ID']) && !isset($in['slug']) ) return ERROR_EMPTY_CATEGORY_ID_OR_SLUG;
     if ( isset($in['cat_ID']) ) $cat = get_category($in['cat_ID']);
     else $cat = get_category_by_slug($in['slug']);
+
+
 
     if ($cat == null) return ERROR_CATEGORY_NOT_EXIST_BY_THAT_ID;
 
@@ -3112,6 +3262,8 @@ function update_category($in)
             if ($k == 'session_id') continue;
             if ($k == 'route') continue;
             if ($k == 'cat_ID') continue;
+            if ($k == 'slug') continue;
+            if ($k == 'category' ) continue;
             $re = update_category_meta(['cat_ID' => $cat->term_id, 'field' => $k, 'value' => $v]);
             if ($re) break;
         }
@@ -3124,7 +3276,7 @@ function update_category($in)
     ///
     $ret = get_category($cat->term_id)->to_array();
 
-    /// 추가 (메타) 정보 업데이트
+    /// 추가 (메타) 정보를 리턴 데이터에 추가
     $metas = get_term_meta($cat->term_id, '', true);
     foreach ($metas as $key => $values) {
         $ret[$key] = $values[0];
@@ -3667,4 +3819,100 @@ function fixJson($s) {
     $s = preg_replace("/^(\s+)([a-zA-Z]+)/m", "$1\"$2\"", $s);
     $s = preg_replace("/,(\s)+}/m", "$1}", $s);
     return $s;
+}
+
+
+/**
+ *
+ * 동일한 투표를 두 번하면, 취소가 된다. 찬성 투표를 했다가 찬성을 하면 취소.
+ * 찬성을 했다가 반대를 하면, 반대 투표로 변경된다.
+ *
+ * 'choice' 필드가 Y 이면 찬성/좋아요, N 이면 반대/싫어요, 빈 문자열('')이면 취소이다.
+ * @param $in
+ */
+function api_vote($in) {
+    global $wpdb;
+
+    $is_mine = false;
+
+    $user_ID = wp_get_current_user()->ID;
+    if ( isset($in['post_ID']) ) {
+        $is_mine = is_my_post($in['post_ID']);
+        $target_ID = "post_" . $in['post_ID'];
+        if( !get_post($in['post_ID']) ) return ERROR_POST_NOT_FOUND;
+    }
+    else if ( isset($in['comment_ID']) ) {
+        $is_mine = is_my_comment($in['comment_ID']);
+        $target_ID = "comment_" . $in['comment_ID'];
+        if( !get_comment($in['comment_ID']) ) return ERROR_COMMENT_NOT_FOUND;
+    }
+    else return ERROR_WRONG_INPUT;
+
+    if ( !isset($in['choice']) ) return ERROR_WRONG_INPUT;
+    if ( $in['choice'] != 'Y'  && $in['choice'] != 'N' ) return ERROR_WRONG_INPUT;
+
+
+    $q = "SELECT * FROM api_forum_vote_history WHERE user_ID=$user_ID AND target_ID='$target_ID'";
+
+    $vote = $wpdb->get_row($q, ARRAY_A);
+
+    if ( $vote ) {
+
+        // 이미 한번 추천 했음. 포인트 변화 없음.
+        $up = [];
+        if ( $vote['choice'] == $in['choice'] ) $up['choice'] = '';
+        else $up['choice'] = $in['choice'];
+        $wpdb->update('api_forum_vote_history', [ 'choice' => $up['choice'] ], ['ID' => $vote['ID']]);
+
+    } else {
+        // 처음 추천
+        $wpdb->insert('api_forum_vote_history', [
+            'user_ID' => $user_ID,
+            'target_ID' => $target_ID,
+            'choice' => $in['choice'],
+            'stamp' => time(),
+        ]);
+
+
+        // 나 자신의 글/코멘트에 추천하는 경우에는 포인트 증감 없음. point_update() 함수 안에 코드가 있음.
+        if ( $is_mine === false ) {
+            $data = [];
+            $data[REASON] = $in['choice'] == 'Y' ? POINT_LIKE : $data[REASON] = POINT_DISLIKE;
+            if ( isset($in['post_ID']) ) $data['post_ID'] = $in['post_ID'];
+            else $data['comment_ID'] = $in['comment_ID'];
+//            d($data);
+            $re = point_update($data);
+//            if ( api_error($re) ) d($re);
+        }
+
+    }
+
+    // 해당 글 또는 코멘트의 총 vote 수를 업데이트 한다.
+    $Y = $wpdb->get_var("SELECT COUNT(*) FROM api_forum_vote_history WHERE target_ID='$target_ID' AND choice='Y'");
+    $N = $wpdb->get_var("SELECT COUNT(*) FROM api_forum_vote_history WHERE target_ID='$target_ID' AND choice='N'");
+    if ( isset($in['post_ID']) ) {
+        update_post_meta($in['post_ID'], 'Y', $Y);
+        update_post_meta($in['post_ID'], 'N', $N);
+        return post_response($in['post_ID']);
+    } else {
+        update_comment_meta($in['comment_ID'], 'Y', $Y);
+        update_comment_meta($in['comment_ID'], 'N', $N);
+        return comment_response($in['comment_ID']);
+    }
+
+}
+
+
+
+function count_my_point_actions($stamp, $actions) {
+    if ( ! $stamp ) return 0;
+    $reasons = [];
+    foreach( $actions as $r ) {
+        $reasons[] = REASON . "='$r'";
+    }
+    $reason_ors = "(" . implode(" OR ", $reasons) . ")";
+    $my_user_ID = wp_get_current_user()->ID;
+    $q = "SELECT COUNT(*) FROM api_point_history WHERE from_user_ID=$my_user_ID AND $reason_ors";
+    global $wpdb;
+    return $wpdb->get_var($q);
 }

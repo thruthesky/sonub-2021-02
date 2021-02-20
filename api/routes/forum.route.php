@@ -49,7 +49,10 @@ class ForumRoute
          */
         $re = wp_delete_post(in('ID'));
         if ($re) {
-            return ['ID' => $re->ID];
+
+            $re = point_update([REASON => POINT_POST_DELETE, 'post_ID' => in('ID')]);
+            if ( api_error($re) ) debug_log("POINT_POST_DELETE: result $re");
+            return ['ID' => in('ID')];
         } else {
             return ERROR_DELETE_POST;
         }
@@ -95,7 +98,7 @@ class ForumRoute
             }
 
             $re = point_update([REASON => POINT_COMMENT_CREATE, 'comment_ID' => $comment_id]);
-            debug_log("POINT_COMMENT_CREATE: result $re");
+            if ( api_error($re) ) debug_log("POINT_COMMENT_CREATE: result $re");
 
 
             /**
@@ -134,8 +137,12 @@ class ForumRoute
         if (!in('comment_ID')) return ERROR_EMPTY_COMMENT_ID;
         if (!is_my_comment(in('comment_ID'))) return ERROR_NOT_YOUR_COMMENT;
         $re = wp_delete_comment(in('comment_ID'));
-        if ($re) return ['comment_ID' => intval(in('comment_ID'))];
-        else return ERROR_DELETE_COMMENT;
+        if (!$re) return ERROR_DELETE_COMMENT;
+
+        $re = point_update([REASON => POINT_COMMENT_DELETE, 'comment_ID' => in('comment_ID')]);
+        if ( api_error($re) ) debug_log("POINT_COMMENT_DELETE: result $re");
+
+        return ['comment_ID' => intval(in('comment_ID'))];
     }
 
 
@@ -164,4 +171,9 @@ class ForumRoute
     {
         return update_category($in);
     }
+
+    public function vote($in) {
+        return api_vote($in);
+    }
 }
+

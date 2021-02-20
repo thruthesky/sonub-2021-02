@@ -54,6 +54,7 @@ function getDatabase() {
  * @return \Kreait\Firebase\Messaging\MulticastSendReport
  */
 function sendMessageToTokens($tokens, $title, $body, $click_action, $data = [], $imageUrl="") {
+    if ( get_phpunit_mode() ) return null;
     $message = CloudMessage::fromArray([
         'notification' => getNotificationData($title, $body, $click_action, $data, $imageUrl),
         'webpush' => getWebPushData($title, $body, $click_action, $data, $imageUrl),
@@ -128,6 +129,7 @@ function unsubscribeFromAllTopics($tokens) {
  * @throws \Kreait\Firebase\Exception\MessagingException
  */
 function unsubscribeTopic($topic, $tokens) {
+    if ( get_phpunit_mode() ) return [];
     return getMessaging()->unsubscribeFromTopic($topic, $tokens);
 }
 

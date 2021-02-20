@@ -23,7 +23,8 @@ define('API_DIR', THEME_DIR . '/api');
 /**
  * Load API functions
  */
-require_once(API_DIR . '/lib/api-functions.php');
+require_once(API_DIR . '/lib/api.functions.php');
+require_once(API_DIR . '/lib/api.point.php');
 require_once(THEME_DIR . '/lib/app.class.php');
 require_once(THEME_DIR . '/lib/utility.php');
 
