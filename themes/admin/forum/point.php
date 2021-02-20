@@ -11,7 +11,7 @@ if ( in('mode') == 'save' ) {
     update_option(POINT_DISLIKE_DEDUCTION, in(POINT_DISLIKE_DEDUCTION));
     update_option(POINT_LIKE_HOUR_LIMIT, in(POINT_LIKE_HOUR_LIMIT));
     update_option(POINT_LIKE_HOUR_LIMIT_COUNT, in(POINT_LIKE_HOUR_LIMIT_COUNT));
-    update_option(POINT_LIKE_DAILY_LIMIT, in(POINT_LIKE_DAILY_LIMIT));
+    update_option(POINT_LIKE_DAILY_LIMIT_COUNT, in(POINT_LIKE_DAILY_LIMIT_COUNT));
 }
 
 
@@ -102,7 +102,7 @@ if ( in('mode') == 'save' ) {
         <div class="row mt-3">
             <div class="col">
                 <label class="form-label">일/수 제한</label>
-                <input type="number" class="form-control" name="POINT_LIKE_DAILY_LIMIT" placeholder="0" value="<?=get_option(POINT_LIKE_DAILY_LIMIT, 0)?>">
+                <input type="number" class="form-control" name="POINT_LIKE_DAILY_LIMIT_COUNT" placeholder="0" value="<?=get_option(POINT_LIKE_DAILY_LIMIT_COUNT, 0)?>">
             </div>
         </div>
 

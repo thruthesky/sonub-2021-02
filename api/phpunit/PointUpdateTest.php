@@ -27,18 +27,18 @@ final class PointUpdateTest extends TestCase
         update_option(POINT_DISLIKE_DEDUCTION, 0);
         update_option(POINT_LIKE_HOUR_LIMIT, 0);
         update_option(POINT_LIKE_HOUR_LIMIT_COUNT, 0);
-        update_option(POINT_LIKE_DAILY_LIMIT, 0);
+        update_option(POINT_LIKE_DAILY_LIMIT_COUNT, 0);
 
         $cat = get_category_by_slug('point_test');
         if ( !$cat ) {
             wp_insert_category( ['cat_name'=> 'point_test', 'category_description'=> 'point_test' ], true );
             $cat = get_category_by_slug('point_test');
         }
-        update_category_meta(['cat_ID' => $cat->term_id, 'field' => POINT_POST_CREATE, 'value' => 0]);
-        update_category_meta(['cat_ID' => $cat->term_id, 'field' => POINT_COMMENT_CREATE, 'value' => 0]);
-        update_category_meta(['cat_ID' => $cat->term_id, 'field' => POINT_POST_DELETE, 'value' => 0]);
-        update_category_meta(['cat_ID' => $cat->term_id, 'field' => POINT_COMMENT_DELETE, 'value' => 0]);
-        update_category(['category' => 'point_test', POINT_DAILY_LIMIT => 0, POINT_HOUR_LIMIT => 0, POINT_HOUR_LIMIT_COUNT => 0]);
+//        update_category_meta(['cat_ID' => $cat->term_id, 'field' => POINT_POST_CREATE, 'value' => 0]);
+//        update_category_meta(['cat_ID' => $cat->term_id, 'field' => POINT_COMMENT_CREATE, 'value' => 0]);
+//        update_category_meta(['cat_ID' => $cat->term_id, 'field' => POINT_POST_DELETE, 'value' => 0]);
+//        update_category_meta(['cat_ID' => $cat->term_id, 'field' => POINT_COMMENT_DELETE, 'value' => 0]);
+        update_category(['category' => 'point_test', POINT_DAILY_LIMIT_COUNT => 0, POINT_HOUR_LIMIT => 0, POINT_HOUR_LIMIT_COUNT => 0]);
     }
 
     public function testGetInput(): void
@@ -399,7 +399,7 @@ final class PointUpdateTest extends TestCase
         update_option(POINT_DISLIKE_DEDUCTION, -50);
 
         // 하루 12개 추천을 제한
-        update_option(POINT_LIKE_DAILY_LIMIT, 12);
+        update_option(POINT_LIKE_DAILY_LIMIT_COUNT, 12);
 
         // 사용자 B 로 로그인하고, 1천 포인트 세팅
         wp_set_current_user($this->B);
@@ -439,7 +439,7 @@ final class PointUpdateTest extends TestCase
             'category' => 'point_test',
             POINT_POST_CREATE => -100,
             POINT_COMMENT_CREATE => -10,
-            POINT_DAILY_LIMIT => 25]);
+            POINT_DAILY_LIMIT_COUNT => 25]);
 
         set_user_point($this->A, 10000);
 
@@ -473,7 +473,7 @@ final class PointUpdateTest extends TestCase
         update_category([
             'category' => 'point_test',
             POINT_POST_CREATE => 100,
-            POINT_DAILY_LIMIT => 2]);
+            POINT_DAILY_LIMIT_COUNT => 2]);
 
 
         wp_set_current_user($this->A);
