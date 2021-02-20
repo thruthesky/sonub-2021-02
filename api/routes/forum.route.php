@@ -66,6 +66,7 @@ class ForumRoute
 
     public function editComment()
     {
+        if ( notLoggedIn() ) return ERROR_LOGIN_FIRST;
         $user = wp_get_current_user();
 
 
@@ -92,6 +93,11 @@ class ForumRoute
                 }
                 return ERROR_COMMENT_EDIT . ':' . $msg;
             }
+
+            $re = point_update([REASON => POINT_COMMENT_CREATE, 'comment_ID' => $comment_id]);
+            debug_log("POINT_COMMENT_CREATE: result $re");
+
+
             /**
              * NEW COMMENT IS CREATED ==>  Send notification to forum comment subscriber
              */

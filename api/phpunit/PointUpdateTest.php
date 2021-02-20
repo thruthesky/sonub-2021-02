@@ -279,6 +279,24 @@ final class PointUpdateTest extends TestCase
 
     public function testCommentCreate(): void {
 
+        $this->clear();
+        update_category( ['slug' => 'point_test',
+                POINT_POST_CREATE => 100,
+                POINT_COMMENT_CREATE => 50,
+                POINT_POST_DELETE => -80,
+                POINT_COMMENT_DELETE => -40]
+        );
+
+        wp_set_current_user($this->B);
+        /// 글 쓰기 포인트 100 추가
+        $re = api_create_post(['category' => 'point_test', 'post_title' => 'abc']);
+        self::assertTrue(api_error($re) === false, "Api_error() true? " . api_error($re) === true ? 'y' : 'n');
+        self::assertTrue( get_user_point($this->B) == 100, 'Point after post create is ' . get_user_point($this->A) );
+
+        $res = getRoute(['route'=>'forum.editComment', 'comment_post_ID' => $re['ID'], 'comment_content' => 'point test', 'session_id' => get_session_id()]);
+        d($res);
+        self::assertTrue( get_user_point($this->B) == 150, 'point must be 150: ' . get_user_point($this->B));
+
     }
     public function testPostDelete(): void {
 

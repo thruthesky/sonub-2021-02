@@ -677,21 +677,25 @@ function point_update($in): string {
         case POINT_POST_CREATE:
             if ( !isset($in['post_ID']) || empty($in['post_ID']) ) return ERROR_EMPTY_POST_ID;
             change_user_point($to_user->ID, category_meta($category, POINT_POST_CREATE) );
+            $history['target_ID'] = $in['post_ID'];
             break;
 
         case POINT_POST_DELETE:
             if ( !isset($in['post_ID']) || empty($in['post_ID']) ) return ERROR_EMPTY_POST_ID;
             change_user_point($to_user->ID, category_meta($category, POINT_POST_DELETE) );
+            $history['target_ID'] = $in['post_ID'];
             break;
 
         case POINT_COMMENT_CREATE:
             if ( !isset($in['comment_ID']) || empty($in['comment_ID']) ) return ERROR_EMPTY_COMMENT_ID;
             change_user_point($to_user->ID, category_meta($category, POINT_COMMENT_CREATE) );
+            $history['target_ID'] = $in['comment_ID'];
             break;
 
         case POINT_COMMENT_DELETE:
             if ( !isset($in['comment_ID']) || empty($in['comment_ID']) ) return ERROR_EMPTY_COMMENT_ID;
             change_user_point($to_user->ID, category_meta($category, POINT_COMMENT_DELETE) );
+            $history['target_ID'] = $in['comment_ID'];
             break;
 
         default: break;
@@ -2541,7 +2545,7 @@ function api_edit_post($in)
 
     if ( !isset($in['ID']) ) { // 새로운 글 생성을 했다.
         $re = point_update([REASON => POINT_POST_CREATE, 'post_ID' => $ID]);
-        if ( api_error($re) ) return $re;
+        debug_log("POINT_POST_CREATE: result $re");
     } else { // 글 수정을 했다.
         //
     }
