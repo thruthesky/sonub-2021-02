@@ -20,12 +20,12 @@ $posts = forum_search($o);
         <h2 class="fs-normal"><?=$o['widget_title'] ?? ''?></h2>
         <i class="fa fa-angle-double-right"></i>
     </a>
-    <hr>
-    <? foreach( $posts as $post ) { ?>
-        <div class="post">
-            <a href="<?=$post['url']?>" class="post-title fs-normal"><?=$post['post_title']?></a>
-        </div>
-    <? } ?>
+    <hr style="margin: .7em 0; color: #a0a0a0;">
+    <div class="posts fs-sm">
+        <? foreach( $posts as $post ) { ?>
+            <a class="post-title d-block pt-1" href="<?=$post['url']?>"><?=$post['post_title']?></a>
+        <? } ?>
+    </div>
 </section>
 
 

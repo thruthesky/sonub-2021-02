@@ -3629,3 +3629,43 @@ function api_vote($in) {
 }
 
 
+/**
+ * 캐시를 저장한다. 단순히, transient 함수 wrapper 이다.
+ *
+ * 분 단위로, 캐시를 저장한다.
+ *
+ * 주의: false 값을 집어 넣지 않는다. get_cache() 에서 문제된다.
+ *
+ * @see https://docs.google.com/document/d/1EFFODj0cwL1OxFlK3cvDW1-2o57X6JtKHiEcgm-RDBE/edit#heading=h.g0ws6l27v0mq
+ * @param string $key
+ * @param string $value
+ * @param int $minutes
+ * @return bool
+ */
+function set_cache(string $key, string $value, int $minutes): bool
+{
+    return set_transient( $key, $value, $minutes * 60 );
+}
+
+/**
+ *
+ * @param string $key
+ * @return mixed
+ */
+function get_cache(string $key) {
+    $value = get_transient( 'value' );
+    if ( false === $value ) {
+        return false;
+    } else {
+        return $value;
+    }
+}
+
+/**
+ * @param string $key
+ * @return bool
+ */
+function delete_cache(string $key): bool
+{
+    return delete_transient( $key );
+}

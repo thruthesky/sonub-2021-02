@@ -4,13 +4,9 @@ $co = cafe_option();
 
 ?>
 
-
 <header class="d-md-none">
     <? include 'header.mainmenu.mobile.php' ?>
 </header>
-
-
-
 
 
 <header class="d-none d-md-block">
