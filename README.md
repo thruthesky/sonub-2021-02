@@ -1240,11 +1240,6 @@ EOS;
   `etc/markdown/display-markdown.php` 을 참조.
 
 
-# 포인트 시스템
-
-* 사용자 meta 의 point 키에 저장된다.
-  * 이 `point` 는 직접 수정 할 수 없으며, `point_update()` 함수를 통해서만 가능하다.
-
 # Settings
 
 * 관리자 페이지에서 설정을 할 수 있다.
@@ -1332,9 +1327,17 @@ select * from zipcode where eupmyun like '테헤란로%' or doro like '테헤란
 
 # 포인트 시스템
 
+
+- 사용자 meta 의 point 키에 저장된다.
+  - 사용자는 이 `point` 를 직접 수정 할 수 없으며, 오직 포인트 활동에 의해서 자동으로 변경된다.
+  - 관리자는 api_admin_point_update() 또는 `route=admin.pointUpdate&user_ID=1&point=2` 와 같이 업데이트를 할 수 있다.
+  
 - `api_point_history` 에 포인트 기록이 남는다.
   - 포인트 이벤트를 발생시키는 사용자 from_user_ID 와 포인트 이벤트의 대상(포인트를 받는) 사용자를 to_user_ID 에 기록한다.
     그리고 각각의 사용자에게 적용되는 포인트와, 적용된 후의 포인트 변화를 같이 기록해서 알아보기 쉽도록 한다.
+
+
+- 테스트 코드는 api/phpunit/PointTest.php 에 있다.
 
 - 글 쓰기를 할 때, 포인트를 차감한다면, 해당 차감 포인트 만큼 포인트를 보유해야 코멘트/글을 쓸 수 있다. 아니면 에러가 난다.
 

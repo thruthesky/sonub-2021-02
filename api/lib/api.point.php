@@ -242,69 +242,6 @@ function add_user_point($user_ID, $point): int
 
 }
 
-/**
- * @deprecated 사용하지 말 것. 오래된 함수.
- *
- * 포인트를 증감 또는 차감한다.
- *
- * $reason 은 문자열 아니면, 숫자 값이 들어온다.
- *  예를 들면, POINT_LIKE 또는 POINT_LIKE_DEDUCTION 과 같이 포인트 REASON 이 들어 오거나
- *  숫자로 100, -200 와 같이 들어 올 수 있다.
- *
- * $reason 의 값(또는 설정된 포인트)이 음수인 경우, 포인트가 차감된다.
- *
- *
- * 주의: 포인트를 차감 할 때, 0 이하(음수) 값을 DB 에 저장하지 않는다.
- *      대신, 포인가 0 이하로 내려가면 그냥 0 을 저장한다.
- *
- * 예) 사용자 포인트가 10 이고, 증가 저장하려는 값이 -15 이면, 결과는 -5 가 된다.
- *   하지만 -5 를 저장하는 것이 아니라, 0 을 저장한다.
- *   이 때, 사용자로 부터 차감된 포인트 -10을 리턴한다.
- *
- * 예제) 만약, B 가 1000 의 값을 가지고 있는 경우, 그리고 비추천 받는 포인트가 1500 이라면, B 의 포인트는 0이 되, -1000 이 리턴된다.
- *   change_user_point($to_user->ID, POINT_DISLIKE);
- *
- * 예제) 회원 가입시 2,000 포인트가 증가한다면, 리턴하는 값은 2,000 이다.
- *
- *
- * @param $user_ID
- * @param $reason
- *
- *
- * @return int
- *  0 이 리턴되면 값을 증가하지 않았음.
- *  양수이면 - 증가한 값
- *  음수이면 - 차감된 값
- *
- *
- */
-function change_user_point(int $user_ID, $reason): int {
-    $user_point = get_user_point($user_ID);
-    if ( is_numeric($reason) ) $reason_point = $reason;
-    else $reason_point = get_option($reason, 0);
-
-
-
-    $saving_point = $user_point + $reason_point;
-    // 포인트를 차감을 하는 경우,
-    if ( $reason_point < 0 ) {
-        // 0 보다 작으면,
-        if ( $saving_point < 0 ) {
-            // 0 을 저장
-            set_user_point($user_ID, 0);
-            // 차감된 포인트를 리턴
-            return -$user_point;
-        } else {
-            // 차감 후, 사용자 포인트가 남은 경우, (0 이상인 경우), 포인트 전액 차감 후 차감된 포인트 리턴
-            set_user_point($user_ID, $saving_point);
-            return $reason_point;
-        }
-    } else {
-        // 포인트를 증가 시키는 경우, 포인트 증가 후, 증가된 포인트 리턴
-        set_user_point($user_ID, $saving_point);
-        return $reason_point;
-    }
-}
 
 
 /**
@@ -328,21 +265,6 @@ function lack_of_point($user_ID, $reason): bool
     return ( get_user_point($user_ID) + $reason_point ) < 0;
 }
 
-
-
-
-/**
- * @deprecated
- *
- * 사용자 인트를 0으로 만드는 것과 동일한 효과.
- *
- * @주의: RestApi 로 바로 호출되지 않도록 한다.
- *
- * @param $user_ID
- */
-function point_reset($user_ID) {
-    set_user_point($user_ID, 0);
-}
 
 
 /**
