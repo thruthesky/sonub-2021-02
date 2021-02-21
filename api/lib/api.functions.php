@@ -605,7 +605,7 @@ function point_update($in): string {
         category_meta($category, POINT_HOUR_LIMIT, 0)  * 60 * 60,
         category_meta($category, POINT_HOUR_LIMIT_COUNT)
     );
-    if ( $re ) return ERROR_HOUR_COUNT_LIMIT;
+    if ( $re ) return ERROR_HOURLY_LIMIT;
 
 
     // 추천/비추천 시간/수 제한
@@ -616,7 +616,7 @@ function point_update($in): string {
         get_option(POINT_LIKE_HOUR_LIMIT) * 60 * 60,
         get_option(POINT_LIKE_HOUR_LIMIT_COUNT)
     );
-    if ( $re ) return ERROR_HOUR_COUNT_LIMIT;
+    if ( $re ) return ERROR_HOURLY_LIMIT;
 
 
 
@@ -624,7 +624,7 @@ function point_update($in): string {
 //        if ( get_option(POINT_LIKE_HOUR_LIMIT_COUNT) ) {
 //            $count = count_my_point_actions( get_option(POINT_LIKE_HOUR_LIMIT) * 60 * 60, POINT_LIKE_ACTIONS );
 //            if ( $count >= get_option(POINT_LIKE_HOUR_LIMIT_COUNT) ) {
-//                return ERROR_HOUR_COUNT_LIMIT;
+//                return ERROR_HOURLY_LIMIT;
 //            }
 //        }
 //    }
@@ -636,7 +636,7 @@ function point_update($in): string {
         24  * 60 * 60,
         category_meta($category, POINT_DAILY_LIMIT_COUNT)
     );
-    if ( $re ) return ERROR_HOUR_COUNT_LIMIT;
+    if ( $re ) return ERROR_HOURLY_LIMIT;
 
 
     // 추천/비추천 일/수 제한
@@ -646,7 +646,7 @@ function point_update($in): string {
         24  * 60 * 60,
         get_option(POINT_LIKE_DAILY_LIMIT_COUNT)
     );
-    if ( $re ) return ERROR_HOUR_COUNT_LIMIT;
+    if ( $re ) return ERROR_HOURLY_LIMIT;
 
 //    if ( in_array($in[REASON], POINT_LIKE_ACTIONS) ) {
 //        if ( get_option(POINT_LIKE_DAILY_LIMIT_COUNT) ) {
@@ -1814,7 +1814,8 @@ function image_path_from_url($url)
 }
 
 /**
- * 글의 첫번째 카테고리 slug 를 리턴한다.
+ * 글의 첫번째 카테고리 slug 를 리턴한다. 글 번호를 입력해서, 카테고리(slug) 를 얻고자하는 경우 사용
+ *
  * @param $post_ID
  * - null 카테고리가 없으면 null 이 리턴된다.
  * @return null
@@ -1830,7 +1831,7 @@ function get_first_category($post_ID) {
     }
 }
 /**
- * 글의 첫번째 카테고리 번호를 리턴한다.
+ * 글의 첫번째 카테고리 번호를 리턴한다.  글 번호를 입력해서, cat_ID(term_id) 를 얻고자하는 경우 사용
  */
 function get_first_category_ID($post_ID) {
     $post = get_post($post_ID, ARRAY_A);
@@ -2482,24 +2483,13 @@ function api_edit_post($in)
     } else {
         /// 글 쓰기
 
-//        // 제한에 걸리면, 글 쓰기 금지. 문제 발생. 카테고리 별로, 글 쓰기를 제한해야 하는데, 카테고리 정보가 저장이 되지 않는다.
-//        if ( category_meta($in['category'], BAN_ON_LIMIT) == 'Y' ) {
-//            $re = count_over(
-//                POINT_POST_CREATE,
-//                [POINT_POST_CREATE],
-//                category_meta($in['category'], POINT_HOUR_LIMIT, 0)  * 60 * 60,
-//                category_meta($in['category'], POINT_HOUR_LIMIT_COUNT)
-//            );
-//            if ( $re ) return ERROR_HOUR_COUNT_LIMIT;
-//
-//            $re = count_over(
-//                POINT_POST_CREATE,
-//                [POINT_POST_CREATE],
-//                24  * 60 * 60,
-//                category_meta($in['category'], POINT_DAILY_LIMIT_COUNT)
-//            );
-//            if ( $re ) return ERROR_HOUR_COUNT_LIMIT;
-//        }
+        /// 글/코멘트 쓰기 제한이 있는지 검사.
+        if ( category_meta($in['category'], BAN_ON_LIMIT) ) {
+            if ( category_hourly_limit($in['category']) ) return ERROR_HOURLY_LIMIT;
+            if ( category_daily_limit($in['category']) ) return ERROR_DAILY_LIMIT;
+        }
+
+        ///
         $data['post_title'] = $in['post_title'] ?? '';
         $data['post_content'] = $in['post_content'] ?? '';
     }
@@ -2536,12 +2526,12 @@ function api_edit_post($in)
 
     update_post_properties($ID, $in);
 
-    // 새로운 글 생성을 했다. 포인트 수정
-    if ( !isset($in['ID']) ) {
-        $re = point_update([REASON => POINT_POST_CREATE, 'post_ID' => $ID]);
-        if ( api_error($re) ) debug_log("POINT_POST_CREATE: result $re");
-    } else { // 글 수정을 했다.
-        ////
+
+    if ( isset($in['ID']) ) {
+        // 글 수정을 했다.
+    } else {
+        // 새로운 글 생성을 했다. 포인트 수정
+        api_forum_point_change(POINT_POST_CREATE, $ID);
     }
 
     // NEW POST IS CREATED => Send notification to forum subscriber
@@ -2561,6 +2551,129 @@ function api_edit_post($in)
     return post_response($ID);
 }
 
+
+
+
+/**
+ * @param $in
+ * @return array|string
+ * @example
+ *  api_delete_post([ 'ID' => $post1['ID'], 'session_id' => get_session_id() ]);
+ */
+function api_delete_post($in) {
+
+    if (is_my_post($in['ID']) == false) return ERROR_NOT_YOUR_POST;
+
+    /**
+     * In the official doc, it is stated that attachments are removed or trashed when post is deleted with method.
+     */
+    $re = wp_delete_post($in['ID']);
+    if ($re) {
+        api_forum_point_change(POINT_POST_DELETE, $in['ID']);
+        return ['ID' => $in['ID'] ];
+    } else {
+        return ERROR_DELETE_POST;
+    }
+}
+
+/**
+ * @param $in
+ * @return array|string
+ *
+ * @example
+ *  api_edit_comment(['comment_post_ID' => $this->post1['ID'], 'comment_content' => 'comment ' . time()]);
+ */
+function api_edit_comment($in) {
+
+    if ( notLoggedIn() ) return ERROR_LOGIN_FIRST;
+    $user = wp_get_current_user();
+
+
+    if ($in['comment_post_ID'] == null) return ERROR_EMPTY_COMMENT_POST_ID;
+
+
+    if (!isset($in['comment_ID']) || empty($in['comment_ID']) ) {
+
+        // 글/코멘트 쓰기 제한이 있는지 검사.
+        $category = get_first_category($in['comment_post_ID']);
+        if ( category_meta($category, BAN_ON_LIMIT) ) {
+            if ( category_hourly_limit($category) ) return ERROR_HOURLY_LIMIT;
+            if ( category_daily_limit($category) ) return ERROR_DAILY_LIMIT;
+        }
+
+
+        // 코멘트 생성
+        $commentdata = [
+            'comment_post_ID' => $in['comment_post_ID'],
+            'comment_content' => $in['comment_content'] ?? '',
+            'comment_parent' => $in['comment_parent'] ?? 0,
+            'user_id' => $user->ID,
+            'comment_author' => $user->nickname,
+            'comment_author_url' => $user->user_url,
+            'comment_author_email' => $user->user_email,
+
+            /// if removed, will cause error: Undefined index: comment_type.
+            'comment_type' => '',
+        ];
+        $comment_id = wp_new_comment($commentdata, true);
+        if (is_wp_error($comment_id)) {
+            $msg = $comment_id->get_error_message();
+            if (strpos($msg, 'too quickly') !== false) {
+                return ERROR_SLOW_DOWN_ON_COMMENTING;
+            }
+            return ERROR_COMMENT_EDIT . ':' . $msg;
+        }
+
+        /// 포인트 추가
+        api_forum_point_change(POINT_COMMENT_CREATE, $comment_id);
+
+
+        /**
+         * NEW COMMENT IS CREATED ==>  Send notification to forum comment subscriber
+         */
+        onCommentCreateSendNotification($comment_id, $in);
+    } else {
+        //
+        if (!is_my_comment($in['comment_ID'])) return ERROR_NOT_YOUR_COMMENT;
+        /**
+         * There is no error on wp_update_comment.
+         */
+        $re = wp_update_comment([
+            'comment_ID' => $in['comment_ID'],
+            'comment_content' => $in['comment_content']
+        ], true);
+        if (is_wp_error($re)) {
+            return ERROR_COMMENT_EDIT . ':' . $re->get_error_message();
+        }
+        $comment_id = $in['comment_ID'];
+    }
+
+    if (isset($in['files'])) {
+        attach_files($comment_id, $in['files'], COMMENT_ATTACHMENT);
+    }
+
+    return comment_response($comment_id);
+}
+
+/**
+ * @param $in
+ * @return array|string
+ *
+ * @example
+ *  api_delete_comment(['comment_ID' => $re['comment_ID'] ]);
+ */
+function api_delete_comment($in) {
+
+    if (!isset($in['comment_ID'])) return ERROR_EMPTY_COMMENT_ID;
+    if (!is_my_comment($in['comment_ID'])) return ERROR_NOT_YOUR_COMMENT;
+    $re = wp_delete_comment($in['comment_ID']);
+    if (!$re) return ERROR_DELETE_COMMENT;
+
+    /// 포인트 감소
+    api_forum_point_change(POINT_COMMENT_DELETE, $in['comment_ID']);
+
+    return ['comment_ID' => intval($in['comment_ID'])];
+}
 
 /**
  *
@@ -3725,7 +3838,7 @@ function api_vote($in) {
         // 처음 추천
         // 처음 추천하는 경우에만 포인트 지정.
 
-        // 추천 기록 남김
+        // 추천 기록 남김. 포인트 증/감 유무와 상관 없음.
         $wpdb->insert('api_forum_vote_history', [
             'user_ID' => $user_ID,
             'target_ID' => $target_ID,
@@ -3736,9 +3849,7 @@ function api_vote($in) {
 
         // 내 글/코멘트가 아니면, 포인트 증/감. 내 글/코멘트에 추천하는 경우, 포인트 증감 없음.
         if ( $is_mine === false ) {
-
             $limit = false;
-
             // 추천/비추천 시간/수 제한
             if ( $re = count_over(
                 [ POINT_LIKE, POINT_DISLIKE ], // 추천/비추천을
@@ -3746,7 +3857,7 @@ function api_vote($in) {
                 get_like_hour_limit_count() // count 회 수 이상 했으면,
             ) ) {
                 // 추천/비추천에서는 에러를 리턴 할 필요 없이 그냥 계속 한다.
-                // return ERROR_HOUR_COUNT_LIMIT; // 에러 리턴
+                // return ERROR_HOURLY_LIMIT; // 에러 리턴
                 $limit = true;
             }
 
@@ -3758,10 +3869,9 @@ function api_vote($in) {
                 get_like_daily_limit_count() // count 회 수 이상 했으면,
             ) ) {
                 // 무시하고 계속
-                // return ERROR_HOUR_COUNT_LIMIT; // 에러 리턴
+                // return ERROR_HOURLY_LIMIT; // 에러 리턴
                 $limit = true;
             }
-
             // 제한에 안 걸렸으면, 계속
             if ( $limit == false ) add_point_history(
                 $in['choice'] == 'Y' ? POINT_LIKE : POINT_DISLIKE,

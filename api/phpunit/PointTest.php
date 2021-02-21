@@ -34,6 +34,7 @@ final class PointTest extends TestCase
         set_user_point(A, 0);
         set_user_point(B, 0);
         set_user_point(C, 0);
+        set_user_point(D, 0);
 
         set_register_point(0);
         set_login_point(0);
@@ -42,6 +43,7 @@ final class PointTest extends TestCase
         set_like_deduction_point(0);
         set_dislike_point(0);
         set_dislike_deduction_point(0);
+
 
         set_like_daily_limit_count(0);
         set_like_hour_limit(0);
@@ -52,27 +54,35 @@ final class PointTest extends TestCase
             wp_insert_category(['cat_name' => $this->category, 'category_description' => 'point_test'], true);
         }
 
-        $this->login(D);
-        $this->post1 = api_create_post(['category' => $this->category, 'post_title' => 'post 1']);
-        $this->post2 = api_create_post(['category' => $this->category, 'post_title' => 'post 2']);
-        $this->post3 = api_create_post(['category' => $this->category, 'post_title' => 'post 3']);
 
         set_post_create_point($this->category, 0);
         set_comment_create_point($this->category, 0);
         set_post_delete_point($this->category, 0);
         set_comment_delete_point($this->category, 0);
-
         set_category_hour_limit($this->category, 0);
         set_category_hour_limit_count($this->category, 0);
         set_category_daily_limit_count($this->category, 0);
 
+
+
+        $this->login(D);
+        $this->post1 = api_create_post(['category' => $this->category, 'post_title' => 'post 1']);
+        $this->post2 = api_create_post(['category' => $this->category, 'post_title' => 'post 2']);
+        $this->post3 = api_create_post(['category' => $this->category, 'post_title' => 'post 3']);
+
+
         $this->posts = get_posts(['posts_per_page' => 10]);
+
+
+
     }
 
     private function login($ID, $point=0) {
         wp_set_current_user($ID);
         set_user_point($ID, $point);
     }
+
+
     public function testLike(): void {
         $this->clear();
         set_like_point(100);
@@ -194,7 +204,111 @@ final class PointTest extends TestCase
         self::assertTrue(get_user_point(B) == 800, 'No change: B point 800: vs: ' . get_user_point(B));
         self::assertTrue(get_user_point(D) == 0, 'No change: D point 0: vs: ' . get_user_point(D));
 
+    }
 
+
+
+    public function testPostCreateDelete(): void {
+        $this->clear();
+        set_post_create_point($this->category, 1000);
+        set_post_delete_point($this->category, -1200);
+        set_comment_create_point($this->category, 200);
+        set_comment_delete_point($this->category, -300);
+
+        self::assertTrue(get_post_create_point($this->category) == 1000);
+        self::assertTrue(get_post_delete_point($this->category) == -1200);
+        self::assertTrue(get_comment_create_point($this->category) == 200);
+        self::assertTrue(get_comment_delete_point($this->category) == -300);
+
+        /// 게시글 생성
+        $this->login(A);
+        $post1 = api_create_post(['category' => $this->category, 'post_title' => 'post 1']);
+        self::assertTrue(get_user_point(A) == 1000, 'A point must be 1000: ' . get_user_point(A));
+
+        $post2 = api_create_post(['category' => $this->category, 'post_title' => 'post 2']);
+        self::assertTrue(get_user_point(A) == 2000, 'A point must be 2000: ' . get_user_point(A));
+
+
+        // 게시글 삭제
+        $re = api_delete_post([ 'ID' => $post2['ID'], 'session_id' => get_session_id() ]);
+        self::assertTrue($re['ID'] > 0, 'post delete');
+        self::assertTrue(get_user_point(A) == 800, 'A point must be 800: ' . get_user_point(A));
+
+        $re = api_delete_post([ 'ID' => $post1['ID'], 'session_id' => get_session_id() ]);
+        self::assertTrue($re['ID'] > 0, 'post delete');
+        self::assertTrue(get_user_point(A) == 0, 'A point must be 0: ' . get_user_point(A));
+    }
+
+    public function testCommentCreateDelete(): void {
+        $this->clear();
+        set_comment_create_point($this->category, 200);
+        set_comment_delete_point($this->category, -300);
+
+
+        /// 코멘트 생성
+        $this->login(A, 1000);
+        $re = api_edit_comment(['comment_post_ID' => $this->post1['ID'], 'comment_content' => 'comment ' . time()]);
+        self::assertTrue($re['comment_ID'] > 0, 'comment create');
+        self::assertTrue(get_user_point(A) == 1200, 'A point must be 1200: ' . get_user_point(A));
+
+
+        /// 코멘트 삭제
+        $re = api_delete_comment(['comment_ID' => $re['comment_ID'] ]);
+        self::assertTrue($re['comment_ID'] > 0, 'comment delete');
+        self::assertTrue(get_user_point(A) == 900, 'A point must be 900: ' . get_user_point(A));
+    }
+
+
+    public function testPostCommentCreateHourlyLimit(): void {
+        $this->clear();
+
+        // 2시간에 3번 제한
+        set_category_hour_limit($this->category, 2);
+        set_category_hour_limit_count($this->category, 3);
+
+
+        $this->login(A);
+        $post1 = api_create_post(['category' => $this->category, 'post_title' => 'post 1']);
+        self::assertTrue($post1['ID'] > 0, '첫번째 글 쓰기 성공');
+
+
+        $post2 = api_create_post(['category' => $this->category, 'post_title' => 'post 1']);
+        self::assertTrue($post1['ID'] > 0, '두번째 글 쓰기 성공');
+
+        $post3 = api_create_post(['category' => $this->category, 'post_title' => 'post 1']);
+        self::assertTrue($post1['ID'] > 0, '세번째 글 쓰기 성공');
+
+        $re = api_create_post(['category' => $this->category, 'post_title' => 'post 1']);
+        self::assertTrue($re == ERROR_HOURLY_LIMIT, '네번째 글 쓰기 실패');
+
+
+        $re = api_edit_comment(['comment_post_ID' => $post3['ID'], 'comment_content' => 'Yo! hourly limit test.']);
+        self::assertTrue($re == ERROR_HOURLY_LIMIT, '코멘트 쓰기 실패');
+    }
+
+    public function testPostCommentCreateDailyLimit(): void {
+        $this->clear();
+
+        // 하루에 3번 제한
+        set_category_daily_limit_count($this->category, 3);
+
+
+        $this->login(A);
+        $post1 = api_create_post(['category' => $this->category, 'post_title' => 'post 1']);
+        self::assertTrue($post1['ID'] > 0, '첫번째 글 쓰기 성공');
+
+
+        $post2 = api_create_post(['category' => $this->category, 'post_title' => 'post 1']);
+        self::assertTrue($post1['ID'] > 0, '두번째 글 쓰기 성공');
+
+        $post3 = api_create_post(['category' => $this->category, 'post_title' => 'post 1']);
+        self::assertTrue($post1['ID'] > 0, '세번째 글 쓰기 성공');
+
+        $re = api_create_post(['category' => $this->category, 'post_title' => 'post 1']);
+        self::assertTrue($re == ERROR_DAILY_LIMIT, '네번째 글 쓰기 실패: ' . $re);
+
+        $re = api_edit_comment(['comment_post_ID' => $post3['ID'], 'comment_content' => 'Yo! hourly limit test.']);
+        self::assertTrue($re == ERROR_DAILY_LIMIT, '코멘트 쓰기 실패: ' . $re);
     }
 
 

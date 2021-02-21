@@ -143,7 +143,7 @@ function get_category_daily_limit_count($category) {
         [ POINT_LIKE, POINT_DISLIKE ], // 추천/비추천을
         get_like_hour_limit() * 60 * 60, // 특정 시간에, 시간 단위 이므로 * 60 * 60 을 하여 초로 변경.
         get_like_hour_limit_count() // count 회 수 이상 했으면,
-    ) ) return ERROR_HOUR_COUNT_LIMIT; // 에러 리턴
+    ) ) return ERROR_HOURLY_LIMIT; // 에러 리턴
  *
  */
 function count_over(array $reasons, int $stamp, int $count): bool {
@@ -219,6 +219,8 @@ function set_user_point($user_ID, $point) {
  * @param $point
  *
  * @return int|mixed
+ *
+ * - 적용된 포인트를 음/양의 값으로 리턴한다. 이 리턴되는 값을 from_user_point_apply 또는 to_user_point_apply 에 넣으면 된다.
  */
 function add_user_point($user_ID, $point): int
 {
@@ -241,7 +243,7 @@ function add_user_point($user_ID, $point): int
 }
 
 /**
- * @deprecated
+ * @deprecated 사용하지 말 것. 오래된 함수.
  *
  * 포인트를 증감 또는 차감한다.
  *
@@ -384,8 +386,10 @@ function count_my_point_actions($stamp, $actions) {
  */
 function add_point_history(string $reason, int $from_user_point_apply, int $to_user_point_apply=0, string $target_ID=null, int $cat_ID=0): int {
 
+
     // 받는 사람 아이디
     $to_user_ID = 0;
+
     if ( $target_ID ) {
         $arr = explode('_', $target_ID);
         if ( $arr[0] == 'post' ) {
@@ -396,6 +400,7 @@ function add_point_history(string $reason, int $from_user_point_apply, int $to_u
             $to_user_ID = $comment->user_id;
         }
     }
+
 
 
 
@@ -419,8 +424,82 @@ function add_point_history(string $reason, int $from_user_point_apply, int $to_u
         'stamp' => time(),
     ];
 
+
     global $wpdb;
     $wpdb->insert('api_point_history', $history);
 
     return $wpdb->insert_id;
+}
+
+
+/**
+ * 내가 쓴 $ID (글 또는 코멘트) 에 대해서, $point 를 증/감하고 기록을 남기고 기록 ID 리턴한다.
+ *
+ * 참고: 관리자는 타인의 글을 삭제 할 수 있다. 따라서 자기 글/코멘트가 아니면, 그냥 리턴한다.
+ *
+ * @param string $reason
+ * @param int $ID - 글 또는 코멘트 번호
+ * @return int
+ */
+function api_forum_point_change(string $reason, int $ID): int {
+
+    if ( in_array($reason, [ POINT_POST_CREATE, POINT_POST_DELETE ]) ) {
+        if ( is_my_post($ID) == false ) return 0;
+        $cat_ID = get_first_category_ID($ID);
+        $category = get_first_category($ID);
+        $point = category_meta($category, $reason, 0);
+        $target_ID = "post_$ID";
+    } else if ( in_array($reason, [ POINT_COMMENT_CREATE, POINT_COMMENT_DELETE ] ) ) {
+        if ( is_my_comment($ID) == false ) return 0;
+        $comment = get_comment( $ID );
+        $cat_ID = get_first_category_ID($comment->comment_post_ID);
+        $category = get_first_category($comment->comment_post_ID);
+        $point = category_meta($category, $reason, 0);
+        $target_ID = "comment_$ID";
+    } else {
+        die("api_forum_point_change() : Wrong reason.");
+    }
+
+    // 제한에 걸리면, 포인트를 추가하지 않는다.
+    if ( category_hourly_limit($category) || category_daily_limit($category) ) return 0;
+
+
+    // 포인트 추가하기
+    $applied = add_user_point(my('ID'), $point );
+
+    // 포인트 기록 남기기
+    return add_point_history(
+        $reason,
+        $applied,
+        $applied,
+        $target_ID,
+        $cat_ID
+    );
+}
+
+/**
+ * 카테고리 별 글/코멘트 쓰기 제한에 걸렸으면 true 를 리턴한다.
+ * @param string $category
+ * @return bool
+ */
+function category_hourly_limit(string $category): bool {
+    return count_over(
+        [ POINT_POST_CREATE, POINT_COMMENT_CREATE ], // 글/코멘트 작성을
+        get_category_hour_limit($category) * 60 * 60, // 특정 시간에, 시간 단위 이므로 * 60 * 60 을 하여 초로 변경.
+        get_category_hour_limit_count($category) // count 회 수 이상 했으면,
+    );
+}
+
+/**
+ * 카테고리 별 일/수, 글/코멘트 쓰기 제한에 걸렸으면 true 를 리턴한다.
+ * @param string $category
+ * @return bool
+ */
+function category_daily_limit(string $category): bool {
+    // 추천/비추천 일/수 제한
+    return count_over(
+        [ POINT_POST_CREATE, POINT_COMMENT_CREATE ], // 글/코멘트 작성을
+        24 * 60 * 60, // 하루에
+        get_category_daily_limit_count($category) // count 회 수 이상 했으면,
+    );
 }
