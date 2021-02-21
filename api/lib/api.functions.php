@@ -458,8 +458,18 @@ function login($data)
     wp_set_current_user($user->ID);
 
 
-    //// @todo 로그인 포인트
-    point_update([REASON => POINT_LOGIN]);
+    /// 로그인 포인트
+    /// 하루에 1번으로 고정.
+    if ( count_over([POINT_LOGIN], 24 * 60 * 60, 1) == false ) {
+        $applied = add_user_point($user->ID, get_login_point());
+        add_point_history(
+            POINT_LOGIN,
+            $applied,
+            $applied,
+            $user->ID,
+            0
+        );
+    }
 
 
     /**
@@ -924,14 +934,25 @@ function register($in)
     wp_set_current_user($user_ID);
 
 
-    //// @todo 포인트
-    point_update([REASON => POINT_REGISTER]);
+    /// 가입 포인트
+    $applied = add_user_point($user_ID, get_register_point());
+    add_point_history(
+        POINT_REGISTER,
+        $applied,
+        $applied,
+        $user_ID,
+        0
+    );
+
 
     return profile();
 }
 
 
 /**
+ *
+ * @attention 포인트 수정은 안 됨.
+ *
  * @param $user_ID
  * @param $data
  * @return void|string

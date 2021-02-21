@@ -83,6 +83,81 @@ final class PointTest extends TestCase
     }
 
 
+    public function testRegisterPoint(): void {
+        $this->clear();
+        set_register_point(1000);
+        self::assertTrue(get_register_point() == 1000, 'register point 1000');
+
+
+        $email = time() . "@point-test.com";
+        $profile = login_or_register(['user_email' => $email, 'user_pass' => $email]);
+        self::assertTrue( get_user_point($profile['ID']) == get_register_point(), "$email's point: " . get_user_point($profile['ID']));
+    }
+
+    public function testLoginPoint(): void {
+
+        $this->clear();
+        set_login_point(300);
+        self::assertTrue(get_login_point() == 300, 'login point 300');
+
+        $email = time() . "@login-point-test.com";
+        $profile = login_or_register(['user_email' => $email, 'user_pass' => $email]);
+        self::assertTrue( get_user_point($profile['ID']) == get_register_point(), "$email's point: " . get_user_point($profile['ID']));
+
+        $profile = login_or_register(['user_email' => $email, 'user_pass' => $email]);
+        self::assertTrue( get_user_point($profile['ID']) == (get_register_point() + get_login_point()), "$email's point: " . get_user_point($profile['ID']));
+
+        $profile = login_or_register(['user_email' => $email, 'user_pass' => $email]);
+        self::assertTrue( get_user_point($profile['ID']) == (get_register_point() + get_login_point()), "$email's point: " . get_user_point($profile['ID']));
+    }
+
+
+
+    public function testAdminUpdatePoint(): void {
+
+
+
+
+        /// ERROR TEST
+        $this->login(B);
+        $re = api_admin_point_update([
+            'user_ID' => B,
+            'point' => 10000,
+        ]);
+        self::assertTrue($re === ERROR_PERMISSION_DENIED, "expect: ERROR_PERMISSION_DENIED, re: $re");
+
+        $this->login(A);
+        $re = api_admin_point_update([
+            'user_ID' => 12345678901,
+        ]);
+        self::assertTrue($re === ERROR_USER_NOT_FOUND, "re: $re");
+
+        $this->login(A);
+        $re = api_admin_point_update([
+            'user_ID' => B,
+        ]);
+        self::assertTrue($re === ERROR_POINT_IS_NOT_SET, "re: $re");
+
+
+        $this->login(A);
+        $re = api_admin_point_update([
+            'user_ID' => B,
+            'point' => -1
+        ]);
+        self::assertTrue($re === ERROR_POINT_CANNOT_BE_SET_LESS_THAN_ZERO, "re: $re");
+
+        $this->login(A);
+        $re = api_admin_point_update([
+            'user_ID' => B,
+            'point' => 12345
+        ]);
+        self::assertTrue($re > 0, 'point record success');
+        self::assertTrue(get_user_point(B) == 12345, "B point should be 12345: " . get_user_point(B));
+
+    }
+
+
+
     public function testLike(): void {
         $this->clear();
         set_like_point(100);

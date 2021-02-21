@@ -390,7 +390,8 @@ function add_point_history(string $reason, int $from_user_point_apply, int $to_u
     // 받는 사람 아이디
     $to_user_ID = 0;
 
-    if ( $target_ID ) {
+    // 회원 가입, 로그인에서 target_ID 는 숫자.
+    if ( $target_ID && is_string($target_ID) ) {
         $arr = explode('_', $target_ID);
         if ( $arr[0] == 'post' ) {
             $post = get_post($arr[1]);
@@ -502,4 +503,25 @@ function category_daily_limit(string $category): bool {
         24 * 60 * 60, // 하루에
         get_category_daily_limit_count($category) // count 회 수 이상 했으면,
     );
+}
+
+
+/**
+ * @param $in
+ * @return mixed
+ */
+function api_admin_point_update($in) {
+    if ( admin() == false ) return ERROR_PERMISSION_DENIED;
+    $user = get_user_by('id', $in['user_ID']);
+    if ( ! $user ) return ERROR_USER_NOT_FOUND;
+    if ( isset($in['point']) == false ) return ERROR_POINT_IS_NOT_SET;
+    if ( $in['point'] < 0 ) return ERROR_POINT_CANNOT_BE_SET_LESS_THAN_ZERO;
+    $applied = add_user_point($in['user_ID'], $in['point']);
+    return ['ID' => add_point_history(
+        POINT_UPDATE,
+        $applied,
+        $applied,
+        $in['user_ID'],
+        0
+    )];
 }
