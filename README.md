@@ -697,8 +697,48 @@ displayTestSummary();
 
 ```js
 later(function () {
-   app.loadProfileUpdateForm();
+   app.loadProfile();
 });
+```
+
+### User profile update - 회원 정보 수정
+
+* Define your own method to update user profile data instead of using `onProfileUpdateFormSubmit` that is
+  defined on `app.js`, which updates the whole `app.profile` into backend and that might be the right way.
+
+  By creating you own method, you can update only the minimal data to backend.
+
+```html
+<form @submit.prevent="onProfileFormSubmit">
+    <div class="form-group mt-5 mb-3">
+        <label for="profile_form_email" class="form-label">이메일 주소</label>
+        <input class="form-control" type="email" placeholder="메일 주소를 입력해주세요." v-model="profile.email">
+    </div>
+    <div class="form-group mb-3">
+        <label for="name">좌우명</label>
+        <input type="text" class="form-control" v-model="profile.motto">
+    </div>
+    <button type="submit" class="btn btn-primary">저장</button>
+</form>
+
+<script>
+    later(function () { // Since `app` is defined at the bottom of the page.
+        app.loadProfile();
+    });
+    const mixin = {
+        methods: {
+            onProfileFormSubmit() { // submit the form
+                this.userProfileUpdate({
+                    email: this.profile.email,
+                    motto: this.profile.motto
+                }, function(profile) {
+                    console.log('success: ', profile);
+                    alert("프로필 정보를 수정하였습니다.");
+                });
+            }
+        }
+    }
+</script>
 ```
 
 ### Adding component into Vue App
@@ -749,7 +789,7 @@ addComponent('comment-form', commentForm);
 
 ## Profile page
 
-* `app.loadProfileUpdateForm()` will fill the `app.profile` object. So, you can display it in the form.
+* `app.loadProfile()` will fill the `app.profile` object. So, you can display it in the form.
 * `app.onProfileUpdateFormSubmit()` should be called on update button clicked.
 
 # Push notification
@@ -985,6 +1025,11 @@ if ( in('mode') == 'delete' ) {
 
 
 # Cafe (or Group)
+
+## 카페 개요
+
+* 참고 문서: 기획: https://docs.google.com/document/d/183T26WZtfaa0SrQRF7Ut2h_pFn3qorZk1OrdH-1VWrU/edit#heading=h.39a89ueox04d
+
 
 카페 기능이 따로 있는 것이 아니라, 각 테마(theme) 에서 적절히 구현을 해야 한다. 여기서는 어떻게 하면 되는지 간략하게 설명을 한다.
 

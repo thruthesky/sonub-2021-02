@@ -458,6 +458,7 @@ function login($data)
     wp_set_current_user($user->ID);
 
 
+    //// @todo 로그인 포인트
     point_update([REASON => POINT_LOGIN]);
 
 
@@ -509,8 +510,8 @@ function login($data)
  */
 function profile_update($in)
 {
+    debug_log("profile_update(): ", $in);
     $re = user_update_meta(wp_get_current_user()->ID, $in);
-    debug_log("re: $re");
     if ( api_error($re) ) return $re;
     return profile();
 }
@@ -923,6 +924,7 @@ function register($in)
     wp_set_current_user($user_ID);
 
 
+    //// @todo 포인트
     point_update([REASON => POINT_REGISTER]);
 
     return profile();
@@ -938,7 +940,7 @@ function user_update_meta($user_ID, $data): string
 {
     foreach ($data as $k => $v) {
         if (!in_array($k, USER_META_EXCEPTIONS)) {
-            if ( $k == 'point' ) return ERROR_POINT_CANNOT_BE_UPDATED;
+            if ( $k == 'point' ) continue;
             update_user_meta($user_ID, $k, $v);
         }
     }

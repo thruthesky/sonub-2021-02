@@ -36,7 +36,9 @@ const AttributeBinding = {
   },
   methods: {
     profile_photo_url() {
-      return this.loggedIn() ? this.user.profile_photo_url : '/wp-content/themes/sonub/img/anonymous.png';
+      if ( this.notLoggedIn() ) return '/wp-content/themes/sonub/img/anonymous.png';
+      if ( this.user.profile_photo_url && this.user.profile_photo_url != 'undefined' ) return this.user.profile_photo_url;
+      else return '/wp-content/themes/sonub/img/anonymous.png';
     },
     /**
      * Debouncing functions
@@ -105,13 +107,16 @@ const AttributeBinding = {
     },
     /**
      * Loads user profile data and set it on `app.profile` in vue.
+     *
+     * @usage
+     *   - You may load user profile on profile page to bind latest data from backend.
      */
-    loadProfileUpdateForm() {
+    loadProfile() {
       request(
         "user.profile",
         {},
         function (profile) {
-          console.log("loadProfileUpdateForm: ", profile);
+          console.log("loadProfile: ", profile);
           app.profile = profile;
         },
         this.error
@@ -125,6 +130,7 @@ const AttributeBinding = {
      *    - If there is erorr, it handles error.
      *    - If there is no error, it updates the localStorage with new data.
      * @param data
+     *
      */
     userProfileUpdate(data, onSuccessCallback) {
       request(
@@ -139,9 +145,12 @@ const AttributeBinding = {
         this.error
       );
     },
+    /**
+     *
+     * @attention This does not update only the form data. It update the whole data of this.profile
+     */
     onProfileUpdateFormSubmit() {
-      console.log(this.$data.profile);
-      this.userProfileUpdate(this.$data.profile);
+      this.userProfileUpdate(this.profile);
     },
     /**
      * It's a wrapper of calling global fileUpload function.
