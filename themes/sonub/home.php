@@ -5,10 +5,10 @@ if ( is_in_cafe() == false ) {
 
     include widget('posts/two-columns', [
         'left' => [
-            'category_name' => 'reminder',
+            'category_name' => cafe_category('reminder'),
         ],
         'right' => [
-            'category_name' => 'qna',
+            'category_name' =>  cafe_category('qna'),
         ],
         'class' => 'border-radius-md',
     ]);
