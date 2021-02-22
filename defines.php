@@ -308,3 +308,4 @@ define('DEFAULT_TOPIC', 'DefaultTopic');
 define('DEFAULT_NOTIFY_PREFIX', 'notify');
 define('NOTIFY_POST', DEFAULT_NOTIFY_PREFIX . 'Post_');
 define('NOTIFY_COMMENT', DEFAULT_NOTIFY_PREFIX . 'Comment_');
+

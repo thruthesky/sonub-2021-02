@@ -1,5 +1,10 @@
 <?php
 
+if ( loggedIn() && empty(profile('name')) ) {
+    include script('user/profile');
+    return;
+}
+
 if ( is_in_cafe() == false ) {
     include 'home.cafe_create.php';
 

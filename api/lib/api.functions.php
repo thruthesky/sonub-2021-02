@@ -411,7 +411,10 @@ function my($field)
     } else if ($field == 'email') {
         return wp_get_current_user()->user_email;
     } else {
-        return get_user_meta(wp_get_current_user()->ID, $field, true);
+        $profile = profile();
+        if (isset($profile) ) return $profile[$field];
+        else return null;
+//        return get_user_meta(wp_get_current_user()->ID, $field, true);
     }
 }
 
@@ -705,6 +708,7 @@ function user_metas($user_ID)
  */
 function profile($user_ID = null)
 {
+
     $arg_user_ID = $user_ID;
     if ($user_ID === null) {
         $user_ID = wp_get_current_user()->ID;
@@ -713,6 +717,8 @@ function profile($user_ID = null)
         $arr = explode('_', $user_ID);
         $user_ID = $arr[0];
     }
+
+    if( ! $user_ID ) return [];
 
     $user = new WP_User($user_ID);
     if (!isset($user->ID)) {
@@ -934,7 +940,7 @@ function end_if_error($code)
 function login_or_register($in)
 {
     $re = login($in);
-    debug_log("login:", $re);
+//    debug_log("login:", $re);
     if (api_error($re)) {
         if ($re == ERROR_USER_NOT_FOUND_BY_THAT_EMAIL) {
             $re = register($in);
@@ -3223,7 +3229,7 @@ function pass_login_or_register($user)
     if (isset($user['ci']) && $user['ci']) {
         /// 처음 로그인 또는 자동 로그인이 아닌 경우,
         $user['user_email'] = PASS_LOGIN_MOBILE_PREFIX . "$user[phoneNo]@passlogin.com";
-        $user['user_pass'] = md5(PASS_LOGIN_SALT . PASS_LOGIN_CLIENT_ID . $user['phoneNo']);
+        $user['user_pass'] = md5(LOGIN_PASSWORD_SALT . PASS_LOGIN_CLIENT_ID . $user['phoneNo']);
         $profile = login_or_register($user);
     } else {
         /// plid 가 들어 온 경우, meta 에서 ci 를 끄집어 낸다.

@@ -82,6 +82,12 @@ if ( !defined('BROWSER_COOKIE_DOMAIN') ) {
 
 
 /**
+ * 각종 로그인(패스로그인, 카카오로그인, 등) 할 때, 사용되는 비밀번호.
+ */
+define('LOGIN_PASSWORD_SALT', 'Random_Salt_oO^.^Oo_S.0.48.PM,*'); // This is any random (secret) string.
+
+
+/**
  * Pass login
  * @see README
  */
@@ -94,8 +100,21 @@ define('PASS_LOGIN_MOBILE_PREFIX', 'm');
 define('PASS_LOGIN_CLIENT_ID', 'b90hirE4UYwVf2GkHIiK');
 define('PASS_LOGIN_CLIENT_SECRET_KEY', '366c0f3775bfa48f2239226506659f5981afd3eb2b08189f9f9d22cdc4ca63c9');
 define('PASS_LOGIN_CALLBACK_URL', "https://sonub.com/wp-content/themes/sonub/callbacks/pass-login-callback.php");
-define('PASS_LOGIN_SALT', 'Random_Salt_oO^.^Oo_S.0.48.PM'); // This is any random (secret) string.
-
 
 // 날짜 설정
+//
+// 추천/비추천 및 게시글/코멘트 쓰기 제한 등에서, 일/수 단위로 제한을 할 때, 한국 시간으로 할지, 어느나라 시간으로 할 지 지정 할 수 있다.
 date_default_timezone_set('Asia/Seoul');
+
+
+// Kakao Javascript Api 키
+define('KAKAO_CLIENT_ID', '6f8d49d406555f69828891821ea56c8b');
+// Kakao Redirect URI
+define('KAKAO_CALLBACK_URL', 'https://main.philov.com/wp-content/themes/sonub/callbacks/kakao-login.callback.php');
+
+
+
+define('NAVER_CLIENT_ID', 'gCVN3T_vsOmX1ADriDOA');
+define('NAVER_CLIENT_SECRET', 'JzWh7zPeJF');
+define('NAVER_CALLBACK_URL', urlencode('https://main.philov.com/wp-content/themes/sonub/callbacks/naver-login.callback.php'));
+define('NAVER_API_URL', "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=".NAVER_CLIENT_ID."&redirect_uri=".NAVER_CALLBACK_URL."&state=1");
