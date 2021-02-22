@@ -7,7 +7,7 @@ if ( is_in_cafe() == false ) {
         'left' => [
             'category_name' => 'reminder',
         ],
-        'middle' => [
+        'right' => [
             'category_name' => 'qna',
         ],
         'class' => 'border-radius-md',
