@@ -5,10 +5,6 @@
 * The reason why we have chosen as its backend frame is because 1) It's easy. Team members can easily learn it. 2) It's almost a standard CMS and widely used all over the world.
 
 
-
-
-
-
 # Overview
 
 * Build with PHP.
@@ -356,6 +352,13 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
 ```
 
 
+
+### Forum list
+
+- On first page, the backend returns the category option in the first post as `category_options` property.
+
+
+
 # Developer Guideline
 
 ## Precautions
@@ -701,8 +704,48 @@ displayTestSummary();
 
 ```js
 later(function () {
-   app.loadProfileUpdateForm();
+   app.loadProfile();
 });
+```
+
+### User profile update - 회원 정보 수정
+
+* Define your own method to update user profile data instead of using `onProfileUpdateFormSubmit` that is
+  defined on `app.js`, which updates the whole `app.profile` into backend and that might be the right way.
+
+  By creating you own method, you can update only the minimal data to backend.
+
+```html
+<form @submit.prevent="onProfileFormSubmit">
+    <div class="form-group mt-5 mb-3">
+        <label for="profile_form_email" class="form-label">이메일 주소</label>
+        <input class="form-control" type="email" placeholder="메일 주소를 입력해주세요." v-model="profile.email">
+    </div>
+    <div class="form-group mb-3">
+        <label for="name">좌우명</label>
+        <input type="text" class="form-control" v-model="profile.motto">
+    </div>
+    <button type="submit" class="btn btn-primary">저장</button>
+</form>
+
+<script>
+    later(function () { // Since `app` is defined at the bottom of the page.
+        app.loadProfile();
+    });
+    const mixin = {
+        methods: {
+            onProfileFormSubmit() { // submit the form
+                this.userProfileUpdate({
+                    email: this.profile.email,
+                    motto: this.profile.motto
+                }, function(profile) {
+                    console.log('success: ', profile);
+                    alert("프로필 정보를 수정하였습니다.");
+                });
+            }
+        }
+    }
+</script>
 ```
 
 ### Adding component into Vue App
@@ -753,7 +796,7 @@ addComponent('comment-form', commentForm);
 
 ## Profile page
 
-* `app.loadProfileUpdateForm()` will fill the `app.profile` object. So, you can display it in the form.
+* `app.loadProfile()` will fill the `app.profile` object. So, you can display it in the form.
 * `app.onProfileUpdateFormSubmit()` should be called on update button clicked.
 
 # Push notification
@@ -990,6 +1033,11 @@ if ( in('mode') == 'delete' ) {
 
 # Cafe (or Group)
 
+## 카페 개요
+
+* 참고 문서: 기획: https://docs.google.com/document/d/183T26WZtfaa0SrQRF7Ut2h_pFn3qorZk1OrdH-1VWrU/edit#heading=h.39a89ueox04d
+
+
 카페 기능이 따로 있는 것이 아니라, 각 테마(theme) 에서 적절히 구현을 해야 한다. 여기서는 어떻게 하면 되는지 간략하게 설명을 한다.
 
 * 기본적으로 2차 도메인을 사용하는 것이 원칙이다. 예) https://my-cafe.sonub.com
@@ -997,6 +1045,10 @@ if ( in('mode') == 'delete' ) {
   * 카페 아이디가 get_option("cafe-[id]") 설정에 존재하면 카페가 존재하는 것이다.
 * 각 글마다 카페 아이디를 기록한다.
 * 가능하면 메인 사이트에서 각 카페 홍보를 할 때, URL 링크를 카페 도메인으로 해서 절대 경로로 연결해준다.
+
+
+* 카페 메인 사이트도 위젯 설정을 할 수 있다.
+  루트 아이디로 로그인을 하면, 카페 관리자 메뉴가 활성화 되고, 메인 사이트에 대해서 위젯 설정이 가능하다.
 
 ## Sonub Cafe 기능
 
@@ -1199,11 +1251,6 @@ EOS;
   `etc/markdown/display-markdown.php` 을 참조.
 
 
-# 포인트 시스템
-
-* 사용자 meta 의 point 키에 저장된다.
-  * 이 `point` 는 직접 수정 할 수 없으며, `point_update()` 함수를 통해서만 가능하다.
-
 # Settings
 
 * 관리자 페이지에서 설정을 할 수 있다.
@@ -1291,13 +1338,142 @@ select * from zipcode where eupmyun like '테헤란로%' or doro like '테헤란
 
 # 포인트 시스템
 
-- `api_point_history` 에 포인트 기록이 남는다. 이전, 이후의 포인트 변화를 같이 기록한다.
-- `from_userID` 와 `reason` 그리고 `stamp` 3 개에 복합 index 가 걸려 있어,
+
+- 사용자 meta 의 point 키에 저장된다.
+  - 사용자는 이 `point` 를 직접 수정 할 수 없으며, 오직 포인트 활동에 의해서 자동으로 변경된다.
+  - 관리자는 api_admin_point_update() 또는 `route=admin.pointUpdate&user_ID=1&point=2` 와 같이 업데이트를 할 수 있다.
+  
+- `api_point_history` 에 포인트 기록이 남는다.
+  - 포인트 이벤트를 발생시키는 사용자 from_user_ID 와 포인트 이벤트의 대상(포인트를 받는) 사용자를 to_user_ID 에 기록한다.
+    그리고 각각의 사용자에게 적용되는 포인트와, 적용된 후의 포인트 변화를 같이 기록해서 알아보기 쉽도록 한다.
+
+
+- 테스트 코드는 api/phpunit/PointTest.php 에 있다.
+
+- 글 쓰기를 할 때, 포인트를 차감한다면, 해당 차감 포인트 만큼 포인트를 보유해야 코멘트/글을 쓸 수 있다. 아니면 에러가 난다.
+
+
+- 글/코멘트 쓰기 포인트를 양수로 정하면, 글/코멘트 쓸 때마 포인트를 증가 시킨다.
+  이 때, 시간/수 제한 또는 일/수 제한을 걸면, 그 제한에 걸리는 경우, 글/코멘트를 계속 쓸 수 있지만, 포인트 증/감은 하지 않는다.
+  
+- 카테고리에서 제한은 글과 코멘트가 같이 정해진다. 일/수 제한을 하루 5개로 한 경우, 글을 4개 섰다면, 코멘트를 1개 밖에 포인트 증/감을 하지 못한다.
+
+- 포인트 증/감은 안되어도 계속 해서 글/코멘트를 쓸 수 있다.
+
+- 만약, "글/코멘트에 제한" 설정을 "예"로 하면, 포인트 증/감과 상관 없이, 시간/수, 일/수 제한에 걸리면, 글이나 코멘트를 새로 작성 할 수 없다.
+
+- 참고로 DB 에 `from_userID`, `reason`, `category` 그리고 `stamp` 와 같이 4 개에 복합 index 가 걸려 있어,
   - 24시간 마다 한번씩 출석 포너스를 인정 한다던가,
   - 날짜별로 글 보너스를 10개만 준다던지
   - 또는 5시간 마다 최대 몇개의 글만 보너스를 준다던지 할 수 있다.
     제한을 할 때 사용된다.
     
+기타 자세한 사항은 아래 항목을 참고한다.
 
 
 
+
+## 포인트 증/감 제한 규정
+
+
+- 포인트 증/감 제한
+  추천 / 비추천은 전체 설정만 있고, 게시판 별 설정은 없다. 즉, 전체 설정이 모든 게시판의 추천/비추천에 적용된다.
+  게시판 별 설정은 전체 설정이 없다. 그냥 게시판 별로 설정을 해야 한다.
+
+  모든 포인트 증/감에는 "시간/수" 제한과 "일/수" 제한이 있는데, 2가지 방식을 둔 이유는 연속으로 포인트 증/감을 하지 못하도록 하기 위한 것이다.
+
+  시간/수 제한: 5/6 과 같이 하면 5시간에 6번 할 수 있다. 즉, '시간 별 몇 회'로 제한 하는 것이다.
+  일/수 제한: '추가로 1일 6회로 제한하면', '하루에 6번'으로 제한 하는 것이다.
+
+  10월 10일 밤 11시 50분 부터 55분 사이에 6번 하고,
+  10월 11일 새벽 0시에 다시 할 수 없다. 왜하면 5시간에 6번으로 제한이 되어져 있기 때문에 5시간을 기다려야 한다.
+
+  만약, 시간/수 제한을 하지 않으면, 10월 10일 11시 59분에 6번 하고, 10월 11일 0시 0분에 6번 할 수 있다. 즉, 연속으로 12번 할 수 있다.
+  만약, 일/수 제한을 하지 않으면, 10월 10일 0시 0분에 6번하고, 같은 날 또, 10월 10일 5시 0분에 6분 할 수 있다.
+
+  이 처럼, 추천/비추천과 게시판에 시간/수와 일/수의 조합으로 제한을 할 수 있다.
+
+  예) 일주일에 한번으로 제한하고 싶다면, 단순히 시간/수 제한을 168/1 로 하면 된다.
+
+  예) 하루에 글 10번 까지 포인트를 주고 싶은데 연속으로 10번을 쓰지 못하게 하고 싶다면, 일/수 제한 10, 시간/제한 1/2 로 하면 된다.
+  즉, 하루 최대 10개 까지만 되지만, 1시간에 2개까지만 인정된다. 즉, 시간 단위로 1시간에 2개씩 총 5시간에 걸쳐 하루 10개 포인트를 획득할 수 있다.
+
+- 제한이 없으면, 포인트/증감이 계속해서 적용된다.
+
+- 추천/비추천을 하는 사람과 받는 사람 모두 포인트 변경이 된다.
+
+
+- 추천/반대는 게시판별 설정이 없고, 모든 게시판에 적용된다.
+  관리자 설정에는 추천 받는 경우, 비추천 받는 경우, 추천 하는 경우, 비추천 하는 경우 4가지 설정이 있고 시간/수, 일/수 제한이 있는데,
+  시간/수, 일/수 제한은 추천/비추천 하는 사람에게만 제한 된다.
+  즉, 추천/비추천 받는 사람은 제한 없이 계속 해서 포인트를 받을 수 있다.
+
+- 추천/비추천은 제한에 걸리면 포인트 증/감을 하지 않지만, 추천/비추천은 계속 할 수 있다.
+
+- 추천/비추천을 받는 경우, 포인트가 감소한다면,
+  추천/비추천 받는 사람이 포인트가 모자라도 추천/비추천을 받을 수 있으며, 이 때, 포인트가 음수로 내려가지 않고 최소 0이 된다.
+  
+- 추천을 받는 경우 반드시 0 또는 양의 정수 값만 입력해야 한다. 음수를 입력하면 안된다.
+  - 추천을 하는 경우, (0, 양수, 음수 상관없이) 정수를 입력한다.
+- 반대를 받는 경우, 반드시 0 또는 음의 정수만 입력한다. 양수를 입력하면 안된다.
+  - 비추천을 하는 경우, (0, 양수, 음수 상관없이) 정수를 입력한다.
+  
+- 자기 자신을 추천/비추천하는 경우, 추천 하는 포인트와 추천 받는 포인트가 적용되지 않는다.(증/감하지 않는다.)
+
+- 추천/비추천을 한 경우, 처음 한번만 포인트 증/감을 하고, 그 다음에 취소 후 다시 추천이이나 또는 반대로 추천/비추천을 해도 포인트가 증/감되지 않는다.
+  즉, 한번 추천/비추천을 한 글에는 두번 적용이 안되며, 취소를 할 수 없다.
+
+  포인트 복구하는 시스템을 만들면, 문제가 생길 수 있다.
+  예를 들어, A 가 B 에게 추천을 했는데, B 가 포인트를 모두 써 버려, A 가 취소하려는데, B 포인트가 없는데, A 의 포인트를 복구한다면, 시스템적으로 포인트 손실이 생기기 때문이다.
+  
+  추천 취소를 할 때, 추천 기록 레코드를 DB에서 삭제하지 않고, 그대로 두기 때문에 추적 가능하다.
+
+- 추천/비추천은 내가 포인트가 없어도 할 수 있다.
+  예를 들어 추천을 할 때, 추천을 하는 사람(나)의 포인트가 -50 차감되는데, 내 포인트가 -50이 안된다면, 나의 포인트는 0으로 저장이 된다.
+  하지만, 상대방의 포인트는 설정에 따라 증/감한다.
+  그리고 만약, 제한에 글리면, 추천/비추천을 할 수 있지만, 나의 포인트 뿐만아니라 상대방의 포인트에 변화가 없다.
+  즉, 제한에 걸리면, 추천/비추천을 할 수 있지만, 포인트 증/감이 안된다.
+  비 추천도 마찬가지이다. 비추천을 할 때, 내가 포인트가 모자라면, 나의 포인트는 0이 되고, 상대방의 포인트는 설정에 따라 변한다.
+
+- 게시판 새글을 작성하는 경우, 정수(0, 양수, 음수)를 입력한다.
+  즉, 유료 게시판의 경우, 게시판에 글 작성 포인트를 음수로 두어, 사용자가 글 작성시 포인트를 차감 시킬 수 있다.
+
+  
+
+## 증/감 제한 활용
+
+
+- 로그인 포인트는 로그인을 할 때에만 포인트 증가가 발생한다.
+  따라서 회원이 한번 로그인을 해 놓고, 로그인 아웃하지 않고 사용하면 왠지 손해보는 느낌이 들 수 있다.
+  이 같은 경우는 로그인 포인트를 사용하지 않도록 관리자가 시스템 설정에서 로그인 포인트를 0 으로 하면 된다.
+  대신, 출석 게시판에 제한을 6/1(6시간에 1번) 과 1일 1회로 제한 해서, 특정 포인트를 주게한다.
+
+
+### 제한에 따른 글/코멘트 쓰기/삭제 방지
+
+- 시간/수, 일/수 제한에 걸리면 포인트는 증/감하지 않지만, 글/코멘트 쓰기/삭제는 계속 할 수 있다.
+  이 때, '글/코멘트에 제한' 옵션을 '예'로 선택하면, 시간/수, 일/수 제한에 걸리면, 글/코멘트 쓰기를 못하게 한다. 단, 삭제는 할 수 있다. 삭제에는 제한이 없다.
+  만약, '글/코멘트에 제한' 옵션을 '아니오'로 선택하면, 포인트가 증/감하지 않지만, 글/코멘트 쓰기에 제한 없이 계속 할 수 있다.
+
+
+  - 예를 들어, 장터 게시판에 하루 1번만 쓰게하려고 한다면,
+    - 시간/수를 5(12시간이 지나도 글 2개를 연속으로 쓰는게 아니라, 최소 5시간 간격두기),
+    - 일/수를 1로 제한하면 된다.
+    - 이 때, 포인트를 줘도 되고, 포인트가 굳이 필요 없으면, 모두 0 으로 두면 된다.
+  
+- 장터에 하루에 1번만 글 쓰기를 할 때, 상단에 자신의 글을 표시하기 위해서, 사용자는 삭제하고 다시 글을 쓰려고 할 수 있다. 이를 방지하기 위해서,
+  - 주의 깊게 생각해야 할 것은, 글/코멘트 쓰기를 할 때에는 시간/수, 일/수 제한이 적용지만, 글/코멘트 삭제를 할 때에는 적용이 되지 않는다.
+    그래서, 삭제하고 다시 쓸 수 있다고 생각하지만, 아니다.
+    삭제하기 전에 한번 썼고, 삭제하고 다시 쓴다면, 두번째 쓰는 것이다.
+    즉, 삭제하는 것은 마음데로 얼마든지 할 수 있지만, 글/코멘트 쓰는 것은 삭제를 해도 카운트 된다.
+    따라서, 조금 전에 쓴 글을 삭제하고 다시 써도 안된다. 조금전에 글을 썼기 때문에, 삭제를 해도, 또 쓰지 못한다.
+    
+
+
+# 개발자 매뉴얼
+
+## 데이터베이스
+
+- 시스템에서 사용하는 모든 데이터베이스는 api- 로 시작한다.
+- 그리고 대부분의 설정은 wp_options 에 저장이 된다.
+- 따라서, api-** 데이터베이스를 모두 삭제하고 다시 추가해도 설정은 유지가 된다.

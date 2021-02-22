@@ -48,6 +48,7 @@ function cafe_id_key($id) {
  * 접속 URL 로 부터 카페 아이디를 리턴한다.
  *
  * @note 접속이 apple.sonub.com 이면 apple 을 리턴한다.
+ *      하지만, www 또는 1차 도메인의 경우, null 을 리턴한다.
  *
  * @return mixed|string|string[]|null
  */
@@ -61,11 +62,15 @@ function get_cafe_id() {
 
 /**
  * 현재 카페의 id 를 options 이나 다른 곳에 사용하기 쉽도록 cafe_[id] 와 같이 리턴한다.
+ *
+ * 만약, 현재 카페가 루트(1차도메인)라면, "cafe_1차 도메인"을 리턴한다.
+ *
  * @return string
  *  - 예) cafe_local, cafe_my_cafe_id
  */
 function get_current_cafe_id_key(): string {
-    return cafe_id_key( get_cafe_id() );
+    if ( get_cafe_id() ) return cafe_id_key( get_cafe_id() );
+    else return cafe_id_key( get_root_domain() );
 }
 
 /**
@@ -99,7 +104,7 @@ function is_in_cafe(): bool {
  * @return bool
  */
 function is_in_cafe_main(): bool {
-    return is_in_cafe();
+    return !is_in_cafe();
 }
 
 /**
@@ -230,17 +235,20 @@ function set_cafe_country_code($id, $code) {
 }
 
 /**
- * 카페가 속한 국가 코드를 리턴한다.
- * - 카페가 아니거나 루트 사이트의 경우, 설정에 있는 국가 코드를 리턴한다.
+ * 현재 카페가 속한 국가 코드를 리턴한다.
+ *
+ * 만약, 카페가 아닌 루트 사이트(1차 도메인)의 경우 cafe.config.php 설정에 있는 국가 코드를 리턴한다.
+ * 즉, 메인 사이트도 올바른 국가 코드를 리턴한다.
+ *
  * @return string
  */
 function cafe_country_code(): string {
     $code = get_option(get_current_cafe_id_key() . '_countryCode');
     if ( $code ) return $code;
 
-        $setting = get_cafe_domain_settings();
-        return $setting['countryCode'];
 
+    $setting = get_cafe_domain_settings();
+    return $setting['countryCode'];
 }
 
 
@@ -281,8 +289,11 @@ function update_widget_icon($widget_id) {
 
 
 /**
- *
  * 다이나믹 위젯의 설정을 저장/삭제하고 가져오는 함수
+ *
+ * 가져오기, 저장, 삭제를 할 때, 현재 카페의 ID 를 가지고 읽기/쓰기를 한다. 즉, 카페 마다 각각의 정보가 따로 설정된다.
+ *
+ *
  * @param $id - widget id
  * @return false|mixed|void
  */
@@ -292,7 +303,6 @@ function get_dynamic_widget_options($id) {
 function set_dynamic_widget_options($id, $data) {
     return update_option(get_current_cafe_id_key() . '-' .$id, $data, false);
 }
-
 function delete_dynamic_widget_options($id) {
     return delete_option(get_current_cafe_id_key() . '-' .$id);
 }

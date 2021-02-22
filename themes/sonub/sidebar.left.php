@@ -1,4 +1,4 @@
-<section class="l-sidebar d-none d-md-block mt-3">
+<section class="left-sidebar l-sidebar d-none d-md-block mt-3">
 
 
     <?php
@@ -10,7 +10,7 @@
             include widget('login/info', ['class' => 'border-radius-md']);
         }
     } else {
-        include widget('login/social-login', ['class' => 'border-radius-md']);
+        include widget('login/social-login', ['class' => 'login border-radius-md']);
     }
 
     //

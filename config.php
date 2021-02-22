@@ -97,3 +97,5 @@ define('PASS_LOGIN_CALLBACK_URL', "https://sonub.com/wp-content/themes/sonub/cal
 define('PASS_LOGIN_SALT', 'Random_Salt_oO^.^Oo_S.0.48.PM'); // This is any random (secret) string.
 
 
+// 날짜 설정
+date_default_timezone_set('Asia/Seoul');

@@ -4,13 +4,9 @@ $co = cafe_option();
 
 ?>
 
-
 <header class="d-md-none">
     <? include 'header.mainmenu.mobile.php' ?>
 </header>
-
-
-
 
 
 <header class="d-none d-md-block">
@@ -32,7 +28,7 @@ $co = cafe_option();
             <li><a href="/?page=cafe/sitemap">전체메뉴</a></li>
             <? if ( admin() ) { ?>
                 <li>
-                    <a href="/?page=admin/home">Admin</a>
+                    <a href="/?page=admin/home">Admin(<?= is_localhost() ? 'local' : 'prod' ?>)</a>
                 </li>
             <? } ?>
             <li>

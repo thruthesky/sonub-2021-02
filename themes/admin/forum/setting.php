@@ -70,34 +70,84 @@ $categories = get_category_tree();
         <tr>
             <td><?=ln('Point', '글 쓰기 포인트')?></td>
             <td>
-                <input type="number" name="post_create_point" value="<?=category_meta($cat->cat_ID, 'post_create_point','0')?>">
+                <input type="number" name="<?=POINT_POST_CREATE?>" value="<?=category_meta($cat->cat_ID, POINT_POST_CREATE,'0')?>">
             </td>
         </tr>
         <tr>
             <td><?=ln('Point', '글 삭제 포인트')?></td>
             <td>
-                <input type="number" name="post_delete_point" value="<?=category_meta($cat->cat_ID, 'post_delete_point','0')?>">
+                <input type="number" name="<?=POINT_POST_DELETE?>" value="<?=category_meta($cat->cat_ID, POINT_POST_DELETE,'0')?>">
             </td>
         </tr>
-
 
         <tr>
             <td><?=ln('Point', '코멘트 쓰기 포인트')?></td>
             <td>
-                <input type="number" name="comment_create_point" value="<?=category_meta($cat->cat_ID, 'comment_create_point','0')?>">
+                <input type="number" name="<?=POINT_COMMENT_CREATE?>" value="<?=category_meta($cat->cat_ID, POINT_COMMENT_CREATE,'0')?>">
             </td>
         </tr>
         <tr>
             <td><?=ln('Point', '코멘트 삭제 포인트')?></td>
             <td>
-                <input type="number" name="comment_delete_point" value="<?=category_meta($cat->cat_ID, 'comment_delete_point','0')?>">
+                <input type="number" name="<?=POINT_COMMENT_DELETE?>" value="<?=category_meta($cat->cat_ID, POINT_COMMENT_DELETE,'0')?>">
+            </td>
+        </tr>
+
+
+        <tr class="table-dark">
+            <td colspan="2">제한 설정</td>
+        </tr>
+        <tr class="table-light">
+            <td colspan="2">
+                <div class="hint">
+                    포인트 설정 및 글 쓰기 제한. 포인트에는 기본 적용됩니다.
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td><?=ln('Point', '시간/수 제한')?></td>
+            <td>
+                <input class="w-64px" type="number" name="<?=POINT_HOUR_LIMIT?>" value="<?=category_meta($cat->cat_ID, POINT_HOUR_LIMIT, '0')?>">
+                /
+                <input class="w-64px" type="number" name="<?=POINT_HOUR_LIMIT_COUNT?>" value="<?=category_meta($cat->cat_ID, POINT_HOUR_LIMIT_COUNT, '0')?>">
+            </td>
+        </tr>
+        <tr>
+            <td><?=ln('Point', '일/수 제한')?></td>
+            <td>
+                <input class="w-64px" type="number" name="<?=POINT_DAILY_LIMIT_COUNT?>" value="<?=category_meta($cat->cat_ID, POINT_DAILY_LIMIT_COUNT, '0')?>">
             </td>
         </tr>
 
 
 
+        <tr>
+            <td><?=ln('Point', '글/코멘트에 제한')?></td>
+            <td>
+                <label>
+                    <input
+                            type="radio"
+                            name="<?=BAN_ON_LIMIT?>"
+                            value="Y"
+                        <?php if (category_meta($cat->cat_ID, BAN_ON_LIMIT, '') == 'Y' ) echo 'checked' ?>> 예,
+                </label>
+                &nbsp;
+                <label>
+                    <input
+                            type="radio"
+                            name="<?=BAN_ON_LIMIT?>"
+                            value="N"
+                        <?php if (category_meta($cat->cat_ID, BAN_ON_LIMIT, '') != 'Y' ) echo 'checked' ?>> 아니오
+                </label>
+            </td>
+        </tr>
+
+
+
+
         <tr class="table-dark">
-            <td colspan="2">위젯 설정</td>
+            <td colspan="2">웹 위젯 설정</td>
         </tr>
 
         <tr>
@@ -167,7 +217,7 @@ $categories = get_category_tree();
                             type="radio"
                             name="list_on_view"
                             value="Y"
-                        <?php if (category_meta($cat->cat_ID, 'list_on_view', '') == 'Y' ) echo 'checked' ?>> Yes,
+                        <?php if (category_meta($cat->cat_ID, 'list_on_view', '') == 'Y' ) echo 'checked' ?>> 예,
                 </label>
                 &nbsp;
                 <label>
@@ -175,7 +225,7 @@ $categories = get_category_tree();
                             type="radio"
                             name="list_on_view"
                             value="N"
-                        <?php if (category_meta($cat->cat_ID, 'list_on_view', '') != 'Y' ) echo 'checked' ?>> No
+                        <?php if (category_meta($cat->cat_ID, 'list_on_view', '') != 'Y' ) echo 'checked' ?>> 아니오
                 </label>
             </td>
         </tr>
@@ -197,6 +247,62 @@ $categories = get_category_tree();
                         value="<?=category_meta($cat->cat_ID, 'no_of_pages_on_nav', NO_OF_PAGES_ON_NAV)?>">
             </td>
         </tr>
+
+
+        <tr class="table-dark">
+            <td colspan="2"><?=ln('App Widgets', '앱 위젯 설정')?></td>
+        </tr>
+
+        <tr>
+            <td><?=ln('Post List Widget', '글 목록 위젯')?></td>
+            <td>
+                <label class="">
+                    <input
+                            type="radio"
+                            name="mobile_forum_list_widget"
+                            value="text"
+                        <?php if (category_meta($cat->cat_ID, 'mobile_forum_list_widget', 'text') == 'text' ) echo 'checked' ?>> <?=ln('Text', '텍스트')?>
+                </label>
+                <label class="ps-2">
+                    <input
+                            type="radio"
+                            name="mobile_forum_list_widget"
+                            value="gallery"
+                        <?php if (category_meta($cat->cat_ID, 'mobile_forum_list_widget', 'text') == 'gallery' ) echo 'checked' ?>> <?=ln('Gallery', '갤러리')?>
+                </label>
+
+                <label class="ps-2">
+                    <input
+                            type="radio"
+                            name="mobile_forum_list_widget"
+                            value="thumbnail"
+                        <?php if (category_meta($cat->cat_ID, 'mobile_forum_list_widget', 'text') == 'thumbnail' ) echo 'checked' ?>> <?=ln('Thumbnail', '썸네일')?>
+                </label>
+
+            </td>
+        </tr>
+
+        <tr>
+            <td><?=ln('Post View Widget', '글 읽기 위젯')?></td>
+            <td>
+                <label class="">
+                    <input
+                            type="radio"
+                            name="mobile_forum_view_widget"
+                            value="default"
+                        <?php if (category_meta($cat->cat_ID, 'mobile_forum_view_widget', 'default') == 'default' ) echo 'checked' ?>> <?=ln('Default', '기본')?>
+                </label>
+                <label class="ps-2">
+                    <input
+                            type="radio"
+                            name="mobile_forum_view_widget"
+                            value="slide"
+                        <?php if (category_meta($cat->cat_ID, 'mobile_forum_view_widget', 'slide') == 'slide' ) echo 'checked' ?>> <?=ln('Slide', '슬라이드')?>
+                </label>
+
+            </td>
+        </tr>
+
 
 
         <tr>

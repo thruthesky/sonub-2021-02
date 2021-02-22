@@ -92,10 +92,27 @@ class AdminRoute
     }
 
 
+    /**
+     *
+     * 포인트 수정은 안 됨. 포인트 수정은 pointUpdate() 함수를 사용한다.
+     * @param $in
+     * @return array|string
+     */
     public function userProfileUpdate($in) {
         if ( !is_user_logged_in()) return ERROR_LOGIN_FIRST;
         if ( !admin()) return ERROR_NOT_AN_ADMIN;
         return admin_user_profile_update($in);
+    }
+
+
+    /**
+     * 관리자만 포인트를 업데이트 할 수 있음.
+     * @param $in
+     * @return mixed
+     */
+    public function pointUpdate($in)
+    {
+        return api_admin_point_update($in);
     }
 
 

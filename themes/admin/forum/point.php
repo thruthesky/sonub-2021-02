@@ -1,6 +1,8 @@
 <?php
 
 if ( in('mode') == 'save' ) {
+    if ( in(POINT_LIKE) < 0 ) jsBack('앗! 추천 받는 사람의 포인트는 0 이상이어야 합니다.');
+    if ( in(POINT_DISLIKE) > 0 ) jsBack('앗! 비추천 받는 사람의 포인트는 0 이하이어야 합니다.');
     update_option(POINT_REGISTER, in(POINT_REGISTER));
     update_option(POINT_LOGIN, in(POINT_LOGIN));
     update_option(POINT_LIKE, in(POINT_LIKE));
@@ -8,7 +10,8 @@ if ( in('mode') == 'save' ) {
     update_option(POINT_LIKE_DEDUCTION, in(POINT_LIKE_DEDUCTION));
     update_option(POINT_DISLIKE_DEDUCTION, in(POINT_DISLIKE_DEDUCTION));
     update_option(POINT_LIKE_HOUR_LIMIT, in(POINT_LIKE_HOUR_LIMIT));
-    update_option(POINT_LIKE_COUNT_LIMIT, in(POINT_LIKE_COUNT_LIMIT));
+    update_option(POINT_LIKE_HOUR_LIMIT_COUNT, in(POINT_LIKE_HOUR_LIMIT_COUNT));
+    update_option(POINT_LIKE_DAILY_LIMIT_COUNT, in(POINT_LIKE_DAILY_LIMIT_COUNT));
 }
 
 
@@ -54,8 +57,11 @@ if ( in('mode') == 'save' ) {
                 <li>비추천 받는 사람의 포인트는 비 추천을 받으면 얻게되는 포인트. 주로 0 또는 음수 값.</li>
                 <li>
                     시간 제한과 회수 제한은 같이 사용되는 것으로 하루에 5번까지만 추천 포인트가 주어지게 한다면
-                    시간에 24, 회수에 5를 입력하면 됩니다.
-                    시간/회수 제한을 넘어서도 추천/비추천 가능하지만, 포인트 증/감은 하지 않습니다.
+                    시간에 24, 회수에 5를 입력하면 됨.
+                    시간/회수 제한을 넘어서도 추천/비추천 가능하지만, 포인트 증/감은 하지 않음.
+                </li>
+                <li>
+                    일/수 제한은 하루에 몇 회까지 허용 할지 제한하는 것.
                 </li>
             </ul>
         </div>
@@ -84,14 +90,22 @@ if ( in('mode') == 'save' ) {
 
         <div class="row mt-3">
             <div class="col">
-                <label class="form-label">추천/비추천 포인트 증/감 시간 제한</label>
+                <label class="form-label">추천/비추천 포인트 증/감 시간 제한. 단위) 시간</label>
                 <input type="number" class="form-control" name="POINT_LIKE_HOUR_LIMIT" placeholder="0" value="<?=get_option(POINT_LIKE_HOUR_LIMIT, 0)?>">
             </div>
             <div class="col">
                 <label class="form-label">추천/비추천 포인트 증/감 회수 제한</label>
-                <input type="number" class="form-control" name="POINT_LIKE_COUNT_LIMIT" placeholder="0" value="<?=get_option(POINT_LIKE_COUNT_LIMIT, 0)?>">
+                <input type="number" class="form-control" name="POINT_LIKE_HOUR_LIMIT_COUNT" placeholder="0" value="<?=get_option(POINT_LIKE_HOUR_LIMIT_COUNT, 0)?>">
             </div>
         </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <label class="form-label">일/수 제한</label>
+                <input type="number" class="form-control" name="POINT_LIKE_DAILY_LIMIT_COUNT" placeholder="0" value="<?=get_option(POINT_LIKE_DAILY_LIMIT_COUNT, 0)?>">
+            </div>
+        </div>
+
     </div>
 
     <div class="d-grid">

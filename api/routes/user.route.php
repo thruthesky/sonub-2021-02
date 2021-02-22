@@ -23,10 +23,4 @@ class UserRoute {
         return profile_update($in);
     }
 
-
-
-    public function pointUpdate($in) {
-        return point_update($in);
-    }
-
 }

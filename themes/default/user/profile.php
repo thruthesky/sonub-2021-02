@@ -60,6 +60,6 @@
 
 <script>
 later(function () {
-   app.loadProfileUpdateForm();
+   app.loadProfile();
 });
 </script>
