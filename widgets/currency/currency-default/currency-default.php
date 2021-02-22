@@ -29,9 +29,6 @@ $usd = country_currency_code('US') ;
 
 $currencies = get_cache($cafe_code);
 if ( ! $currencies ) {
-
-
-
     $key = 'bd6ed497a84496be7ee9';
     $url = "https://free.currconv.com/api/v7/convert?q={$cafe_code}_KRW,{$cafe_code}_USD&compact=ultra&apiKey=$key";
     $re = file_get_contents($url);
@@ -39,9 +36,6 @@ if ( ! $currencies ) {
     $url = "https://free.currconv.com/api/v7/convert?q=USD_KRW,USD_{$cafe_code}&compact=ultra&apiKey=$key";
     $re = file_get_contents($url);
     $currencies = array_merge($currencies, json_decode($re, true));
-
-
-
 
     $re = set_cache("$cafe_code", $currencies, 60);
     if ( $re ) {
@@ -51,26 +45,27 @@ if ( ! $currencies ) {
 
 $letters = country_currency_korean_letter();
 
-foreach( $currencies as $names => $rate ) {
-    if ( $rate == 1 ) continue;
-    if ( $rate < 0.009 ) continue;
-    $arr = explode('_', $names);
-
-    if ( $rate < 100 ) $rate = round($rate, 3);
-else    $rate = round($rate, 2);
-
-    echo "<div>";
-    echo "1 ".$letters[$arr[0]]['Code'].": $rate " . $letters[$arr[1]]['Code'];
-    echo "</div>";
-}
-d($currencies);
-
-
-
-
 
 
 ?>
-<div class="box border-radius-md mb-2 p-3">
+<div class="box border-radius-md mb-2 p-3 fs-sm">
+    오늘의 환율
+    <hr>
+    <?
 
+    foreach( $currencies as $names => $rate ) {
+        if ( $rate == 1 ) continue;
+        if ( $rate < 0.009 ) continue;
+        $arr = explode('_', $names);
+
+        if ( $rate < 10 ) $rate = round($rate, 3);
+        else    $rate = round($rate, 2);
+
+        echo "<div>";
+        echo "1 ".$letters[$arr[0]]['Code'].": $rate " . $letters[$arr[1]]['Code'];
+        echo "</div>";
+    }
+    ?>
+    <hr>
+    환율 기준시간: <?=date('m월 d일 H시')?>
 </div>

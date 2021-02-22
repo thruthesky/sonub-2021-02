@@ -140,8 +140,20 @@ function cafe_home_url($id=null) {
  * @return string
  */
 function cafe_url($category) : string {
+    return "/?page=forum.list&category=" . cafe_category($category);
+}
+
+/**
+ * 현재 카페의 국가에 맞는 카테고리를 리턴한다.
+ *
+ * 예를 들어 'reminder' 로 입력되면, 'reminder_kr' 로 변경해서 리턴한다.
+ *
+ * @param $category
+ * @return string
+ */
+function cafe_category($category) {
     $code = cafe_country_code();
-    return "/?page=forum.list&category={$category}_$code";
+    return "{$category}_$code";
 }
 
 
