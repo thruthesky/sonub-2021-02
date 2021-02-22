@@ -42,7 +42,7 @@ define('CAFE_DOMAIN_SETTING', [
  * 테스트 할 때, 루트 도메인을 hosts 파일에 127.0.0.1 로 한다면, 배포 후, 확인을 위해서 항상 hosts 파일을 수정해야한다.
  * 그러한 번거로움 없이, 아래의 도메인의 경우, 루트 도메인으로 항상 지정한다.
  */
-define('TEST_CAFE_ROOT_DOMAINS', ['main.philov.com']);
+define('TEST_CAFE_ROOT_DOMAINS', ['main.philov.com', 'local.sonub.com']);
 
 
 /**

@@ -1,0 +1,677 @@
+[
+  {
+    "Name": "호주 달러",
+    "ISO": "AUD",
+    "Symbol": "$"
+  },
+  {
+    "Name": "알바니아 렉",
+    "ISO": "ALL",
+    "Symbol": "L"
+  },
+  {
+    "Name": "알제리 디나르",
+    "ISO": "DZD",
+    "Symbol": "دج"
+  },
+  {
+    "Name": "아르헨티나 페소",
+    "ISO": "ARS",
+    "Symbol": "$"
+  },
+  {
+    "Name": "아루바 플로린",
+    "ISO": "AWG",
+    "Symbol": "ƒ"
+  },
+  {
+    "Name": "영국 파운드",
+    "ISO": "GBP",
+    "Symbol": "£"
+  },
+  {
+    "Name": "바하마 달러",
+    "ISO": "BSD",
+    "Symbol": "B$"
+  },
+  {
+    "Name": "바레인 디나르",
+    "ISO": "BHD",
+    "Symbol": ".د.ب"
+  },
+  {
+    "Name": "방글라데시 타카",
+    "ISO": "BDT",
+    "Symbol": "Tk"
+  },
+  {
+    "Name": "바베이도스 달러",
+    "ISO": "BBD",
+    "Symbol": "BBD"
+  },
+  {
+    "Name": "벨라루스 루블",
+    "ISO": "BYR",
+    "Symbol": "Br"
+  },
+  {
+    "Name": "벨리즈 달러",
+    "ISO": "BZD",
+    "Symbol": "BZ$"
+  },
+  {
+    "Name": "버뮤다 달러",
+    "ISO": "BMD",
+    "Symbol": "BD$"
+  },
+  {
+    "Name": "부탄 눌트럼",
+    "ISO": "BTN",
+    "Symbol": "Nu."
+  },
+  {
+    "Name": "볼리비아노",
+    "ISO": "BOB",
+    "Symbol": "Bs"
+  },
+  {
+    "Name": "보츠와나 풀라",
+    "ISO": "BWP",
+    "Symbol": "P"
+  },
+  {
+    "Name": "브라질 레알",
+    "ISO": "BRL",
+    "Symbol": "R$"
+  },
+  {
+    "Name": "브루나이 달러",
+    "ISO": "BND",
+    "Symbol": "B$"
+  },
+  {
+    "Name": "불가리아 레프",
+    "ISO": "BGN",
+    "Symbol": "лв"
+  },
+  {
+    "Name": "부룬디 프랑",
+    "ISO": "BIF",
+    "Symbol": "FBu"
+  },
+  {
+    "Name": "캐나다 달러",
+    "ISO": "CAD",
+    "Symbol": "C$"
+  },
+  {
+    "Name": "중국 위안",
+    "ISO": "CNY",
+    "Symbol": "¥"
+  },
+  {
+    "Name": "캄보디아 리엘",
+    "ISO": "KHR",
+    "Symbol": "KHR"
+  },
+  {
+    "Name": "카보베르데 에스쿠도",
+    "ISO": "CVE",
+    "Symbol": "Esc"
+  },
+  {
+    "Name": "케이맨 제도 달러",
+    "ISO": "KYD",
+    "Symbol": "$"
+  },
+  {
+    "Name": "CFA 프랑 (BCEAO)",
+    "ISO": "XOF",
+    "Symbol": "BCEAO"
+  },
+  {
+    "Name": "CFA 프랑 (BEAC)",
+    "ISO": "XAF",
+    "Symbol": "BEAC"
+  },
+  {
+    "Name": "칠레 페소",
+    "ISO": "CLP",
+    "Symbol": "$"
+  },
+  {
+    "Name": "콜롬비아 페소",
+    "ISO": "COP",
+    "Symbol": "$"
+  },
+  {
+    "Name": "코모로 프랑",
+    "ISO": "KMF",
+    "Symbol": "KMF"
+  },
+  {
+    "Name": "코스타리카 콜론",
+    "ISO": "CRC",
+    "Symbol": "₡"
+  },
+  {
+    "Name": "크로아티아 쿠나",
+    "ISO": "HRK",
+    "Symbol": "kn"
+  },
+  {
+    "Name": "쿠바 페소",
+    "ISO": "CUP",
+    "Symbol": "$MN"
+  },
+  {
+    "Name": "체코 코루나",
+    "ISO": "CZK",
+    "Symbol": "Kč"
+  },
+  {
+    "Name": "덴마크 크로네",
+    "ISO": "DKK",
+    "Symbol": "kr"
+  },
+  {
+    "Name": "지부티 프랑",
+    "ISO": "DJF",
+    "Symbol": "Fdj"
+  },
+  {
+    "Name": "도미니카 공화국 페소",
+    "ISO": "DOP",
+    "Symbol": "RD$"
+  },
+  {
+    "Name": "유로",
+    "ISO": "EUR",
+    "Symbol": "€"
+  },
+  {
+    "Name": "동카리브 달러",
+    "ISO": "XCD",
+    "Symbol": "EC$"
+  },
+  {
+    "Name": "이집트 파운드",
+    "ISO": "EGP",
+    "Symbol": "ج.م"
+  },
+  {
+    "Name": "엘살바도르 콜론",
+    "ISO": "SVC",
+    "Symbol": "₡"
+  },
+  {
+    "Name": "에스토니아 크룬",
+    "ISO": "EEK",
+    "Symbol": "EEK"
+  },
+  {
+    "Name": "에티오피아 비르",
+    "ISO": "ETB",
+    "Symbol": "Br"
+  },
+  {
+    "Name": "포클랜드 제도 파운드",
+    "ISO": "FKP",
+    "Symbol": "£"
+  },
+  {
+    "Name": "피지 달러",
+    "ISO": "FJD",
+    "Symbol": "FJ$"
+  },
+  {
+    "Name": "감비아 달라시",
+    "ISO": "GMD",
+    "Symbol": "D"
+  },
+  {
+    "Name": "과테말라 퀘찰",
+    "ISO": "GTQ",
+    "Symbol": "Q"
+  },
+  {
+    "Name": "기니 프랑",
+    "ISO": "GNF",
+    "Symbol": "FG"
+  },
+  {
+    "Name": "가이아나 달러",
+    "ISO": "GYD",
+    "Symbol": "GY$"
+  },
+  {
+    "Name": "가나 세디",
+    "ISO": "GHS",
+    "Symbol": "GHS"
+  },
+  {
+    "Name": "홍콩 달러",
+    "ISO": "HKD",
+    "Symbol": "HK$"
+  },
+  {
+    "Name": "아이티 구르드",
+    "ISO": "HTG",
+    "Symbol": ""
+  },
+  {
+    "Name": "온두라스 렘피라",
+    "ISO": "HNL",
+    "Symbol": "L"
+  },
+  {
+    "Name": "헝가리 포린트",
+    "ISO": "HUF",
+    "Symbol": "Ft"
+  },
+  {
+    "Name": "인도네시아 루피아",
+    "ISO": "IDR",
+    "Symbol": "Rp"
+  },
+  {
+    "Name": "인도 루피",
+    "ISO": "INR",
+    "Symbol": "Rs."
+  },
+  {
+    "Name": "아이슬란드 크로네",
+    "ISO": "ISK",
+    "Symbol": "kr"
+  },
+  {
+    "Name": "이란 리알",
+    "ISO": "IRR",
+    "Symbol": ""
+  },
+  {
+    "Name": "이라크 디나르",
+    "ISO": "IQD",
+    "Symbol": "ع.د"
+  },
+  {
+    "Name": "이스라엘 셰켈",
+    "ISO": "ILS",
+    "Symbol": "₪"
+  },
+  {
+    "Name": "일본 엔",
+    "ISO": "JPY",
+    "Symbol": "¥"
+  },
+  {
+    "Name": "요르단 디나르",
+    "ISO": "JOD",
+    "Symbol": "JOD"
+  },
+  {
+    "Name": "카자흐스탄 텡게",
+    "ISO": "KZT",
+    "Symbol": "KZT"
+  },
+  {
+    "Name": "케냐 실링",
+    "ISO": "KES",
+    "Symbol": "KSh"
+  },
+  {
+    "Name": "대한민국 원",
+    "ISO": "KRW",
+    "Symbol": "₩"
+  },
+  {
+    "Name": "쿠웨이트 디나르",
+    "ISO": "KWD",
+    "Symbol": "د.ك"
+  },
+  {
+    "Name": "키르기스스탄 솜",
+    "ISO": "KGS",
+    "Symbol": "KGS"
+  },
+  {
+    "Name": "마카오 파타카",
+    "ISO": "MOP",
+    "Symbol": "$"
+  },
+  {
+    "Name": "마케도니아 디나르",
+    "ISO": "MKD",
+    "Symbol": "MKD"
+  },
+  {
+    "Name": "말라위 콰차",
+    "ISO": "MWK",
+    "Symbol": "MK"
+  },
+  {
+    "Name": "말레이시아 링깃",
+    "ISO": "MYR",
+    "Symbol": "RM"
+  },
+  {
+    "Name": "몰디브 루피야",
+    "ISO": "MVR",
+    "Symbol": "Rf"
+  },
+  {
+    "Name": "모리타니 우기야",
+    "ISO": "MRO",
+    "Symbol": "UM"
+  },
+  {
+    "Name": "모리셔스 루피",
+    "ISO": "MUR",
+    "Symbol": "₨"
+  },
+  {
+    "Name": "멕시코 페소",
+    "ISO": "MXN",
+    "Symbol": "$"
+  },
+  {
+    "Name": "몰도바 레우",
+    "ISO": "MDL",
+    "Symbol": "MDL"
+  },
+  {
+    "Name": "몽골 투그릭",
+    "ISO": "MNT",
+    "Symbol": "₮"
+  },
+  {
+    "Name": "모로코 디르함",
+    "ISO": "MAD",
+    "Symbol": "د.م."
+  },
+  {
+    "Name": "미얀마 차트",
+    "ISO": "MMK",
+    "Symbol": "K"
+  },
+  {
+    "Name": "나미비아 달러",
+    "ISO": "NAD",
+    "Symbol": "N$"
+  },
+  {
+    "Name": "네팔 루피",
+    "ISO": "NPR",
+    "Symbol": "₨"
+  },
+  {
+    "Name": "네덜란드령 안틸레스 굴덴",
+    "ISO": "ANG",
+    "Symbol": "NAƒ"
+  },
+  {
+    "Name": "뉴질랜드 달러",
+    "ISO": "NZD",
+    "Symbol": "$"
+  },
+  {
+    "Name": "니카라과 코르도바",
+    "ISO": "NIO",
+    "Symbol": "C$"
+  },
+  {
+    "Name": "나이지리아 나이라",
+    "ISO": "NGN",
+    "Symbol": "₦"
+  },
+  {
+    "Name": "조선민주주의인민공화국 원",
+    "ISO": "KPW",
+    "Symbol": "₩"
+  },
+  {
+    "Name": "노르웨이 크로네",
+    "ISO": "NOK",
+    "Symbol": "kr"
+  },
+  {
+    "Name": "오만 리알",
+    "ISO": "OMR",
+    "Symbol": "ر.ع."
+  },
+  {
+    "Name": "CFP 프랑",
+    "ISO": "XPF",
+    "Symbol": "F"
+  },
+  {
+    "Name": "파키스탄 루피",
+    "ISO": "PKR",
+    "Symbol": "Rs."
+  },
+  {
+    "Name": "파나마 발보아",
+    "ISO": "PAB",
+    "Symbol": "B"
+  },
+  {
+    "Name": "파푸아 뉴기니 키나",
+    "ISO": "PGK",
+    "Symbol": "K"
+  },
+  {
+    "Name": "파라과이 과라니",
+    "ISO": "PYG",
+    "Symbol": ""
+  },
+  {
+    "Name": "페루 누에보솔",
+    "ISO": "PEN",
+    "Symbol": "S/."
+  },
+  {
+    "Name": "필리핀 페소",
+    "ISO": "PHP",
+    "Symbol": "₱"
+  },
+  {
+    "Name": "폴란드 즈워티",
+    "ISO": "PLN",
+    "Symbol": "zł"
+  },
+  {
+    "Name": "카타르 리알",
+    "ISO": "QAR",
+    "Symbol": "ر.ق"
+  },
+  {
+    "Name": "루마니아 레우",
+    "ISO": "RON",
+    "Symbol": "L"
+  },
+  {
+    "Name": "러시아 루블",
+    "ISO": "RUB",
+    "Symbol": "руб"
+  },
+  {
+    "Name": "르완다 프랑",
+    "ISO": "RWF",
+    "Symbol": "RF"
+  },
+  {
+    "Name": "스위스 프랑",
+    "ISO": "CHF",
+    "Symbol": "CHF"
+  },
+  {
+    "Name": "사모아 탈라",
+    "ISO": "WST",
+    "Symbol": "WS$"
+  },
+  {
+    "Name": "상투메 도브라",
+    "ISO": "STD",
+    "Symbol": "Db"
+  },
+  {
+    "Name": "사우디아라비아 리얄",
+    "ISO": "SAR",
+    "Symbol": "ر.س"
+  },
+  {
+    "Name": "세이셸 루피",
+    "ISO": "SCR",
+    "Symbol": "SR"
+  },
+  {
+    "Name": "시에라리온 레온",
+    "ISO": "SLL",
+    "Symbol": "Le"
+  },
+  {
+    "Name": "싱가폴 달러",
+    "ISO": "SGD",
+    "Symbol": "S$"
+  },
+  {
+    "Name": "슬로바키아 코루나",
+    "ISO": "SKK",
+    "Symbol": "Sk"
+  },
+  {
+    "Name": "솔로몬 제도 달러",
+    "ISO": "SBD",
+    "Symbol": "SI$"
+  },
+  {
+    "Name": "소말리아 실링",
+    "ISO": "SOS",
+    "Symbol": "So."
+  },
+  {
+    "Name": "남아프리카 공화국 랜드",
+    "ISO": "ZAR",
+    "Symbol": "R"
+  },
+  {
+    "Name": "스리랑카 루피",
+    "ISO": "LKR",
+    "Symbol": "ரூ"
+  },
+  {
+    "Name": "세인트헬레나 파운드",
+    "ISO": "SHP",
+    "Symbol": "£"
+  },
+  {
+    "Name": "수단 파운드",
+    "ISO": "SDG",
+    "Symbol": "SDG"
+  },
+  {
+    "Name": "스와질란드 릴랑게니",
+    "ISO": "SZL",
+    "Symbol": "SZL"
+  },
+  {
+    "Name": "스웨덴 크로나",
+    "ISO": "SEK",
+    "Symbol": "kr"
+  },
+  {
+    "Name": "시리아 파운드",
+    "ISO": "SYP",
+    "Symbol": "SYP"
+  },
+  {
+    "Name": "태국 바트",
+    "ISO": "THB",
+    "Symbol": "฿"
+  },
+  {
+    "Name": "터키어 리라",
+    "ISO": "TRY",
+    "Symbol": "YTL"
+  },
+  {
+    "Name": "대만 달러",
+    "ISO": "TWD",
+    "Symbol": "NT$"
+  },
+  {
+    "Name": "탄자니아 실링",
+    "ISO": "TZS",
+    "Symbol": "x"
+  },
+  {
+    "Name": "통가 팡가",
+    "ISO": "TOP",
+    "Symbol": "T$"
+  },
+  {
+    "Name": "트리니다드 토바고 달러",
+    "ISO": "TTD",
+    "Symbol": "TTD"
+  },
+  {
+    "Name": "튀니지 디나르",
+    "ISO": "TND",
+    "Symbol": "د.ت"
+  },
+  {
+    "Name": "미국 달러",
+    "ISO": "USD",
+    "Symbol": "$"
+  },
+  {
+    "Name": "아랍에미리트 디르함",
+    "ISO": "AED",
+    "Symbol": "د.إ"
+  },
+  {
+    "Name": "우간다 실링",
+    "ISO": "UGX",
+    "Symbol": "USh"
+  },
+  {
+    "Name": "우크라이나 흐리브냐",
+    "ISO": "UAH",
+    "Symbol": ""
+  },
+  {
+    "Name": "우루과이 페소",
+    "ISO": "UYU",
+    "Symbol": "UYU"
+  },
+  {
+    "Name": "우즈베크 솜",
+    "ISO": "UZS",
+    "Symbol": "UZS"
+  },
+  {
+    "Name": "바누아투 바투",
+    "ISO": "VUV",
+    "Symbol": "Vt"
+  },
+  {
+    "Name": "베트남 동",
+    "ISO": "VND",
+    "Symbol": "₫"
+  },
+  {
+    "Name": "볼리바르 후에르떼",
+    "ISO": "VEF",
+    "Symbol": "VEF"
+  },
+  {
+    "Name": "예멘 리알",
+    "ISO": "YER",
+    "Symbol": "YER"
+  },
+  {
+    "Name": "잠비아 콰차",
+    "ISO": "ZMK",
+    "Symbol": "ZMK"
+  }
+]

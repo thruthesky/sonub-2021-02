@@ -3364,6 +3364,22 @@ function country_name($code, $lang="CountryNameKR") {
 
 
 /**
+ * 국가 코드 2 자리를 입력하면, 3자리 환율 코드를 리턴한다.
+ *
+ * 예)
+ * PH 를 입력하면 PHP 를 리턴하고,
+ * KR 를 입력하면 KWR 를 리턴한다.
+ *
+ * @param $country_id
+ * @return string
+ */
+function country_currency_code($country_id): string {
+    $currency = json_decode(file_get_contents(THEME_DIR . '/etc/data/country-currency-code.json'), true);
+    return $currency[$country_id]['currencyId'];
+}
+
+
+/**
  * Hook system
  */
 $_hook_functions = [];
@@ -3638,22 +3654,23 @@ function api_vote($in) {
  *
  * @see https://docs.google.com/document/d/1EFFODj0cwL1OxFlK3cvDW1-2o57X6JtKHiEcgm-RDBE/edit#heading=h.g0ws6l27v0mq
  * @param string $key
- * @param string $value
+ * @param mixed $value
  * @param int $minutes
- * @return bool
+ * @return bool - 성공이면 참 리턴
  */
-function set_cache(string $key, string $value, int $minutes): bool
+function set_cache(string $key, $value, int $minutes): bool
 {
     return set_transient( $key, $value, $minutes * 60 );
 }
 
 /**
- *
+ * 저장된 캐시를 리턴한다.
  * @param string $key
  * @return mixed
+ * - 저장된 값이 없으면 false 를 리턴한다.
  */
 function get_cache(string $key) {
-    $value = get_transient( 'value' );
+    $value = get_transient( $key );
     if ( false === $value ) {
         return false;
     } else {

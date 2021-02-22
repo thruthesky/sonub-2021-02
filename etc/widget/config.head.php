@@ -40,6 +40,7 @@ if ( in('mode') == 'save' ) {
                 <option value="posts" <? if ( $dwo['widget_type'] == 'posts') echo 'selected'; ?>>타입: 최근 글 또는 사진 목록</option>
                 <option value="login" <? if ( $dwo['widget_type'] == 'login') echo 'selected'; ?>>타입: 로그인</option>
                 <option value="statistics" <? if ( $dwo['widget_type'] == 'statistics') echo 'selected'; ?>>타입: 통계</option>
+                <option value="currency" <? if ( $dwo['widget_type'] == 'currency') echo 'selected'; ?>>타입: 환율</option>
             </select>
         </div>
 <?php if ( $dwo['widget_type'] ) { ?>
