@@ -2020,19 +2020,37 @@ function between($val, $min, $max)
 function forum_search($in)
 {
 
-//    if (!isset($in['category_name']) && !isset($in['author'])) return ERROR_EMPTY_CATEGORY_OR_ID;
-    // @deprecated @todo if 'category_name' is empty, then it will search all posts.
-//    if ($in['category_name'] == 'all_posts') $in['category_name'] = '';
 
     /// 글 가져오는 옵션을 변경 할 수 있는 훅
     /// 예) 카페에서, 해당 카페 국가의 글만 가져오도록 옵션을 변경 할 수 있다.
     run_hook('forum_search_option', $in);
 
+
+    /// If `postIdOnTop` option has passed.
+    $post = null;
+    if ( isset($in['postIdOnTop']) ) {
+        $post = post_response($in['postIdOnTop']);
+        unset($in['postIdOnTop']);
+        if ( api_error($post) ) return $post;
+        $in['category_name'] = $post['category'];
+    }
+
+
     $posts = get_posts($in);
 
+
     $rets = [];
+    if ( $post ) $rets[] = $post; // Add the `postIdOnTop` on Top.
     foreach ($posts as $p) {
+        if ( $post && $p->ID == $post['ID'] ) continue;
         $rets[] = post_response($p);
+    }
+
+    /// Deliver category(forum) options with `$rets[0]['category_options']` only if the page no is 1.
+    if ( $in['paged'] == 1 ) {
+        $post = $rets[0];
+        $post['category_options'] = get_category_options($post['category']);
+        $rets[0] = $post;
     }
     return $rets;
 }
@@ -2952,16 +2970,8 @@ function update_category($in)
      */
     if ($re) return $re;
 
-    ///
-    $ret = get_category($cat->term_id)->to_array();
 
-    /// 추가 (메타) 정보를 리턴 데이터에 추가
-    $metas = get_term_meta($cat->term_id, '', true);
-    foreach ($metas as $key => $values) {
-        $ret[$key] = $values[0];
-    }
-
-    return $ret;
+    return get_category_options($cat->term_id);
 }
 
 /**
@@ -3039,6 +3049,32 @@ function category_meta($cat_ID, $name, $default_value = '')
     run_hook('category_meta', $name, $v);
     if ($v) return $v;
     else return $default_value;
+}
+
+/**
+ * Returns category options
+ *
+ * @param $cat_ID_or_slug
+ * @return mixed
+ */
+function get_category_options($cat_ID_or_slug) {
+    if ( is_string($cat_ID_or_slug) ) {
+        $cat = get_category_by_slug($cat_ID_or_slug);
+        $cat_ID = $cat->term_id;
+    } else {
+        $cat_ID = $cat_ID_or_slug;
+    }
+
+    ///
+    $ret = get_category($cat_ID)->to_array();
+
+    /// 추가 (메타) 정보를 리턴 데이터에 추가
+    $metas = get_term_meta($cat_ID, '', true);
+    foreach ($metas as $key => $values) {
+        $ret[$key] = $values[0];
+    }
+
+    return $ret;
 }
 
 

@@ -352,6 +352,13 @@ https://local.nalia.kr/v3/index.php?route=loginOrRegister&user_email=user1@test.
 ```
 
 
+
+### Forum list
+
+- On first page, the backend returns the category option in the first post as `category_options` property.
+
+
+
 # Developer Guideline
 
 ## Precautions

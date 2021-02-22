@@ -250,7 +250,7 @@ $categories = get_category_tree();
 
 
         <tr class="table-dark">
-            <td colspan="2">앱 위젯 설정</td>
+            <td colspan="2"><?=ln('App Widgets', '앱 위젯 설정')?></td>
         </tr>
 
         <tr>
@@ -261,14 +261,14 @@ $categories = get_category_tree();
                             type="radio"
                             name="mobile_forum_list_widget"
                             value="text"
-                        <?php if (category_meta($cat->cat_ID, 'mobile_forum_list_widget', 'text') == 'text' ) echo 'checked' ?>> 텍스트
+                        <?php if (category_meta($cat->cat_ID, 'mobile_forum_list_widget', 'text') == 'text' ) echo 'checked' ?>> <?=ln('Text', '텍스트')?>
                 </label>
                 <label class="ps-2">
                     <input
                             type="radio"
                             name="mobile_forum_list_widget"
                             value="gallery"
-                        <?php if (category_meta($cat->cat_ID, 'mobile_forum_list_widget', 'text') == 'gallery' ) echo 'checked' ?>> 갤러리
+                        <?php if (category_meta($cat->cat_ID, 'mobile_forum_list_widget', 'text') == 'gallery' ) echo 'checked' ?>> <?=ln('Gallery', '갤러리')?>
                 </label>
 
                 <label class="ps-2">
@@ -276,7 +276,28 @@ $categories = get_category_tree();
                             type="radio"
                             name="mobile_forum_list_widget"
                             value="thumbnail"
-                        <?php if (category_meta($cat->cat_ID, 'mobile_forum_list_widget', 'text') == 'thumbnail' ) echo 'checked' ?>> 썸네일
+                        <?php if (category_meta($cat->cat_ID, 'mobile_forum_list_widget', 'text') == 'thumbnail' ) echo 'checked' ?>> <?=ln('Thumbnail', '썸네일')?>
+                </label>
+
+            </td>
+        </tr>
+
+        <tr>
+            <td><?=ln('Post View Widget', '글 읽기 위젯')?></td>
+            <td>
+                <label class="">
+                    <input
+                            type="radio"
+                            name="mobile_forum_view_widget"
+                            value="default"
+                        <?php if (category_meta($cat->cat_ID, 'mobile_forum_view_widget', 'default') == 'default' ) echo 'checked' ?>> <?=ln('Default', '기본')?>
+                </label>
+                <label class="ps-2">
+                    <input
+                            type="radio"
+                            name="mobile_forum_view_widget"
+                            value="slide"
+                        <?php if (category_meta($cat->cat_ID, 'mobile_forum_view_widget', 'slide') == 'slide' ) echo 'checked' ?>> <?=ln('Slide', '슬라이드')?>
                 </label>
 
             </td>

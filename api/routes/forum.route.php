@@ -42,9 +42,7 @@ class ForumRoute
 
     public function deletePost($in)
     {
-
         api_delete_post($in);
-
     }
 
 
