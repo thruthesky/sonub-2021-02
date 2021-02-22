@@ -3378,6 +3378,14 @@ function country_currency_code($country_id): string {
     return $currency[$country_id]['currencyId'];
 }
 
+/**
+ * @return array
+ */
+function country_currency_korean_letter(): array {
+    $letters = json_decode(file_get_contents(THEME_DIR . '/etc/data/country-currency-korean-letter.json'), true);
+    return $letters;
+}
+
 
 /**
  * Hook system
@@ -3458,6 +3466,8 @@ function stamp_tomorrow() {
 
 
 /**
+ * @deprecated Flutter 에서는 common_utils 를 쓰면, 제대로 된 JSON 값을 표현 할 수 있다.
+ *
  * 잘못된 JSON 포맷 문자열을 바로 잡는다. 그래서 json_decode(fixJson($str)); 와 같이 할 수 있다.
  * @param $s
  * @return string|string[]|null
