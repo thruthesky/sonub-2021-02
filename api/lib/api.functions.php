@@ -2047,7 +2047,7 @@ function forum_search($in)
     }
 
     /// Deliver category(forum) options with `$rets[0]['category_options']` only if the page no is 1.
-    if ( $in['paged'] == 1 ) {
+    if ( isset($in['paged']) && $in['paged'] == 1 ) {
         $post = $rets[0];
         $post['category_options'] = get_category_options($post['category']);
         $rets[0] = $post;
