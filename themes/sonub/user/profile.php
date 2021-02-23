@@ -21,16 +21,22 @@
 
     <form @submit.prevent="onProfileFormSubmit">
 
-        <? if ( my('provider') == 'kakao' || my('provider') == 'naver' ) { ?>
+        <? if ( empty(my('name')) ) { ?>
             <div class="form-group mt-5 mb-3">
                 <label for="name">이름</label>
                 <input type="text" class="form-control" placeholder="이름" v-model="profile.name">
                 <div class="form-text">
-                    네이버, 카카오 로그인을 하는 경우 본명을 입력해주세요.
+                    주의: 이름은 딱 한번만 입력 할 수 있습니다. 반드시 본명을 입력해주세요.
+                </div>
+            </div>
+        <? } else { ?>
+            <div class="mt-5 mb-3">
+                <div>이름</div>
+                <div class="fs-lg">
+                    <?=my('name')?>
                 </div>
             </div>
         <? } ?>
-
         <div class="form-group mb-3">
             <label for="profile_form_email" class="form-label">이메일 주소</label>
             <input class="form-control" type="email" placeholder="메일 주소를 입력해주세요." v-model="profile.email">
@@ -50,11 +56,14 @@
     const mixin = {
         methods: {
             onProfileFormSubmit() {
-                this.userProfileUpdate({
-                    name: this.profile.name,
+                const data = {
                     email: this.profile.email,
                     motto: this.profile.motto
-                }, function(profile) {
+                };
+                <? if ( empty(my('name')) ) { ?>
+                data['name'] = this.profile.name;
+                <? } ?>
+                this.userProfileUpdate(data, function(profile) {
                     console.log('success: ', profile);
                     alert("프로필 정보를 수정하였습니다.");
                 });

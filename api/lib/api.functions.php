@@ -412,7 +412,7 @@ function my($field)
         return wp_get_current_user()->user_email;
     } else {
         $profile = profile();
-        if (isset($profile) ) return $profile[$field];
+        if (isset($profile) && isset( $profile[$field] ) ) return $profile[$field];
         else return null;
 //        return get_user_meta(wp_get_current_user()->ID, $field, true);
     }
@@ -679,8 +679,11 @@ function user_update_meta($user_ID, $data): string
 }
 
 
-
-
+/**
+ * 사용자의 전체 메타 정보를 리턴한다.
+ * @param $user_ID
+ * @return array
+ */
 function user_metas($user_ID)
 {
     if (empty($user_ID)) return [];
@@ -705,10 +708,11 @@ function user_metas($user_ID)
  *
  * @return array
  *  - if it cannot find user information, it return an empty array.
+ *  - false if there is error.
  */
 function profile($user_ID = null)
 {
-
+    if ( $user_ID && !is_numeric($user_ID)) return false;
     $arg_user_ID = $user_ID;
     if ($user_ID === null) {
         $user_ID = wp_get_current_user()->ID;
