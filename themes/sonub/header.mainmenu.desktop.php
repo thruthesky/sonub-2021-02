@@ -36,6 +36,16 @@
                         <? } } ?>
                 <? } else { ?>
                     <li><a class="px-2 py-2 ps-0" href="/?page=cafe.admin">카페 설정</a></li>
+
+                    <li><a class="px-3 py-2" href="<?=cafe_url('reminder')?>">공지사항</a></li>
+                    <li><a class="px-3 py-2" href="<?=cafe_url('discussion')?>">자유게시판</a></li>
+                    <li><a class="px-3 py-2" href="<?=cafe_url('qna')?>">질문게시판</a></li>
+                    <li><a class="px-3 py-2" href="<?=cafe_url('greeting')?>">가입인사</a></li>
+                    <li><a class="px-3 py-2" href="<?=cafe_url('knowhow')?>">경험담</a></li>
+                    <li><a class="px-3 py-2" href="<?=cafe_url('buyandsell')?>">회원장터</a></li>
+                    <li><a class="px-3 py-2" href="<?=cafe_url('travel')?>">여행</a></li>
+                    <li><a class="px-3 py-2" href="<?=cafe_url('company_book')?>">업소록</a></li>
+                    <li><a class="px-3 py-2" href="<?=cafe_url('business')?>">비즈니스</a></li>
                 <? } ?>
             </ul>
 

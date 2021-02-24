@@ -10,10 +10,10 @@ if ( is_in_home_page() ) {
     <nav class="l-center bg-light border-radius-md">
         <div class="d-flex justify-content-between p-5 fs-sm">
             <div>
-                <div>회사소개</div>
-                <div>제휴제안</div>
-                <div>이용약관</div>
-                <div>개인정보처리방침</div>
+                <div><a href="/?page=doc.withcenter-company-info">회사소개</a></div>
+                <div><a href="/?page=doc.partnership">제휴제안</a></div>
+                <div><a href="/?page=doc.terms-and-conditions">이용약관</a></div>
+                <div><a href="/?page=doc.privacy-policy">개인정보처리방침</a></div>
             </div>
             <div>
                 <div>회사명: 위세너</div>

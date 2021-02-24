@@ -35,24 +35,7 @@ $co = cafe_option();
     <div class="container">
         <div class="row">
             <div class="col">
-                <h3>좁은 화면 메뉴</h3>
-                <div class="hint">
-                    핸드폰이나 테블릿 등의 좁은 화면에서 사용되는 메뉴입니다.
-                </div>
-                <ol>
-                    <? for( $i = 0; $i < NO_OF_NARROW_CAFE_MENU; $i ++ ) { ?>
-                        <li>
-                            <select name="narrow_menu_<?=$i?>">
-                                <option value="">게시판 선택</option>
-                                <? foreach( CAFE_CATEGORIES as $id => $cat ) { ?>
-                                    <option value="<?=$id?>" <? if ( ($co["narrow_menu_$i"] ?? '') == "$id" ) echo "selected" ?>><?=$cat['name']?></option>
-                                <? } ?>
-                            </select>
-                        </li>
-                    <? } ?>
-                </ol>
-            </div>
-            <div class="col">
+
                 <h3>넓은 화면 메뉴</h3>
                 <div class="hint">
                     컴퓨터나 노트북 등의 넓은 화면에서 사용되는 메뉴입니다.
@@ -64,6 +47,27 @@ $co = cafe_option();
                                 <option value="">게시판 선택</option>
                                 <? foreach( CAFE_CATEGORIES as $id => $cat ) { ?>
                                     <option value="<?=$id?>" <? if ( ($co["wide_menu_$i"] ?? '') == "$id" ) echo "selected" ?>><?=$cat['name']?></option>
+                                <? } ?>
+                            </select>
+                        </li>
+                    <? } ?>
+                </ol>
+
+
+            </div>
+            <div class="col">
+
+                <h3>좁은 화면 메뉴</h3>
+                <div class="hint">
+                    핸드폰이나 테블릿 등의 좁은 화면에서 사용되는 메뉴입니다.
+                </div>
+                <ol>
+                    <? for( $i = 0; $i < NO_OF_NARROW_CAFE_MENU; $i ++ ) { ?>
+                        <li>
+                            <select name="narrow_menu_<?=$i?>">
+                                <option value="">게시판 선택</option>
+                                <? foreach( CAFE_CATEGORIES as $id => $cat ) { ?>
+                                    <option value="<?=$id?>" <? if ( ($co["narrow_menu_$i"] ?? '') == "$id" ) echo "selected" ?>><?=$cat['name']?></option>
                                 <? } ?>
                             </select>
                         </li>

@@ -10,8 +10,10 @@
  * - $o['widget_title'] is the widget title.
  */
 $o = get_widget_options();
+
+
 $posts = latest_photos([
-    'category_name' => $o['left']['category_name'] ?? '',
+    'category_name' => $o['left'] ?? '',
     'posts_per_page' => 1,
 ]);
 if ( empty($posts) ) {
@@ -30,7 +32,7 @@ if ( empty($posts) ) {
 
 
 $left_posts = latest_search([
-    'category_name' => $o['left']['category_name'] ?? '',
+    'category_name' => $o['left'] ?? '',
     'posts_per_page' => 7,
     'post__not_in' => [$big['ID']],
 ]);
@@ -47,7 +49,7 @@ if ( count($left_posts) == 0 ) {
 
 
 $right_photos = latest_photos([
-    'category_name' => $o['right']['category_name'] ?? '',
+    'category_name' => $o['right'] ?? '',
     'posts_per_page' => 4,
 ]);
 
@@ -66,7 +68,7 @@ if ( count($right_photos) == 0 ) {
 
 
 $right_posts = latest_search([
-    'category_name' => $o['right']['category_name'] ?? '',
+    'category_name' => $o['right'] ?? '',
     'posts_per_page' => 3,
     'post__not_in' => App::getIDs($right_photos),
 ]);
@@ -83,8 +85,22 @@ if ( count($right_posts) == 0 ) {
 
 
 ?>
+<style>
+    .<?=$o['widget_id']?> * {
+        color: <?=$o['fontColor']?> !important;
+        font-size: <?=$o['fontSize']?>px !important;
+    }
+    .<?=$o['widget_id']?> {
+        border-width: <?=$o['borderWidth']?>px !important;
+    }
+</style>
 <div class="container">
-    <section class="posts-multi-column box mb-2 row <?=$o['class'] ?? ''?>">
+    <section class="<?=$o['widget_id']?> posts-multi-column box mb-2 row px-1 <?=$o['class'] ?? ''?>"
+             style="border-radius: <?=$o['borderRadius']?>px;
+                     background-color: <?=$o['backgroundColor']?>;
+                     color: <?=$o['fontColor']?>;
+                     font-size: <?=$o['fontsize']?>;
+                     ">
         <div class="col-12 col-sm-6">
             <a class="d-block" href="<?=$big['url']?>">
                 <div class="of-hidden">
