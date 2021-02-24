@@ -27,8 +27,8 @@
     const mixin = {
         data() {
             return {
-                delivery_fee_free_limit: <?=get_option('delivery_fee_free_limit', 30000)?>,
-                delivery_fee_price: <?=get_option('delivery_fee_price', 2500)?>,
+                delivery_fee_free_limit: <?=get_option('delivery_fee_free_limit', DEFAULT_DELIVERY_FEE_FREE_LIMIT)?>,
+                delivery_fee_price: <?=get_option('delivery_fee_price', DEFAULT_DELIVERY_FEE_PRICE)?>,
             };
         },
         created() {

@@ -118,3 +118,8 @@ define('NAVER_CLIENT_ID', 'gCVN3T_vsOmX1ADriDOA');
 define('NAVER_CLIENT_SECRET', 'JzWh7zPeJF');
 define('NAVER_CALLBACK_URL', urlencode('https://main.philov.com/wp-content/themes/sonub/callbacks/naver-login.callback.php'));
 define('NAVER_API_URL', "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=".NAVER_CLIENT_ID."&redirect_uri=".NAVER_CALLBACK_URL."&state=1");
+
+
+
+define('DEFAULT_DELIVERY_FEE_FREE_LIMIT', 30000);
+define('DEFAULT_DELIVERY_FEE_PRICE', 2500);
