@@ -9,6 +9,16 @@ class MallRoute
 {
 
     /**
+     * @return array
+     */
+    public function options(): array {
+        return [
+            'delivery_fee_free_limit' => get_option('delivery_fee_free_limit', DEFAULT_DELIVERY_FEE_FREE_LIMIT),
+            'delivery_fee_price' => get_option('delivery_fee_price', DEFAULT_DELIVERY_FEE_PRICE),
+        ];
+    }
+
+    /**
      * @param $in
      * @return array|object|void|null
      */

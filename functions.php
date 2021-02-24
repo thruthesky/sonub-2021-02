@@ -719,6 +719,7 @@ function select_list_widgets_option($type, $default_selected) {
 
 /**
  * Set login cookies
+ * 입력된 $profile 정보로 해당 사용자를 로그인 시킨다.
  *
  * When user login, the session_id must be saved in cookie. And it is shared with Javascript.
  * @param $profile

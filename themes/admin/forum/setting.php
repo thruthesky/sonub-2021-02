@@ -297,7 +297,7 @@ $categories = get_category_tree();
                             type="radio"
                             name="mobile_forum_view_widget"
                             value="slide"
-                        <?php if (category_meta($cat->cat_ID, 'mobile_forum_view_widget', 'slide') == 'slide' ) echo 'checked' ?>> <?=ln('Slide', '슬라이드')?>
+                        <?php if (category_meta($cat->cat_ID, 'mobile_forum_view_widget', 'default') == 'slide' ) echo 'checked' ?>> <?=ln('Slide', '슬라이드')?>
                 </label>
 
             </td>

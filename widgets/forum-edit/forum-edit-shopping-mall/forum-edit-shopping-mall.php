@@ -37,14 +37,17 @@ if (in('category')) {
 
     <div class="form-group mb-3">
         <label for="price">가격</label>
-        <input type="number" class="form-control" id="price" name="price" v-model="post.price">
+        <input type="number" class="form-control" id="price" name="price" @keyup="onPriceChange" v-model="post.price">
+        <div class="form-text">
+            할인된 가격: <span>{{ discountedPrice }}</span> 원 (할인율이 적용된 후의 가격입니다.)
+        </div>
     </div>
 
 
 
     <div class="form-group mb-3">
         <label for="discount_rate">할인율</label>
-        <input type="number" class="form-control" id="discount_rate" name="discount_rate" v-model="post.discount_rate">
+        <input type="number" class="form-control" id="discount_rate" name="discount_rate" @keyup="onPriceChange" v-model="post.discount_rate">
         <div class="form-text">
             단위 %. 가격에서 자동으로 할인율이 계산되어 화면에 표시됩니다.
         </div>
@@ -72,7 +75,7 @@ if (in('category')) {
 
     <div class="form-group mb-3">
         <label for="volume">용량, 수량</label>
-        <input type="number" class="form-control" id="volume" name="volume" v-model="post.volume">
+        <input type="text" class="form-control" id="volume" name="volume" v-model="post.volume">
         <div class="form-text">
             상품의 크기나, 용량, 수량을 입력하세요.
         </div>
@@ -169,6 +172,7 @@ if (in('category')) {
     const mixin = {
         data() {
             return {
+                discountedPrice: 0,
                 loading: false,
                 post: {
                     category: "<?=$category?>",
@@ -189,6 +193,7 @@ if (in('category')) {
                     // true, false 를 DB 에 저장하면, 1, 0 이 되는데, 아래와 같이 boolean 으로 변환 해 주어야 한다.
                     app.post.stop = app.post.stop === '1';
                     app.post.option_item_price = app.post.option_item_price === '1';
+                    app.onPriceChange();
                 }, alert);
             }
         },
@@ -206,7 +211,10 @@ if (in('category')) {
                 request('forum.editPost', app.post, function(post) {
                     move("/?page=forum.edit&ID=" + post.ID);
                 }, this.error);
-            }
+            },
+            onPriceChange() {
+              this.discountedPrice = Math.round(this.post.price - this.post.price * this.post.discount_rate / 100);
+            },
         }
     }
 </script>
