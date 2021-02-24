@@ -22,6 +22,7 @@
 <div>Email address</div>
 <div>{{ profile.user_email }}</div>
 
+<?d(profile())?>
 
 
 <form @submit.prevent="onProfileUpdateFormSubmit">
