@@ -1,5 +1,11 @@
 # Sonub Theme API
 
+- 가입 약관 정리하고, 개인 정보 보호 만들고, 최초 로그인 시 또는 약관에 동의하기 까지, 동의 화면을 보여주고,
+- 디자인/위젯 좀 더 마무리하고,
+- 배포하고, 삼사, 로그인 심사 받고,
+- 광고 시작한다.
+
+
 * Sonub(Sonub Network Hub) is an open source, complete CMS with modern functionalities like realtime update, push notification, and more.
 * It is build on Apache(or Nginx) + MySQL(or MariaDB) + PHP stack based Wordpress. It works as a theme but has very much fixed.
 * The reason why we have chosen as its backend frame is because 1) It's easy. Team members can easily learn it. 2) It's almost a standard CMS and widely used all over the world.
