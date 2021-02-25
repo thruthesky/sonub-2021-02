@@ -10,8 +10,6 @@ $o = get_widget_options();
     <ul>
         <li><a href="https://github.com/thruthesky/sonub/issues/14" target="_blank">@TODO 회원 관리</a></li>
         <li>게시글 관리</li>
-        <li>게시판 관리</li>
-        <li>전체 사진 목록</li>
         <li><a href="/?page=cafe.admin">카페 설정</a></li>
         <li>
 
@@ -25,7 +23,7 @@ $o = get_widget_options();
             </a>
         </li>
         <li><a href="/?page=cafe.tip">카페 운영 팁</a></li>
-        <li>카페 운영 문의하기</li>
+        <li><a href="/?page=doc.inquiry">카페 운영 문의하기</a></li>
     </ul>
 
 </div>

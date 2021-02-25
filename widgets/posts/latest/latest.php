@@ -11,12 +11,13 @@
  */
 $o = get_widget_options();
 run_hook('widgets/posts/latest option', $o);
+include THEME_DIR . '/etc/widget/config.styles.php';
 $posts = forum_search($o);
 
 
 ?>
-<section class="posts-latest box mb-2 <?=$o['class'] ?? ''?>">
-    <a class="d-flex justify-content-between" href="/?page=forum/list&category=<?=$o['category'] ?? ''?>">
+<section class="<?=$o['widget_id']?> posts-latest mb-2 p-3 <?=$o['class'] ?? ''?>">
+    <a class="d-flex justify-content-between" href="/?page=forum/list&category=<?=$o['category_name'] ?? ''?>">
         <h2 class="fs-normal"><?=$o['widget_title'] ?? ''?></h2>
         <i class="fa fa-angle-double-right"></i>
     </a>

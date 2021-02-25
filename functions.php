@@ -545,8 +545,13 @@ function get_widget_options()
  * @code
  *   include widget('social-login/naver'); // will load 'widgets/social-login/naver/naver.php'
  * @endcode
+ *
+ * @note 만약, widget_id 가 없으면, 모든 입력값을 바탕으로 해서, md5 로 만들어 낸다.
  */
 function widget( string $path, array $options = [] ) {
+    if ( isset($options['widget_id'])  == false ) {
+        $options['widget_id'] = "id-" . md5(serialize($options));
+    }
     set_widget_options( $options );
     $arr = explode('/', $path);
     if ( count($arr) != 2 ) {

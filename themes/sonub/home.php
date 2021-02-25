@@ -16,7 +16,7 @@ if ( is_in_cafe_main() ) {
 
     if ( has_widget_of("cafe-home-widget") || is_widget_edit_mode() ) {
         for ($i = 0; $i < NO_OF_CAFE_WIDGETS; $i++) {
-            include dynamic_widget("cafe-home-widget-$i", ['class' => 'border-radius-md']);
+            include dynamic_widget("cafe-home-widget-$i", ['class' => '']);
         }
     } else {
         include 'home.default_widgets.php';

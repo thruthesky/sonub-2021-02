@@ -46,6 +46,10 @@
             <label for="name">좌우명</label>
             <input type="text" class="form-control" placeholder="좌우명을 입력하세요." v-model="profile.motto">
         </div>
+        <div class="form-group mb-3">
+            <label for="name">나의 포인트</label>
+            <?=number_format(my('point'))?>
+        </div>
         <button type="submit" class="btn btn-primary">저장</button>
     </form>
 </div>
