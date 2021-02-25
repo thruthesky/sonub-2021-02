@@ -78,5 +78,18 @@ class MallRoute
         }
         return $rets;
     }
+
+    /**
+     * @param $in
+     * @return array|object|string|void|null
+     */
+    public function cancelOrder($in) {
+        global $wpdb;
+        $order = $wpdb->get_row("SELECT * FROM api_order_history WHERE ID=$in[ID]", ARRAY_A);
+        if ( ! $order ) return ERROR_ORDER_NOT_EXISTS;
+        if ( $order['user_ID'] != my('ID') ) return ERROR_NOT_YOUR_ITEM;
+        $wpdb->delete('api_order_history', ['ID' => $in['ID']]);
+        return $order;
+    }
 }
 
