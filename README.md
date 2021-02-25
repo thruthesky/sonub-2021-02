@@ -1023,8 +1023,9 @@ if ( in('mode') == 'delete' ) {
 
 # Configuration
 
-* `config.php` is the configuration and the theme may have its own configuration.
-* If the theme is `abc`, then `sonub/configs/abc.config.php` will be loaded if exists.
+* `config.php` is the configuration and each theme may have its own configuration.
+* If the theme is `abc`, then `sonub/themes/abc/abc.config.php` will be loaded if exists.
+  * And theme config will be loaded even if it's api call.
 
 # Generating test data - posts and comments
 

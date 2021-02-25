@@ -18,17 +18,21 @@ $domain_themes = [
     'philov' => 'sonub',
     'tellvi' => 'sonub',
     'sonub' => 'sonub',
-    'goldenage50' => 'goldenage50',
+    'goldenage50' => 'itsuda',
+    'itsuda' => 'itsuda'
 ];
 
 /**
  * Theme configuration exists, load it.
  * @attention 관리자 페이지에 있는 경우, 관리자 페이지 theme 이 아닌, 실제 theme 의 config.php 를 실행한다.
  */
-$_path = THEME_DIR . "/configs/".get_domain_theme(false).".config.php";
+$_theme = get_domain_theme(false);
+$_path = THEME_DIR . "/themes/$_theme/$_theme.config.php";
 if ( file_exists($_path) ) {
     require_once($_path);
 }
+
+
 
 /**
  * Once set, do not change it. Or, all users must login again.
@@ -38,8 +42,12 @@ define('SESSION_ID_SALT', "__SID__This_is_secret__<.o*o.>_salt__~,7__");
 /**
  * Firebase Admin Service Account Key, for firebase connection
  */
-define("FIREBASE_ADMIN_SDK_SERVICE_ACCOUNT_KEY_PATH", THEME_DIR . "/keys/firebase-adminsdk.json");
-define("FIREBASE_DATABASE_URI", "https://dalgona-firebase-default-rtdb.firebaseio.com/");
+if ( ! defined('FIREBASE_ADMIN_SDK_SERVICE_ACCOUNT_KEY_PATH') ) {
+    define("FIREBASE_ADMIN_SDK_SERVICE_ACCOUNT_KEY_PATH", THEME_DIR . "/keys/x-dalgona-firebase-adminsdk.json");
+}
+if ( ! defined('FIREBASE_DATABASE_URI') ) {
+    define("FIREBASE_DATABASE_URI", "https://dalgona-firebase-default-rtdb.firebaseio.com/");
+}
 
 
 

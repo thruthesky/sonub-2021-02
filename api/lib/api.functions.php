@@ -2656,7 +2656,6 @@ function api_notify_translation_update()
  */
 function get_domain_theme($admin=true)
 {
-    if (API_CALL) return null;
     if ($admin && is_in_admin_page()) return 'admin';
     global $domain_themes;
     if (!isset($domain_themes)) return null;
