@@ -732,7 +732,6 @@ function profile($user_ID = null)
     unset($data['user_pass'], $data['user_activation_key'], $data['user_status'], $data['user_nicename'], $data['display_name'], $data['user_url']);
 
     $data['session_id'] = get_session_id($user);
-    $data['md5'] = md5($data['session_id']);
 
     $data = array_merge(user_metas($user_ID), $data);
 
@@ -776,8 +775,6 @@ function other_profile($user_ID = null)
         'ID' => $data['ID'],
         'nickname' => $data['nickname'] ?? '',
         'profile_photo_url' => $data['profile_photo_url'] ?? '',
-        'md5'=> md5($data['session_id']),
-        'roomId' => getRoomID($data['session_id'])
     ];
 
     return $ret;
