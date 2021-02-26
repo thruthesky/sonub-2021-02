@@ -8,16 +8,14 @@
 
 require_once('../../../../wp-load.php');
 
-d('$_REQUEST;');
-d($_REQUEST);
+
 $user = pass_login_callback($_REQUEST);
 
 if ( api_error($user) ) {
     echo "<h1>ERROR: $user</h1>";
     exit;
 }
-d('user;');
-d($user);
+
 debug_log("pass-login-callback.php:: user", $user);
 
 $profile = pass_login_or_register($user);
