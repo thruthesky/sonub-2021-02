@@ -884,6 +884,38 @@ addComponent('comment-form', commentForm);
 
 # File upload
 
+## Using fileUpload function in helper.js
+
+* Below are the example of using helper.js
+
+```html
+<input type="file" onchange="onChangeImage(this)">
+<script>
+    function onChangeImage($this) {
+        const $file = $this.files[0];
+        fileUpload(
+            $this.files[0],
+            {
+                onUploadProgress: function (progressEvent) {
+                    app.uploadPercentage = Math.round(
+                        (progressEvent.loaded * 100) / progressEvent.total
+                    );
+                },
+            },
+            function(success) {
+                console.log("success: res.url: ", success.url);
+            },
+            function(error) {
+                console.log(error);
+                alert(error);
+            }
+        );
+    }
+</script>
+```
+
+## Using helper function
+
 * The code below shows how to do file upload.
 * `uploadPercentage` is handled by `app.js`.
 
@@ -1023,8 +1055,9 @@ if ( in('mode') == 'delete' ) {
 
 # Configuration
 
-* `config.php` is the configuration and the theme may have its own configuration.
-* If the theme is `abc`, then `sonub/configs/abc.config.php` will be loaded if exists.
+* `config.php` is the configuration and each theme may have its own configuration.
+* If the theme is `abc`, then `sonub/themes/abc/abc.config.php` will be loaded if exists.
+  * And theme config will be loaded even if it's api call.
 
 # Generating test data - posts and comments
 

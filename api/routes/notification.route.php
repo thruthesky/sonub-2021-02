@@ -122,18 +122,25 @@ class NotificationRoute {
         }
     }
 
+    /**
+     * Chat does not subscribe topic! When there is a new messages, it gets all tokens of the user and send push notificatoin.
+     *
+     * @param $in
+     * @return array|string
+     */
     public function chatSubscription($in) {
         if ( ! is_user_logged_in() ) return ERROR_LOGIN_FIRST;
         if ( ! isset($in['topic']) && empty($in['topic']) ) return ERROR_EMPTY_TOPIC;
-        $sub = get_user_meta(wp_get_current_user()->ID, $in['topic'], true) == "Y";
-        if ( !$sub ) {
-            user_update_meta(wp_get_current_user()->ID, [ $in['topic'] => 'Y' ]);
-        } else {
+        $sub = get_user_meta(wp_get_current_user()->ID, $in['topic'], true);
+        if ( $sub == "Y" ) {
             user_update_meta(wp_get_current_user()->ID, [ $in['topic'] => 'N' ]);
+        } else {
+            user_update_meta(wp_get_current_user()->ID, [ $in['topic'] => 'Y' ]);
         }
-        return [
-            $in['topic'] => get_user_meta(wp_get_current_user()->ID, $in['topic'], true)
-        ];
+//        return [
+//            $in['topic'] => get_user_meta(wp_get_current_user()->ID, $in['topic'], true)
+//        ];
+        return profile();
     }
 
 }

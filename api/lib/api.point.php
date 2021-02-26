@@ -158,7 +158,11 @@ function count_over(array $reasons, int $stamp, int $count): bool {
 
 /**
  * @param $options
+ *   - $options['limit'] 가져 올 레코드 개 수. 기본 200 개.
  * @return null
+ *
+ * @example 내 받은 또는 감소된 모든 포인트 기록 가져오기
+ *   get_point_history([ 'from_user_ID' => $user['ID'] ]);
  */
 function get_point_history($options) {
     global $wpdb;
@@ -172,6 +176,17 @@ function get_point_history($options) {
 
     $q_where = "WHERE " . implode(' AND ', $conds);
     $q = "SELECT * FROM api_point_history $q_where";
+    if ( isset($options['order']) && isset($options['orderby'])) {
+        $q .= " ORDER BY ".$options['orderby']." " . $options['order'];
+    } else {
+        $q .= " ORDER BY ID DESC";
+    }
+    if ( isset($options['limit']) ) {
+        $q .= " LIMIT " . $options['limit'];
+    } else {
+        $q .= " LIMIT 200";
+    }
+
     return $wpdb->get_results($q, ARRAY_A);
 }
 
@@ -290,6 +305,8 @@ function count_my_point_actions($stamp, $actions) {
 /**
  * 포인트 기록을 한다.
  *
+ * - to_user_ID 는 target_ID 에 의해서 자동으로 결정된다. 특히, target_ID 가 post_123, comment_456 과 같이 입력되면, 해당 글/코멘트에서 사용자 번호를 뽑아낸다.
+ *
  * @param string $reason 포인트 액션(REASON)
  * @param int $from_user_point_apply 현재 사용자의 포인트 증/감. 추천의 경우, 자신의 증/감 포인트. 글 쓰기의 경우 자신의 증/감 포인트.
  * @param int $to_user_point_apply 상대 사용자의 포인트 증/감. 추천의 경우, 상대방 증/감 포인트.
@@ -309,10 +326,12 @@ function count_my_point_actions($stamp, $actions) {
 function add_point_history(string $reason, int $from_user_point_apply, int $to_user_point_apply=0, string $target_ID=null, int $cat_ID=0): int {
 
 
+
     // 받는 사람 아이디
     $to_user_ID = 0;
 
-    // 회원 가입, 로그인에서 target_ID 는 숫자.
+    // 회원 가입, 로그인에서 자기 자신을 가르키는 숫자, target_ID 는 숫자.
+    // 게시판/코멘트에서는 글 번호. 추천/비추천을 할 때, target_ID 는 글/코멘트 번호.
     if ( $target_ID && is_string($target_ID) ) {
         $arr = explode('_', $target_ID);
         if ( $arr[0] == 'post' ) {
@@ -323,9 +342,11 @@ function add_point_history(string $reason, int $from_user_point_apply, int $to_u
             $to_user_ID = $comment->user_id;
         }
     }
-
-
-
+    if ( in_array($reason, [POINT_ORDER_CONFIRM, POINT_ITEM_ORDER, POINT_ITEM_RESTORE]) ) {
+        // 주문 또는 구매확정을 할 때에는 target_ID 주문 번호이다. 주문 번호로 부터 회원 아이디를 가져온다.
+        $order = get_order($target_ID);
+        $to_user_ID = $order['user_ID'];
+    }
 
 
     // 포인트 기록
@@ -352,6 +373,15 @@ function add_point_history(string $reason, int $from_user_point_apply, int $to_u
     $wpdb->insert('api_point_history', $history);
 
     return $wpdb->insert_id;
+}
+
+/// 상품 주문 했을 때, 추가한 포인트를 뺀다.
+function api_item_order_point_restore($ID) {
+    $order = get_order($ID);
+    $info = decode_order_info($order);
+    $point = $info['pointToUse'];
+    add_user_point($order['user_ID'], $point);
+    add_point_history(POINT_ITEM_RESTORE, 0, $point, $ID, 0 );
 }
 
 

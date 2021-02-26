@@ -732,7 +732,6 @@ function profile($user_ID = null)
     unset($data['user_pass'], $data['user_activation_key'], $data['user_status'], $data['user_nicename'], $data['display_name'], $data['user_url']);
 
     $data['session_id'] = get_session_id($user);
-    $data['md5'] = md5($data['session_id']);
 
     $data = array_merge(user_metas($user_ID), $data);
 
@@ -776,8 +775,6 @@ function other_profile($user_ID = null)
         'ID' => $data['ID'],
         'nickname' => $data['nickname'] ?? '',
         'profile_photo_url' => $data['profile_photo_url'] ?? '',
-        'md5'=> md5($data['session_id']),
-        'roomId' => getRoomID($data['session_id'])
     ];
 
     return $ret;
@@ -2247,9 +2244,21 @@ function api_edit_post($in)
             if ( category_daily_limit($in['category']) ) return ERROR_DAILY_LIMIT;
         }
 
+        /// 글/코멘트 쓰기를 할 때, 포인트가 감소하도록 설정되었다면, 해당 포인트를 보유해야 글/코멘트 쓰기 가능하다.
+        if ( get_post_create_point($in['category']) < 0 ) {
+            if ( my('point') < abs(get_post_create_point($in['category'])) ) {
+                return ERROR_LACK_OF_POINT;
+            }
+        }
+
         ///
         $data['post_title'] = $in['post_title'] ?? '';
         $data['post_content'] = $in['post_content'] ?? '';
+
+
+        // 글을 쓸 때, 도메인을 기록해서, 해당 글이 어는 사이트, 카페에서 기록되었는지 표시를 한다.
+        $in['host'] = get_host_name();
+
     }
 
     // If in('ID') is set, it will change category. Or It will create new.
@@ -2281,6 +2290,7 @@ function api_edit_post($in)
     if (isset($in['featured_image_ID'])) {
         set_post_thumbnail($ID, $in['featured_image_ID']);
     }
+
 
     update_post_properties($ID, $in);
 
@@ -2359,6 +2369,13 @@ function api_edit_comment($in) {
             if ( category_daily_limit($category) ) return ERROR_DAILY_LIMIT;
         }
 
+        /// 글/코멘트 쓰기를 할 때, 포인트가 감소하도록 설정되었다면, 해당 포인트를 보유해야 글/코멘트 쓰기 가능하다.
+        $category = get_first_category($in['comment_post_ID']);
+        if ( get_comment_create_point($category) < 0 ) {
+            if ( my('point') < abs(get_comment_create_point($category)) ) {
+                return ERROR_LACK_OF_POINT;
+            }
+        }
 
         // 코멘트 생성
         $commentdata = [
@@ -2384,6 +2401,10 @@ function api_edit_comment($in) {
 
         /// 포인트 추가
         api_forum_point_change(POINT_COMMENT_CREATE, $comment_id);
+
+
+        // 코멘트를 쓸 때, 도메인을 기록해서, 해당 글이 어는 사이트, 카페에서 기록되었는지 표시를 한다.
+        update_comment_meta($comment_id, 'host', get_host_name());
 
 
         /**
@@ -2635,7 +2656,6 @@ function api_notify_translation_update()
  */
 function get_domain_theme($admin=true)
 {
-    if (API_CALL) return null;
     if ($admin && is_in_admin_page()) return 'admin';
     global $domain_themes;
     if (!isset($domain_themes)) return null;
@@ -3741,4 +3761,35 @@ function get_cache(string $key) {
 function delete_cache(string $key): bool
 {
     return delete_transient( $key );
+}
+
+
+function get_order($ID) {
+    global $wpdb;
+    $q = "SELECT * FROM api_order_history WHERE ID=$ID";
+    return $wpdb->get_row($q, ARRAY_A);
+}
+
+/**
+ * 주의: 레코드 전체를 리턴하는 것이 아니라, info 필드를 decode 해서 리턴한다.
+ * @param $row
+ * @return mixed
+ */
+function decode_order_info($row) {
+    $info = json_decode($row['info'], ARRAY_A);
+    $_items = json_decode($info['items'], ARRAY_A);
+    $items = [];
+    foreach($_items as $item) {
+        $item = json_decode($item, ARRAY_A);
+        $selectedOptions = [];
+        if ( isset($item['selectedOptions'])) {
+            foreach($item['selectedOptions'] as $name => $opt ) {
+                $selectedOptions[$name] = json_decode($opt, ARRAY_A);
+            }
+        }
+        $item['selectedOptions'] = $selectedOptions;
+        $items[] = $item;
+    }
+    $info['items'] = $items;
+    return $info;
 }

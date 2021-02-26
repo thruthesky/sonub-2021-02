@@ -11,16 +11,12 @@
  */
 $o = get_widget_options();
 run_hook('widgets/posts/latest-photos option', $o);
-$o['category_name'] = 'kr';
+include THEME_DIR . '/etc/widget/config.styles.php';
 $posts = latest_photos($o);
-//d($posts);
-
-
-
 
 
 ?>
-<section class="latest-photos box mb-2 <?=$o['class'] ?? ''?>">
+<section class="<?=$o['widget_id']?> latest-photos box mb-2 <?=$o['class'] ?? ''?>">
     <a class="d-flex justify-content-between" href="/?page=forum/list&category=<?=$o['category_name'] ?? ''?>">
         <h2 class="fs-normal"><?=$o['widget_title'] ?? ''?></h2>
         <i class="fa fa-angle-double-right"></i>
