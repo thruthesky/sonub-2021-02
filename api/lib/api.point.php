@@ -306,6 +306,11 @@ function count_my_point_actions($stamp, $actions) {
  * 포인트 기록을 한다.
  *
  * - to_user_ID 는 target_ID 에 의해서 자동으로 결정된다. 특히, target_ID 가 post_123, comment_456 과 같이 입력되면, 해당 글/코멘트에서 사용자 번호를 뽑아낸다.
+ * - 그 외에, 대부분의 경우, 예를 들어,
+ *   - 사용자 A/B 가 아닌 경우, 즉, 회원 가입, 로그인 등에서 자동으로 포인트가 생겨나는 경우 또는
+ *   - 상품 구매시 적립금 등,
+ *   한 사용자가 다른 사용자에게 포인트 영향을 주지 않는다면, from_user_ID 와 to_user_ID 의 값은 동일하다.
+ *   단, 관리자가 상품 주문을 confirm 하는 경우, 로그인 사용자가 관리자, 대상은 회원이기 때문에 from_user_ID 와 to_user_ID 가 달라야 한다.
  *
  * @param string $reason 포인트 액션(REASON)
  * @param int $from_user_point_apply 현재 사용자의 포인트 증/감. 추천의 경우, 자신의 증/감 포인트. 글 쓰기의 경우 자신의 증/감 포인트.
@@ -343,7 +348,7 @@ function add_point_history(string $reason, int $from_user_point_apply, int $to_u
         }
     }
     if ( in_array($reason, [POINT_ORDER_CONFIRM, POINT_ITEM_ORDER, POINT_ITEM_RESTORE]) ) {
-        // 주문 또는 구매확정을 할 때에는 target_ID 주문 번호이다. 주문 번호로 부터 회원 아이디를 가져온다.
+        // 주문 또는 구매확정을 할 때에는 from_user_ID 와 to_user_ID 가 동일하다.
         $order = get_order($target_ID);
         $to_user_ID = $order['user_ID'];
     }

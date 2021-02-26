@@ -90,6 +90,7 @@ class MallRoute
         $order = $wpdb->get_row("SELECT * FROM api_order_history WHERE ID=$in[ID]", ARRAY_A);
         if ( ! $order ) return ERROR_ORDER_NOT_EXISTS;
         if ( $order['user_ID'] != my('ID') ) return ERROR_NOT_YOUR_ITEM;
+        if ( $order['confirmed'] ) return ERROR_ORDER_CONFIRMED;
         api_item_order_point_restore($in['ID']);
         $wpdb->delete('api_order_history', ['ID' => $in['ID']]);
         return $order;
