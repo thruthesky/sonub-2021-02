@@ -1,15 +1,15 @@
 <?php
-    $_user = profile(in('user_ID'));
+    $user = profile(in('user_ID'));
     ?>
 
     <div class="option-box mb-3">
-        <? if ( isset($_user['profile_photo_url']) && $_user['profile_photo_url'] ) { ?>
-            <img class="avatar d-block size-128" src="<?=$_user['profile_photo_url']?>">
+        <? if ( isset($user['profile_photo_url']) && $user['profile_photo_url'] ) { ?>
+            <img class="avatar d-block size-128" src="<?=$user['profile_photo_url']?>">
         <? } ?>
 
-        <b><?=$_user['name'] ?? '??'?> (<?=$_user['gender'] ?? '?'?>/<?=$_user['birthdate'] ?? '?'?>)</b>
+        <b><?=$user['name'] ?? '??'?> (<?=$user['gender'] ?? '?'?>/<?=$user['birthdate'] ?? '?'?>)</b>
         <div>
-            <?=$_user['phoneNo'] ?? '- - -'?>
+            <?=$user['phoneNo'] ?? '- - -'?>
         </div>
         <div>
             가입 날짜:
@@ -22,8 +22,8 @@
         </div>
 
         <div>
-            보유 포인트: 1,000,000
-            포인트 기록 보기
+            보유 포인트: <?=number_format($user['point'])?>
+            <a href="/?page=admin.user.point-history&user_ID=<?=$user['ID']?>">포인트 기록 보기</a>
         </div>
 
         <div>

@@ -3762,3 +3762,34 @@ function delete_cache(string $key): bool
 {
     return delete_transient( $key );
 }
+
+
+function get_order($ID) {
+    global $wpdb;
+    $q = "SELECT * FROM api_order_history WHERE ID=$ID";
+    return $wpdb->get_row($q, ARRAY_A);
+}
+
+/**
+ * 주의: 레코드 전체를 리턴하는 것이 아니라, info 필드를 decode 해서 리턴한다.
+ * @param $row
+ * @return mixed
+ */
+function decode_order_info($row) {
+    $info = json_decode($row['info'], ARRAY_A);
+    $_items = json_decode($info['items'], ARRAY_A);
+    $items = [];
+    foreach($_items as $item) {
+        $item = json_decode($item, ARRAY_A);
+        $selectedOptions = [];
+        if ( isset($item['selectedOptions'])) {
+            foreach($item['selectedOptions'] as $name => $opt ) {
+                $selectedOptions[$name] = json_decode($opt, ARRAY_A);
+            }
+        }
+        $item['selectedOptions'] = $selectedOptions;
+        $items[] = $item;
+    }
+    $info['items'] = $items;
+    return $info;
+}

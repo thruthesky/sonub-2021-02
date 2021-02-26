@@ -23,4 +23,8 @@ class UserRoute {
         return profile_update($in);
     }
 
+    /// 사용자의 포인트 기록을 리턴한다.
+    public function point($in) {
+        return get_point_history([ 'to_user_ID' => my('ID') ]);
+    }
 }

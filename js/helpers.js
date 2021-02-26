@@ -40,6 +40,16 @@ function request(route, data, successCallback, errorCallback) {
     }).catch(errorCallback);
 }
 
+
+/**
+ * 백엔드로 파일을 업로드한다.
+ *
+ * README#File upload 참고
+ * @param file
+ * @param options
+ * @param successCallback
+ * @param errorCallback
+ */
 function fileUpload(file, options, successCallback, errorCallback) {
     const form = new FormData();
     form.append('route', 'file.upload');

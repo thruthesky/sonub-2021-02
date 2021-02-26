@@ -43,10 +43,10 @@ define('SESSION_ID_SALT', "__SID__This_is_secret__<.o*o.>_salt__~,7__");
  * Firebase Admin Service Account Key, for firebase connection
  */
 if ( ! defined('FIREBASE_ADMIN_SDK_SERVICE_ACCOUNT_KEY_PATH') ) {
-    define("FIREBASE_ADMIN_SDK_SERVICE_ACCOUNT_KEY_PATH", THEME_DIR . "/keys/x-dalgona-firebase-adminsdk.json");
+    define("FIREBASE_ADMIN_SDK_SERVICE_ACCOUNT_KEY_PATH", THEME_DIR . "/keys/sonub-firebase-adminsdk.json");
 }
 if ( ! defined('FIREBASE_DATABASE_URI') ) {
-    define("FIREBASE_DATABASE_URI", "https://dalgona-firebase-default-rtdb.firebaseio.com/");
+    define("FIREBASE_DATABASE_URI", "https://itsuda50-default-rtdb.firebaseio.com/");
 }
 
 

@@ -58,7 +58,7 @@
         <? } else { ?>
 
             <ul class="list-menu bold">
-                <li><a class="px-3 py-2 ps-0" href="/?page=cafe/intro">카페</a></li>
+                <li><a class="px-3 py-2 ps-0" href="/?page=cafe/intro">카페개설</a></li>
                 <li><a class="px-3 py-2" href="<?=cafe_url('reminder')?>">공지사항</a></li>
                 <li><a class="px-3 py-2" href="<?=cafe_url('discussion')?>">자유게시판</a></li>
                 <li><a class="px-3 py-2" href="<?=cafe_url('qna')?>">질문게시판</a></li>
