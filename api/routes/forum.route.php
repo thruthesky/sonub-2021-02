@@ -42,7 +42,7 @@ class ForumRoute
 
     public function deletePost($in)
     {
-        api_delete_post($in);
+        return api_delete_post($in);
     }
 
     public function searchComments($in)
