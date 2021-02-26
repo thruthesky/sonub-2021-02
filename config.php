@@ -104,10 +104,10 @@ define('LOGIN_PASSWORD_SALT', 'Random_Salt_oO^.^Oo_S.0.48.PM,*'); // This is any
  * PASS_LOGIN_MOBILE_PREFIX is the prefix that will be added on user register through Pass login.
  * PASS_LOGIN_SALT is the secret password used with Pass login. It should be a random string between 16 to 32 chars.
  */
-define('PASS_LOGIN_MOBILE_PREFIX', 'm');
-define('PASS_LOGIN_CLIENT_ID', 'b90hirE4UYwVf2GkHIiK');
-define('PASS_LOGIN_CLIENT_SECRET_KEY', '366c0f3775bfa48f2239226506659f5981afd3eb2b08189f9f9d22cdc4ca63c9');
-define('PASS_LOGIN_CALLBACK_URL', "https://sonub.com/wp-content/themes/sonub/callbacks/pass-login-callback.php");
+if ( !defined('PASS_LOGIN_MOBILE_PREFIX') ) define('PASS_LOGIN_MOBILE_PREFIX', 'm');
+if ( !defined('PASS_LOGIN_CLIENT_ID') ) define('PASS_LOGIN_CLIENT_ID', 'b90hirE4UYwVf2GkHIiK');
+if ( !defined('PASS_LOGIN_CLIENT_SECRET_KEY') ) define('PASS_LOGIN_CLIENT_SECRET_KEY', '366c0f3775bfa48f2239226506659f5981afd3eb2b08189f9f9d22cdc4ca63c9');
+if ( !defined('PASS_LOGIN_CALLBACK_URL') ) define('PASS_LOGIN_CALLBACK_URL', "https://sonub.com/wp-content/themes/sonub/callbacks/pass-login-callback.php");
 
 // 날짜 설정
 //
@@ -116,18 +116,13 @@ date_default_timezone_set('Asia/Seoul');
 
 
 // Kakao Javascript Api 키
-define('KAKAO_CLIENT_ID', '6f8d49d406555f69828891821ea56c8b');
+if ( !defined('KAKAO_CLIENT_ID') ) define('KAKAO_CLIENT_ID', '6f8d49d406555f69828891821ea56c8b');
 // Kakao Redirect URI
-define('KAKAO_CALLBACK_URL', 'https://main.philov.com/wp-content/themes/sonub/callbacks/kakao-login.callback.php');
+if ( !defined('KAKAO_CALLBACK_URL') ) define('KAKAO_CALLBACK_URL', 'https://main.philov.com/wp-content/themes/sonub/callbacks/kakao-login.callback.php');
 
 
 
-define('NAVER_CLIENT_ID', 'gCVN3T_vsOmX1ADriDOA');
-define('NAVER_CLIENT_SECRET', 'JzWh7zPeJF');
-define('NAVER_CALLBACK_URL', urlencode('https://main.philov.com/wp-content/themes/sonub/callbacks/naver-login.callback.php'));
-define('NAVER_API_URL', "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=".NAVER_CLIENT_ID."&redirect_uri=".NAVER_CALLBACK_URL."&state=1");
-
-
-
-define('DEFAULT_DELIVERY_FEE_FREE_LIMIT', 30000);
-define('DEFAULT_DELIVERY_FEE_PRICE', 2500);
+if ( !defined('NAVER_CLIENT_ID') ) define('NAVER_CLIENT_ID', 'gCVN3T_vsOmX1ADriDOA');
+if ( !defined('NAVER_CLIENT_SECRET') ) define('NAVER_CLIENT_SECRET', 'JzWh7zPeJF');
+if ( !defined('NAVER_CALLBACK_URL') ) define('NAVER_CALLBACK_URL', urlencode('https://main.philov.com/wp-content/themes/sonub/callbacks/naver-login.callback.php'));
+if ( !defined('NAVER_API_URL') ) define('NAVER_API_URL', "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=".NAVER_CLIENT_ID."&redirect_uri=".NAVER_CALLBACK_URL."&state=1");
