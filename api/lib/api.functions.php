@@ -612,7 +612,7 @@ function register($in)
     if (get_user_by('email', $in['user_email'])) return ERROR_EMAIL_EXISTS;
     if (check_email_format($in['user_email']) === false) return ERROR_WRONG_EMAIL_FORMAT;
 
-    $nickname = $in['nickname'] ?? $in['user_email'];
+    $nickname = $in['nickname'] ?? '';
 
     $userdata = [
         'user_login' => trim($in['user_email']),
@@ -3125,6 +3125,10 @@ function pass_login_aes_dec($str)
     return openssl_decrypt(base64_decode($str), 'AES-128-CBC', $key_128, true, $key_128);
 }
 
+/**
+ * @param $in
+ * @return array|string
+ */
 function pass_login_callback($in)
 {
     // @todo PASS 휴대폰번호 로그인을 하면, Callback URL 이 호출된다. 그리고 그 정보를 기록한다.
@@ -3161,8 +3165,8 @@ function pass_login_callback($in)
         $response = curl_exec($ch);
         $re = json_decode($response, true);
         if (isset($re['error'])) {
-            echo "<h1>[ ERROR: $re[error], MESSAGE: $re[message]</h1>";
-            return;
+            echo "<h1>[ ERROR: $re[error], MESSAGE: $re[message]</h1><br>file: " . __FILE__ . ' at ' . __LINE__;
+            return ERROR_PASS_LOGIN_CALLBACK_AUTHORIZATION;
         }
         // @todo leave log
         //            file_put_contents($log_file, $response ."\r\n\r\n");
@@ -3254,6 +3258,7 @@ function pass_login_or_register($user)
         /// 처음 로그인 또는 자동 로그인이 아닌 경우,
         $user['user_email'] = PASS_LOGIN_MOBILE_PREFIX . "$user[phoneNo]@passlogin.com";
         $user['user_pass'] = md5(LOGIN_PASSWORD_SALT . PASS_LOGIN_CLIENT_ID . $user['phoneNo']);
+        $user['nickname'] = $user['name'] ?? '';
         $profile = login_or_register($user);
     } else {
         /// plid 가 들어 온 경우, meta 에서 ci 를 끄집어 낸다.

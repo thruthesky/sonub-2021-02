@@ -347,6 +347,10 @@ function add_point_history(string $reason, int $from_user_point_apply, int $to_u
         $order = get_order($target_ID);
         $to_user_ID = $order['user_ID'];
     }
+    if ( in_array($reason, [POINT_REGISTER, POINT_LOGIN]) ) {
+        // 로그인, 가입에서는 from_user_ID 와 to_user_ID 가 동일하다.
+        $to_user_ID = wp_get_current_user()->ID;
+    }
 
 
     // 포인트 기록
