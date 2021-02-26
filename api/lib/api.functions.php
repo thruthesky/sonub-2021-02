@@ -612,7 +612,7 @@ function register($in)
     if (get_user_by('email', $in['user_email'])) return ERROR_EMAIL_EXISTS;
     if (check_email_format($in['user_email']) === false) return ERROR_WRONG_EMAIL_FORMAT;
 
-    $nickname = $in['nickname'] ?? $in['user_email'];
+    $nickname = $in['nickname'] ?? '';
 
     $userdata = [
         'user_login' => trim($in['user_email']),
@@ -3258,7 +3258,7 @@ function pass_login_or_register($user)
         /// 처음 로그인 또는 자동 로그인이 아닌 경우,
         $user['user_email'] = PASS_LOGIN_MOBILE_PREFIX . "$user[phoneNo]@passlogin.com";
         $user['user_pass'] = md5(LOGIN_PASSWORD_SALT . PASS_LOGIN_CLIENT_ID . $user['phoneNo']);
-        $user['nickname'] = $user['name'] ?? 'nickname';
+        $user['nickname'] = $user['name'] ?? '';
         $profile = login_or_register($user);
     } else {
         /// plid 가 들어 온 경우, meta 에서 ci 를 끄집어 낸다.
