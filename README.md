@@ -884,6 +884,38 @@ addComponent('comment-form', commentForm);
 
 # File upload
 
+## Using fileUpload function in helper.js
+
+* Below are the example of using helper.js
+
+```html
+<input type="file" onchange="onChangeImage(this)">
+<script>
+    function onChangeImage($this) {
+        const $file = $this.files[0];
+        fileUpload(
+            $this.files[0],
+            {
+                onUploadProgress: function (progressEvent) {
+                    app.uploadPercentage = Math.round(
+                        (progressEvent.loaded * 100) / progressEvent.total
+                    );
+                },
+            },
+            function(success) {
+                console.log("success: res.url: ", success.url);
+            },
+            function(error) {
+                console.log(error);
+                alert(error);
+            }
+        );
+    }
+</script>
+```
+
+## Using helper function
+
 * The code below shows how to do file upload.
 * `uploadPercentage` is handled by `app.js`.
 

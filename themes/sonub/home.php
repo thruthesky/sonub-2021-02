@@ -1,9 +1,6 @@
 <?php
 
 
-d(pathinfo(FIREBASE_ADMIN_SDK_SERVICE_ACCOUNT_KEY_PATH));
-
-
 // 로그인을 했고, 이름이 없으면 이름을 등록한다.
 if ( loggedIn() && empty(my('name')) ) {
     include script('user/profile');

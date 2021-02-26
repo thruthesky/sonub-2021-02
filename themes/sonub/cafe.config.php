@@ -11,7 +11,7 @@ define('NO_OF_WIDE_CAFE_MENU', 16);
 define('NO_OF_NARROW_CAFE_MENU', 8);
 
 /// 카페에서 본문, 사이드바에서 사용 할 최대 위젯 개수
-define('NO_OF_CAFE_WIDGETS', 12);
+define('NO_OF_CAFE_WIDGETS', 20);
 
 
 

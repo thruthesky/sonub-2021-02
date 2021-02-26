@@ -49,16 +49,18 @@ class MallRoute
         $ID = $wpdb->insert_id;
 
 
-        // 포인트를 차감하고 기록을 남긴다.
-        $applied = add_user_point(my('ID'), -$point );
-        debug_log("applied: $applied");
-        add_point_history(
-            POINT_ITEM_ORDER,
-            $applied,
-            $applied,
-            $ID,
-            0
-        );
+        if ( $point ) {
+            // 포인트를 차감하고 기록을 남긴다.
+            $applied = add_user_point(my('ID'), -$point );
+            debug_log("applied: $applied");
+            add_point_history(
+                POINT_ITEM_ORDER,
+                $applied,
+                $applied,
+                $ID, // 상품 번호
+                0
+            );
+        }
 
         debug_log("ID: $ID");
         $res = $wpdb->get_row("SELECT * FROM api_order_history WHERE ID=$ID", ARRAY_A);
@@ -88,6 +90,7 @@ class MallRoute
         $order = $wpdb->get_row("SELECT * FROM api_order_history WHERE ID=$in[ID]", ARRAY_A);
         if ( ! $order ) return ERROR_ORDER_NOT_EXISTS;
         if ( $order['user_ID'] != my('ID') ) return ERROR_NOT_YOUR_ITEM;
+        api_item_order_point_restore($in['ID']);
         $wpdb->delete('api_order_history', ['ID' => $in['ID']]);
         return $order;
     }

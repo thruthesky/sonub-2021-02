@@ -41,6 +41,7 @@ if ( in('mode') == 'save' ) {
                 <option value="login" <? if ( $dwo['widget_type'] == 'login') echo 'selected'; ?>>타입: 로그인</option>
                 <option value="statistics" <? if ( $dwo['widget_type'] == 'statistics') echo 'selected'; ?>>타입: 통계</option>
                 <option value="currency" <? if ( $dwo['widget_type'] == 'currency') echo 'selected'; ?>>타입: 환율</option>
+                <option value="banner" <? if ( $dwo['widget_type'] == 'banner') echo 'selected'; ?>>타입: 배너 & 이미지</option>
             </select>
         </div>
 <?php if ( $dwo['widget_type'] ) { ?>
