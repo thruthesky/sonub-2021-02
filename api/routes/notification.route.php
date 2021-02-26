@@ -116,10 +116,11 @@ class NotificationRoute {
         if ( ! isset($in['topic']) && empty($in['topic']) ) return ERROR_EMPTY_TOPIC;
         $sub = get_user_meta(wp_get_current_user()->ID, $in['topic'], true) == "Y";
         if ( !$sub ) {
-            return $this->subscribeTopic($in);
+            $this->subscribeTopic($in);
         } else {
-            return $this->unsubscribeTopic($in);
+            $this->unsubscribeTopic($in);
         }
+        return profile();
     }
 
     /**
@@ -137,9 +138,6 @@ class NotificationRoute {
         } else {
             user_update_meta(wp_get_current_user()->ID, [ $in['topic'] => 'Y' ]);
         }
-//        return [
-//            $in['topic'] => get_user_meta(wp_get_current_user()->ID, $in['topic'], true)
-//        ];
         return profile();
     }
 
